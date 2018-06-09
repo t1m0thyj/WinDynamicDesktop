@@ -16,8 +16,6 @@ After you enter your location, the program will minimize to your system tray and
 The program does not yet have an option built-in to automatically start when Windows boots. To make it do this, create a shortcut to the EXE in the following folder: `%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup`.
 
 ## Legal and privacy stuff
-I do not own the wallpaper pictures used by WinDynamicDesktop, they belong to Apple.
+I do not own the wallpaper pictures used by WinDynamicDesktop, they belong to Apple. The icon used in this program was made by [Roundicons](https://www.flaticon.com/authors/roundicons) from [flaticon.com](https://www.flaticon.com/) and is licensed by [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/).
 
-When you enter your location, WinDynamicDesktop uses the [LocationIQ service](https://locationiq.org/) to convert your location to latitude and longitude. Your location info is never sent anywhere without your consent.
-
-To get sunrise and sunset times, WinDynamicDesktop uses the free API available at [sunrise-sunset.org](https://sunrise-sunset.org/).
+When you enter your location, WinDynamicDesktop uses the [LocationIQ service](https://locationiq.org/) to convert your location to latitude and longitude. Your location info is never sent anywhere without your consent. To get sunrise and sunset times, WinDynamicDesktop uses the free API available at [sunrise-sunset.org](https://sunrise-sunset.org/).

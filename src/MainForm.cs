@@ -8,69 +8,53 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
-using System.IO.Compression;
-using System.Net;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace WinDynamicDesktop
 {
     public partial class MainForm : Form
     {
-        private Uri imagesZipUri = new Uri("https://files.rb.gd/mojave_dynamic.zip");
+        // Hack to show watermark in textbox from https://stackoverflow.com/questions/2487104
+        [DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam,
+            [MarshalAs(UnmanagedType.LPWStr)] string lParam);
 
         public MainForm()
         {
             InitializeComponent();
         }
 
-        public void UpdateLogLine(string newLine)
+        public void AppendToLog(string lineText, bool addNewLine = true)
         {
-            string[] lines = logTextBox.Lines;
-            lines[lines.Length - 1] = newLine;
-            logTextBox.Lines = lines;
-        }
-
-        public void DownloadImagesZip()
-        {
-            logTextBox.Text += "Downloading images.zip (39.0 MB)...";
-
-            using (WebClient client = new WebClient())
+            if (addNewLine)
             {
-                client.DownloadProgressChanged += client_DownloadProgressChanged;
-                client.DownloadFileCompleted += client_DownloadFileCompleted;
-                client.DownloadFileAsync(imagesZipUri, "images.zip");
+                lineText += Environment.NewLine;
             }
-        }
-
-        private void client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
-        {
-            UpdateLogLine("Downloading images.zip (39.0 MB)..." + e.ProgressPercentage + "%");
-        }
-
-        private void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
-        {
-            UpdateLogLine("Downloading images.zip (39.0 MB)...done" + Environment.NewLine);
-            ExtractImagesZip();
-        }
-
-        public void ExtractImagesZip()
-        {
-            logTextBox.Text += "Extracting images.zip...";
-            ZipFile.ExtractToDirectory("images.zip", "images");
-            logTextBox.Text += "done" + Environment.NewLine;
+            logTextBox.AppendText(lineText);
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            SendMessage(textBox1.Handle, 0x1501, 1, "Enter your location...");
             logTextBox.Text = "Welcome to WinDynamicDesktop " +
-                Assembly.GetExecutingAssembly().GetName().Version.ToString() + "!";
+                Assembly.GetExecutingAssembly().GetName().Version.ToString() + "!" +
+                Environment.NewLine;
+            logTextBox.Text += "Enter your location in the textbox and click Set Location." +
+                Environment.NewLine;
+            logTextBox.Text += "Once a valid location has been entered, this window will" +
+                Environment.NewLine;
+            logTextBox.Text += "close and the program will run in the background." +
+                Environment.NewLine;
+            logTextBox.Text += "You can still access it from the icon in your system tray." +
+                Environment.NewLine;
             /*Wallpaper.Set(new Uri(Path.Combine(Directory.GetCurrentDirectory(), "images",
                 "mojave_dynamic_1.jpeg")), Wallpaper.Style.Stretched);*/
         }
 
         private void MainForm_Shown(object sender, EventArgs e)
         {
-            if (!Directory.Exists("images"))
+            /*if (!Directory.Exists("images"))
             {
                 if (!File.Exists("images.zip"))
                 {
@@ -80,7 +64,7 @@ namespace WinDynamicDesktop
                 {
                     ExtractImagesZip();
                 }
-            }
+            }*/
         }
 
         private void setLocationButton_Click(object sender, EventArgs e)

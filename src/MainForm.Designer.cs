@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.setLocationButton = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.logTextBox = new System.Windows.Forms.TextBox();
@@ -59,6 +60,7 @@
             this.logTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.logTextBox.Multiline = true;
             this.logTextBox.Name = "logTextBox";
+            this.logTextBox.ReadOnly = true;
             this.logTextBox.Size = new System.Drawing.Size(428, 148);
             this.logTextBox.TabIndex = 2;
             // 
@@ -71,6 +73,7 @@
             this.Controls.Add(this.setLocationButton);
             this.Controls.Add(this.textBox1);
             this.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
