@@ -32,7 +32,7 @@ namespace WinDynamicDesktop
 
         public void DownloadImagesZip()
         {
-            logTextBox.Text += "Downloading images.zip (39.0 MB)...0%";
+            logTextBox.Text += "Downloading images.zip (39.0 MB)...";
 
             using (WebClient client = new WebClient())
             {
