@@ -10,26 +10,27 @@ using System.Windows.Forms;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
+using System.Reflection;
 
 namespace WinDynamicDesktop
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
         private Uri imagesZipUri = new Uri("https://files.rb.gd/mojave_dynamic.zip");
 
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
         }
 
-        public void updateLogLine(string newLine)
+        public void UpdateLogLine(string newLine)
         {
             string[] lines = logTextBox.Lines;
             lines[lines.Length - 1] = newLine;
             logTextBox.Lines = lines;
         }
 
-        public void downloadImagesZip()
+        public void DownloadImagesZip()
         {
             logTextBox.Text += "Downloading images.zip (39.0 MB)...0%";
 
@@ -43,42 +44,53 @@ namespace WinDynamicDesktop
 
         private void client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            updateLogLine("Downloading images.zip (39.0 MB)..." + e.ProgressPercentage + "%");
+            UpdateLogLine("Downloading images.zip (39.0 MB)..." + e.ProgressPercentage + "%");
         }
 
         private void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
-            updateLogLine("Downloading images.zip (39.0 MB)...done" + Environment.NewLine);
-            extractImagesZip();
+            UpdateLogLine("Downloading images.zip (39.0 MB)...done" + Environment.NewLine);
+            ExtractImagesZip();
         }
 
-        public void extractImagesZip()
+        public void ExtractImagesZip()
         {
             logTextBox.Text += "Extracting images.zip...";
             ZipFile.ExtractToDirectory("images.zip", "images");
             logTextBox.Text += "done" + Environment.NewLine;
         }
 
-        private void Form1_Shown(object sender, EventArgs e)
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            logTextBox.Text = "Welcome to WinDynamicDesktop " +
+                Assembly.GetExecutingAssembly().GetName().Version.ToString() + "!";
+            /*Wallpaper.Set(new Uri(Path.Combine(Directory.GetCurrentDirectory(), "images",
+                "mojave_dynamic_1.jpeg")), Wallpaper.Style.Stretched);*/
+        }
+
+        private void MainForm_Shown(object sender, EventArgs e)
         {
             if (!Directory.Exists("images"))
             {
                 if (!File.Exists("images.zip"))
                 {
-                    downloadImagesZip();
+                    DownloadImagesZip();
                 }
                 else
                 {
-                    extractImagesZip();
+                    ExtractImagesZip();
                 }
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void setLocationButton_Click(object sender, EventArgs e)
         {
             LocationIQService service = new LocationIQService();
-            LocationIQPlace place = service.getLocationData(textBox1.Text);
-            MessageBox.Show(place.lat.ToString() + place.lon.ToString());
+            LocationIQData data = service.GetLocationData(textBox1.Text);
+            MessageBox.Show(data.lat + ", " + data.lon);
+            SunriseSunsetService service2 = new SunriseSunsetService();
+            SunriseSunsetData data2 = service2.GetWeatherData(data.lat, data.lon);
+            MessageBox.Show(data2.results.sunrise + ", " + data2.results.sunset);
         }
     }
 }
