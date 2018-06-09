@@ -1,6 +1,8 @@
 .vs/
 bin/
 obj/
+output/
 packages/
 images/
 images.zip
+settings.conf

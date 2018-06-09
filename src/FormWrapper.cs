@@ -4,29 +4,58 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 
 namespace WinDynamicDesktop
 {
     class FormWrapper : ApplicationContext
     {
         private Uri imagesZipUri = new Uri("https://files.rb.gd/mojave_dynamic.zip");
+        private int downloadProgress = 0;
+        private bool firstRun;
 
         private MainForm mainForm;
         private NotifyIcon notifyIcon;
 
+        public LocationConfig config;
+
         public FormWrapper()
         {
             Application.ApplicationExit += new EventHandler(this.OnApplicationExit);
+
             InitializeComponent();
-            notifyIcon.Visible = true;
+
+            if (File.Exists("settings.conf"))
+            {
+                config = JsonConvert.DeserializeObject<LocationConfig>(
+                    File.ReadAllText("settings.conf"));
+                firstRun = false;
+            }
+            else
+            {
+                config = new LocationConfig();
+                firstRun = true;
+            }
+
+            if (firstRun)
+            {
+                ShowMainForm();
+            }
+
+            if (!File.Exists("images.zip"))
+            {
+                DownloadImagesZip();
+            }
         }
 
         private void InitializeComponent()
         {
             notifyIcon = new NotifyIcon();
+            notifyIcon.Visible = true;
             notifyIcon.Icon = Properties.Resources.AppIcon;
             
             notifyIcon.ContextMenu = new ContextMenu(new MenuItem[]
@@ -79,15 +108,21 @@ namespace WinDynamicDesktop
 
         private void client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            if (e.ProgressPercentage % 10 == 9)
+            if (e.ProgressPercentage != downloadProgress)
             {
-                AppendToLog(".", false);
+                downloadProgress = e.ProgressPercentage;
+
+                if (downloadProgress % 10 == 9)
+                {
+                    AppendToLog(".", false);
+                }
             }
         }
 
         private void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
             AppendToLog("done");
+
             ZipFile.ExtractToDirectory("images.zip", "images");
         }
 
@@ -95,7 +130,7 @@ namespace WinDynamicDesktop
         {
             if (mainForm == null)
             {
-                mainForm = new MainForm();
+                mainForm = new MainForm(config);
                 mainForm.FormClosed += mainForm_Closed;
                 mainForm.Show();
             }
@@ -108,6 +143,13 @@ namespace WinDynamicDesktop
         private void mainForm_Closed(object sender, EventArgs e)
         {
             mainForm = null;
+
+            if (firstRun)
+            {
+                notifyIcon.BalloonTipText = "WinDynamicDesktop is still running in the background. " +
+                    "You can access it at any time by right-clicking on this icon.";
+                notifyIcon.ShowBalloonTip(5000);
+            }
         }
 
         private void OnApplicationExit(object sender, EventArgs e)
@@ -116,6 +158,7 @@ namespace WinDynamicDesktop
             {
                 mainForm.Close();
             }
+
             notifyIcon.Visible = false;
         }
     }

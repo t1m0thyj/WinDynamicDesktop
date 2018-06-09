@@ -10,9 +10,13 @@ using System.Windows.Forms;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Newtonsoft.Json;
+using RestSharp;
 
 namespace WinDynamicDesktop
 {
+    using LocationIQResponse = IRestResponse<List<LocationIQData>>;
+
     public partial class MainForm : Form
     {
         // Hack to show watermark in textbox from https://stackoverflow.com/questions/2487104
@@ -20,8 +24,11 @@ namespace WinDynamicDesktop
         private static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam,
             [MarshalAs(UnmanagedType.LPWStr)] string lParam);
 
-        public MainForm()
+        public LocationConfig config;
+
+        public MainForm(LocationConfig configObj)
         {
+            config = configObj;
             InitializeComponent();
         }
 
@@ -31,50 +38,48 @@ namespace WinDynamicDesktop
             {
                 lineText += Environment.NewLine;
             }
-            logTextBox.AppendText(lineText);
+            logOutput.AppendText(lineText);
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            SendMessage(textBox1.Handle, 0x1501, 1, "Enter your location...");
-            logTextBox.Text = "Welcome to WinDynamicDesktop " +
-                Assembly.GetExecutingAssembly().GetName().Version.ToString() + "!" +
-                Environment.NewLine;
-            logTextBox.Text += "Enter your location in the textbox and click Set Location." +
-                Environment.NewLine;
-            logTextBox.Text += "Once a valid location has been entered, this window will" +
-                Environment.NewLine;
-            logTextBox.Text += "close and the program will run in the background." +
-                Environment.NewLine;
-            logTextBox.Text += "You can still access it from the icon in your system tray." +
-                Environment.NewLine;
+            SendMessage(locationInput.Handle, 0x1501, 1, "Enter your location...");
+            if (config.Location != null)
+            {
+                locationInput.Text = config.Location;
+            }
+
+            AppendToLog("Welcome to WinDynamicDesktop " +
+                Assembly.GetExecutingAssembly().GetName().Version.ToString() + "!");
             /*Wallpaper.Set(new Uri(Path.Combine(Directory.GetCurrentDirectory(), "images",
                 "mojave_dynamic_1.jpeg")), Wallpaper.Style.Stretched);*/
-        }
-
-        private void MainForm_Shown(object sender, EventArgs e)
-        {
-            /*if (!Directory.Exists("images"))
-            {
-                if (!File.Exists("images.zip"))
-                {
-                    DownloadImagesZip();
-                }
-                else
-                {
-                    ExtractImagesZip();
-                }
-            }*/
         }
 
         private void setLocationButton_Click(object sender, EventArgs e)
         {
             LocationIQService service = new LocationIQService();
-            LocationIQData data = service.GetLocationData(textBox1.Text);
-            MessageBox.Show(data.lat + ", " + data.lon);
-            SunriseSunsetService service2 = new SunriseSunsetService();
-            SunriseSunsetData data2 = service2.GetWeatherData(data.lat, data.lon);
-            MessageBox.Show(data2.results.sunrise + ", " + data2.results.sunset);
+            LocationIQResponse response = service.GetLocationData(locationInput.Text);
+            if (response.Data.Count > 0)
+            {
+                LocationIQData data = response.Data[0];
+                AppendToLog("Location set successfully to: " + data.display_name);
+                AppendToLog("Latitude = " + data.lat + ", Longitude= " + data.lon);
+
+                config.Location = locationInput.Text;
+                config.Latitude = data.lat;
+                config.Longitude = data.lon;
+
+                File.WriteAllText("settings.conf", JsonConvert.SerializeObject(config));
+            }
+            else
+            {
+                MessageBox.Show("The location you entered was invalid. Dynamic wallpaper changing " +
+                    "will not work until you have entered a valid location.", "Error");
+            }
+            
+            //SunriseSunsetService service2 = new SunriseSunsetService();
+            //SunriseSunsetData data2 = service2.GetWeatherData(data.lat, data.lon);
+            //MessageBox.Show(data2.results.sunrise + ", " + data2.results.sunset);
         }
     }
 }

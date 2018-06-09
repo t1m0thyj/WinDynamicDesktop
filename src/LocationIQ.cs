@@ -8,6 +8,13 @@ using RestSharp;
 
 namespace WinDynamicDesktop
 {
+    public class LocationConfig
+    {
+        public string Location { get; set; }
+        public string Latitude { get; set; }
+        public string Longitude { get; set; }
+    }
+
     class LocationIQData
     {
         public string place_id { get; set; }
@@ -29,7 +36,7 @@ namespace WinDynamicDesktop
         private string apiKey = Encoding.UTF8.GetString(Convert.FromBase64String(
             "cGsuYmRhNTk1NDRhN2VjZWMxYjAxMDZkNzg5MzdlMDQzOTk ="));
         
-        public LocationIQData GetLocationData(string locationStr)
+        public IRestResponse<List<LocationIQData>> GetLocationData(string locationStr)
         {
             var client = new RestClient("https://us1.locationiq.org");
 
@@ -39,8 +46,7 @@ namespace WinDynamicDesktop
             request.AddParameter("format", "json");
 
             var response = client.Execute<List<LocationIQData>>(request);
-
-            return response.Data[0];
+            return response;
         }
     }
 }
