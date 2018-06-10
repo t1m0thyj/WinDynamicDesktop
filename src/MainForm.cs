@@ -11,12 +11,9 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Newtonsoft.Json;
-using RestSharp;
 
 namespace WinDynamicDesktop
 {
-    using LocationIQResponse = IRestResponse<List<LocationIQData>>;
-
     public partial class MainForm : Form
     {
         // Hack to show watermark in textbox from https://stackoverflow.com/questions/2487104
@@ -51,17 +48,14 @@ namespace WinDynamicDesktop
 
             AppendToLog("Welcome to WinDynamicDesktop " +
                 Assembly.GetExecutingAssembly().GetName().Version.ToString() + "!");
-            /*Wallpaper.Set(new Uri(Path.Combine(Directory.GetCurrentDirectory(), "images",
-                "mojave_dynamic_1.jpeg")), Wallpaper.Style.Stretched);*/
         }
 
         private void setLocationButton_Click(object sender, EventArgs e)
         {
             LocationIQService service = new LocationIQService();
-            LocationIQResponse response = service.GetLocationData(locationInput.Text);
-            if (response.Data.Count > 0)
+            LocationIQData data = service.GetLocationData(locationInput.Text);
+            if (data != null)
             {
-                LocationIQData data = response.Data[0];
                 AppendToLog("Location set successfully to: " + data.display_name);
                 AppendToLog("Latitude = " + data.lat + ", Longitude= " + data.lon);
 
@@ -76,10 +70,6 @@ namespace WinDynamicDesktop
                 MessageBox.Show("The location you entered was invalid. Dynamic wallpaper changing " +
                     "will not work until you have entered a valid location.", "Error");
             }
-            
-            //SunriseSunsetService service2 = new SunriseSunsetService();
-            //SunriseSunsetData data2 = service2.GetWeatherData(data.lat, data.lon);
-            //MessageBox.Show(data2.results.sunrise + ", " + data2.results.sunset);
         }
     }
 }

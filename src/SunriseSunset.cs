@@ -7,6 +7,12 @@ using RestSharp;
 
 namespace WinDynamicDesktop
 {
+    public class WeatherData
+    {
+        public DateTime SunriseTime { get; set; }
+        public DateTime SunsetTime { get; set; }
+    }
+
     class Results
     {
         public string sunrise { get; set; }
@@ -29,18 +35,26 @@ namespace WinDynamicDesktop
 
     class SunriseSunsetService
     {
-        public SunriseSunsetData GetWeatherData(string lat, string lon)
+        public WeatherData GetWeatherData(string lat, string lon, string date)
         {
             var client = new RestClient("https://api.sunrise-sunset.org");
 
             var request = new RestRequest("json", Method.GET);
             request.AddParameter("lat", lat);
             request.AddParameter("lng", lon);
+            request.AddParameter("date", date);
             request.AddParameter("formatted", "0");
 
             var response = client.Execute<SunriseSunsetData>(request);
+            if (!response.IsSuccessful)
+            {
+                return null;
+            }
 
-            return response.Data;
+            WeatherData data = new WeatherData();
+            data.SunsetTime = DateTime.Parse(response.Data.results.sunrise);
+            data.SunriseTime = DateTime.Parse(response.Data.results.sunset);
+            return data;
         }
     }
 }

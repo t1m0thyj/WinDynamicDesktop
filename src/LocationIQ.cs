@@ -36,7 +36,7 @@ namespace WinDynamicDesktop
         private string apiKey = Encoding.UTF8.GetString(Convert.FromBase64String(
             "cGsuYmRhNTk1NDRhN2VjZWMxYjAxMDZkNzg5MzdlMDQzOTk ="));
         
-        public IRestResponse<List<LocationIQData>> GetLocationData(string locationStr)
+        public LocationIQData GetLocationData(string locationStr)
         {
             var client = new RestClient("https://us1.locationiq.org");
 
@@ -44,9 +44,15 @@ namespace WinDynamicDesktop
             request.AddParameter("key", apiKey);
             request.AddParameter("q", locationStr);
             request.AddParameter("format", "json");
+            request.AddParameter("limit", "1");
 
             var response = client.Execute<List<LocationIQData>>(request);
-            return response;
+            if (!response.IsSuccessful)
+            {
+                return null;
+            }
+
+            return response.Data[0];
         }
     }
 }

@@ -20,6 +20,7 @@ namespace WinDynamicDesktop
 
         private MainForm mainForm;
         private NotifyIcon notifyIcon;
+        private WallpaperChangeScheduler wcs;
 
         public LocationConfig config;
 
@@ -34,6 +35,9 @@ namespace WinDynamicDesktop
                 config = JsonConvert.DeserializeObject<LocationConfig>(
                     File.ReadAllText("settings.conf"));
                 firstRun = false;
+
+                WallpaperChangeScheduler wcs = new WallpaperChangeScheduler(config);
+                wcs.startScheduler();
             }
             else
             {
