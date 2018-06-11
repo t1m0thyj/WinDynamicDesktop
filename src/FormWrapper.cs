@@ -8,7 +8,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Windows.Forms;
-using Newtonsoft.Json;
 
 namespace WinDynamicDesktop
 {
@@ -20,9 +19,7 @@ namespace WinDynamicDesktop
 
         private MainForm mainForm;
         private NotifyIcon notifyIcon;
-        private WallpaperChangeScheduler wcs;
-
-        public LocationConfig config;
+        private WallpaperChangeScheduler wcsService = new WallpaperChangeScheduler();
 
         public FormWrapper()
         {
@@ -30,24 +27,15 @@ namespace WinDynamicDesktop
 
             InitializeComponent();
 
-            if (File.Exists("settings.conf"))
+            JsonConfig.LoadConfig();
+            
+            if (JsonConfig.firstRun)
             {
-                config = JsonConvert.DeserializeObject<LocationConfig>(
-                    File.ReadAllText("settings.conf"));
-                firstRun = false;
-
-                WallpaperChangeScheduler wcs = new WallpaperChangeScheduler(config);
-                wcs.startScheduler();
+                ShowMainForm();
             }
             else
             {
-                config = new LocationConfig();
-                firstRun = true;
-            }
-
-            if (firstRun)
-            {
-                ShowMainForm();
+                wcsService.StartScheduler();
             }
 
             if (!File.Exists("images.zip"))
@@ -134,7 +122,7 @@ namespace WinDynamicDesktop
         {
             if (mainForm == null)
             {
-                mainForm = new MainForm(config);
+                mainForm = new MainForm();
                 mainForm.FormClosed += mainForm_Closed;
                 mainForm.Show();
             }
@@ -148,7 +136,7 @@ namespace WinDynamicDesktop
         {
             mainForm = null;
 
-            if (firstRun)
+            if (JsonConfig.firstRun)
             {
                 notifyIcon.BalloonTipText = "WinDynamicDesktop is still running in the background. " +
                     "You can access it at any time by right-clicking on this icon.";

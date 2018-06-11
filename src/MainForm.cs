@@ -7,10 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.IO;
-using System.Reflection;
 using System.Runtime.InteropServices;
-using Newtonsoft.Json;
 
 namespace WinDynamicDesktop
 {
@@ -21,11 +18,8 @@ namespace WinDynamicDesktop
         private static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam,
             [MarshalAs(UnmanagedType.LPWStr)] string lParam);
 
-        public LocationConfig config;
-
-        public MainForm(LocationConfig configObj)
+        public MainForm()
         {
-            config = configObj;
             InitializeComponent();
         }
 
@@ -41,13 +35,12 @@ namespace WinDynamicDesktop
         private void MainForm_Load(object sender, EventArgs e)
         {
             SendMessage(locationInput.Handle, 0x1501, 1, "Enter your location...");
-            if (config.Location != null)
+            if (JsonConfig.settings.Location != null)
             {
-                locationInput.Text = config.Location;
+                locationInput.Text = JsonConfig.settings.Location;
             }
 
-            AppendToLog("Welcome to WinDynamicDesktop " +
-                Assembly.GetExecutingAssembly().GetName().Version.ToString() + "!");
+            AppendToLog("Welcome to WinDynamicDesktop Mojave Edition!");
         }
 
         private void setLocationButton_Click(object sender, EventArgs e)
@@ -59,11 +52,10 @@ namespace WinDynamicDesktop
                 AppendToLog("Location set successfully to: " + data.display_name);
                 AppendToLog("Latitude = " + data.lat + ", Longitude= " + data.lon);
 
-                config.Location = locationInput.Text;
-                config.Latitude = data.lat;
-                config.Longitude = data.lon;
-
-                File.WriteAllText("settings.conf", JsonConvert.SerializeObject(config));
+                JsonConfig.settings.Location = locationInput.Text;
+                JsonConfig.settings.Latitude = data.lat;
+                JsonConfig.settings.Longitude = data.lon;
+                JsonConfig.SaveConfig();
             }
             else
             {

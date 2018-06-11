@@ -8,13 +8,6 @@ using RestSharp;
 
 namespace WinDynamicDesktop
 {
-    public class LocationConfig
-    {
-        public string Location { get; set; }
-        public string Latitude { get; set; }
-        public string Longitude { get; set; }
-    }
-
     class LocationIQData
     {
         public string place_id { get; set; }
