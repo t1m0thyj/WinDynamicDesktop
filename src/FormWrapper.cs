@@ -15,11 +15,10 @@ namespace WinDynamicDesktop
     {
         private Uri imagesZipUri = new Uri("https://files.rb.gd/mojave_dynamic.zip");
         private int downloadProgress = 0;
-        private bool firstRun;
-
         private MainForm mainForm;
         private NotifyIcon notifyIcon;
-        private WallpaperChangeScheduler wcsService = new WallpaperChangeScheduler();
+
+        public WallpaperChangeScheduler wcsService = new WallpaperChangeScheduler();
 
         public FormWrapper()
         {
@@ -49,6 +48,7 @@ namespace WinDynamicDesktop
             notifyIcon = new NotifyIcon();
             notifyIcon.Visible = true;
             notifyIcon.Icon = Properties.Resources.AppIcon;
+            notifyIcon.BalloonTipTitle = "WinDynamicDesktop";
             
             notifyIcon.ContextMenu = new ContextMenu(new MenuItem[]
             {
@@ -123,6 +123,7 @@ namespace WinDynamicDesktop
             if (mainForm == null)
             {
                 mainForm = new MainForm();
+                mainForm.wcsService = wcsService;
                 mainForm.FormClosed += mainForm_Closed;
                 mainForm.Show();
             }
@@ -136,9 +137,16 @@ namespace WinDynamicDesktop
         {
             mainForm = null;
 
-            if (JsonConfig.firstRun)
+            if (JsonConfig.settings.Location == null)
             {
-                notifyIcon.BalloonTipText = "WinDynamicDesktop is still running in the background. " +
+                notifyIcon.BalloonTipText = "This app cannot display wallpapers until you have " +
+                    "entered a valid location. Right-click on this icon and click Settings to select " +
+                    "a location.";
+                notifyIcon.ShowBalloonTip(5000);
+            }
+            else if (JsonConfig.firstRun)
+            {
+                notifyIcon.BalloonTipText = "The app is still running in the background. " +
                     "You can access it at any time by right-clicking on this icon.";
                 notifyIcon.ShowBalloonTip(5000);
             }

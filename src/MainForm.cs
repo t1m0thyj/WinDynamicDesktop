@@ -18,6 +18,8 @@ namespace WinDynamicDesktop
         private static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam,
             [MarshalAs(UnmanagedType.LPWStr)] string lParam);
 
+        internal WallpaperChangeScheduler wcsService;
+
         public MainForm()
         {
             InitializeComponent();
@@ -47,6 +49,7 @@ namespace WinDynamicDesktop
         {
             LocationIQService service = new LocationIQService();
             LocationIQData data = service.GetLocationData(locationInput.Text);
+
             if (data != null)
             {
                 AppendToLog("Location set successfully to: " + data.display_name);
@@ -56,11 +59,13 @@ namespace WinDynamicDesktop
                 JsonConfig.settings.Latitude = data.lat;
                 JsonConfig.settings.Longitude = data.lon;
                 JsonConfig.SaveConfig();
+
+                wcsService.StartScheduler();
             }
             else
             {
-                MessageBox.Show("The location you entered was invalid. Dynamic wallpaper changing " +
-                    "will not work until you have entered a valid location.", "Error");
+                MessageBox.Show("The location you entered was invalid, or you are not connected to " +
+                    "the Internet", "Error");
             }
         }
     }

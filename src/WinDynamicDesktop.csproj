@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FormWrapper.cs" />
+    <Compile Include="JsonConfig.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
