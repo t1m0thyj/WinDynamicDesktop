@@ -24,7 +24,7 @@ namespace WinDynamicDesktop
         public FormWrapper()
         {
             Application.ApplicationExit += new EventHandler(OnApplicationExit);
-            SystemEvents.SessionSwitch += new SessionSwitchEventHandler(OnSessionSwitch);
+            SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(OnPowerModeChanged);
 
             InitializeComponent();
 
@@ -154,18 +154,21 @@ namespace WinDynamicDesktop
             }
         }
 
-        private void OnSessionSwitch(object sender, SessionSwitchEventArgs e)
+        private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
         {
-            if (e.Reason == SessionSwitchReason.SessionLock)
+            if (e.Mode == PowerModes.Suspend)
             {
                 if (wcsService.wallpaperTimer != null)
                 {
                     wcsService.wallpaperTimer.Stop();
                 }
             }
-            else if (e.Reason == SessionSwitchReason.SessionUnlock)
+            else if (e.Mode == PowerModes.Resume)
             {
-                wcsService.StartScheduler();
+                if (JsonConfig.settings.Location != null)
+                {
+                    wcsService.StartScheduler();
+                }
             }
         }
 

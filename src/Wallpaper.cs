@@ -34,11 +34,7 @@ namespace WinDynamicDesktop
 
             System.Drawing.Image img = System.Drawing.Image.FromStream(s);
             string tempPath = Path.Combine(Path.GetTempPath(), "wallpaper.bmp");
-            // Added temp image to fix https://stackoverflow.com/questions/14866603
-            using (System.Drawing.Bitmap tempImage = new System.Drawing.Bitmap(img))
-            {
-                tempImage.Save(tempPath, System.Drawing.Imaging.ImageFormat.Bmp);
-            } 
+            img.Save(tempPath, System.Drawing.Imaging.ImageFormat.Bmp);
 
             RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
             if (style == Style.Stretched)
