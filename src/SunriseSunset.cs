@@ -52,8 +52,8 @@ namespace WinDynamicDesktop
             }
 
             WeatherData data = new WeatherData();
-            data.SunsetTime = DateTime.Parse(response.Data.results.sunrise);
-            data.SunriseTime = DateTime.Parse(response.Data.results.sunset);
+            data.SunriseTime = DateTime.Parse(response.Data.results.sunrise);
+            data.SunsetTime = DateTime.Parse(response.Data.results.sunset);
             return data;
         }
     }

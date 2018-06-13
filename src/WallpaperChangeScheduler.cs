@@ -24,15 +24,45 @@ namespace WinDynamicDesktop
         private WeatherData tomorrowsData;
         private Timer wallpaperTimer;
 
-        private string GetDateString(int todayDelta=0)
+        private string GetDateString(int todayDelta = 0)
         {
             DateTime date = DateTime.Today;
+
             if (todayDelta != 0)
             {
-                date = date.AddDays(todayDelta);   
+                date = date.AddDays(todayDelta);
             }
 
             return date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        }
+
+        private WeatherData GetWeatherData(string dateStr)
+        {
+            SunriseSunsetService service = new SunriseSunsetService();
+
+            WeatherData data = service.GetWeatherData(
+                JsonConfig.settings.Latitude, JsonConfig.settings.Longitude, dateStr);
+
+            return data;
+        }
+
+        private int GetImageNumber(DateTime startTime, TimeSpan timerLength, int imageCount)
+        {
+            int imageNumber = 0;
+
+            while (imageNumber < imageCount)
+            {
+                if ((startTime.Ticks + timerLength.Ticks * (imageNumber + 1)) < DateTime.Now.Ticks)
+                {
+                    imageNumber++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return imageNumber;
         }
 
         private void SetWallpaper(int imageId)
@@ -50,68 +80,54 @@ namespace WinDynamicDesktop
                 wallpaperTimer.Stop();
             }
 
-            SunriseSunsetService service = new SunriseSunsetService();
-
             string currentDate = GetDateString();
             if (currentDate != lastDate)
             {
-                todaysData = service.GetWeatherData(
-                    JsonConfig.settings.Latitude, JsonConfig.settings.Longitude, GetDateString());
+                todaysData = GetWeatherData(currentDate);
                 lastDate = currentDate;
             }
 
             if (DateTime.Now < todaysData.SunriseTime)
             {
                 // Before sunrise
-                yesterdaysData = service.GetWeatherData(
-                    JsonConfig.settings.Latitude, JsonConfig.settings.Longitude, GetDateString(-1));
+                yesterdaysData = GetWeatherData(GetDateString(-1));
                 tomorrowsData = null;
-
-                StartNightSchedule();
+                isSunUp = false;
             }
             else if (DateTime.Now > todaysData.SunsetTime)
             {
                 // After sunset
                 yesterdaysData = null;
-                tomorrowsData = service.GetWeatherData(
-                    JsonConfig.settings.Latitude, JsonConfig.settings.Longitude, GetDateString(1));
-
-                StartNightSchedule();
+                tomorrowsData = GetWeatherData(GetDateString(1));
+                isSunUp = false;
             }
             else
             {
                 // Between sunrise and sunset
                 yesterdaysData = null;
                 tomorrowsData = null;
+                isSunUp = true;
+            }
 
+            if (isSunUp)
+            {
                 StartDaySchedule();
+            }
+            else
+            {
+                StartNightSchedule();
             }
         }
 
         private void StartDaySchedule()
         {
-            isSunUp = true;
-            yesterdaysData = null;
-
             TimeSpan dayTime = todaysData.SunsetTime - todaysData.SunriseTime;
             TimeSpan timerLength = new TimeSpan(dayTime.Ticks / dayImages.Length);
 
-            int imageNumber = 0;
-            while (imageNumber < dayImages.Length)
-            {
-                if ((todaysData.SunriseTime.Ticks + timerLength.Ticks * imageNumber) <
-                        DateTime.Now.Ticks)
-                {
-                    imageNumber++;
-                }
-                else
-                {
-                    break;
-                }
-            }
-
+            int imageNumber = GetImageNumber(todaysData.SunriseTime, timerLength, dayImages.Length);
             TimeSpan interval = new TimeSpan(todaysData.SunriseTime.Ticks + timerLength.Ticks *
                 (imageNumber + 1) - DateTime.Now.Ticks);
+
             wallpaperTimer = new Timer(interval.Milliseconds);
             wallpaperTimer.Elapsed += new ElapsedEventHandler(wallpaperTimer_Elapsed);
             wallpaperTimer.Start();
@@ -125,45 +141,42 @@ namespace WinDynamicDesktop
 
         private void NextDayImage()
         {
+            if (lastImageNumber == dayImages.Length - 1)
+            {
+                SwitchToNight();
+                return;
+            }
+
             TimeSpan dayTime = todaysData.SunsetTime - todaysData.SunriseTime;
             TimeSpan timerLength = new TimeSpan(dayTime.Ticks / dayImages.Length);
 
             wallpaperTimer.Interval = timerLength.Milliseconds;
             wallpaperTimer.Start();
 
-            TimeSpan dayElapsedTime = DateTime.Now - todaysData.SunriseTime;
-            int imageNumber = (int)(dayElapsedTime.Ticks / timerLength.Ticks);
+            lastImageNumber++;
+            SetWallpaper(dayImages[lastImageNumber]);
+        }
 
-            if (imageNumber != lastImageNumber)
-            {
-                SetWallpaper(dayImages[imageNumber]);
-                lastImageNumber = imageNumber;
-            }
+        private void SwitchToNight()
+        {
+            tomorrowsData = GetWeatherData(GetDateString(1));
+            lastImageNumber = -1;
+
+            StartNightSchedule();
         }
 
         private void StartNightSchedule()
         {
-            isSunUp = false;
-
-            TimeSpan nightTime = todaysData.SunsetTime - todaysData.SunriseTime;
+            WeatherData day1Data = (yesterdaysData == null) ? todaysData : yesterdaysData;
+            WeatherData day2Data = (yesterdaysData == null) ? tomorrowsData : todaysData;
+            
+            TimeSpan nightTime = day2Data.SunriseTime - day1Data.SunsetTime;
             TimeSpan timerLength = new TimeSpan(nightTime.Ticks / nightImages.Length);
 
-            int imageNumber = 0;
-            while (imageNumber < nightImages.Length)
-            {
-                if ((todaysData.SunriseTime.Ticks + timerLength.Ticks * imageNumber) <
-                        DateTime.Now.Ticks)
-                {
-                    imageNumber++;
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            TimeSpan interval = new TimeSpan(todaysData.SunriseTime.Ticks + timerLength.Ticks *
+            int imageNumber = GetImageNumber(day1Data.SunsetTime, timerLength, nightImages.Length);
+            TimeSpan interval = new TimeSpan(day1Data.SunsetTime.Ticks + timerLength.Ticks *
                 (imageNumber + 1) - DateTime.Now.Ticks);
+
             wallpaperTimer = new Timer(interval.Milliseconds);
             wallpaperTimer.Elapsed += new ElapsedEventHandler(wallpaperTimer_Elapsed);
             wallpaperTimer.Start();
@@ -177,47 +190,49 @@ namespace WinDynamicDesktop
 
         private void NextNightImage()
         {
-            TimeSpan nightTime = todaysData.SunsetTime - todaysData.SunriseTime;
+            if (lastImageNumber == nightImages.Length - 1)
+            {
+                SwitchToDay();
+                return;
+            }
+
+            WeatherData day1Data = (yesterdaysData == null) ? todaysData : yesterdaysData;
+            WeatherData day2Data = (yesterdaysData == null) ? tomorrowsData : todaysData;
+
+            TimeSpan nightTime = day2Data.SunriseTime - day1Data.SunsetTime;
             TimeSpan timerLength = new TimeSpan(nightTime.Ticks / nightImages.Length);
 
             wallpaperTimer.Interval = timerLength.Milliseconds;
             wallpaperTimer.Start();
 
-            TimeSpan nightElapsedTime = DateTime.Now - todaysData.SunriseTime;
-            int imageNumber = (int)(nightElapsedTime.Ticks / timerLength.Ticks);
+            lastImageNumber++;
+            SetWallpaper(nightImages[lastImageNumber]);
 
-            if (imageNumber != lastImageNumber)
+            if (DateTime.Now.Hour == 0 && tomorrowsData != null)
             {
-                SetWallpaper(nightImages[imageNumber]);
-                lastImageNumber = imageNumber;
+                yesterdaysData = todaysData;
+                todaysData = tomorrowsData;
+                tomorrowsData = null;
             }
+        }
+
+        private void SwitchToDay()
+        {
+            yesterdaysData = null;
+            lastImageNumber = -1;
+
+            StartDaySchedule();
         }
 
         private void wallpaperTimer_Elapsed(object sender, EventArgs e)
         {
             if (isSunUp)
             {
-                if (lastImageNumber < dayImages.Length - 1)
-                {
-                    NextDayImage();
-                }
-                else
-                {
-                    lastImageNumber = -1;
-                    StartNightSchedule();
-                }
+                NextDayImage();
             }
             else
             {
-                if (lastImageNumber < nightImages.Length - 1)
-                {
-                    NextNightImage();
-                }
-                else
-                {
-                    lastImageNumber = -1;
-                    StartDaySchedule();
-                }
+                NextNightImage();
             }
         }
     }
