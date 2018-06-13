@@ -50,6 +50,7 @@ namespace WinDynamicDesktop
             notifyIcon = new NotifyIcon();
             notifyIcon.Visible = true;
             notifyIcon.Icon = Properties.Resources.AppIcon;
+            notifyIcon.Text = "WinDynamicDesktop";
             notifyIcon.BalloonTipTitle = "WinDynamicDesktop";
             
             notifyIcon.ContextMenu = new ContextMenu(new MenuItem[]

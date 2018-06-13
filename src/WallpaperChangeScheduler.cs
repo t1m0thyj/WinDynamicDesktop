@@ -16,6 +16,7 @@ namespace WinDynamicDesktop
         private int[] nightImages = new[] { 13, 14, 15, 16, 1 };
 
         private string lastDate = "yyyy-MM-dd";
+        private int lastImageId = -1;
         private int lastImageNumber = -1;
         private bool isSunUp;
 
@@ -72,6 +73,8 @@ namespace WinDynamicDesktop
                 String.Format(imageFilename, imageId)));
 
             Wallpaper.Set(wallpaperUri, Wallpaper.Style.Stretched);
+
+            lastImageId = imageId;
         }
 
         public void StartScheduler()
@@ -133,7 +136,7 @@ namespace WinDynamicDesktop
             wallpaperTimer.Elapsed += new ElapsedEventHandler(wallpaperTimer_Elapsed);
             wallpaperTimer.Start();
 
-            if (imageNumber != lastImageNumber)
+            if (dayImages[imageNumber] != lastImageId)
             {
                 SetWallpaper(dayImages[imageNumber]);
                 lastImageNumber = imageNumber;
@@ -182,7 +185,7 @@ namespace WinDynamicDesktop
             wallpaperTimer.Elapsed += new ElapsedEventHandler(wallpaperTimer_Elapsed);
             wallpaperTimer.Start();
 
-            if (imageNumber != lastImageNumber)
+            if (nightImages[imageNumber] != lastImageId)
             {
                 SetWallpaper(nightImages[imageNumber]);
                 lastImageNumber = imageNumber;
@@ -214,6 +217,7 @@ namespace WinDynamicDesktop
                 yesterdaysData = todaysData;
                 todaysData = tomorrowsData;
                 tomorrowsData = null;
+                lastDate = GetDateString();
             }
         }
 
