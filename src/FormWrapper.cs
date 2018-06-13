@@ -8,6 +8,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Windows.Forms;
+using Microsoft.Win32;
 
 namespace WinDynamicDesktop
 {
@@ -22,7 +23,8 @@ namespace WinDynamicDesktop
 
         public FormWrapper()
         {
-            Application.ApplicationExit += new EventHandler(this.OnApplicationExit);
+            Application.ApplicationExit += new EventHandler(OnApplicationExit);
+            SystemEvents.SessionSwitch += new SessionSwitchEventHandler(OnSessionSwitch);
 
             InitializeComponent();
 
@@ -149,6 +151,21 @@ namespace WinDynamicDesktop
                 notifyIcon.BalloonTipText = "The app is still running in the background. " +
                     "You can access it at any time by right-clicking on this icon.";
                 notifyIcon.ShowBalloonTip(5000);
+            }
+        }
+
+        private void OnSessionSwitch(object sender, SessionSwitchEventArgs e)
+        {
+            if (e.Reason == SessionSwitchReason.SessionLock)
+            {
+                if (wcsService.wallpaperTimer != null)
+                {
+                    wcsService.wallpaperTimer.Stop();
+                }
+            }
+            else if (e.Reason == SessionSwitchReason.SessionUnlock)
+            {
+                wcsService.StartScheduler();
             }
         }
 

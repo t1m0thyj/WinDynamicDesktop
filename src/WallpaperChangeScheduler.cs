@@ -22,7 +22,8 @@ namespace WinDynamicDesktop
         private WeatherData yesterdaysData;
         private WeatherData todaysData;
         private WeatherData tomorrowsData;
-        private Timer wallpaperTimer;
+
+        public Timer wallpaperTimer;
 
         private string GetDateString(int todayDelta = 0)
         {
@@ -128,7 +129,7 @@ namespace WinDynamicDesktop
             TimeSpan interval = new TimeSpan(todaysData.SunriseTime.Ticks + timerLength.Ticks *
                 (imageNumber + 1) - DateTime.Now.Ticks);
 
-            wallpaperTimer = new Timer(interval.Milliseconds);
+            wallpaperTimer = new Timer(interval.TotalMilliseconds);
             wallpaperTimer.Elapsed += new ElapsedEventHandler(wallpaperTimer_Elapsed);
             wallpaperTimer.Start();
 
@@ -150,7 +151,7 @@ namespace WinDynamicDesktop
             TimeSpan dayTime = todaysData.SunsetTime - todaysData.SunriseTime;
             TimeSpan timerLength = new TimeSpan(dayTime.Ticks / dayImages.Length);
 
-            wallpaperTimer.Interval = timerLength.Milliseconds;
+            wallpaperTimer.Interval = timerLength.TotalMilliseconds;
             wallpaperTimer.Start();
 
             lastImageNumber++;
@@ -177,7 +178,7 @@ namespace WinDynamicDesktop
             TimeSpan interval = new TimeSpan(day1Data.SunsetTime.Ticks + timerLength.Ticks *
                 (imageNumber + 1) - DateTime.Now.Ticks);
 
-            wallpaperTimer = new Timer(interval.Milliseconds);
+            wallpaperTimer = new Timer(interval.TotalMilliseconds);
             wallpaperTimer.Elapsed += new ElapsedEventHandler(wallpaperTimer_Elapsed);
             wallpaperTimer.Start();
 
@@ -202,7 +203,7 @@ namespace WinDynamicDesktop
             TimeSpan nightTime = day2Data.SunriseTime - day1Data.SunsetTime;
             TimeSpan timerLength = new TimeSpan(nightTime.Ticks / nightImages.Length);
 
-            wallpaperTimer.Interval = timerLength.Milliseconds;
+            wallpaperTimer.Interval = timerLength.TotalMilliseconds;
             wallpaperTimer.Start();
 
             lastImageNumber++;
