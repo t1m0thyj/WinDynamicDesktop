@@ -15,7 +15,7 @@ namespace WinDynamicDesktop
     class FormWrapper : ApplicationContext
     {
         private Uri imagesZipUri = new Uri("https://files.rb.gd/mojave_dynamic.zip");
-        private int downloadProgress = 0;
+        private static int downloadProgress = 0;
         private MainForm mainForm;
         private NotifyIcon notifyIcon;
 
@@ -91,7 +91,7 @@ namespace WinDynamicDesktop
 
         public void DownloadImagesZip()
         {
-            AppendToLog("Downloading images.zip (39.0 MB)", false);
+            AppendToLog("Downloading images.zip (39.0 MB)", true);
 
             using (WebClient client = new WebClient())
             {
@@ -116,9 +116,25 @@ namespace WinDynamicDesktop
 
         private void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
-            AppendToLog("done");
+            if (DownloadFinished() == true)
+            {
+                AppendToLog("Download finished. You may now set the location.", true);
+                ZipFile.ExtractToDirectory("images.zip", "images");
+                downloadProgress = 100;
+            }
+            else
+            {
+                AppendToLog("Please wait.");
+            }
+            
+        }
 
-            ZipFile.ExtractToDirectory("images.zip", "images");
+        public static bool DownloadFinished()
+        {
+            if (downloadProgress >= 100)
+                return true;
+            else
+                return false;
         }
 
         public void ShowMainForm()
