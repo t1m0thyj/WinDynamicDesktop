@@ -49,15 +49,22 @@ namespace WinDynamicDesktop
 
             if (data != null)
             {
-                AppendToLog("Location set successfully to: " + data.display_name);
-                AppendToLog("Latitude = " + data.lat + ", Longitude= " + data.lon);
+                if (FormWrapper.DownloadFinished() == true)
+                {
+                    AppendToLog("Location set successfully to: " + data.display_name);
+                    AppendToLog("Latitude = " + data.lat + ", Longitude= " + data.lon);
 
-                JsonConfig.settings.Location = locationInput.Text;
-                JsonConfig.settings.Latitude = data.lat;
-                JsonConfig.settings.Longitude = data.lon;
-                JsonConfig.SaveConfig();
+                    JsonConfig.settings.Location = locationInput.Text;
+                    JsonConfig.settings.Latitude = data.lat;
+                    JsonConfig.settings.Longitude = data.lon;
+                    JsonConfig.SaveConfig();
 
-                wcsService.StartScheduler();
+                    wcsService.StartScheduler();
+                }
+                else
+                {
+                    AppendToLog("Please wait for the download to finish.");
+                }
             }
             else
             {
