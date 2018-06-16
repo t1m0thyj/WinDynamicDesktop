@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.IO;
-using System.IO.Compression;
 using System.Net;
 using System.Windows.Forms;
 using Microsoft.Win32;
@@ -15,8 +14,8 @@ namespace WinDynamicDesktop
     class FormWrapper : ApplicationContext
     {
         private Uri imagesZipUri = new Uri("https://files.rb.gd/mojave_dynamic.zip");
-        private int downloadProgress = 0;
-        private MainForm mainForm;
+        private ProgressDialog downloadDialog;
+        private InputDialog locationDialog;
         private NotifyIcon notifyIcon;
 
         public WallpaperChangeScheduler wcsService = new WallpaperChangeScheduler();
@@ -29,28 +28,18 @@ namespace WinDynamicDesktop
             InitializeComponent();
 
             JsonConfig.LoadConfig();
-            
-            if (JsonConfig.firstRun)
+
+            if (!Directory.Exists("images"))
             {
-                ShowMainForm();
-                if (!Directory.Exists("images"))
-                {
-                    mainForm.ToggleSetLocationButton(false);
-                    DownloadImagesZip();
-                }
+                DownloadImages();
+            }
+            else if (JsonConfig.firstRun)
+            {
+                UpdateLocation();
             }
             else
             {
-                if (!Directory.Exists("images"))
-                {
-                    ShowMainForm();
-                    mainForm.ToggleSetLocationButton(false);
-                    DownloadImagesZip();
-                }
-                else
-                {
-                    wcsService.StartScheduler();
-                }
+                wcsService.StartScheduler();
             }
         }
 
@@ -66,17 +55,15 @@ namespace WinDynamicDesktop
             {
                 new MenuItem("WinDynamicDesktop"),
                 new MenuItem("-"),
-                new MenuItem("&Settings", settingsItem_Click),
+                new MenuItem("&Update Location", locationItem_Click),
                 new MenuItem("E&xit", exitItem_Click)
             });
             notifyIcon.ContextMenu.MenuItems[0].Enabled = false;
-
-            notifyIcon.DoubleClick += new EventHandler(notifyIcon_DoubleClick);
         }
 
-        private void settingsItem_Click(object sender, EventArgs e)
+        private void locationItem_Click(object sender, EventArgs e)
         {
-            ShowMainForm();
+            UpdateLocation();
         }
 
         private void exitItem_Click(object sender, EventArgs e)
@@ -85,74 +72,62 @@ namespace WinDynamicDesktop
             Application.Exit();
         }
 
-        private void notifyIcon_DoubleClick(object sender, EventArgs e)
+        public void DownloadImages()
         {
-            ShowMainForm();
-        }
-
-        public void AppendToLog(string lineText, bool addNewLine = true)
-        {
-            if (mainForm != null)
-            {
-                mainForm.AppendToLog(lineText, addNewLine);
-            }
-        }
-
-        public void DownloadImagesZip()
-        {
-            AppendToLog("Downloading images.zip (39.0 MB).", true);
-            AppendToLog("Please wait.", false);
+            downloadDialog = new ProgressDialog();
+            downloadDialog.FormClosed += downloadDialog_Closed;
+            downloadDialog.Show();
 
             using (WebClient client = new WebClient())
             {
-                client.DownloadProgressChanged += client_DownloadProgressChanged;
-                client.DownloadFileCompleted += client_DownloadFileCompleted;
+                client.DownloadProgressChanged += downloadDialog.onDownloadProgressChanged;
+                client.DownloadFileCompleted += downloadDialog.onDownloadFileCompleted;
                 client.DownloadFileAsync(imagesZipUri, "images.zip");
             }
         }
 
-        private void client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        private void downloadDialog_Closed(object sender, EventArgs e)
         {
-            if (e.ProgressPercentage != downloadProgress)
-            {
-                downloadProgress = e.ProgressPercentage;
+            downloadDialog = null;
 
-                if (downloadProgress % 10 == 9)
+            if (!Directory.Exists("images"))
+            {
+                DialogResult result = MessageBox.Show("Failed to download images. Click Retry to " +
+                    "try again or Cancel to exit the program.", "Error", MessageBoxButtons.RetryCancel,
+                    MessageBoxIcon.Error);
+                if (result == DialogResult.Retry)
                 {
-                    AppendToLog(".", false);
+                    DownloadImages();
                 }
+                else
+                {
+                    Application.Exit();
+                }
+            }
+            else if (JsonConfig.settings.Location == null)
+            {
+                UpdateLocation();
             }
         }
 
-        private void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+            public void UpdateLocation()
         {
-            ZipFile.ExtractToDirectory("images.zip", "images");
-            AppendToLog("done");
-            AppendToLog("You may now set the location.");
-            mainForm.ToggleSetLocationButton(true);
-
-            // We don't need the zip file after extracting it to a folder
-            File.Delete("images.zip");
-        }
-
-        public void ShowMainForm()
-        {
-            if (mainForm == null)
+            if (locationDialog == null)
             {
-                mainForm = new MainForm();
-                mainForm.wcsService = wcsService;
-                mainForm.FormClosed += mainForm_Closed;
-                mainForm.Show();
+                locationDialog = new InputDialog();
+                locationDialog.wcsService = wcsService;
+                locationDialog.FormClosed += locationDialog_Closed;
+                locationDialog.Show();
             }
             else
             {
-                mainForm.ShowDialog();
+                locationDialog.ShowDialog();
             }
         }
 
-        private void mainForm_Closed(object sender, EventArgs e)
+        private void locationDialog_Closed(object sender, EventArgs e)
         {
-            mainForm = null;
+            locationDialog = null;
 
             if (JsonConfig.settings.Location == null)
             {
@@ -189,9 +164,14 @@ namespace WinDynamicDesktop
 
         private void OnApplicationExit(object sender, EventArgs e)
         {
-            if (mainForm != null)
+            if (downloadDialog != null)
             {
-                mainForm.Close();
+                downloadDialog.Close();
+            }
+
+            if (locationDialog != null)
+            {
+                locationDialog.Close();
             }
 
             notifyIcon.Visible = false;
