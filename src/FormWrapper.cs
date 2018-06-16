@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Windows.Forms;
@@ -80,8 +79,8 @@ namespace WinDynamicDesktop
 
             using (WebClient client = new WebClient())
             {
-                client.DownloadProgressChanged += downloadDialog.onDownloadProgressChanged;
-                client.DownloadFileCompleted += downloadDialog.onDownloadFileCompleted;
+                client.DownloadProgressChanged += downloadDialog.OnDownloadProgressChanged;
+                client.DownloadFileCompleted += downloadDialog.OnDownloadFileCompleted;
                 client.DownloadFileAsync(imagesZipUri, "images.zip");
             }
         }
