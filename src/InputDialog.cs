@@ -22,6 +22,15 @@ namespace WinDynamicDesktop
             {
                 inputBox.Text = JsonConfig.settings.Location;
             }
+            else
+            {
+                okButton.Enabled = false;
+            }
+        }
+
+        private void inputBox_TextChanged(object sender, EventArgs e)
+        {
+            okButton.Enabled = inputBox.TextLength > 0;
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
@@ -31,6 +40,8 @@ namespace WinDynamicDesktop
 
         private void okButton_Click(object sender, EventArgs e)
         {
+            okButton.Enabled = false;
+
             LocationIQService service = new LocationIQService();
             LocationIQData data = service.GetLocationData(inputBox.Text);
 
@@ -41,12 +52,11 @@ namespace WinDynamicDesktop
                 JsonConfig.settings.Longitude = data.lon;
                 JsonConfig.SaveConfig();
 
-                wcsService.StartScheduler();
+                wcsService.StartScheduler(true);
 
                 MessageBox.Show("Location set successfully to: " + data.display_name +
-                    Environment.NewLine + "Latitude = " + data.lat + Environment.NewLine +
-                    "Longitude = " + data.lon, "Success", MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                    Environment.NewLine + "Latitude = " + data.lat + ", Longitude = " + data.lon,
+                    "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 this.Close();
             }
@@ -55,6 +65,8 @@ namespace WinDynamicDesktop
                 MessageBox.Show("The location you entered was invalid, or you are not connected to " +
                     "the Internet", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+
+            okButton.Enabled = true;
         }
     }
 }

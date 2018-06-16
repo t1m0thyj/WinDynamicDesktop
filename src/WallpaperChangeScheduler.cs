@@ -77,7 +77,7 @@ namespace WinDynamicDesktop
             lastImageId = imageId;
         }
 
-        public void StartScheduler()
+        public void StartScheduler(bool forceRefresh = false)
         {
             if (wallpaperTimer != null)
             {
@@ -85,7 +85,7 @@ namespace WinDynamicDesktop
             }
 
             string currentDate = GetDateString();
-            if (currentDate != lastDate)
+            if (currentDate != lastDate || forceRefresh)
             {
                 todaysData = GetWeatherData(currentDate);
                 lastDate = currentDate;
