@@ -35,6 +35,7 @@ namespace WinDynamicDesktop
             System.Drawing.Image img = System.Drawing.Image.FromStream(s);
             string tempPath = Path.Combine(Path.GetTempPath(), "wallpaper.bmp");
             img.Save(tempPath, System.Drawing.Imaging.ImageFormat.Bmp);
+            img.Dispose();  // Free up memory
 
             RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
             if (style == Style.Stretched)

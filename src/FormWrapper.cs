@@ -132,15 +132,15 @@ namespace WinDynamicDesktop
             if (JsonConfig.settings.Location == null)
             {
                 notifyIcon.BalloonTipText = "This app cannot display wallpapers until you have " +
-                    "entered a valid location. Right-click on this icon and click Settings to select " +
-                    "a location.";
-                notifyIcon.ShowBalloonTip(5000);
+                    "entered a valid location. Right-click on this icon and click Update Location " +
+                    "to fix this.";
+                notifyIcon.ShowBalloonTip(10000);
             }
             else if (JsonConfig.firstRun)
             {
                 notifyIcon.BalloonTipText = "The app is still running in the background. " +
                     "You can access it at any time by right-clicking on this icon.";
-                notifyIcon.ShowBalloonTip(5000);
+                notifyIcon.ShowBalloonTip(10000);
             }
         }
 
