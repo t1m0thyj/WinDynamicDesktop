@@ -20,6 +20,7 @@ namespace WinDynamicDesktop
         public MainForm()
         {
             InitializeComponent();
+            ToggleSetLocationButton(true);
         }
 
         public void AppendToLog(string lineText, bool addNewLine = true)
@@ -42,6 +43,11 @@ namespace WinDynamicDesktop
             AppendToLog("Welcome to WinDynamicDesktop Mojave Edition!");
         }
 
+        public void ToggleSetLocationButton(bool value)
+        {
+                setLocationButton.Enabled = value;
+        }
+
         private void setLocationButton_Click(object sender, EventArgs e)
         {
             LocationIQService service = new LocationIQService();
@@ -49,7 +55,7 @@ namespace WinDynamicDesktop
 
             if (data != null)
             {
-                AppendToLog("Location set successfully to: " + data.display_name);
+                AppendToLog("Location set successfully to: " + data.display_name, true);
                 AppendToLog("Latitude = " + data.lat + ", Longitude= " + data.lon);
 
                 JsonConfig.settings.Location = locationInput.Text;

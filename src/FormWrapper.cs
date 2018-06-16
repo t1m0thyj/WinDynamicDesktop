@@ -33,15 +33,24 @@ namespace WinDynamicDesktop
             if (JsonConfig.firstRun)
             {
                 ShowMainForm();
+                if (!Directory.Exists("images"))
+                {
+                    mainForm.ToggleSetLocationButton(false);
+                    DownloadImagesZip();
+                }
             }
             else
             {
-                wcsService.StartScheduler();
-            }
-
-            if (!File.Exists("images.zip"))
-            {
-                DownloadImagesZip();
+                if (!Directory.Exists("images"))
+                {
+                    ShowMainForm();
+                    mainForm.ToggleSetLocationButton(false);
+                    DownloadImagesZip();
+                }
+                else
+                {
+                    wcsService.StartScheduler();
+                }
             }
         }
 
@@ -91,7 +100,8 @@ namespace WinDynamicDesktop
 
         public void DownloadImagesZip()
         {
-            AppendToLog("Downloading images.zip (39.0 MB)", false);
+            AppendToLog("Downloading images.zip (39.0 MB).", true);
+            AppendToLog("Please wait.", false);
 
             using (WebClient client = new WebClient())
             {
@@ -116,9 +126,13 @@ namespace WinDynamicDesktop
 
         private void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
-            AppendToLog("done");
-
             ZipFile.ExtractToDirectory("images.zip", "images");
+            AppendToLog("done");
+            AppendToLog("You may now set the location.");
+            mainForm.ToggleSetLocationButton(true);
+
+            // We don't need the zip file after extracting it to a folder
+            File.Delete("images.zip");
         }
 
         public void ShowMainForm()
