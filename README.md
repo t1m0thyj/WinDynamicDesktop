@@ -7,13 +7,11 @@ When the Dynamic Desktop feature was announced for macOS Mojave which shifts thr
 
 ## How do I use this?
 
-The first time you run WinDynamicDesktop, it will automatically download the macOS Mojave wallpapers from [here](https://files.rb.gd/mojave_dynamic.zip) and extract them to your disk. I have not included the files directly in this repository for copyright reasons.
+The first time you run WinDynamicDesktop, it will automatically download the macOS Mojave wallpapers from [here](https://files.rb.gd/mojave_dynamic.zip) and extract them to your disk. I have not included the files directly in this repository for copyright reasons. If you want to select a different set of images, see the next section for how to do so.
 
 You will also need to input your location when running the program for the first time. This location is not used for any purpose other than to determine the times of sunrise and sunset where you live.
 
-After you enter your location, you can minimize the program to your system tray and it will run in the background. If you ever want to change the location, right-click on the system tray icon and click *Update Location*. The program can also be exited via the right-click menu of the system tray icon.
-
-The program does not yet have an option built-in to automatically start when Windows boots. To make it do this, create a shortcut to the EXE in the following folder: `%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup`.
+After you enter your location, you can minimize the program to your system tray and it will run in the background. Right-clicking on the system tray icon opens a menu with options to update the location, start WinDynamicDesktop when Windows boots, or exit the program.
 
 ## Can I customize the images?
 

@@ -12,6 +12,9 @@ namespace WinDynamicDesktop
 {
     class FormWrapper : ApplicationContext
     {
+        private string registryStartupLocation = @"Software\Microsoft\Windows\CurrentVersion\Run";
+        private bool startOnBoot;
+
         private ProgressDialog downloadDialog;
         private InputDialog locationDialog;
         private NotifyIcon notifyIcon;
@@ -23,9 +26,13 @@ namespace WinDynamicDesktop
             Application.ApplicationExit += new EventHandler(OnApplicationExit);
             SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(OnPowerModeChanged);
 
-            InitializeComponent();
-
             JsonConfig.LoadConfig();
+
+            RegistryKey startupKey = Registry.CurrentUser.OpenSubKey(registryStartupLocation);
+            startOnBoot = startupKey.GetValue("WinDynamicDesktop") != null;
+            startupKey.Close();
+
+            InitializeComponent();
 
             if (!Directory.Exists("images"))
             {
@@ -43,28 +50,38 @@ namespace WinDynamicDesktop
 
         private void InitializeComponent()
         {
-            notifyIcon = new NotifyIcon();
-            notifyIcon.Visible = true;
-            notifyIcon.Icon = Properties.Resources.AppIcon;
-            notifyIcon.Text = "WinDynamicDesktop";
-            notifyIcon.BalloonTipTitle = "WinDynamicDesktop";
+            notifyIcon = new NotifyIcon
+            {
+                Visible = true,
+                Icon = Properties.Resources.AppIcon,
+                Text = "WinDynamicDesktop",
+                BalloonTipTitle = "WinDynamicDesktop"
+            };
             
             notifyIcon.ContextMenu = new ContextMenu(new MenuItem[]
             {
                 new MenuItem("WinDynamicDesktop"),
                 new MenuItem("-"),
-                new MenuItem("&Update Location", locationItem_Click),
-                new MenuItem("E&xit", exitItem_Click)
+                new MenuItem("&Update Location", OnLocationItemClick),
+                new MenuItem("&Start on Boot", OnStartupItemClick),
+                new MenuItem("E&xit", OnExitItemClick)
             });
+
             notifyIcon.ContextMenu.MenuItems[0].Enabled = false;
+            notifyIcon.ContextMenu.MenuItems[3].Checked = startOnBoot;
         }
 
-        private void locationItem_Click(object sender, EventArgs e)
+        private void OnLocationItemClick(object sender, EventArgs e)
         {
             UpdateLocation();
         }
+        
+        private void OnStartupItemClick(object sender, EventArgs e)
+        {
+            ToggleStartOnBoot();
+        }
 
-        private void exitItem_Click(object sender, EventArgs e)
+        private void OnExitItemClick(object sender, EventArgs e)
         {
             notifyIcon.Visible = false;
             Application.Exit();
@@ -83,7 +100,7 @@ namespace WinDynamicDesktop
             }
 
             downloadDialog = new ProgressDialog();
-            downloadDialog.FormClosed += downloadDialog_Closed;
+            downloadDialog.FormClosed += OnDownloadDialogClosed;
             downloadDialog.Show();
 
             using (WebClient client = new WebClient())
@@ -94,7 +111,7 @@ namespace WinDynamicDesktop
             }
         }
 
-        private void downloadDialog_Closed(object sender, EventArgs e)
+        private void OnDownloadDialogClosed(object sender, EventArgs e)
         {
             downloadDialog = null;
 
@@ -118,13 +135,12 @@ namespace WinDynamicDesktop
             }
         }
 
-            public void UpdateLocation()
+        public void UpdateLocation()
         {
             if (locationDialog == null)
             {
-                locationDialog = new InputDialog();
-                locationDialog.wcsService = wcsService;
-                locationDialog.FormClosed += locationDialog_Closed;
+                locationDialog = new InputDialog { wcsService = wcsService };
+                locationDialog.FormClosed += OnLocationDialogClosed;
                 locationDialog.Show();
             }
             else
@@ -133,7 +149,7 @@ namespace WinDynamicDesktop
             }
         }
 
-        private void locationDialog_Closed(object sender, EventArgs e)
+        private void OnLocationDialogClosed(object sender, EventArgs e)
         {
             locationDialog = null;
 
@@ -149,7 +165,28 @@ namespace WinDynamicDesktop
                 notifyIcon.BalloonTipText = "The app is still running in the background. " +
                     "You can access it at any time by right-clicking on this icon.";
                 notifyIcon.ShowBalloonTip(10000);
+
+                JsonConfig.firstRun = false;    // Don't show this message again
             }
+        }
+
+        private void ToggleStartOnBoot()
+        {
+            RegistryKey startupKey = Registry.CurrentUser.OpenSubKey(registryStartupLocation, true);
+
+            if (!startOnBoot)
+            {
+                string exePath = Path.Combine(Directory.GetCurrentDirectory(),
+                    Environment.GetCommandLineArgs()[0]);
+                startupKey.SetValue("WinDynamicDesktop", exePath);
+            }
+            else
+            {
+                startupKey.DeleteValue("WinDynamicDesktop");
+            }
+
+            startOnBoot = !startOnBoot;
+            notifyIcon.ContextMenu.MenuItems[3].Checked = startOnBoot;
         }
 
         private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)

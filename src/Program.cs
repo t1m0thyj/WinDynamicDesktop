@@ -17,6 +17,7 @@ namespace WinDynamicDesktop
         {
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(
                 OnUnhandledException);
+            Environment.CurrentDirectory = Path.GetDirectoryName(Application.ExecutablePath);
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
