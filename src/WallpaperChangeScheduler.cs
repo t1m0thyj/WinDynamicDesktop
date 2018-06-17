@@ -71,7 +71,7 @@ namespace WinDynamicDesktop
             Uri wallpaperUri = new Uri(Path.Combine(Directory.GetCurrentDirectory(), "images",
                 String.Format(JsonConfig.imageSettings.imageFilename, imageId)));
 
-            Wallpaper.Set(wallpaperUri, Wallpaper.Style.Stretched);
+            Wallpaper.Set(wallpaperUri);
 
             lastImageId = imageId;
         }

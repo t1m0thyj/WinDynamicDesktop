@@ -11,9 +11,18 @@ The first time you run WinDynamicDesktop, it will automatically download the mac
 
 You will also need to input your location when running the program for the first time. This location is not used for any purpose other than to determine the times of sunrise and sunset where you live.
 
-After you enter your location, you can minimize the program to your system tray and it will run in the background. If you ever want to change the location, right-click on the system tray icon and select Settings. The program can also be exited via the right-click menu of the system tray icon.
+After you enter your location, you can minimize the program to your system tray and it will run in the background. If you ever want to change the location, right-click on the system tray icon and click *Update Location*. The program can also be exited via the right-click menu of the system tray icon.
 
 The program does not yet have an option built-in to automatically start when Windows boots. To make it do this, create a shortcut to the EXE in the following folder: `%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup`.
+
+## Can I customize the images?
+
+Yes. By default WinDynamicDesktop uses the Mojave wallpapers, but if you create an `images.conf` file in the same folder as the EXE you can customize the images that are used. The default `images.conf` can be found [here](src/images.conf). It is formatted in JSON and must contain the following values:
+
+* `imagesZipUri` - String containing URL to download images.zip file from, or *null* if the content in the images subfolder is provided by the user
+* `imageFilename` - String containing the filename of each wallpaper image, with {0} substituted for the image number
+* `dayImageList` - Array of numbers listing the image numbers to display throughout the day (between sunrise and sunset)
+* `nightImageList` - Array of numbers listing the image numbers to display throughout the night (between sunset and sunrise)
 
 ## Legal and privacy stuff
 I do not own the wallpaper pictures used by WinDynamicDesktop, they belong to Apple. The icon used in this program was made by [Roundicons](https://www.flaticon.com/authors/roundicons) from [flaticon.com](https://www.flaticon.com/) and is licensed by [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/).
