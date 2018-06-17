@@ -11,14 +11,13 @@ namespace WinDynamicDesktop
 {
     class WallpaperChangeScheduler
     {
-        private string imageFilename = "mojave_dynamic_{0}.jpeg";
-        private int[] dayImages = new[] { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
-        private int[] nightImages = new[] { 13, 14, 15, 16, 1 };
+        private int[] dayImages;
+        private int[] nightImages;
+        private bool isSunUp;
 
         private string lastDate = "yyyy-MM-dd";
         private int lastImageId = -1;
         private int lastImageNumber = -1;
-        private bool isSunUp;
 
         private WeatherData yesterdaysData;
         private WeatherData todaysData;
@@ -43,7 +42,7 @@ namespace WinDynamicDesktop
             SunriseSunsetService service = new SunriseSunsetService();
 
             WeatherData data = service.GetWeatherData(
-                JsonConfig.settings.Latitude, JsonConfig.settings.Longitude, dateStr);
+                JsonConfig.settings.latitude, JsonConfig.settings.longitude, dateStr);
 
             return data;
         }
@@ -70,7 +69,7 @@ namespace WinDynamicDesktop
         private void SetWallpaper(int imageId)
         {
             Uri wallpaperUri = new Uri(Path.Combine(Directory.GetCurrentDirectory(), "images",
-                String.Format(imageFilename, imageId)));
+                String.Format(JsonConfig.imageSettings.imageFilename, imageId)));
 
             Wallpaper.Set(wallpaperUri, Wallpaper.Style.Stretched);
 
@@ -83,6 +82,9 @@ namespace WinDynamicDesktop
             {
                 wallpaperTimer.Stop();
             }
+
+            dayImages = JsonConfig.imageSettings.dayImageList;
+            nightImages = JsonConfig.imageSettings.nightImageList;
 
             string currentDate = GetDateString();
             if (currentDate != lastDate || forceRefresh)

@@ -18,9 +18,9 @@ namespace WinDynamicDesktop
 
         private void InputDialog_Load(object sender, EventArgs e)
         {
-            if (JsonConfig.settings.Location != null)
+            if (JsonConfig.settings.location != null)
             {
-                inputBox.Text = JsonConfig.settings.Location;
+                inputBox.Text = JsonConfig.settings.location;
             }
             else
             {
@@ -47,9 +47,9 @@ namespace WinDynamicDesktop
 
             if (data != null)
             {
-                JsonConfig.settings.Location = inputBox.Text;
-                JsonConfig.settings.Latitude = data.lat;
-                JsonConfig.settings.Longitude = data.lon;
+                JsonConfig.settings.location = inputBox.Text;
+                JsonConfig.settings.latitude = data.lat;
+                JsonConfig.settings.longitude = data.lon;
                 JsonConfig.SaveConfig();
 
                 wcsService.StartScheduler(true);

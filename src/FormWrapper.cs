@@ -12,7 +12,6 @@ namespace WinDynamicDesktop
 {
     class FormWrapper : ApplicationContext
     {
-        private Uri imagesZipUri = new Uri("https://files.rb.gd/mojave_dynamic.zip");
         private ProgressDialog downloadDialog;
         private InputDialog locationDialog;
         private NotifyIcon notifyIcon;
@@ -73,6 +72,16 @@ namespace WinDynamicDesktop
 
         public void DownloadImages()
         {
+            string imagesZipUri = JsonConfig.imageSettings.imagesZipUri;
+
+            if (imagesZipUri == null)
+            {
+                MessageBox.Show("Images folder not found. The program will quit now.", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Environment.Exit(1);
+                return;
+            }
+
             downloadDialog = new ProgressDialog();
             downloadDialog.FormClosed += downloadDialog_Closed;
             downloadDialog.Show();
@@ -81,7 +90,7 @@ namespace WinDynamicDesktop
             {
                 client.DownloadProgressChanged += downloadDialog.OnDownloadProgressChanged;
                 client.DownloadFileCompleted += downloadDialog.OnDownloadFileCompleted;
-                client.DownloadFileAsync(imagesZipUri, "images.zip");
+                client.DownloadFileAsync(new Uri(imagesZipUri), "images.zip");
             }
         }
 
@@ -103,7 +112,7 @@ namespace WinDynamicDesktop
                     Application.Exit();
                 }
             }
-            else if (JsonConfig.settings.Location == null)
+            else if (JsonConfig.settings.location == null)
             {
                 UpdateLocation();
             }
@@ -128,7 +137,7 @@ namespace WinDynamicDesktop
         {
             locationDialog = null;
 
-            if (JsonConfig.settings.Location == null)
+            if (JsonConfig.settings.location == null)
             {
                 notifyIcon.BalloonTipText = "This app cannot display wallpapers until you have " +
                     "entered a valid location. Right-click on this icon and click Update Location " +
@@ -154,7 +163,7 @@ namespace WinDynamicDesktop
             }
             else if (e.Mode == PowerModes.Resume)
             {
-                if (JsonConfig.settings.Location != null)
+                if (JsonConfig.settings.location != null)
                 {
                     wcsService.StartScheduler();
                 }
