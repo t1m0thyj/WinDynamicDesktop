@@ -18,7 +18,7 @@ After you enter your location, you can minimize the program to your system tray 
 Yes. By default WinDynamicDesktop uses the Mojave wallpapers, but if you create an `images.conf` file in the same folder as the EXE you can customize the images that are used. The default `images.conf` can be found [here](src/images.conf). It is formatted in JSON and must contain the following values:
 
 * `imagesZipUri` - String containing URL to download images.zip file from, or *null* if the content in the images subfolder is provided by the user
-* `imageFilename` - String containing the filename of each wallpaper image, with {0} substituted for the image number
+* `imageFilename` - String containing the filename of each wallpaper image, with `{0}` substituted for the image number
 * `dayImageList` - Array of numbers listing the image numbers to display throughout the day (between sunrise and sunset)
 * `nightImageList` - Array of numbers listing the image numbers to display throughout the night (between sunset and sunrise)
 

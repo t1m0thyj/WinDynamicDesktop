@@ -14,6 +14,8 @@ namespace WinDynamicDesktop
         public InputDialog()
         {
             InitializeComponent();
+
+            this.FormClosing += OnFormClosing;
         }
 
         private void InputDialog_Load(object sender, EventArgs e)
@@ -31,11 +33,6 @@ namespace WinDynamicDesktop
         private void inputBox_TextChanged(object sender, EventArgs e)
         {
             okButton.Enabled = inputBox.TextLength > 0;
-        }
-
-        private void cancelButton_Click(object sender, EventArgs e)
-        {
-            this.Close();
         }
 
         private void okButton_Click(object sender, EventArgs e)
@@ -67,6 +64,31 @@ namespace WinDynamicDesktop
             }
 
             okButton.Enabled = true;
+        }
+
+        private void cancelButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void OnFormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (JsonConfig.settings.location == null)
+            {
+                DialogResult result = MessageBox.Show("This app cannot display wallpapers until you " +
+                    "have entered a valid location, so that it can calculate sunrise and sunset" +
+                    "times for your location. Are you sure you want to cancel and quit the program?",
+                    "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                if (result == DialogResult.Yes)
+                {
+                    Environment.Exit(0);
+                }
+                else
+                {
+                    e.Cancel = true;
+                }
+            }
         }
     }
 }

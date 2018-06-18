@@ -25,6 +25,12 @@ namespace WinDynamicDesktop
 
         public Timer wallpaperTimer;
 
+        public WallpaperChangeScheduler()
+        {
+            dayImages = JsonConfig.imageSettings.dayImageList;
+            nightImages = JsonConfig.imageSettings.nightImageList;
+        }
+
         private string GetDateString(int todayDelta = 0)
         {
             DateTime date = DateTime.Today;
@@ -68,10 +74,11 @@ namespace WinDynamicDesktop
 
         private void SetWallpaper(int imageId)
         {
-            Uri wallpaperUri = new Uri(Path.Combine(Directory.GetCurrentDirectory(), "images",
-                String.Format(JsonConfig.imageSettings.imageFilename, imageId)));
+            string imageFilename = String.Format(JsonConfig.imageSettings.imageFilename, imageId);
+            string wallpaperPath = Path.Combine(Directory.GetCurrentDirectory(), "images",
+                imageFilename);
 
-            Wallpaper.Set(wallpaperUri);
+            Wallpaper.Set(new Uri(wallpaperPath));
 
             lastImageId = imageId;
         }
@@ -82,9 +89,6 @@ namespace WinDynamicDesktop
             {
                 wallpaperTimer.Stop();
             }
-
-            dayImages = JsonConfig.imageSettings.dayImageList;
-            nightImages = JsonConfig.imageSettings.nightImageList;
 
             string currentDate = GetDateString();
             if (currentDate != lastDate || forceRefresh)

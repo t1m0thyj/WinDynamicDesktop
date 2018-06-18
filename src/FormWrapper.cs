@@ -103,6 +103,8 @@ namespace WinDynamicDesktop
             downloadDialog.FormClosed += OnDownloadDialogClosed;
             downloadDialog.Show();
 
+            notifyIcon.ContextMenu.MenuItems[2].Enabled = false;
+
             using (WebClient client = new WebClient())
             {
                 client.DownloadProgressChanged += downloadDialog.OnDownloadProgressChanged;
@@ -120,6 +122,7 @@ namespace WinDynamicDesktop
                 DialogResult result = MessageBox.Show("Failed to download images. Click Retry to " +
                     "try again or Cancel to exit the program.", "Error", MessageBoxButtons.RetryCancel,
                     MessageBoxIcon.Error);
+
                 if (result == DialogResult.Retry)
                 {
                     DownloadImages();
@@ -131,6 +134,8 @@ namespace WinDynamicDesktop
             }
             else if (JsonConfig.settings.location == null)
             {
+                notifyIcon.ContextMenu.MenuItems[2].Enabled = true;
+
                 UpdateLocation();
             }
         }
@@ -145,7 +150,7 @@ namespace WinDynamicDesktop
             }
             else
             {
-                locationDialog.ShowDialog();
+                locationDialog.Activate();
             }
         }
 
@@ -153,14 +158,7 @@ namespace WinDynamicDesktop
         {
             locationDialog = null;
 
-            if (JsonConfig.settings.location == null)
-            {
-                notifyIcon.BalloonTipText = "This app cannot display wallpapers until you have " +
-                    "entered a valid location. Right-click on this icon and click Update Location " +
-                    "to fix this.";
-                notifyIcon.ShowBalloonTip(10000);
-            }
-            else if (JsonConfig.firstRun)
+            if (JsonConfig.firstRun)
             {
                 notifyIcon.BalloonTipText = "The app is still running in the background. " +
                     "You can access it at any time by right-clicking on this icon.";
