@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using RestSharp;
+using Innovative.SolarCalculator;
+using System.Windows.Forms;
 
 namespace WinDynamicDesktop
 {
@@ -13,47 +14,20 @@ namespace WinDynamicDesktop
         public DateTime SunsetTime { get; set; }
     }
 
-    class Results
-    {
-        public string sunrise { get; set; }
-        public string sunset { get; set; }
-        public string solar_noon { get; set; }
-        public string day_length { get; set; }
-        public string civil_twilight_begin { get; set; }
-        public string civil_twilight_end { get; set; }
-        public string nautical_twilight_begin { get; set; }
-        public string nautical_twilight_end { get; set; }
-        public string astronomical_twilight_begin { get; set; }
-        public string astronomical_twilight_end { get; set; }
-    }
-
-    class SunriseSunsetData
-    {
-        public Results results { get; set; }
-        public string status { get; set; }
-    }
-
     class SunriseSunsetService
     {
-        public static WeatherData GetWeatherData(string lat, string lon, string date)
+        public static WeatherData GetWeatherData(string lat, string lon, string dateStr)
         {
-            var client = new RestClient("https://api.sunrise-sunset.org");
+            DateTime date = DateTime.Parse(dateStr);
+            double latitude = Double.Parse(lat);
+            double longitude = Double.Parse(lon);
 
-            var request = new RestRequest("json", Method.GET);
-            request.AddParameter("lat", lat);
-            request.AddParameter("lng", lon);
-            request.AddParameter("date", date);
-            request.AddParameter("formatted", "0");
-
-            var response = client.Execute<SunriseSunsetData>(request);
-            if (!response.IsSuccessful)
-            {
-                return null;
-            }
+            SolarTimes solarTimes = new SolarTimes(date, latitude, longitude);
 
             WeatherData data = new WeatherData();
-            data.SunriseTime = DateTime.Parse(response.Data.results.sunrise);
-            data.SunsetTime = DateTime.Parse(response.Data.results.sunset);
+            data.SunriseTime = solarTimes.Sunrise;
+            data.SunsetTime = solarTimes.Sunset;
+
             return data;
         }
     }
