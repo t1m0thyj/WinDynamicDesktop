@@ -19,7 +19,7 @@ namespace WinDynamicDesktop
         private InputDialog locationDialog;
         private NotifyIcon notifyIcon;
 
-        public WallpaperChangeScheduler wcsService = new WallpaperChangeScheduler();
+        public WallpaperChangeScheduler wcsService;
 
         public FormWrapper()
         {
@@ -27,6 +27,7 @@ namespace WinDynamicDesktop
             SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(OnPowerModeChanged);
 
             JsonConfig.LoadConfig();
+            wcsService = new WallpaperChangeScheduler();
 
             RegistryKey startupKey = Registry.CurrentUser.OpenSubKey(registryStartupLocation);
             startOnBoot = startupKey.GetValue("WinDynamicDesktop") != null;

@@ -78,7 +78,10 @@ namespace WinDynamicDesktop
             string wallpaperPath = Path.Combine(Directory.GetCurrentDirectory(), "images",
                 imageFilename);
 
-            Wallpaper.Set(new Uri(wallpaperPath));
+            shlobj.EnableTransitions();
+            IActiveDesktop iad = shlobj.GetActiveDesktop();
+            iad.SetWallpaper(wallpaperPath, 0);
+            iad.ApplyChanges(AD_Apply.ALL | AD_Apply.FORCE | AD_Apply.BUFFERED_REFRESH);
 
             lastImageId = imageId;
         }
