@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Innovative.SolarCalculator;
-using System.Windows.Forms;
 
 namespace WinDynamicDesktop
 {
