@@ -79,7 +79,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SunriseSunset.cs" />
-    <Compile Include="Wallpaper.cs" />
+    <Compile Include="WallpaperChanger.cs" />
     <Compile Include="WallpaperChangeScheduler.cs" />
     <EmbeddedResource Include="InputDialog.resx">
       <DependentUpon>InputDialog.cs</DependentUpon>

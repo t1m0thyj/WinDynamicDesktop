@@ -217,28 +217,28 @@ namespace WinDynamicDesktop
     /// Written by: Eber Irigoyen
     /// on: 11/23/2005
     /// </summary>
-    public class shlobj
+    public class WallpaperChanger
     {
         public static readonly Guid CLSID_ActiveDesktop =
             new Guid("{75048700-EF1F-11D0-9888-006097DEACF9}");
 
         public static IActiveDesktop GetActiveDesktop()
         {
-            Type typeActiveDesktop = Type.GetTypeFromCLSID(shlobj.CLSID_ActiveDesktop);
+            Type typeActiveDesktop = Type.GetTypeFromCLSID(WallpaperChanger.CLSID_ActiveDesktop);
             return (IActiveDesktop)Activator.CreateInstance(typeActiveDesktop);
         }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern int SendMessageTimeout(
-                  IntPtr hWnd,      // handle to destination window
-                  uint Msg,       // message
-                  IntPtr wParam,  // first message parameter
-                  IntPtr lParam,   // second message parameter
-                    uint fuFlags,
-                    uint uTimeout,
-                    out IntPtr result
+            IntPtr hWnd,      // handle to destination window
+            uint Msg,         // message
+            IntPtr wParam,    // first message parameter
+            IntPtr lParam,    // second message parameter
+            uint fuFlags,
+            uint uTimeout,
+            out IntPtr result
+        );
 
-                  );
         [DllImport("user32.dll", SetLastError = true)]
         static extern IntPtr FindWindow(string lpClassName, IntPtr ZeroOnly);
 
@@ -248,11 +248,11 @@ namespace WinDynamicDesktop
             SendMessageTimeout(FindWindow("Progman", IntPtr.Zero), 0x52c, IntPtr.Zero, IntPtr.Zero, 0, 500, out result);
         }
 
-        public shlobj()
+        public static void SetWallpaper(string imagePath)
         {
-            //
-            // TODO: Add constructor logic here
-            //
+            IActiveDesktop iad = WallpaperChanger.GetActiveDesktop();
+            iad.SetWallpaper(imagePath, 0);
+            iad.ApplyChanges(AD_Apply.ALL | AD_Apply.FORCE | AD_Apply.BUFFERED_REFRESH);
         }
     }
 }

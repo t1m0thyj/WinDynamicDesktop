@@ -39,8 +39,7 @@ namespace WinDynamicDesktop
         {
             okButton.Enabled = false;
 
-            LocationIQService service = new LocationIQService();
-            LocationIQData data = service.GetLocationData(inputBox.Text);
+            LocationIQData data = LocationIQService.GetLocationData(inputBox.Text);
 
             if (data != null)
             {

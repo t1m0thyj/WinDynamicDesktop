@@ -23,6 +23,7 @@ namespace WinDynamicDesktop
         private WeatherData todaysData;
         private WeatherData tomorrowsData;
 
+        public bool enableTransitions = true;
         public Timer wallpaperTimer;
 
         public WallpaperChangeScheduler()
@@ -45,9 +46,7 @@ namespace WinDynamicDesktop
 
         private WeatherData GetWeatherData(string dateStr)
         {
-            SunriseSunsetService service = new SunriseSunsetService();
-
-            WeatherData data = service.GetWeatherData(
+            WeatherData data = SunriseSunsetService.GetWeatherData(
                 JsonConfig.settings.latitude, JsonConfig.settings.longitude, dateStr);
 
             return data;
@@ -75,14 +74,15 @@ namespace WinDynamicDesktop
         private void SetWallpaper(int imageId)
         {
             string imageFilename = String.Format(JsonConfig.imageSettings.imageFilename, imageId);
-            string wallpaperPath = Path.Combine(Directory.GetCurrentDirectory(), "images",
-                imageFilename);
+            string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "images", imageFilename);
 
-            shlobj.EnableTransitions();
-            IActiveDesktop iad = shlobj.GetActiveDesktop();
-            iad.SetWallpaper(wallpaperPath, 0);
-            iad.ApplyChanges(AD_Apply.ALL | AD_Apply.FORCE | AD_Apply.BUFFERED_REFRESH);
+            if (enableTransitions)
+            {
+                WallpaperChanger.EnableTransitions();
+            }
 
+            WallpaperChanger.SetWallpaper(imagePath);
+            
             lastImageId = imageId;
         }
 
@@ -130,6 +130,8 @@ namespace WinDynamicDesktop
             {
                 StartNightSchedule();
             }
+
+            lastImageId = 0;
         }
 
         private void StartDaySchedule()

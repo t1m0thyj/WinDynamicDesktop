@@ -196,6 +196,8 @@ namespace WinDynamicDesktop
                 {
                     wcsService.wallpaperTimer.Stop();
                 }
+
+                wcsService.enableTransitions = false;
             }
             else if (e.Mode == PowerModes.Resume)
             {
@@ -203,6 +205,8 @@ namespace WinDynamicDesktop
                 {
                     wcsService.StartScheduler();
                 }
+
+                wcsService.enableTransitions = true;
             }
         }
 

@@ -35,7 +35,7 @@ namespace WinDynamicDesktop
 
     class SunriseSunsetService
     {
-        public WeatherData GetWeatherData(string lat, string lon, string date)
+        public static WeatherData GetWeatherData(string lat, string lon, string date)
         {
             var client = new RestClient("https://api.sunrise-sunset.org");
 
