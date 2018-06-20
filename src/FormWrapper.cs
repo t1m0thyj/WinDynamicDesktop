@@ -58,23 +58,31 @@ namespace WinDynamicDesktop
                 Text = "WinDynamicDesktop",
                 BalloonTipTitle = "WinDynamicDesktop"
             };
-            
+
             notifyIcon.ContextMenu = new ContextMenu(new MenuItem[]
             {
                 new MenuItem("WinDynamicDesktop"),
                 new MenuItem("-"),
                 new MenuItem("&Update Location", OnLocationItemClick),
+                new MenuItem("&Refresh Wallpaper", OnRefreshItemClick),
+                new MenuItem("-"),
                 new MenuItem("&Start on Boot", OnStartupItemClick),
+                new MenuItem("-"),
                 new MenuItem("E&xit", OnExitItemClick)
             });
 
             notifyIcon.ContextMenu.MenuItems[0].Enabled = false;
-            notifyIcon.ContextMenu.MenuItems[3].Checked = startOnBoot;
+            notifyIcon.ContextMenu.MenuItems[5].Checked = startOnBoot;
         }
 
         private void OnLocationItemClick(object sender, EventArgs e)
         {
             UpdateLocation();
+        }
+
+        private void OnRefreshItemClick(object sender, EventArgs e)
+        {
+            wcsService.StartScheduler(true);
         }
         
         private void OnStartupItemClick(object sender, EventArgs e)
@@ -185,7 +193,7 @@ namespace WinDynamicDesktop
             }
 
             startOnBoot = !startOnBoot;
-            notifyIcon.ContextMenu.MenuItems[3].Checked = startOnBoot;
+            notifyIcon.ContextMenu.MenuItems[5].Checked = startOnBoot;
         }
 
         private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
