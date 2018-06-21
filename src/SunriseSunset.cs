@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
 using Innovative.SolarCalculator;
 
 namespace WinDynamicDesktop
@@ -15,11 +16,13 @@ namespace WinDynamicDesktop
 
     class SunriseSunsetService
     {
+        private static CultureInfo cultureInfo = CultureInfo.GetCultureInfo("en-US");
+
         public static WeatherData GetWeatherData(string lat, string lon, string dateStr)
         {
             DateTime date = DateTime.Parse(dateStr);
-            double latitude = Double.Parse(lat);
-            double longitude = Double.Parse(lon);
+            double latitude = Double.Parse(lat, cultureInfo);
+            double longitude = Double.Parse(lon, cultureInfo);
 
             SolarTimes solarTimes = new SolarTimes(date, latitude, longitude);
 

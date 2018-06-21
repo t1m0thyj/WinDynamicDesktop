@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "WinDynamicDesktop"
-#define MyAppVersion "1.2"
+#define MyAppVersion "1.2.1"
 #define MyAppPublisher "Timothy Johnson"
 #define MyAppURL "https://github.com/t1m0thyj/WinDynamicDesktop"
 #define MyAppExeName "WinDynamicDesktop.exe"
