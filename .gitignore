@@ -1,8 +1,13 @@
 .vs/
+AppPackages/
+BundleArtifacts/
 bin/
 obj/
 output/
-packages/
-images/
+src/*/images
+src/packages/
+
+*.pfx
+Package.StoreAssociation.xml
 images.zip
 settings.conf

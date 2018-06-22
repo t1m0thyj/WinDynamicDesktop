@@ -15,7 +15,7 @@ namespace WinDynamicDesktop
         [STAThread]
         static void Main()
         {
-            Environment.CurrentDirectory = Path.GetDirectoryName(Application.ExecutablePath);
+            Environment.CurrentDirectory = UwpDesktop.GetCurrentDirectory();
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(
                 OnUnhandledException);
 
