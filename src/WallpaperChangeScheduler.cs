@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Globalization;
 using System.IO;
-using System.Timers;
+using System.Windows.Forms;
 
 namespace WinDynamicDesktop
 {
@@ -82,7 +82,7 @@ namespace WinDynamicDesktop
             }
 
             WallpaperChanger.SetWallpaper(imagePath);
-            
+
             lastImageId = imageId;
         }
 
@@ -122,6 +122,8 @@ namespace WinDynamicDesktop
                 isSunUp = true;
             }
 
+            lastImageId = -1;
+
             if (isSunUp)
             {
                 StartDaySchedule();
@@ -130,8 +132,6 @@ namespace WinDynamicDesktop
             {
                 StartNightSchedule();
             }
-
-            lastImageId = 0;
         }
 
         private void StartDaySchedule()
@@ -143,8 +143,9 @@ namespace WinDynamicDesktop
             TimeSpan interval = new TimeSpan(todaysData.SunriseTime.Ticks + timerLength.Ticks *
                 (imageNumber + 1) - DateTime.Now.Ticks);
 
-            wallpaperTimer = new Timer(interval.TotalMilliseconds);
-            wallpaperTimer.Elapsed += new ElapsedEventHandler(wallpaperTimer_Elapsed);
+            wallpaperTimer = new Timer();
+            wallpaperTimer.Interval = (int)interval.TotalMilliseconds;
+            wallpaperTimer.Tick += new EventHandler(OnWallpaperTimerTick);
             wallpaperTimer.Start();
 
             if (dayImages[imageNumber] != lastImageId)
@@ -165,7 +166,7 @@ namespace WinDynamicDesktop
             TimeSpan dayTime = todaysData.SunsetTime - todaysData.SunriseTime;
             TimeSpan timerLength = new TimeSpan(dayTime.Ticks / dayImages.Length);
 
-            wallpaperTimer.Interval = timerLength.TotalMilliseconds;
+            wallpaperTimer.Interval = (int)timerLength.TotalMilliseconds;
             wallpaperTimer.Start();
 
             lastImageNumber++;
@@ -184,7 +185,7 @@ namespace WinDynamicDesktop
         {
             WeatherData day1Data = (yesterdaysData == null) ? todaysData : yesterdaysData;
             WeatherData day2Data = (yesterdaysData == null) ? tomorrowsData : todaysData;
-            
+
             TimeSpan nightTime = day2Data.SunriseTime - day1Data.SunsetTime;
             TimeSpan timerLength = new TimeSpan(nightTime.Ticks / nightImages.Length);
 
@@ -192,8 +193,9 @@ namespace WinDynamicDesktop
             TimeSpan interval = new TimeSpan(day1Data.SunsetTime.Ticks + timerLength.Ticks *
                 (imageNumber + 1) - DateTime.Now.Ticks);
 
-            wallpaperTimer = new Timer(interval.TotalMilliseconds);
-            wallpaperTimer.Elapsed += new ElapsedEventHandler(wallpaperTimer_Elapsed);
+            wallpaperTimer = new Timer();
+            wallpaperTimer.Interval = (int)interval.TotalMilliseconds;
+            wallpaperTimer.Tick += new EventHandler(OnWallpaperTimerTick);
             wallpaperTimer.Start();
 
             if (nightImages[imageNumber] != lastImageId)
@@ -217,7 +219,7 @@ namespace WinDynamicDesktop
             TimeSpan nightTime = day2Data.SunriseTime - day1Data.SunsetTime;
             TimeSpan timerLength = new TimeSpan(nightTime.Ticks / nightImages.Length);
 
-            wallpaperTimer.Interval = timerLength.TotalMilliseconds;
+            wallpaperTimer.Interval = (int)timerLength.TotalMilliseconds;
             wallpaperTimer.Start();
 
             lastImageNumber++;
@@ -240,7 +242,7 @@ namespace WinDynamicDesktop
             StartDaySchedule();
         }
 
-        private void wallpaperTimer_Elapsed(object sender, EventArgs e)
+        private void OnWallpaperTimerTick(object sender, EventArgs e)
         {
             if (isSunUp)
             {

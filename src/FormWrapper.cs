@@ -16,8 +16,8 @@ namespace WinDynamicDesktop
         private InputDialog locationDialog;
         private NotifyIcon notifyIcon;
 
-        public StartupManager startupManager;
-        public WallpaperChangeScheduler wcsService;
+        public StartupManager _startupManager;
+        public WallpaperChangeScheduler _wcsService;
 
         public FormWrapper()
         {
@@ -25,10 +25,10 @@ namespace WinDynamicDesktop
             SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(OnPowerModeChanged);
 
             JsonConfig.LoadConfig();
-            wcsService = new WallpaperChangeScheduler();
+            _wcsService = new WallpaperChangeScheduler();
 
             InitializeComponent();
-            startupManager = new StartupManager(notifyIcon.ContextMenu.MenuItems[5]);
+            _startupManager = new StartupManager(notifyIcon.ContextMenu.MenuItems[5]);
 
             if (!Directory.Exists("images"))
             {
@@ -40,7 +40,7 @@ namespace WinDynamicDesktop
             }
             else
             {
-                wcsService.StartScheduler();
+                _wcsService.StartScheduler();
             }
         }
 
@@ -75,12 +75,12 @@ namespace WinDynamicDesktop
 
         private void OnRefreshItemClick(object sender, EventArgs e)
         {
-            wcsService.StartScheduler(true);
+            _wcsService.StartScheduler(true);
         }
         
         private void OnStartupItemClick(object sender, EventArgs e)
         {
-            startupManager.ToggleStartOnBoot();
+            _startupManager.ToggleStartOnBoot();
         }
 
         private void OnExitItemClick(object sender, EventArgs e)
@@ -146,7 +146,7 @@ namespace WinDynamicDesktop
         {
             if (locationDialog == null)
             {
-                locationDialog = new InputDialog { wcsService = wcsService };
+                locationDialog = new InputDialog { _wcsService = _wcsService };
                 locationDialog.FormClosed += OnLocationDialogClosed;
                 locationDialog.Show();
             }
@@ -174,21 +174,21 @@ namespace WinDynamicDesktop
         {
             if (e.Mode == PowerModes.Suspend)
             {
-                if (wcsService.wallpaperTimer != null)
+                if (_wcsService.wallpaperTimer != null)
                 {
-                    wcsService.wallpaperTimer.Stop();
+                    _wcsService.wallpaperTimer.Stop();
                 }
 
-                wcsService.enableTransitions = false;
+                _wcsService.enableTransitions = false;
             }
             else if (e.Mode == PowerModes.Resume)
             {
                 if (JsonConfig.settings.location != null)
                 {
-                    wcsService.StartScheduler();
+                    _wcsService.StartScheduler();
                 }
 
-                wcsService.enableTransitions = true;
+                _wcsService.enableTransitions = true;
             }
         }
 

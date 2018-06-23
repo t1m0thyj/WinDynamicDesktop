@@ -9,7 +9,7 @@ namespace WinDynamicDesktop
 {
     public partial class InputDialog : Form
     {
-        internal WallpaperChangeScheduler wcsService;
+        internal WallpaperChangeScheduler _wcsService;
 
         public InputDialog()
         {
@@ -48,7 +48,7 @@ namespace WinDynamicDesktop
                 JsonConfig.settings.longitude = data.lon;
                 JsonConfig.SaveConfig();
 
-                wcsService.StartScheduler(true);
+                _wcsService.StartScheduler(true);
 
                 MessageBox.Show("Location set successfully to: " + data.display_name +
                     Environment.NewLine + "Latitude = " + data.lat + ", Longitude = " + data.lon,
