@@ -250,7 +250,7 @@ namespace WinDynamicDesktop
 
         public static void SetWallpaper(string imagePath)
         {
-            IActiveDesktop iad = WallpaperChanger.GetActiveDesktop();
+            IActiveDesktop iad = GetActiveDesktop();
             iad.SetWallpaper(imagePath, 0);
             iad.ApplyChanges(AD_Apply.ALL | AD_Apply.FORCE | AD_Apply.BUFFERED_REFRESH);
         }

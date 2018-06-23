@@ -1,13 +1,15 @@
 .vs/
-AppPackages/
-BundleArtifacts/
+DesktopBridge/AppPackages/
+DesktopBridge/BundleArtifacts/
 bin/
 obj/
 output/
 src/*/images
 src/packages/
 
-*.pfx
-Package.StoreAssociation.xml
+DesktopBridge/*.pfx
+DesktopBridge/DesktopBridge.wapproj.user
+DesktopBridge/Package.StoreAssociation.xml
+DesktopBridge/_pkginfo.txt
 images.zip
 settings.conf

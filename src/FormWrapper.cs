@@ -16,7 +16,7 @@ namespace WinDynamicDesktop
         private InputDialog locationDialog;
         private NotifyIcon notifyIcon;
 
-        public StartupManager _startupManager;
+        public IStartupManager _startupManager;
         public WallpaperChangeScheduler _wcsService;
 
         public FormWrapper()
@@ -28,7 +28,7 @@ namespace WinDynamicDesktop
             _wcsService = new WallpaperChangeScheduler();
 
             InitializeComponent();
-            _startupManager = new StartupManager(notifyIcon.ContextMenu.MenuItems[5]);
+            _startupManager = UwpDesktop.GetStartupManager(notifyIcon.ContextMenu.MenuItems[5]);
 
             if (!Directory.Exists("images"))
             {

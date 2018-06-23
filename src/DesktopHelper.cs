@@ -9,30 +9,25 @@ using Microsoft.Win32;
 
 namespace WinDynamicDesktop
 {
-    class UwpDesktop
+    class DesktopHelper
     {
         public static string GetCurrentDirectory()
         {
             return Path.GetDirectoryName(Application.ExecutablePath);
         }
     }
-
-    class StartupManager
+   
+    class DesktopStartupManager : IStartupManager
     {
         private bool startOnBoot;
         private string registryStartupLocation = @"Software\Microsoft\Windows\CurrentVersion\Run";
 
         private MenuItem menuItem;
 
-        public StartupManager(MenuItem startupMenuItem)
+        public DesktopStartupManager(MenuItem startupMenuItem)
         {
             menuItem = startupMenuItem;
 
-            CheckStatus();
-        }
-
-        private void CheckStatus()
-        {
             RegistryKey startupKey = Registry.CurrentUser.OpenSubKey(registryStartupLocation);
             startOnBoot = startupKey.GetValue("WinDynamicDesktop") != null;
             startupKey.Close();
@@ -40,7 +35,7 @@ namespace WinDynamicDesktop
             menuItem.Checked = startOnBoot;
         }
 
-        public void ToggleStartOnBoot()
+        public override void ToggleStartOnBoot()
         {
             RegistryKey startupKey = Registry.CurrentUser.OpenSubKey(registryStartupLocation, true);
 

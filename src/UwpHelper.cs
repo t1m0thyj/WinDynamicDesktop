@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace WinDynamicDesktop
 {
-    class UwpDesktop
+    class UwpHelper
     {
         public static string GetCurrentDirectory()
         {
@@ -15,13 +15,13 @@ namespace WinDynamicDesktop
         }
     }
 
-    class StartupManager
+    class UwpStartupManager : IStartupManager
     {
         private bool startOnBoot;
 
         private MenuItem menuItem;
 
-        public StartupManager(MenuItem startupMenuItem)
+        public UwpStartupManager(MenuItem startupMenuItem)
         {
             menuItem = startupMenuItem;
 
@@ -49,7 +49,7 @@ namespace WinDynamicDesktop
             }
         }
 
-        public async void ToggleStartOnBoot()
+        public override async void ToggleStartOnBoot()
         {
             var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync("WinDynamicDesktopUwp");
 

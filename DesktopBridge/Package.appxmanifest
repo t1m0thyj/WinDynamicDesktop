@@ -21,7 +21,7 @@
         <uap:SplashScreen Image="Images\SplashScreen.png" />
       </uap:VisualElements>
       <Extensions>
-        <desktop:Extension Category="windows.startupTask" Executable="WinDynamicDesktopUwp\WinDynamicDesktop.exe" EntryPoint="Windows.FullTrustApplication">
+        <desktop:Extension Category="windows.startupTask" Executable="WinDynamicDesktop\WinDynamicDesktop.exe" EntryPoint="Windows.FullTrustApplication">
           <desktop:StartupTask TaskId="WinDynamicDesktopUwp" Enabled="true" DisplayName="WinDynamicDesktop" />
         </desktop:Extension>
       </Extensions>
