@@ -15,7 +15,7 @@ namespace WinDynamicDesktop
         }
     }
 
-    class UwpStartupManager : IStartupManager
+    class UwpStartupManager : StartupManager
     {
         private bool startOnBoot;
 

@@ -17,7 +17,7 @@ namespace WinDynamicDesktop
         }
     }
    
-    class DesktopStartupManager : IStartupManager
+    class DesktopStartupManager : StartupManager
     {
         private bool startOnBoot;
         private string registryStartupLocation = @"Software\Microsoft\Windows\CurrentVersion\Run";

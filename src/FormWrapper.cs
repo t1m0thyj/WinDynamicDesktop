@@ -16,7 +16,7 @@ namespace WinDynamicDesktop
         private InputDialog locationDialog;
         private NotifyIcon notifyIcon;
 
-        public IStartupManager _startupManager;
+        public StartupManager _startupManager;
         public WallpaperChangeScheduler _wcsService;
 
         public FormWrapper()

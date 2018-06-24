@@ -8,7 +8,7 @@ using DesktopBridge;
 
 namespace WinDynamicDesktop
 {
-    abstract class IStartupManager
+    abstract class StartupManager
     {
         public abstract void ToggleStartOnBoot();
     }
@@ -34,7 +34,7 @@ namespace WinDynamicDesktop
             }
         }
 
-        public static IStartupManager GetStartupManager(MenuItem startupMenuItem)
+        public static StartupManager GetStartupManager(MenuItem startupMenuItem)
         {
             if (!IsRunningAsUwp())
             {
