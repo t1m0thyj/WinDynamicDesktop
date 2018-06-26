@@ -22,12 +22,8 @@ namespace WinDynamicDesktop
         private bool startOnBoot;
         private string registryStartupLocation = @"Software\Microsoft\Windows\CurrentVersion\Run";
 
-        private MenuItem menuItem;
-
-        public DesktopStartupManager(MenuItem startupMenuItem)
+        public DesktopStartupManager(MenuItem startupMenuItem) : base(startupMenuItem)
         {
-            menuItem = startupMenuItem;
-
             RegistryKey startupKey = Registry.CurrentUser.OpenSubKey(registryStartupLocation);
             startOnBoot = startupKey.GetValue("WinDynamicDesktop") != null;
             startupKey.Close();

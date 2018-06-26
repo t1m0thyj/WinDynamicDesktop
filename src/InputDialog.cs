@@ -51,7 +51,7 @@ namespace WinDynamicDesktop
                 _wcsService.StartScheduler(true);
 
                 MessageBox.Show("Location set successfully to: " + data.display_name +
-                    Environment.NewLine + "Latitude = " + data.lat + ", Longitude = " + data.lon,
+                    Environment.NewLine + "(Latitude = " + data.lat + ", Longitude = " + data.lon + ")",
                     "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 this.Close();

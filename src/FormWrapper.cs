@@ -100,6 +100,18 @@ namespace WinDynamicDesktop
                 Environment.Exit(1);
                 return;
             }
+            else
+            {
+                DialogResult result = MessageBox.Show("WinDynamicDesktop needs to download images for " +
+                    "the " + JsonConfig.imageSettings.themeName + " theme from " + imagesZipUri +
+                    Environment.NewLine + Environment.NewLine + "Do you want to continue?", "Setup",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (result != DialogResult.Yes)
+                {
+                    Environment.Exit(0);
+                }
+            }
 
             downloadDialog = new ProgressDialog();
             downloadDialog.FormClosed += OnDownloadDialogClosed;
@@ -131,7 +143,7 @@ namespace WinDynamicDesktop
                 }
                 else
                 {
-                    Application.Exit();
+                    Environment.Exit(0);
                 }
             }
             else if (JsonConfig.settings.location == null)

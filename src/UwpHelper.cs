@@ -19,16 +19,12 @@ namespace WinDynamicDesktop
     {
         private bool startOnBoot;
 
-        private MenuItem menuItem;
-
-        public UwpStartupManager(MenuItem startupMenuItem)
+        public UwpStartupManager(MenuItem startupMenuItem) : base(startupMenuItem)
         {
-            menuItem = startupMenuItem;
-
-            CheckStatus();
+            UpdateStatus();
         }
 
-        private async void CheckStatus()
+        private async void UpdateStatus()
         {
             var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync("WinDynamicDesktopUwp");
 

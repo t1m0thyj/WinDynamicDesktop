@@ -17,6 +17,7 @@ namespace WinDynamicDesktop
 
     public class ImagesConfig
     {
+        public string themeName { get; set; }
         public string imagesZipUri { get; set; }
         public string imageFilename { get; set; }
         public int[] dayImageList { get; set; }
@@ -38,6 +39,7 @@ namespace WinDynamicDesktop
             }
 
             string imagesConf;
+
             if (File.Exists("images.conf"))
             {
                 imagesConf = File.ReadAllText("images.conf");
@@ -46,6 +48,7 @@ namespace WinDynamicDesktop
             {
                 imagesConf = Encoding.UTF8.GetString(Properties.Resources.imagesConf);
             }
+
             imageSettings = JsonConvert.DeserializeObject<ImagesConfig>(imagesConf);
         }
 

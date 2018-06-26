@@ -9,7 +9,7 @@ The first time you run WinDynamicDesktop, it will automatically download the mac
 
 You will also need to input your location when running the program for the first time. This location is not used for any purpose other than to determine the times of sunrise and sunset where you live.
 
-After you enter your location, you can minimize the program to your system tray and it will run in the background. Right-clicking on the system tray icon opens a menu with options to update the location, start WinDynamicDesktop when Windows boots, or exit the program.
+After you enter your location, the program will minimize to your system tray and it will run in the background. Right-clicking on the system tray icon opens a menu with options to update the location, start WinDynamicDesktop when Windows boots, or exit the program.
 
 ## Why did you develop this?
 
@@ -19,6 +19,7 @@ When the Dynamic Desktop feature was announced for macOS Mojave which shifts thr
 
 Yes. By default WinDynamicDesktop uses the Mojave wallpapers, but if you create an `images.conf` file in the same folder as the EXE you can customize the images that are used. The default `images.conf` can be found [here](src/images.conf). It is formatted in JSON and must contain the following values:
 
+* `themeName` - String which is the name of the wallpaper theme shown in the user interface
 * `imagesZipUri` - String containing URL to download images.zip file from, or *null* if the content in the images subfolder is provided by the user
 * `imageFilename` - String containing the filename of each wallpaper image, with `{0}` substituted for the image number
 * `dayImageList` - Array of numbers listing the image numbers to display throughout the day (between sunrise and sunset)

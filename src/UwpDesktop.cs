@@ -10,12 +10,19 @@ namespace WinDynamicDesktop
 {
     abstract class StartupManager
     {
+        public MenuItem menuItem;
+
+        public StartupManager(MenuItem startupMenuItem)
+        {
+            menuItem = startupMenuItem;
+        }
+
         public abstract void ToggleStartOnBoot();
     }
 
     class UwpDesktop
     {
-        private static bool IsRunningAsUwp()
+        public static bool IsRunningAsUwp()
         {
             Helpers helpers = new Helpers();
 
