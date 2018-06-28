@@ -141,7 +141,7 @@ namespace WinDynamicDesktop
             RegistryKey myKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", true);
             if (myKey != null)
             {
-                myKey.SetValue("AppsUseLightTheme", "1", RegistryValueKind.String);
+                myKey.SetValue("AppsUseLightTheme", "1", RegistryValueKind.DWord);
                 myKey.Close();
             }
 
@@ -196,7 +196,7 @@ namespace WinDynamicDesktop
             RegistryKey myKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", true);
             if (myKey != null)
             {
-                myKey.SetValue("AppsUseLightTheme", "0", RegistryValueKind.String);
+                myKey.SetValue("AppsUseLightTheme", "0", RegistryValueKind.DWord);
                 myKey.Close();
             }
 
