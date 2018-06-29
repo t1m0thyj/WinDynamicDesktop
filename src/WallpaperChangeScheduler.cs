@@ -139,11 +139,13 @@ namespace WinDynamicDesktop
         {
 
             RegistryKey myKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", true);
-            if (myKey != null)
-            {
-                myKey.SetValue("AppsUseLightTheme", "1", RegistryValueKind.DWord);
-                myKey.Close();
-            }
+
+            myKey.SetValue("AppsUseLightTheme", "1", RegistryValueKind.DWord);
+            myKey.Close();
+
+            myKey = Registry.CurrentUser.OpenSubKey(@"Software\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\microsoft.microsoftedge_8wekyb3d8bbwe\MicrosoftEdge\Main", true);
+            myKey.SetValue("Theme", "0", RegistryValueKind.DWord);
+            myKey.Close();
 
             isSunUp = true;
 
@@ -194,11 +196,12 @@ namespace WinDynamicDesktop
         {
 
             RegistryKey myKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", true);
-            if (myKey != null)
-            {
                 myKey.SetValue("AppsUseLightTheme", "0", RegistryValueKind.DWord);
                 myKey.Close();
-            }
+
+            myKey = Registry.CurrentUser.OpenSubKey(@"Software\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\microsoft.microsoftedge_8wekyb3d8bbwe\MicrosoftEdge\Main", true);
+            myKey.SetValue("Theme", "1", RegistryValueKind.DWord);
+            myKey.Close();
 
             isSunUp = false;
 
