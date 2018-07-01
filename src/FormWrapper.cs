@@ -92,13 +92,11 @@ namespace WinDynamicDesktop
         public void DownloadImages()
         {
             string imagesZipUri = JsonConfig.imageSettings.imagesZipUri;
+            bool imagesNotFound = false;
 
             if (imagesZipUri == null)
             {
-                MessageBox.Show("Images folder not found. The program will quit now.", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Environment.Exit(1);
-                return;
+                imagesNotFound = true;
             }
             else
             {
@@ -109,21 +107,31 @@ namespace WinDynamicDesktop
 
                 if (result != DialogResult.Yes)
                 {
-                    Environment.Exit(0);
+                    imagesNotFound = true;
                 }
+            }
+
+            if (imagesNotFound)
+            {
+                MessageBox.Show("Images folder not found. The program will quit now.", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Environment.Exit(1);
             }
 
             downloadDialog = new ProgressDialog();
             downloadDialog.FormClosed += OnDownloadDialogClosed;
             downloadDialog.Show();
-
-            notifyIcon.ContextMenu.MenuItems[2].Enabled = false;
-
+            
             using (WebClient client = new WebClient())
             {
                 client.DownloadProgressChanged += downloadDialog.OnDownloadProgressChanged;
                 client.DownloadFileCompleted += downloadDialog.OnDownloadFileCompleted;
                 client.DownloadFileAsync(new Uri(imagesZipUri), "images.zip");
+            }
+
+            if (JsonConfig.settings.location == null)
+            {
+                UpdateLocation();
             }
         }
 
@@ -146,11 +154,17 @@ namespace WinDynamicDesktop
                     Environment.Exit(0);
                 }
             }
-            else if (JsonConfig.settings.location == null)
+            else
             {
-                notifyIcon.ContextMenu.MenuItems[2].Enabled = true;
+                if (JsonConfig.settings.location != null)
+                {
+                    _wcsService.StartScheduler(true);
+                }
 
-                UpdateLocation();
+                if (JsonConfig.firstRun && locationDialog == null)
+                {
+                    BackgroundNotify();
+                }
             }
         }
 
@@ -172,14 +186,19 @@ namespace WinDynamicDesktop
         {
             locationDialog = null;
 
-            if (JsonConfig.firstRun)
+            if (JsonConfig.firstRun && downloadDialog == null)
             {
-                notifyIcon.BalloonTipText = "The app is still running in the background. " +
-                    "You can access it at any time by right-clicking on this icon.";
-                notifyIcon.ShowBalloonTip(10000);
-
-                JsonConfig.firstRun = false;    // Don't show this message again
+                BackgroundNotify();
             }
+        }
+
+        private void BackgroundNotify()
+        {
+            notifyIcon.BalloonTipText = "The app is still running in the background. " +
+                "You can access it at any time by right-clicking on this icon.";
+            notifyIcon.ShowBalloonTip(10000);
+
+            JsonConfig.firstRun = false;    // Don't show this message again
         }
 
         private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)

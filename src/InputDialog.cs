@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 namespace WinDynamicDesktop
 {
@@ -48,7 +49,10 @@ namespace WinDynamicDesktop
                 JsonConfig.settings.longitude = data.lon;
                 JsonConfig.SaveConfig();
 
-                _wcsService.StartScheduler(true);
+                if (Directory.Exists("images"))
+                {
+                    _wcsService.StartScheduler(true);
+                }
 
                 MessageBox.Show("Location set successfully to: " + data.display_name +
                     Environment.NewLine + "(Latitude = " + data.lat + ", Longitude = " + data.lon + ")",
@@ -59,7 +63,7 @@ namespace WinDynamicDesktop
             else
             {
                 MessageBox.Show("The location you entered was invalid, or you are not connected to " +
-                    "the Internet", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    "the Internet.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
             okButton.Enabled = true;

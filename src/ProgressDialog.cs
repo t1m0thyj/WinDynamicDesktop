@@ -23,9 +23,9 @@ namespace WinDynamicDesktop
             progressBar1.Value = e.ProgressPercentage;
         }
 
-        public void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+        public async void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
-            ZipFile.ExtractToDirectory("images.zip", "images");
+            await Task.Run(() => ZipFile.ExtractToDirectory("images.zip", "images"));
             File.Delete("images.zip");
 
             this.Close();
