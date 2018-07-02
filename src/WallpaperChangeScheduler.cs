@@ -28,8 +28,16 @@ namespace WinDynamicDesktop
 
         public WallpaperChangeScheduler()
         {
-            dayImages = JsonConfig.imageSettings.dayImageList;
             nightImages = JsonConfig.imageSettings.nightImageList;
+
+            if (!JsonConfig.settings.darkMode)
+            {
+                dayImages = JsonConfig.imageSettings.dayImageList;
+            }
+            else
+            {
+                dayImages = nightImages;
+            }
 
             wallpaperTimer.Tick += new EventHandler(OnWallpaperTimerTick);
         }
@@ -224,6 +232,21 @@ namespace WinDynamicDesktop
             lastImageNumber = -1;
 
             StartDaySchedule();
+        }
+
+        public void ToggleDarkMode()
+        {
+            if (!JsonConfig.settings.darkMode)
+            {
+                dayImages = nightImages;
+            }
+            else
+            {
+                dayImages = JsonConfig.imageSettings.dayImageList;
+            }
+
+            StartScheduler();
+            JsonConfig.settings.darkMode ^= true;
         }
 
         private void OnWallpaperTimerTick(object sender, EventArgs e)

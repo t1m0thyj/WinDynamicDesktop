@@ -8,11 +8,13 @@ using Newtonsoft.Json;
 
 namespace WinDynamicDesktop
 {
-    public class LocationConfig
+    public class AppConfig
     {
         public string location { get; set; }
         public string latitude { get; set; }
         public string longitude { get; set; }
+        public bool darkMode { get; set; }
+        public bool hideTrayIcon { get; set; }
     }
 
     public class ImagesConfig
@@ -26,7 +28,7 @@ namespace WinDynamicDesktop
 
     class JsonConfig
     {
-        public static LocationConfig settings = new LocationConfig();
+        public static AppConfig settings = new AppConfig();
         public static ImagesConfig imageSettings = new ImagesConfig();
         public static bool firstRun = !File.Exists("settings.conf");
 
@@ -34,7 +36,7 @@ namespace WinDynamicDesktop
         {
             if (!firstRun)
             {
-                settings = JsonConvert.DeserializeObject<LocationConfig>(
+                settings = JsonConvert.DeserializeObject<AppConfig>(
                     File.ReadAllText("settings.conf"));
             }
 

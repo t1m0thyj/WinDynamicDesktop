@@ -28,7 +28,7 @@ namespace WinDynamicDesktop
             _wcsService = new WallpaperChangeScheduler();
 
             InitializeComponent();
-            _startupManager = UwpDesktop.GetStartupManager(notifyIcon.ContextMenu.MenuItems[5]);
+            _startupManager = UwpDesktop.GetStartupManager(notifyIcon.ContextMenu.MenuItems[6]);
 
             if (!Directory.Exists("images"))
             {
@@ -48,7 +48,7 @@ namespace WinDynamicDesktop
         {
             notifyIcon = new NotifyIcon
             {
-                Visible = true,
+                Visible = !JsonConfig.settings.hideTrayIcon,
                 Icon = Properties.Resources.AppIcon,
                 Text = "WinDynamicDesktop",
                 BalloonTipTitle = "WinDynamicDesktop"
@@ -61,11 +61,14 @@ namespace WinDynamicDesktop
                 new MenuItem("&Update Location...", OnLocationItemClick),
                 new MenuItem("&Refresh Wallpaper", OnRefreshItemClick),
                 new MenuItem("-"),
+                new MenuItem("&Dark Mode", OnDarkItemClick),
                 new MenuItem("&Start on Boot", OnStartupItemClick),
                 new MenuItem("-"),
                 new MenuItem("E&xit", OnExitItemClick)
             });
+
             notifyIcon.ContextMenu.MenuItems[0].Enabled = false;
+            notifyIcon.ContextMenu.MenuItems[5].Checked = JsonConfig.settings.darkMode;
         }
 
         private void OnLocationItemClick(object sender, EventArgs e)
@@ -76,6 +79,11 @@ namespace WinDynamicDesktop
         private void OnRefreshItemClick(object sender, EventArgs e)
         {
             _wcsService.StartScheduler(true);
+        }
+
+        private void OnDarkItemClick(object sender, EventArgs e)
+        {
+            ToggleDarkMode();
         }
         
         private void OnStartupItemClick(object sender, EventArgs e)
@@ -190,6 +198,14 @@ namespace WinDynamicDesktop
             {
                 BackgroundNotify();
             }
+        }
+
+        private void ToggleDarkMode()
+        {
+            _wcsService.ToggleDarkMode();
+            notifyIcon.ContextMenu.MenuItems[5].Checked = JsonConfig.settings.darkMode;
+
+            JsonConfig.SaveConfig();
         }
 
         private void BackgroundNotify()
