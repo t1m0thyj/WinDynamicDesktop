@@ -1,4 +1,5 @@
-﻿using System;
+using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -140,6 +141,16 @@ namespace WinDynamicDesktop
 
         private void StartDaySchedule()
         {
+
+            RegistryKey myKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", true);
+
+            myKey.SetValue("AppsUseLightTheme", "1", RegistryValueKind.DWord);
+            myKey.Close();
+
+            myKey = Registry.CurrentUser.OpenSubKey(@"Software\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\microsoft.microsoftedge_8wekyb3d8bbwe\MicrosoftEdge\Main", true);
+            myKey.SetValue("Theme", "0", RegistryValueKind.DWord);
+            myKey.Close();
+
             isSunUp = true;
 
             TimeSpan dayTime = todaysData.SunsetTime - todaysData.SunriseTime;
@@ -181,6 +192,15 @@ namespace WinDynamicDesktop
 
         private void StartNightSchedule()
         {
+
+            RegistryKey myKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", true);
+                myKey.SetValue("AppsUseLightTheme", "0", RegistryValueKind.DWord);
+                myKey.Close();
+
+            myKey = Registry.CurrentUser.OpenSubKey(@"Software\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\microsoft.microsoftedge_8wekyb3d8bbwe\MicrosoftEdge\Main", true);
+            myKey.SetValue("Theme", "1", RegistryValueKind.DWord);
+            myKey.Close();
+
             isSunUp = false;
 
             WeatherData day1Data = (yesterdaysData == null) ? todaysData : yesterdaysData;
