@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Net;
+using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
 
@@ -12,6 +13,7 @@ namespace WinDynamicDesktop
 {
     class FormWrapper : ApplicationContext
     {
+        private Mutex _mutex;
         private ProgressDialog downloadDialog;
         private InputDialog locationDialog;
         private NotifyIcon notifyIcon;
@@ -22,6 +24,7 @@ namespace WinDynamicDesktop
         public FormWrapper()
         {
             Application.ApplicationExit += new EventHandler(OnApplicationExit);
+            EnforceSingleInstance();
             SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(OnPowerModeChanged);
 
             JsonConfig.LoadConfig();
@@ -41,6 +44,22 @@ namespace WinDynamicDesktop
             else
             {
                 _wcsService.StartScheduler();
+            }
+        }
+
+        private void EnforceSingleInstance()
+        {
+            bool isNewInstance;
+            _mutex = new Mutex(true, @"Global\WinDynamicDesktop", out isNewInstance);
+
+            GC.KeepAlive(_mutex);
+
+            if (!isNewInstance)
+            {
+                MessageBox.Show("Another instance of WinDynamicDesktop is already running.", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                Environment.Exit(0);
             }
         }
 
@@ -122,8 +141,9 @@ namespace WinDynamicDesktop
             if (imagesNotFound)
             {
                 MessageBox.Show("Images folder not found. The program will quit now.", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Environment.Exit(1);
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                Environment.Exit(0);
             }
 
             downloadDialog = new ProgressDialog();
