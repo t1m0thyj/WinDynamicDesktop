@@ -13,17 +13,13 @@ namespace WinDynamicDesktop
     {
         private int[] dayImages;
         private int[] nightImages;
-
-        private bool isSunUp;
         private string lastDate = "yyyy-MM-dd";
         private int lastImageId = -1;
-        private int lastImageNumber = -1;
 
         private WeatherData yesterdaysData;
         private WeatherData todaysData;
         private WeatherData tomorrowsData;
 
-        public bool enableTransitions = true;
         public Timer wallpaperTimer = new Timer();
 
         public WallpaperChangeScheduler()
@@ -82,17 +78,13 @@ namespace WinDynamicDesktop
             string imageFilename = String.Format(JsonConfig.imageSettings.imageFilename, imageId);
             string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "images", imageFilename);
 
-            if (enableTransitions)
-            {
-                WallpaperChanger.EnableTransitions();
-            }
-
+            WallpaperChanger.EnableTransitions();
             WallpaperChanger.SetWallpaper(imagePath);
 
             lastImageId = imageId;
         }
 
-        public void StartScheduler(bool forceRefresh = false)
+        public void RunScheduler(bool forceRefresh = false)
         {
             if (wallpaperTimer != null)
             {
@@ -100,8 +92,9 @@ namespace WinDynamicDesktop
             }
 
             string currentDate = GetDateString();
+            bool shouldRefresh = currentDate != lastDate || forceRefresh;
 
-            if (currentDate != lastDate || forceRefresh)
+            if (shouldRefresh)
             {
                 todaysData = GetWeatherData(currentDate);
                 lastDate = currentDate;
@@ -110,14 +103,22 @@ namespace WinDynamicDesktop
             if (DateTime.Now < todaysData.SunriseTime)
             {
                 // Before sunrise
-                yesterdaysData = GetWeatherData(GetDateString(-1));
+                if (shouldRefresh || yesterdaysData == null)
+                {
+                    yesterdaysData = GetWeatherData(GetDateString(-1));
+                }
+
                 tomorrowsData = null;
             }
             else if (DateTime.Now > todaysData.SunsetTime)
             {
                 // After sunset
                 yesterdaysData = null;
-                tomorrowsData = GetWeatherData(GetDateString(1));
+
+                if (shouldRefresh || tomorrowsData == null)
+                {
+                    tomorrowsData = GetWeatherData(GetDateString(1));
+                }
             }
             else
             {
@@ -130,18 +131,16 @@ namespace WinDynamicDesktop
 
             if (yesterdaysData == null && tomorrowsData == null)
             {
-                StartDaySchedule();
+                UpdateDayImage();
             }
             else
             {
-                StartNightSchedule();
+                UpdateNightImage();
             }
         }
 
-        private void StartDaySchedule()
+        private void UpdateDayImage()
         {
-            isSunUp = true;
-
             TimeSpan dayTime = todaysData.SunsetTime - todaysData.SunriseTime;
             TimeSpan timerLength = new TimeSpan(dayTime.Ticks / dayImages.Length);
             int imageNumber = GetImageNumber(todaysData.SunriseTime, timerLength);
@@ -152,37 +151,11 @@ namespace WinDynamicDesktop
             if (dayImages[imageNumber] != lastImageId)
             {
                 SetWallpaper(dayImages[imageNumber]);
-                lastImageNumber = imageNumber;
             }
         }
 
-        private void NextDayImage()
+        private void UpdateNightImage()
         {
-            if (lastImageNumber == dayImages.Length - 1)
-            {
-                SwitchToNight();
-                return;
-            }
-
-            TimeSpan dayTime = todaysData.SunsetTime - todaysData.SunriseTime;
-            StartTimer(dayTime.Ticks / dayImages.Length);
-
-            lastImageNumber++;
-            SetWallpaper(dayImages[lastImageNumber]);
-        }
-
-        private void SwitchToNight()
-        {
-            tomorrowsData = GetWeatherData(GetDateString(1));
-            lastImageNumber = -1;
-
-            StartNightSchedule();
-        }
-
-        private void StartNightSchedule()
-        {
-            isSunUp = false;
-
             WeatherData day1Data = (yesterdaysData == null) ? todaysData : yesterdaysData;
             WeatherData day2Data = (yesterdaysData == null) ? tomorrowsData : todaysData;
 
@@ -196,42 +169,7 @@ namespace WinDynamicDesktop
             if (nightImages[imageNumber] != lastImageId)
             {
                 SetWallpaper(nightImages[imageNumber]);
-                lastImageNumber = imageNumber;
             }
-        }
-
-        private void NextNightImage()
-        {
-            if (lastImageNumber == nightImages.Length - 1)
-            {
-                SwitchToDay();
-                return;
-            }
-
-            WeatherData day1Data = (yesterdaysData == null) ? todaysData : yesterdaysData;
-            WeatherData day2Data = (yesterdaysData == null) ? tomorrowsData : todaysData;
-
-            TimeSpan nightTime = day2Data.SunriseTime - day1Data.SunsetTime;
-            StartTimer(nightTime.Ticks / nightImages.Length);
-
-            lastImageNumber++;
-            SetWallpaper(nightImages[lastImageNumber]);
-
-            if (DateTime.Now.Hour >= 0 && DateTime.Now.Hour < 12 && tomorrowsData != null)
-            {
-                yesterdaysData = todaysData;
-                todaysData = tomorrowsData;
-                tomorrowsData = null;
-                lastDate = GetDateString();
-            }
-        }
-
-        private void SwitchToDay()
-        {
-            yesterdaysData = null;
-            lastImageNumber = -1;
-
-            StartDaySchedule();
         }
 
         public void ToggleDarkMode()
@@ -245,7 +183,7 @@ namespace WinDynamicDesktop
                 dayImages = JsonConfig.imageSettings.dayImageList;
             }
 
-            StartScheduler();
+            RunScheduler();
             JsonConfig.settings.darkMode ^= true;
         }
 
@@ -253,14 +191,7 @@ namespace WinDynamicDesktop
         {
             wallpaperTimer.Stop();
 
-            if (isSunUp)
-            {
-                NextDayImage();
-            }
-            else
-            {
-                NextNightImage();
-            }
+            RunScheduler();
         }
     }
 }

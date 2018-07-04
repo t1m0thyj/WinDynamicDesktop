@@ -7,7 +7,6 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
-using Microsoft.Win32;
 
 namespace WinDynamicDesktop
 {
@@ -25,8 +24,7 @@ namespace WinDynamicDesktop
         {
             Application.ApplicationExit += new EventHandler(OnApplicationExit);
             EnforceSingleInstance();
-            SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(OnPowerModeChanged);
-
+            
             JsonConfig.LoadConfig();
             _wcsService = new WallpaperChangeScheduler();
 
@@ -43,7 +41,7 @@ namespace WinDynamicDesktop
             }
             else
             {
-                _wcsService.StartScheduler();
+                _wcsService.RunScheduler();
             }
         }
 
@@ -97,7 +95,7 @@ namespace WinDynamicDesktop
 
         private void OnRefreshItemClick(object sender, EventArgs e)
         {
-            _wcsService.StartScheduler(true);
+            _wcsService.RunScheduler(true);
         }
 
         private void OnDarkItemClick(object sender, EventArgs e)
@@ -186,7 +184,7 @@ namespace WinDynamicDesktop
             {
                 if (JsonConfig.settings.location != null)
                 {
-                    _wcsService.StartScheduler(true);
+                    _wcsService.RunScheduler();
                 }
 
                 if (JsonConfig.firstRun && locationDialog == null)
@@ -235,28 +233,6 @@ namespace WinDynamicDesktop
             notifyIcon.ShowBalloonTip(10000);
 
             JsonConfig.firstRun = false;    // Don't show this message again
-        }
-
-        private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
-        {
-            if (e.Mode == PowerModes.Suspend)
-            {
-                if (_wcsService.wallpaperTimer != null)
-                {
-                    _wcsService.wallpaperTimer.Stop();
-                }
-
-                _wcsService.enableTransitions = false;
-            }
-            else if (e.Mode == PowerModes.Resume)
-            {
-                if (JsonConfig.settings.location != null)
-                {
-                    _wcsService.StartScheduler();
-                }
-
-                _wcsService.enableTransitions = true;
-            }
         }
 
         private void OnApplicationExit(object sender, EventArgs e)

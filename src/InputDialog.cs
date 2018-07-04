@@ -51,7 +51,7 @@ namespace WinDynamicDesktop
 
                 if (Directory.Exists("images"))
                 {
-                    _wcsService.StartScheduler(true);
+                    _wcsService.RunScheduler(true);
                 }
 
                 MessageBox.Show("Location set successfully to: " + data.display_name +
