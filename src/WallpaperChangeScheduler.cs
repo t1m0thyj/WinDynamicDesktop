@@ -189,8 +189,6 @@ namespace WinDynamicDesktop
 
         private void OnWallpaperTimerTick(object sender, EventArgs e)
         {
-            wallpaperTimer.Stop();
-
             RunScheduler();
         }
     }

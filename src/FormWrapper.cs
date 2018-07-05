@@ -117,26 +117,8 @@ namespace WinDynamicDesktop
         public void DownloadImages()
         {
             string imagesZipUri = JsonConfig.imageSettings.imagesZipUri;
-            bool imagesNotFound = false;
 
             if (imagesZipUri == null)
-            {
-                imagesNotFound = true;
-            }
-            else
-            {
-                DialogResult result = MessageBox.Show("WinDynamicDesktop needs to download images for " +
-                    "the " + JsonConfig.imageSettings.themeName + " theme from " + imagesZipUri +
-                    Environment.NewLine + Environment.NewLine + "Do you want to continue?", "Setup",
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-                if (result != DialogResult.Yes)
-                {
-                    imagesNotFound = true;
-                }
-            }
-
-            if (imagesNotFound)
             {
                 MessageBox.Show("Images folder not found. The program will quit now.", "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -147,7 +129,7 @@ namespace WinDynamicDesktop
             downloadDialog = new ProgressDialog();
             downloadDialog.FormClosed += OnDownloadDialogClosed;
             downloadDialog.Show();
-            
+
             using (WebClient client = new WebClient())
             {
                 client.DownloadProgressChanged += downloadDialog.OnDownloadProgressChanged;

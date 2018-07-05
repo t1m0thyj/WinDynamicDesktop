@@ -9,7 +9,9 @@ The first time you run WinDynamicDesktop, it will automatically download the mac
 
 You will also need to input your location when running the program for the first time. This location is not used for any purpose other than to determine the times of sunrise and sunset where you live.
 
-After you enter your location, the program will minimize to your system tray and it will run in the background. Right-clicking on the system tray icon opens a menu with options to update the location, start WinDynamicDesktop when Windows boots, or exit the program.
+After you enter your location, the program will minimize to your system tray and it will run in the background. Right-clicking on the system tray icon opens a menu with options to update the location, refresh the wallpaper manually if necessary, or exit the program. You can also enable dark mode or choose to start WinDynamicDesktop when Windows boots from this menu.
+
+If you want to run the app silently with no icon in the system tray, you can do this by editing the `settings.conf` file which is in the same folder as the EXE. Change the setting `"hideTrayIcon":false` to `"hideTrayIcon":true` (or add it if it doesn't exist), then restart the app.
 
 ## Why did you develop this?
 
