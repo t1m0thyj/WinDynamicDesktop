@@ -1,6 +1,7 @@
 # WinDynamicDesktop
 Port of macOS Mojave Dynamic Desktop feature to Windows 10
 
+[![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/t1m0thyj/WinDynamicDesktop)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=H8ZZXM9ABRJFU)
 
 ## How do I use this?
