@@ -81,6 +81,8 @@ namespace WinDynamicDesktop
                 new MenuItem("&Dark Mode", OnDarkItemClick),
                 new MenuItem("&Start on Boot", OnStartupItemClick),
                 new MenuItem("-"),
+                new MenuItem("&About", OnAboutItemClick),
+                new MenuItem("-"),
                 new MenuItem("E&xit", OnExitItemClick)
             });
 
@@ -106,6 +108,11 @@ namespace WinDynamicDesktop
         private void OnStartupItemClick(object sender, EventArgs e)
         {
             _startupManager.ToggleStartOnBoot();
+        }
+
+        private void OnAboutItemClick(object sender, EventArgs e)
+        {
+            AboutDialog.Show();
         }
 
         private void OnExitItemClick(object sender, EventArgs e)
