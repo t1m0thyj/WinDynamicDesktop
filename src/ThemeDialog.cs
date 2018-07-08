@@ -14,9 +14,18 @@ namespace WinDynamicDesktop
 {
     public partial class ThemeDialog : Form
     {
+        private string themesLink = "https://t1m0thyj.github.io/windynamicdesktop-themes/";
+
         public ThemeDialog()
         {
             InitializeComponent();
+
+            this.FormClosing += OnFormClosing;
+        }
+
+        private void themesLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(themesLink);
         }
 
         private async void importButton_Click(object sender, EventArgs e)
@@ -33,6 +42,25 @@ namespace WinDynamicDesktop
         private void exitButton_Click(object sender, EventArgs e)
         {
             Environment.Exit(0);
+        }
+
+        private void OnFormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (!Directory.Exists("images"))
+            {
+                DialogResult result = MessageBox.Show("This app cannot display wallpapers until you " +
+                    "have downloaded images for it to use. Are you sure you want to cancel and quit the " +
+                    "program?", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                if (result == DialogResult.Yes)
+                {
+                    Environment.Exit(0);
+                }
+                else
+                {
+                    e.Cancel = true;
+                }
+            }
         }
     }
 }

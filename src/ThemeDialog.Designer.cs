@@ -28,29 +28,29 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.importButton = new System.Windows.Forms.Button();
+            this.selectFileButton = new System.Windows.Forms.Button();
             this.exitButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.themesLinkLabel = new System.Windows.Forms.LinkLabel();
             this.label2 = new System.Windows.Forms.Label();
             this.fileDialog = new System.Windows.Forms.OpenFileDialog();
             this.SuspendLayout();
             // 
-            // importButton
+            // selectFileButton
             // 
-            this.importButton.Location = new System.Drawing.Point(101, 210);
-            this.importButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.importButton.Name = "importButton";
-            this.importButton.Size = new System.Drawing.Size(126, 26);
-            this.importButton.TabIndex = 0;
-            this.importButton.Text = "Import from file";
-            this.importButton.UseVisualStyleBackColor = true;
-            this.importButton.Click += new System.EventHandler(this.importButton_Click);
+            this.selectFileButton.Location = new System.Drawing.Point(35, 160);
+            this.selectFileButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.selectFileButton.Name = "selectFileButton";
+            this.selectFileButton.Size = new System.Drawing.Size(150, 26);
+            this.selectFileButton.TabIndex = 0;
+            this.selectFileButton.Text = "Select File...";
+            this.selectFileButton.UseVisualStyleBackColor = true;
+            this.selectFileButton.Click += new System.EventHandler(this.importButton_Click);
             // 
             // exitButton
             // 
             this.exitButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.exitButton.Location = new System.Drawing.Point(294, 210);
+            this.exitButton.Location = new System.Drawing.Point(217, 160);
             this.exitButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.exitButton.Name = "exitButton";
             this.exitButton.Size = new System.Drawing.Size(75, 26);
@@ -62,32 +62,33 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 16);
+            this.label1.Location = new System.Drawing.Point(10, 15);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(356, 60);
+            this.label1.Size = new System.Drawing.Size(377, 40);
             this.label1.TabIndex = 2;
-            this.label1.Text = "WinDynamicDesktop needs wallpaper images for\r\nthe Mojave Default theme. Click on " +
-    "the link below to\r\ndownload them.";
+            this.label1.Text = "WinDynamicDesktop needs wallpaper images for the\r\nMojave Default theme. Click the" +
+    " link to download them:";
             // 
-            // linkLabel1
+            // themesLinkLabel
             // 
-            this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(65, 99);
-            this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(375, 20);
-            this.linkLabel1.TabIndex = 3;
-            this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "https://t1m0thyj.github.io/windynamicdesktop-themes/";
+            this.themesLinkLabel.AutoSize = true;
+            this.themesLinkLabel.Location = new System.Drawing.Point(13, 70);
+            this.themesLinkLabel.Name = "themesLinkLabel";
+            this.themesLinkLabel.Size = new System.Drawing.Size(375, 20);
+            this.themesLinkLabel.TabIndex = 3;
+            this.themesLinkLabel.TabStop = true;
+            this.themesLinkLabel.Text = "https://t1m0thyj.github.io/windynamicdesktop-themes/";
+            this.themesLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.themesLinkLabel_LinkClicked);
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(13, 146);
+            this.label2.Location = new System.Drawing.Point(10, 105);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(417, 40);
+            this.label2.Size = new System.Drawing.Size(369, 40);
             this.label2.TabIndex = 4;
-            this.label2.Text = "After the images finish downloading, click on Import from file\r\nand select the lo" +
-    "cation of the ZIP file.";
+            this.label2.Text = "After the images finish downloading, click \"Select File\"\r\nand choose the location" +
+    " of the ZIP file.";
             // 
             // fileDialog
             // 
@@ -98,22 +99,23 @@
             // 
             // ThemeDialog
             // 
-            this.AcceptButton = this.importButton;
+            this.AcceptButton = this.selectFileButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.exitButton;
-            this.ClientSize = new System.Drawing.Size(486, 253);
+            this.ClientSize = new System.Drawing.Size(332, 203);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.linkLabel1);
+            this.Controls.Add(this.themesLinkLabel);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.exitButton);
-            this.Controls.Add(this.importButton);
+            this.Controls.Add(this.selectFileButton);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = global::WinDynamicDesktop.Properties.Resources.AppIcon;
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ThemeDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Welcome to WinDynamicDesktop";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -122,10 +124,10 @@
 
         #endregion
 
-        private System.Windows.Forms.Button importButton;
+        private System.Windows.Forms.Button selectFileButton;
         private System.Windows.Forms.Button exitButton;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.LinkLabel themesLinkLabel;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.OpenFileDialog fileDialog;
     }

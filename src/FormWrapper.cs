@@ -123,6 +123,12 @@ namespace WinDynamicDesktop
 
         public void DownloadImages()
         {
+            if (UwpDesktop.IsRunningAsUwp())
+            {
+                UwpHelper.DownloadImages(this);
+                return;
+            }
+
             string imagesZipUri = JsonConfig.imageSettings.imagesZipUri;
 
             if (imagesZipUri == null)
@@ -150,11 +156,27 @@ namespace WinDynamicDesktop
             }
         }
 
-        private void OnDownloadDialogClosed(object sender, EventArgs e)
+        public void OnDownloadDialogClosed(object sender, EventArgs e)
         {
             downloadDialog = null;
 
-            if (!Directory.Exists("images"))
+            if (Directory.Exists("images"))
+            {
+                if (JsonConfig.settings.location != null)
+                {
+                    _wcsService.RunScheduler();
+
+                    if (JsonConfig.firstRun && locationDialog == null)
+                    {
+                        BackgroundNotify();
+                    }
+                }
+                else if (UwpDesktop.IsRunningAsUwp())
+                {
+                    UpdateLocation();
+                }
+            }
+            else if (!UwpDesktop.IsRunningAsUwp())
             {
                 DialogResult result = MessageBox.Show("Failed to download images. Click Retry to " +
                     "try again or Cancel to exit the program.", "Error", MessageBoxButtons.RetryCancel,
@@ -167,18 +189,6 @@ namespace WinDynamicDesktop
                 else
                 {
                     Environment.Exit(0);
-                }
-            }
-            else
-            {
-                if (JsonConfig.settings.location != null)
-                {
-                    _wcsService.RunScheduler();
-                }
-
-                if (JsonConfig.firstRun && locationDialog == null)
-                {
-                    BackgroundNotify();
                 }
             }
         }
