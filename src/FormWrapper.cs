@@ -78,8 +78,8 @@ namespace WinDynamicDesktop
                 new MenuItem("&Update Location...", OnLocationItemClick),
                 new MenuItem("&Refresh Wallpaper", OnRefreshItemClick),
                 new MenuItem("-"),
-                new MenuItem("&Dark Mode", OnDarkItemClick),
-                new MenuItem("&Start on Boot", OnStartupItemClick),
+                new MenuItem("&Dark Mode", OnDarkModeClick),
+                new MenuItem("&Start on Boot", OnStartOnBootClick),
                 new MenuItem("-"),
                 new MenuItem("&About", OnAboutItemClick),
                 new MenuItem("-"),
@@ -88,6 +88,12 @@ namespace WinDynamicDesktop
 
             notifyIcon.ContextMenu.MenuItems[0].Enabled = false;
             notifyIcon.ContextMenu.MenuItems[5].Checked = JsonConfig.settings.darkMode;
+
+            if (!UwpDesktop.IsRunningAsUwp())
+            {
+                notifyIcon.ContextMenu.MenuItems.Add(8, new MenuItem("&Check for Updates...",
+                    OnUpdateItemClick));
+            }
         }
 
         private void OnLocationItemClick(object sender, EventArgs e)
@@ -100,14 +106,19 @@ namespace WinDynamicDesktop
             _wcsService.RunScheduler(true);
         }
 
-        private void OnDarkItemClick(object sender, EventArgs e)
+        private void OnDarkModeClick(object sender, EventArgs e)
         {
             ToggleDarkMode();
         }
         
-        private void OnStartupItemClick(object sender, EventArgs e)
+        private void OnStartOnBootClick(object sender, EventArgs e)
         {
             _startupManager.ToggleStartOnBoot();
+        }
+
+        private void OnUpdateItemClick(object sender, EventArgs e)
+        {
+            UpdateChecker.CheckManual();
         }
 
         private void OnAboutItemClick(object sender, EventArgs e)
