@@ -13,13 +13,6 @@ namespace WinDynamicDesktop
         {
             return Windows.Storage.ApplicationData.Current.LocalFolder.Path;
         }
-
-        public static void DownloadImages(FormWrapper _formWrapper)
-        {
-            ThemeDialog dialog = new ThemeDialog();
-            dialog.FormClosed += _formWrapper.OnDownloadDialogClosed;
-            dialog.Show();
-        }
     }
 
     class UwpStartupManager : StartupManager

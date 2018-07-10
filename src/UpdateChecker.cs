@@ -78,6 +78,11 @@ namespace WinDynamicDesktop
                     System.Diagnostics.Process.Start(updateLink);
                 }
             }
+            else
+            {
+                MessageBox.Show("You already have the latest version of WinDynamicDesktop installed.",
+                    "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
     }
 }

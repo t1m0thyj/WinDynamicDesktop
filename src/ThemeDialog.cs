@@ -14,8 +14,6 @@ namespace WinDynamicDesktop
 {
     public partial class ThemeDialog : Form
     {
-        private string themesLink = "https://t1m0thyj.github.io/windynamicdesktop-themes/";
-
         public ThemeDialog()
         {
             InitializeComponent();
@@ -25,7 +23,7 @@ namespace WinDynamicDesktop
 
         private void themesLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            System.Diagnostics.Process.Start(themesLink);
+            System.Diagnostics.Process.Start(themesLinkLabel.Text);
         }
 
         private async void importButton_Click(object sender, EventArgs e)

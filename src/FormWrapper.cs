@@ -35,13 +35,9 @@ namespace WinDynamicDesktop
             {
                 DownloadImages();
             }
-            else if (JsonConfig.firstRun)
-            {
-                UpdateLocation();
-            }
             else
             {
-                _wcsService.RunScheduler();
+                TryStartScheduler();
             }
         }
 
@@ -123,69 +119,77 @@ namespace WinDynamicDesktop
 
         private void OnAboutItemClick(object sender, EventArgs e)
         {
-            AboutDialog.Show();
+            (new AboutDialog()).Show();
         }
 
         private void OnExitItemClick(object sender, EventArgs e)
         {
-            notifyIcon.Visible = false;
             Application.Exit();
+        }
+
+        public void TryStartScheduler(bool alreadyRunning = false)
+        {
+            if (JsonConfig.settings.location == null && locationDialog == null)
+            {
+                UpdateLocation();
+                return;
+            }
+
+            if (!alreadyRunning)
+            {
+                _wcsService.RunScheduler();
+            }
+
+            if (JsonConfig.firstRun && downloadDialog == null && locationDialog == null)
+            {
+                notifyIcon.BalloonTipText = "The app is still running in the background. " +
+                    "You can access it at any time by right-clicking on this icon.";
+                notifyIcon.ShowBalloonTip(10000);
+
+                JsonConfig.firstRun = false;    // Don't show this message again
+            }
         }
 
         public void DownloadImages()
         {
-            if (UwpDesktop.IsRunningAsUwp())
+            if (!UwpDesktop.IsRunningAsUwp())
             {
-                UwpHelper.DownloadImages(this);
-                return;
+                string imagesZipUri = JsonConfig.imageSettings.imagesZipUri;
+
+                if (imagesZipUri == null)
+                {
+                    MessageBox.Show("Images folder not found. The program will quit now.", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                    Environment.Exit(0);
+                }
+
+                downloadDialog = new ProgressDialog();
+                downloadDialog.FormClosed += OnDownloadDialogClosed;
+                downloadDialog.Show();
+
+                using (WebClient client = new WebClient())
+                {
+                    client.DownloadProgressChanged += downloadDialog.OnDownloadProgressChanged;
+                    client.DownloadFileCompleted += downloadDialog.OnDownloadFileCompleted;
+                    client.DownloadFileAsync(new Uri(imagesZipUri), "images.zip");
+                }
             }
-
-            string imagesZipUri = JsonConfig.imageSettings.imagesZipUri;
-
-            if (imagesZipUri == null)
+            else
             {
-                MessageBox.Show("Images folder not found. The program will quit now.", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-                Environment.Exit(0);
-            }
-
-            downloadDialog = new ProgressDialog();
-            downloadDialog.FormClosed += OnDownloadDialogClosed;
-            downloadDialog.Show();
-
-            using (WebClient client = new WebClient())
-            {
-                client.DownloadProgressChanged += downloadDialog.OnDownloadProgressChanged;
-                client.DownloadFileCompleted += downloadDialog.OnDownloadFileCompleted;
-                client.DownloadFileAsync(new Uri(imagesZipUri), "images.zip");
-            }
-
-            if (JsonConfig.settings.location == null)
-            {
-                UpdateLocation();
+                ThemeDialog dialog = new ThemeDialog();
+                dialog.FormClosed += OnDownloadDialogClosed;
+                dialog.Show();
             }
         }
 
-        public void OnDownloadDialogClosed(object sender, EventArgs e)
+        private void OnDownloadDialogClosed(object sender, EventArgs e)
         {
             downloadDialog = null;
 
             if (Directory.Exists("images"))
             {
-                if (JsonConfig.settings.location != null)
-                {
-                    _wcsService.RunScheduler();
-
-                    if (JsonConfig.firstRun && locationDialog == null)
-                    {
-                        BackgroundNotify();
-                    }
-                }
-                else if (UwpDesktop.IsRunningAsUwp())
-                {
-                    UpdateLocation();
-                }
+                TryStartScheduler();
             }
             else if (!UwpDesktop.IsRunningAsUwp())
             {
@@ -221,11 +225,7 @@ namespace WinDynamicDesktop
         private void OnLocationDialogClosed(object sender, EventArgs e)
         {
             locationDialog = null;
-
-            if (JsonConfig.firstRun && downloadDialog == null)
-            {
-                BackgroundNotify();
-            }
+            TryStartScheduler(true);
         }
 
         private void ToggleDarkMode()
@@ -234,15 +234,6 @@ namespace WinDynamicDesktop
             notifyIcon.ContextMenu.MenuItems[5].Checked = JsonConfig.settings.darkMode;
 
             JsonConfig.SaveConfig();
-        }
-
-        private void BackgroundNotify()
-        {
-            notifyIcon.BalloonTipText = "The app is still running in the background. " +
-                "You can access it at any time by right-clicking on this icon.";
-            notifyIcon.ShowBalloonTip(10000);
-
-            JsonConfig.firstRun = false;    // Don't show this message again
         }
 
         private void OnApplicationExit(object sender, EventArgs e)
