@@ -1,8 +1,10 @@
 # WinDynamicDesktop
-Port of macOS Mojave Dynamic Desktop feature to Windows 10
+Port of macOS Mojave Dynamic Desktop feature to Windows 10, available for download on both GitHub and the Microsoft Store
 
 [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/t1m0thyj/WinDynamicDesktop)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=H8ZZXM9ABRJFU)
+
+<a href='//www.microsoft.com/store/apps/9NM8N7DQ3Z5F?ocid=badge'><img src='https://assets.windowsphone.com/85864462-9c82-451e-9355-a3d5f874397a/English_get-it-from-MS_InvariantCulture_Default.png' alt='Microsoft Store' width='180'/></a>
 
 ## How do I use this?
 
