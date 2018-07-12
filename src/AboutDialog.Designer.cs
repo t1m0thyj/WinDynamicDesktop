@@ -34,8 +34,9 @@
             this.descriptionLabel = new System.Windows.Forms.Label();
             this.websiteLabel = new System.Windows.Forms.LinkLabel();
             this.closeButton = new System.Windows.Forms.Button();
-            this.creditsButton = new System.Windows.Forms.Button();
+            this.creditsButton = new System.Windows.Forms.CheckBox();
             this.donateButton = new System.Windows.Forms.Button();
+            this.creditsBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.iconBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -99,13 +100,15 @@
             // 
             // creditsButton
             // 
+            this.creditsButton.Appearance = System.Windows.Forms.Appearance.Button;
             this.creditsButton.Location = new System.Drawing.Point(9, 112);
             this.creditsButton.Name = "creditsButton";
             this.creditsButton.Size = new System.Drawing.Size(75, 26);
             this.creditsButton.TabIndex = 2;
             this.creditsButton.Text = "Credits";
+            this.creditsButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.creditsButton.UseVisualStyleBackColor = true;
-            this.creditsButton.Click += new System.EventHandler(this.creditsButton_Click);
+            this.creditsButton.CheckedChanged += new System.EventHandler(this.creditsButton_CheckedChanged);
             // 
             // donateButton
             // 
@@ -118,12 +121,23 @@
             this.donateButton.Visible = false;
             this.donateButton.Click += new System.EventHandler(this.donateButton_Click);
             // 
+            // creditsBox
+            // 
+            this.creditsBox.Location = new System.Drawing.Point(5, 5);
+            this.creditsBox.Multiline = true;
+            this.creditsBox.Name = "creditsBox";
+            this.creditsBox.ReadOnly = true;
+            this.creditsBox.Size = new System.Drawing.Size(390, 97);
+            this.creditsBox.TabIndex = 8;
+            this.creditsBox.Visible = false;
+            // 
             // AboutDialog
             // 
             this.AcceptButton = this.closeButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(399, 144);
+            this.Controls.Add(this.creditsBox);
             this.Controls.Add(this.donateButton);
             this.Controls.Add(this.creditsButton);
             this.Controls.Add(this.closeButton);
@@ -143,6 +157,7 @@
             this.Load += new System.EventHandler(this.AboutDialog_Load);
             ((System.ComponentModel.ISupportInitialize)(this.iconBox)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -154,7 +169,8 @@
         private System.Windows.Forms.Label descriptionLabel;
         private System.Windows.Forms.LinkLabel websiteLabel;
         private System.Windows.Forms.Button closeButton;
-        private System.Windows.Forms.Button creditsButton;
+        private System.Windows.Forms.CheckBox creditsButton;
         private System.Windows.Forms.Button donateButton;
+        private System.Windows.Forms.TextBox creditsBox;
     }
 }

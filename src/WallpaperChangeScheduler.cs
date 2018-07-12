@@ -26,15 +26,6 @@ namespace WinDynamicDesktop
         {
             nightImages = JsonConfig.imageSettings.nightImageList;
 
-            if (!JsonConfig.settings.darkMode)
-            {
-                dayImages = JsonConfig.imageSettings.dayImageList;
-            }
-            else
-            {
-                dayImages = nightImages;
-            }
-
             wallpaperTimer.Tick += new EventHandler(OnWallpaperTimerTick);
         }
 
@@ -69,7 +60,7 @@ namespace WinDynamicDesktop
         {
             TimeSpan interval = new TimeSpan(tickInterval);
 
-            wallpaperTimer.Interval = (int)interval.TotalMilliseconds;
+            wallpaperTimer.Interval = Math.Max(1, (int)interval.TotalMilliseconds);
             wallpaperTimer.Start();
         }
 
@@ -127,6 +118,7 @@ namespace WinDynamicDesktop
                 tomorrowsData = null;
             }
 
+            dayImages = JsonConfig.settings.darkMode ? nightImages : JsonConfig.imageSettings.dayImageList;
             lastImageId = -1;
 
             if (yesterdaysData == null && tomorrowsData == null)
@@ -170,21 +162,6 @@ namespace WinDynamicDesktop
             {
                 SetWallpaper(nightImages[imageNumber]);
             }
-        }
-
-        public void ToggleDarkMode()
-        {
-            if (!JsonConfig.settings.darkMode)
-            {
-                dayImages = nightImages;
-            }
-            else
-            {
-                dayImages = JsonConfig.imageSettings.dayImageList;
-            }
-
-            RunScheduler();
-            JsonConfig.settings.darkMode ^= true;
         }
 
         private void OnWallpaperTimerTick(object sender, EventArgs e)

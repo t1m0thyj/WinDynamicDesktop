@@ -33,6 +33,22 @@ namespace WinDynamicDesktop
             {
                 donateButton.Visible = true;
             }
+
+            creditsBox.Text = GetCreditsText();
+        }
+
+        private string GetCreditsText()
+        {
+            List<string> lines = new List<string>() {
+                "Thanks to:",
+                "",
+                "Apple for the Mojave wallpapers",
+                "Contributors on GitHub",
+                "LocationIQ for their free geocoding API",
+                "Roundicons from flaticon.com for the icon (licensed by CC 3.0 BY)"
+            };
+
+            return String.Join(Environment.NewLine + "    ", lines);
         }
 
         private void websiteLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -45,19 +61,9 @@ namespace WinDynamicDesktop
             this.Close();
         }
 
-        private void creditsButton_Click(object sender, EventArgs e)
+        private void creditsButton_CheckedChanged(object sender, EventArgs e)
         {
-            List<string> lines = new List<string>() {
-                "Thanks to:",
-                "",
-                "Apple for the Mojave wallpapers",
-                "Contributors on GitHub",
-                "LocationIQ for their free geocoding API",
-                "Roundicons from flaticon.com for the app icon (licensed by CC 3.0 BY)"
-            };
-            string unlines = String.Join(Environment.NewLine, lines);
-
-            MessageBox.Show(unlines, "Credits");
+            creditsBox.Visible ^= true;
         }
 
         private void donateButton_Click(object sender, EventArgs e)

@@ -230,9 +230,10 @@ namespace WinDynamicDesktop
 
         private void ToggleDarkMode()
         {
-            _wcsService.ToggleDarkMode();
+            JsonConfig.settings.darkMode ^= true;
             notifyIcon.ContextMenu.MenuItems[5].Checked = JsonConfig.settings.darkMode;
 
+            _wcsService.RunScheduler();
             JsonConfig.SaveConfig();
         }
 
