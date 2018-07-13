@@ -167,6 +167,7 @@ namespace WinDynamicDesktop
         private void OnWallpaperTimerTick(object sender, EventArgs e)
         {
             RunScheduler();
+            UpdateChecker.TryCheckAuto();
         }
     }
 }

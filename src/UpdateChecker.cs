@@ -31,7 +31,16 @@ namespace WinDynamicDesktop
 
     class UpdateChecker
     {
-        private static string updateLink = "https://github.com/t1m0thyj/WinDynamicDesktop/releases";
+        public static string updateLink = "https://github.com/t1m0thyj/WinDynamicDesktop/releases";
+
+        internal static NotifyIcon _notifyIcon;
+
+        public static void Initialize(NotifyIcon notifyIcon)
+        {
+            _notifyIcon = notifyIcon;
+
+            TryCheckAuto();
+        }
 
         private static string GetLatestVersion()
         {
@@ -83,6 +92,47 @@ namespace WinDynamicDesktop
                 MessageBox.Show("You already have the latest version of WinDynamicDesktop installed.",
                     "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+        }
+
+        private static void CheckAuto()
+        {
+            string currentVersion = GetCurrentVersion();
+            string latestVersion = GetLatestVersion();
+
+            if (IsUpdateAvailable(currentVersion, latestVersion))
+            {
+                _notifyIcon.BalloonTipTitle = "Update Available";
+                _notifyIcon.BalloonTipText = "WinDynamicDesktop " + latestVersion + " is available. " +
+                    "Click here to download it.";
+                _notifyIcon.ShowBalloonTip(10000);
+            }
+        }
+
+        public static void TryCheckAuto()
+        {
+            if (JsonConfig.settings.disableAutoUpdate)
+            {
+                return;
+            }
+
+            if (JsonConfig.settings.lastUpdateCheck != null)
+            {
+                DateTime lastUpdateCheck = DateTime.Parse(JsonConfig.settings.lastUpdateCheck);
+                long tickDiff = Math.Max(0, DateTime.Now.Ticks - lastUpdateCheck.Ticks);
+                int dayDiff = (new TimeSpan(tickDiff)).Days;
+
+                if (dayDiff < 7)
+                {
+                    return;
+                }
+            }
+
+            CheckAuto();
+
+            DateTime today = DateTime.Now;
+            DateTime lastMonday = today.AddDays(DayOfWeek.Monday - today.DayOfWeek);
+            JsonConfig.settings.lastUpdateCheck = lastMonday.ToString("yyyy-MM-dd");
+            JsonConfig.SaveConfig();
         }
     }
 }

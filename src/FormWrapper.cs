@@ -39,6 +39,8 @@ namespace WinDynamicDesktop
             {
                 TryStartScheduler();
             }
+
+            UpdateChecker.Initialize(notifyIcon);
         }
 
         private void EnforceSingleInstance()
@@ -87,8 +89,14 @@ namespace WinDynamicDesktop
 
             if (!UwpDesktop.IsRunningAsUwp())
             {
-                notifyIcon.ContextMenu.MenuItems.Add(8, new MenuItem("&Check for Updates...",
+                notifyIcon.ContextMenu.MenuItems.Add(8, new MenuItem("&Check for Updates Now",
                     OnUpdateItemClick));
+                notifyIcon.ContextMenu.MenuItems.Add(9, new MenuItem("C&heck Automatically Once a Week",
+                    OnAutoUpdateItemClick));
+                notifyIcon.ContextMenu.MenuItems[9].Checked = !JsonConfig.settings.disableAutoUpdate;
+                notifyIcon.ContextMenu.MenuItems.Add(10, new MenuItem("-"));
+
+                notifyIcon.BalloonTipClicked += OnBalloonTipClicked;
             }
         }
 
@@ -112,6 +120,11 @@ namespace WinDynamicDesktop
             _startupManager.ToggleStartOnBoot();
         }
 
+        private void OnAutoUpdateItemClick(object sender, EventArgs e)
+        {
+            ToggleAutoUpdate();
+        }
+
         private void OnUpdateItemClick(object sender, EventArgs e)
         {
             UpdateChecker.CheckManual();
@@ -125,6 +138,14 @@ namespace WinDynamicDesktop
         private void OnExitItemClick(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private void OnBalloonTipClicked(object sender, EventArgs e)
+        {
+            if (notifyIcon.BalloonTipText == "Update Available")
+            {
+                System.Diagnostics.Process.Start(UpdateChecker.updateLink);
+            }
         }
 
         public void TryStartScheduler(bool alreadyRunning = false)
@@ -234,6 +255,15 @@ namespace WinDynamicDesktop
             notifyIcon.ContextMenu.MenuItems[5].Checked = JsonConfig.settings.darkMode;
 
             _wcsService.RunScheduler();
+            JsonConfig.SaveConfig();
+        }
+
+        private void ToggleAutoUpdate()
+        {
+            JsonConfig.settings.disableAutoUpdate ^= true;
+            notifyIcon.ContextMenu.MenuItems[9].Checked = !JsonConfig.settings.disableAutoUpdate;
+
+            UpdateChecker.TryCheckAuto();
             JsonConfig.SaveConfig();
         }
 

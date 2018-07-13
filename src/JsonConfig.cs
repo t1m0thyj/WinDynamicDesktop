@@ -15,6 +15,8 @@ namespace WinDynamicDesktop
         public string longitude { get; set; }
         public bool darkMode { get; set; }
         public bool hideTrayIcon { get; set; }
+        public bool disableAutoUpdate { get; set; }
+        public string lastUpdateCheck { get; set; }
     }
 
     public class ImagesConfig
