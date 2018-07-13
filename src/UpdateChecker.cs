@@ -45,7 +45,7 @@ namespace WinDynamicDesktop
         private static string GetLatestVersion()
         {
             var client = new RestClient("https://api.github.com");
-            var request = new RestRequest("/repos/t1m0thyj/WinDynamicDesktop/releases/latest", Method.GET);
+            var request = new RestRequest("/repos/t1m0thyj/WinDynamicDesktop/releases/latest");
 
             var response = client.Execute<GitHubApiData>(request);
             if (!response.IsSuccessful)
@@ -110,7 +110,7 @@ namespace WinDynamicDesktop
 
         public static void TryCheckAuto()
         {
-            if (JsonConfig.settings.disableAutoUpdate)
+            if (UwpDesktop.IsRunningAsUwp() || JsonConfig.settings.disableAutoUpdate)
             {
                 return;
             }

@@ -32,7 +32,7 @@ namespace WinDynamicDesktop
         {
             var client = new RestClient("https://us1.locationiq.org");
 
-            var request = new RestRequest("v1/search.php", Method.GET);
+            var request = new RestRequest("v1/search.php");
             request.AddParameter("key", apiKey);
             request.AddParameter("q", locationStr);
             request.AddParameter("format", "json");

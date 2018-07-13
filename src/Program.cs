@@ -21,7 +21,7 @@ namespace WinDynamicDesktop
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FormWrapper());
+            Application.Run(new AppContext());
         }
 
         static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)

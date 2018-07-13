@@ -84,8 +84,8 @@
     <Compile Include="AboutDialog.Designer.cs">
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="AppContext.cs" />
     <Compile Include="DesktopHelper.cs" />
-    <Compile Include="FormWrapper.cs" />
     <Compile Include="InputDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -108,12 +108,6 @@
     <Compile Include="UwpHelper.cs" />
     <Compile Include="WallpaperChanger.cs" />
     <Compile Include="WallpaperChangeScheduler.cs" />
-    <Compile Include="ThemeDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ThemeDialog.Designer.cs">
-      <DependentUpon>ThemeDialog.cs</DependentUpon>
-    </Compile>
     <EmbeddedResource Include="AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -133,9 +127,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="ThemeDialog.resx">
-      <DependentUpon>ThemeDialog.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="images.conf" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
