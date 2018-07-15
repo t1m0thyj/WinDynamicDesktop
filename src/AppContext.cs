@@ -146,7 +146,7 @@ namespace WinDynamicDesktop
 
         private void OnBalloonTipClicked(object sender, EventArgs e)
         {
-            if (notifyIcon.BalloonTipText == "Update Available")
+            if (notifyIcon.BalloonTipTitle == "Update Available")
             {
                 System.Diagnostics.Process.Start(UpdateChecker.updateLink);
             }
@@ -200,7 +200,7 @@ namespace WinDynamicDesktop
                     Environment.Exit(0);
                 }
             }
-            else if (JsonConfig.settings.location == null)
+            else if (locationDialog == null)
             {
                 _wcsService.RunScheduler();
                 BackgroundNotify();

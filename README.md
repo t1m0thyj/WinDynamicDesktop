@@ -5,7 +5,7 @@ Port of macOS Mojave Dynamic Desktop feature to Windows 10, available for downlo
 [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/t1m0thyj/WinDynamicDesktop)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=H8ZZXM9ABRJFU)
 
-<a href='//www.microsoft.com/store/apps/9NM8N7DQ3Z5F?ocid=badge'><img src='https://assets.windowsphone.com/85864462-9c82-451e-9355-a3d5f874397a/English_get-it-from-MS_InvariantCulture_Default.png' alt='Microsoft Store' width='180'/></a>
+<a href='//www.microsoft.com/store/apps/9NM8N7DQ3Z5F?ocid=badge'><img src='https://assets.windowsphone.com/85864462-9c82-451e-9355-a3d5f874397a/English_get-it-from-MS_InvariantCulture_Default.png' alt='Microsoft Store' width='160'/></a>
 
 ## How do I use this?
 
@@ -25,7 +25,7 @@ When the Dynamic Desktop feature was announced for macOS Mojave which shifts thr
 
 Yes. By default WinDynamicDesktop uses the Mojave wallpapers, but if you create an `images.conf` file in the same folder as the EXE you can customize the images that are used. The default `images.conf` can be found [here](src/images.conf). It is formatted in JSON and must contain the following values:
 
-* `themeName` - String which is the name of the wallpaper theme shown in the user interface
+* `themeName` - String which is the name of the wallpaper theme (e.g., "Mojave Default")
 * `imagesZipUri` - String containing URL to download images.zip file from, or *null* if the content in the images subfolder is provided by the user
 * `imageFilename` - String containing the filename of each wallpaper image, with `{0}` substituted for the image number
 * `dayImageList` - Array of numbers listing the image numbers to display throughout the day (between sunrise and sunset)

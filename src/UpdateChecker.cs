@@ -90,7 +90,7 @@ namespace WinDynamicDesktop
             else
             {
                 MessageBox.Show("You already have the latest version of WinDynamicDesktop installed.",
-                    "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    "Up To Date", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -118,8 +118,7 @@ namespace WinDynamicDesktop
             if (JsonConfig.settings.lastUpdateCheck != null)
             {
                 DateTime lastUpdateCheck = DateTime.Parse(JsonConfig.settings.lastUpdateCheck);
-                long tickDiff = Math.Max(0, DateTime.Now.Ticks - lastUpdateCheck.Ticks);
-                int dayDiff = (new TimeSpan(tickDiff)).Days;
+                int dayDiff = (new TimeSpan(DateTime.Now.Ticks - lastUpdateCheck.Ticks)).Days;
 
                 if (dayDiff < 7)
                 {
@@ -129,9 +128,7 @@ namespace WinDynamicDesktop
 
             CheckAuto();
 
-            DateTime today = DateTime.Now;
-            DateTime lastMonday = today.AddDays(DayOfWeek.Monday - today.DayOfWeek);
-            JsonConfig.settings.lastUpdateCheck = lastMonday.ToString("yyyy-MM-dd");
+            JsonConfig.settings.lastUpdateCheck = DateTime.Now.ToString("yyyy-MM-dd");
             JsonConfig.SaveConfig();
         }
     }

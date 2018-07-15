@@ -56,11 +56,16 @@ namespace WinDynamicDesktop
             return (int)(elapsedTime.Ticks / timerLength.Ticks);
         }
 
-        private void StartTimer(long tickInterval)
+        private void StartTimer(long tickInterval, TimeSpan maxInterval)
         {
+            if (tickInterval < TimeSpan.TicksPerMillisecond)
+            {
+                tickInterval += maxInterval.Ticks;
+            }
+
             TimeSpan interval = new TimeSpan(tickInterval);
 
-            wallpaperTimer.Interval = Math.Max(1, (int)interval.TotalMilliseconds);
+            wallpaperTimer.Interval = (int)interval.TotalMilliseconds;
             wallpaperTimer.Start();
         }
 
@@ -136,9 +141,9 @@ namespace WinDynamicDesktop
             TimeSpan dayTime = todaysData.SunsetTime - todaysData.SunriseTime;
             TimeSpan timerLength = new TimeSpan(dayTime.Ticks / dayImages.Length);
             int imageNumber = GetImageNumber(todaysData.SunriseTime, timerLength);
-            
+
             StartTimer(todaysData.SunriseTime.Ticks + timerLength.Ticks * (imageNumber + 1)
-                - DateTime.Now.Ticks);
+                - DateTime.Now.Ticks, timerLength);
 
             if (dayImages[imageNumber] != lastImageId)
             {
@@ -156,7 +161,7 @@ namespace WinDynamicDesktop
             int imageNumber = GetImageNumber(day1Data.SunsetTime, timerLength);
 
             StartTimer(day1Data.SunsetTime.Ticks + timerLength.Ticks * (imageNumber + 1)
-                - DateTime.Now.Ticks);
+                - DateTime.Now.Ticks, timerLength);
 
             if (nightImages[imageNumber] != lastImageId)
             {
