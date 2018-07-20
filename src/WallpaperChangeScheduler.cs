@@ -65,7 +65,8 @@ namespace WinDynamicDesktop
 
             TimeSpan interval = new TimeSpan(tickInterval);
 
-            wallpaperTimer.Interval = (int)interval.TotalMilliseconds;
+            int integerInterval = (int)interval.TotalMilliseconds;
+            wallpaperTimer.Interval = integerInterval <= 0 ? 1 : integerInterval;
             wallpaperTimer.Start();
         }
 
