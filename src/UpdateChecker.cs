@@ -31,15 +31,23 @@ namespace WinDynamicDesktop
 
     class UpdateChecker
     {
-        public static string updateLink = "https://github.com/t1m0thyj/WinDynamicDesktop/releases";
+        private static string updateLink = "https://github.com/t1m0thyj/WinDynamicDesktop/releases";
 
         internal static NotifyIcon _notifyIcon;
 
         public static void Initialize(NotifyIcon notifyIcon)
         {
             _notifyIcon = notifyIcon;
+            _notifyIcon.ContextMenu.MenuItems.Add(8, new MenuItem("&Check for Updates Now",
+                OnUpdateItemClick));
+            _notifyIcon.ContextMenu.MenuItems.Add(9, new MenuItem("C&heck Automatically Once a Week",
+                OnAutoUpdateItemClick));
+            _notifyIcon.ContextMenu.MenuItems[9].Checked = !JsonConfig.settings.disableAutoUpdate;
+            _notifyIcon.ContextMenu.MenuItems.Add(10, new MenuItem("-"));
 
-            TryCheckAuto();
+            _notifyIcon.BalloonTipClicked += OnBalloonTipClicked;
+
+            TryCheckAuto(true);
         }
 
         private static string GetLatestVersion()
@@ -74,7 +82,12 @@ namespace WinDynamicDesktop
             string currentVersion = GetCurrentVersion();
             string latestVersion = GetLatestVersion();
 
-            if (IsUpdateAvailable(currentVersion, latestVersion))
+            if (latestVersion == null)
+            {
+                MessageBox.Show("WinDynamicDesktop could not connect to the Internet to check for updates.",
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            else if (IsUpdateAvailable(currentVersion, latestVersion))
             {
                 DialogResult result = MessageBox.Show("There is a newer version of WinDynamicDesktop " +
                     "available. Would you like to visit the download page?" + Environment.NewLine +
@@ -99,23 +112,30 @@ namespace WinDynamicDesktop
             string currentVersion = GetCurrentVersion();
             string latestVersion = GetLatestVersion();
 
-            if (IsUpdateAvailable(currentVersion, latestVersion))
+            if (latestVersion == null)
+            {
+                return;
+            }
+            else if (IsUpdateAvailable(currentVersion, latestVersion))
             {
                 _notifyIcon.BalloonTipTitle = "Update Available";
                 _notifyIcon.BalloonTipText = "WinDynamicDesktop " + latestVersion + " is available. " +
                     "Click here to download it.";
                 _notifyIcon.ShowBalloonTip(10000);
             }
+
+            JsonConfig.settings.lastUpdateCheck = DateTime.Now.ToString("yyyy-MM-dd");
+            JsonConfig.SaveConfig();
         }
 
-        public static void TryCheckAuto()
+        public static async void TryCheckAuto(bool forceIfEnabled = false)
         {
             if (UwpDesktop.IsRunningAsUwp() || JsonConfig.settings.disableAutoUpdate)
             {
                 return;
             }
 
-            if (JsonConfig.settings.lastUpdateCheck != null)
+            if (JsonConfig.settings.lastUpdateCheck != null && !forceIfEnabled)
             {
                 DateTime lastUpdateCheck = DateTime.Parse(JsonConfig.settings.lastUpdateCheck);
                 int dayDiff = (new TimeSpan(DateTime.Now.Ticks - lastUpdateCheck.Ticks)).Days;
@@ -126,10 +146,34 @@ namespace WinDynamicDesktop
                 }
             }
 
-            CheckAuto();
+            await Task.Run(() => CheckAuto());
+        }
 
-            JsonConfig.settings.lastUpdateCheck = DateTime.Now.ToString("yyyy-MM-dd");
+        private static void ToggleAutoUpdate()
+        {
+            JsonConfig.settings.disableAutoUpdate ^= true;
+            _notifyIcon.ContextMenu.MenuItems[9].Checked = !JsonConfig.settings.disableAutoUpdate;
+
+            TryCheckAuto(true);
             JsonConfig.SaveConfig();
+        }
+
+        private static void OnUpdateItemClick(object sender, EventArgs e)
+        {
+            CheckManual();
+        }
+
+        private static void OnAutoUpdateItemClick(object sender, EventArgs e)
+        {
+            ToggleAutoUpdate();
+        }
+
+        private static void OnBalloonTipClicked(object sender, EventArgs e)
+        {
+            if (_notifyIcon.BalloonTipTitle == "Update Available")
+            {
+                System.Diagnostics.Process.Start(updateLink);
+            }
         }
     }
 }

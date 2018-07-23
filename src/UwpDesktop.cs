@@ -10,11 +10,11 @@ namespace WinDynamicDesktop
 {
     abstract class StartupManager
     {
-        public MenuItem menuItem;
+        internal MenuItem _menuItem;
 
         public StartupManager(MenuItem startupMenuItem)
         {
-            menuItem = startupMenuItem;
+            _menuItem = startupMenuItem;
         }
 
         public abstract void ToggleStartOnBoot();
@@ -22,11 +22,17 @@ namespace WinDynamicDesktop
 
     class UwpDesktop
     {
+        private static bool? _isRunningAsUwp;
+
         public static bool IsRunningAsUwp()
         {
-            Helpers helpers = new Helpers();
+            if (!_isRunningAsUwp.HasValue)
+            {
+                Helpers helpers = new Helpers();
+                _isRunningAsUwp = helpers.IsRunningAsUwp();
+            }
 
-            return helpers.IsRunningAsUwp();
+            return _isRunningAsUwp.Value;
         }
 
         public static string GetCurrentDirectory()

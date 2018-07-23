@@ -13,6 +13,15 @@ namespace WinDynamicDesktop
         {
             return Windows.Storage.ApplicationData.Current.LocalFolder.Path;
         }
+
+        public static async void SetWallpaper(string imageFilename)
+        {
+            //var uri = new Uri("ms-appx://Local/images/" + imageFilename);
+            //var file = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri);
+            var file = await Windows.Storage.StorageFile.GetFileFromPathAsync(System.IO.Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "images", imageFilename));
+            var profileSettings = Windows.System.UserProfile.UserProfilePersonalizationSettings.Current;
+            await profileSettings.TrySetWallpaperImageAsync(file);
+        }
     }
 
     class UwpStartupManager : StartupManager
@@ -32,15 +41,15 @@ namespace WinDynamicDesktop
             {
                 case Windows.ApplicationModel.StartupTaskState.Disabled:
                     startOnBoot = false;
-                    menuItem.Checked = startOnBoot;
+                    _menuItem.Checked = startOnBoot;
                     break;
                 case Windows.ApplicationModel.StartupTaskState.DisabledByUser:
                     startOnBoot = false;
-                    menuItem.Checked = startOnBoot;
+                    _menuItem.Checked = startOnBoot;
                     break;
                 case Windows.ApplicationModel.StartupTaskState.Enabled:
                     startOnBoot = true;
-                    menuItem.Checked = startOnBoot;
+                    _menuItem.Checked = startOnBoot;
                     break;
             }
         }
@@ -58,11 +67,11 @@ namespace WinDynamicDesktop
                     case Windows.ApplicationModel.StartupTaskState.DisabledByUser:
                         //MessageBox.Show("The task has been disabled by the user");
                         startOnBoot = false;
-                        menuItem.Checked = startOnBoot;
+                        _menuItem.Checked = startOnBoot;
                         break;
                     case Windows.ApplicationModel.StartupTaskState.Enabled:
                         startOnBoot = true;
-                        menuItem.Checked = startOnBoot;
+                        _menuItem.Checked = startOnBoot;
                         break;
                 }
             }
@@ -71,7 +80,7 @@ namespace WinDynamicDesktop
                 startupTask.Disable();
 
                 startOnBoot = false;
-                menuItem.Checked = startOnBoot;
+                _menuItem.Checked = startOnBoot;
             }
         }
     }

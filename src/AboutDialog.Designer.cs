@@ -112,7 +112,7 @@
             // 
             // donateButton
             // 
-            this.donateButton.Location = new System.Drawing.Point(97, 112);
+            this.donateButton.Location = new System.Drawing.Point(93, 112);
             this.donateButton.Name = "donateButton";
             this.donateButton.Size = new System.Drawing.Size(75, 26);
             this.donateButton.TabIndex = 3;

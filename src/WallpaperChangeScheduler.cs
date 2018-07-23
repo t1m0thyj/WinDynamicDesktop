@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
+using Microsoft.Win32;
 
 namespace WinDynamicDesktop
 {
@@ -15,18 +16,26 @@ namespace WinDynamicDesktop
         private int[] nightImages;
         private string lastDate = "yyyy-MM-dd";
         private int lastImageId = -1;
+        private long timerError = TimeSpan.TicksPerMillisecond * 55;
 
         private WeatherData yesterdaysData;
         private WeatherData todaysData;
         private WeatherData tomorrowsData;
 
-        public Timer wallpaperTimer = new Timer();
+        private Timer wallpaperTimer = new Timer();
 
         public WallpaperChangeScheduler()
         {
-            nightImages = JsonConfig.imageSettings.nightImageList;
+            LoadImageLists();
 
             wallpaperTimer.Tick += new EventHandler(OnWallpaperTimerTick);
+            SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(OnPowerModeChanged);
+        }
+
+        public void LoadImageLists()
+        {
+            nightImages = JsonConfig.imageSettings.nightImageList;
+            dayImages = JsonConfig.settings.darkMode ? nightImages : JsonConfig.imageSettings.dayImageList;
         }
 
         private string GetDateString(int todayDelta = 0)
@@ -53,17 +62,17 @@ namespace WinDynamicDesktop
         {
             TimeSpan elapsedTime = DateTime.Now - startTime;
 
-            return (int)(elapsedTime.Ticks / timerLength.Ticks);
+            return (int)((elapsedTime.Ticks + timerError) / timerLength.Ticks);
         }
 
-        private void StartTimer(long tickInterval, TimeSpan maxInterval)
+        private void StartTimer(long intervalTicks, TimeSpan maxInterval)
         {
-            if (tickInterval < TimeSpan.TicksPerMillisecond)
+            if (intervalTicks < timerError)
             {
-                tickInterval += maxInterval.Ticks;
+                intervalTicks += maxInterval.Ticks;
             }
 
-            TimeSpan interval = new TimeSpan(tickInterval);
+            TimeSpan interval = new TimeSpan(intervalTicks);
 
             wallpaperTimer.Interval = (int)interval.TotalMilliseconds;
             wallpaperTimer.Start();
@@ -76,17 +85,15 @@ namespace WinDynamicDesktop
 
             WallpaperChanger.EnableTransitions();
             WallpaperChanger.SetWallpaper(imagePath);
+            //UwpHelper.SetWallpaper(imageFilename);
 
             lastImageId = imageId;
         }
 
         public void RunScheduler(bool forceRefresh = false)
         {
-            if (wallpaperTimer != null)
-            {
-                wallpaperTimer.Stop();
-            }
-
+            wallpaperTimer.Stop();
+            
             string currentDate = GetDateString();
             bool shouldRefresh = currentDate != lastDate || forceRefresh;
 
@@ -123,7 +130,6 @@ namespace WinDynamicDesktop
                 tomorrowsData = null;
             }
 
-            dayImages = JsonConfig.settings.darkMode ? nightImages : JsonConfig.imageSettings.dayImageList;
             lastImageId = -1;
 
             if (yesterdaysData == null && tomorrowsData == null)
@@ -173,6 +179,14 @@ namespace WinDynamicDesktop
         {
             RunScheduler();
             UpdateChecker.TryCheckAuto();
+        }
+
+        private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
+        {
+            if (e.Mode == PowerModes.Resume && !wallpaperTimer.Enabled)
+            {
+                RunScheduler();
+            }
         }
     }
 }
