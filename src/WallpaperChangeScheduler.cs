@@ -35,7 +35,15 @@ namespace WinDynamicDesktop
         public void LoadImageLists()
         {
             nightImages = JsonConfig.imageSettings.nightImageList;
-            dayImages = JsonConfig.settings.darkMode ? nightImages : JsonConfig.imageSettings.dayImageList;
+
+            if (!JsonConfig.settings.darkMode)
+            {
+                dayImages = JsonConfig.imageSettings.dayImageList;
+            }
+            else
+            {
+                dayImages = nightImages;
+            }
         }
 
         private string GetDateString(int todayDelta = 0)
@@ -81,11 +89,7 @@ namespace WinDynamicDesktop
         private void SetWallpaper(int imageId)
         {
             string imageFilename = String.Format(JsonConfig.imageSettings.imageFilename, imageId);
-            string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "images", imageFilename);
-
-            WallpaperChanger.EnableTransitions();
-            WallpaperChanger.SetWallpaper(imagePath);
-            //UwpHelper.SetWallpaper(imageFilename);
+            UwpDesktop.SetWallpaper(imageFilename);
 
             lastImageId = imageId;
         }
@@ -93,7 +97,7 @@ namespace WinDynamicDesktop
         public void RunScheduler(bool forceRefresh = false)
         {
             wallpaperTimer.Stop();
-            
+
             string currentDate = GetDateString();
             bool shouldRefresh = currentDate != lastDate || forceRefresh;
 

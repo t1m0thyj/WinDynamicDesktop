@@ -15,11 +15,19 @@ namespace WinDynamicDesktop
         {
             return Path.GetDirectoryName(Application.ExecutablePath);
         }
+
+        public static void SetWallpaper(string imageFilename)
+        {
+            string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "images",
+                imageFilename);
+
+            WallpaperChanger.EnableTransitions();
+            WallpaperChanger.SetWallpaper(imagePath);
+        }
     }
-   
+
     class DesktopStartupManager : StartupManager
     {
-        private bool startOnBoot;
         private string registryStartupLocation = @"Software\Microsoft\Windows\CurrentVersion\Run";
 
         public DesktopStartupManager(MenuItem startupMenuItem) : base(startupMenuItem)

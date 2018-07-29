@@ -34,14 +34,14 @@ namespace WinDynamicDesktop
             {
                 File.AppendAllText(logFilename, errorMessage);
 
-                MessageBox.Show("See the logfile '" + logFilename + "' for details", "Errors occurred",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("See the logfile '" + logFilename + "' for details",
+                    "Errors occurred", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch
             {
                 MessageBox.Show("The logfile '" + logFilename + "' could not be opened:" +
-                    Environment.NewLine + " " + errorMessage, "Errors occurred", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    Environment.NewLine + " " + errorMessage, "Errors occurred",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

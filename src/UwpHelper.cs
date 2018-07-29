@@ -16,18 +16,17 @@ namespace WinDynamicDesktop
 
         public static async void SetWallpaper(string imageFilename)
         {
-            //var uri = new Uri("ms-appx://Local/images/" + imageFilename);
-            //var file = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri);
-            var file = await Windows.Storage.StorageFile.GetFileFromPathAsync(System.IO.Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "images", imageFilename));
-            var profileSettings = Windows.System.UserProfile.UserProfilePersonalizationSettings.Current;
+            var uri = new Uri("ms-appdata:///local/images/" + imageFilename);
+            var file = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri);
+
+            var profileSettings =
+                Windows.System.UserProfile.UserProfilePersonalizationSettings.Current;
             await profileSettings.TrySetWallpaperImageAsync(file);
         }
     }
 
     class UwpStartupManager : StartupManager
     {
-        private bool startOnBoot;
-
         public UwpStartupManager(MenuItem startupMenuItem) : base(startupMenuItem)
         {
             UpdateStatus();
@@ -35,7 +34,8 @@ namespace WinDynamicDesktop
 
         private async void UpdateStatus()
         {
-            var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync("WinDynamicDesktopUwp");
+            var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync(
+                "WinDynamicDesktopUwp");
 
             switch (startupTask.State)
             {
@@ -56,7 +56,8 @@ namespace WinDynamicDesktop
 
         public override async void ToggleStartOnBoot()
         {
-            var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync("WinDynamicDesktopUwp");
+            var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync(
+                "WinDynamicDesktopUwp");
 
             if (!startOnBoot)
             {

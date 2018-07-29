@@ -40,8 +40,8 @@ namespace WinDynamicDesktop
             _notifyIcon = notifyIcon;
             _notifyIcon.ContextMenu.MenuItems.Add(8, new MenuItem("&Check for Updates Now",
                 OnUpdateItemClick));
-            _notifyIcon.ContextMenu.MenuItems.Add(9, new MenuItem("C&heck Automatically Once a Week",
-                OnAutoUpdateItemClick));
+            _notifyIcon.ContextMenu.MenuItems.Add(9, new MenuItem(
+                "C&heck Automatically Once a Week", OnAutoUpdateItemClick));
             _notifyIcon.ContextMenu.MenuItems[9].Checked = !JsonConfig.settings.disableAutoUpdate;
             _notifyIcon.ContextMenu.MenuItems.Add(10, new MenuItem("-"));
 
@@ -84,16 +84,16 @@ namespace WinDynamicDesktop
 
             if (latestVersion == null)
             {
-                MessageBox.Show("WinDynamicDesktop could not connect to the Internet to check for updates.",
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("WinDynamicDesktop could not connect to the Internet to check " +
+                    "for updates.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             else if (IsUpdateAvailable(currentVersion, latestVersion))
             {
-                DialogResult result = MessageBox.Show("There is a newer version of WinDynamicDesktop " +
-                    "available. Would you like to visit the download page?" + Environment.NewLine +
-                    Environment.NewLine + "Current Version: " + currentVersion + Environment.NewLine +
-                    "Latest Version: " + latestVersion, "Update Available", MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
+                DialogResult result = MessageBox.Show("There is a newer version of " +
+                    "WinDynamicDesktop available. Would you like to visit the download page?" +
+                    Environment.NewLine + Environment.NewLine + "Current Version: " +
+                    currentVersion + Environment.NewLine + "Latest Version: " + latestVersion,
+                    "Update Available", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (result == DialogResult.Yes)
                 {
@@ -102,8 +102,8 @@ namespace WinDynamicDesktop
             }
             else
             {
-                MessageBox.Show("You already have the latest version of WinDynamicDesktop installed.",
-                    "Up To Date", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("You already have the latest version of WinDynamicDesktop " +
+                    "installed.", "Up To Date", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -119,8 +119,8 @@ namespace WinDynamicDesktop
             else if (IsUpdateAvailable(currentVersion, latestVersion))
             {
                 _notifyIcon.BalloonTipTitle = "Update Available";
-                _notifyIcon.BalloonTipText = "WinDynamicDesktop " + latestVersion + " is available. " +
-                    "Click here to download it.";
+                _notifyIcon.BalloonTipText = "WinDynamicDesktop " + latestVersion +
+                    " is available. Click here to download it.";
                 _notifyIcon.ShowBalloonTip(10000);
             }
 

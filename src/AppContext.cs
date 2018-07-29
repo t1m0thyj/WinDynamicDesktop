@@ -53,8 +53,8 @@ namespace WinDynamicDesktop
 
             if (!isNewInstance)
             {
-                MessageBox.Show("Another instance of WinDynamicDesktop is already running.", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Another instance of WinDynamicDesktop is already running.",
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                 Environment.Exit(0);
             }
@@ -109,7 +109,7 @@ namespace WinDynamicDesktop
         {
             ToggleDarkMode();
         }
-        
+
         private void OnStartOnBootClick(object sender, EventArgs e)
         {
             _startupManager.ToggleStartOnBoot();
@@ -161,8 +161,8 @@ namespace WinDynamicDesktop
             if (!Directory.Exists("images"))
             {
                 DialogResult result = MessageBox.Show("Failed to download images. Click Retry to " +
-                    "try again or Cancel to exit the program.", "Error", MessageBoxButtons.RetryCancel,
-                    MessageBoxIcon.Error);
+                    "try again or Cancel to exit the program.", "Error",
+                    MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
 
                 if (result == DialogResult.Retry)
                 {

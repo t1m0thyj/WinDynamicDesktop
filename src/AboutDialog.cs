@@ -25,7 +25,7 @@ namespace WinDynamicDesktop
         private void AboutDialog_Load(object sender, EventArgs e)
         {
             iconBox.Image = (new Icon(Properties.Resources.AppIcon, 64, 64)).ToBitmap();
-            
+
             string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             nameLabel.Text += " " + version;
 

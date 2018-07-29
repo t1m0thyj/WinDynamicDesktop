@@ -55,15 +55,15 @@ namespace WinDynamicDesktop
                 }
 
                 MessageBox.Show("Location set successfully to: " + data.display_name +
-                    Environment.NewLine + "(Latitude = " + data.lat + ", Longitude = " + data.lon + ")",
-                    "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Environment.NewLine + "(Latitude = " + data.lat + ", Longitude = " + data.lon +
+                    ")", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 this.Close();
             }
             else
             {
-                MessageBox.Show("The location you entered was invalid, or you are not connected to " +
-                    "the Internet.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("The location you entered was invalid, or you are not connected " +
+                    "to the Internet.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
             okButton.Enabled = true;
@@ -78,10 +78,11 @@ namespace WinDynamicDesktop
         {
             if (JsonConfig.settings.location == null)
             {
-                DialogResult result = MessageBox.Show("This app cannot display wallpapers until you " +
-                    "have entered a valid location, so that it can calculate sunrise and sunset" +
-                    "times for your location. Are you sure you want to cancel and quit the program?",
-                    "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                DialogResult result = MessageBox.Show("WinDynamicDesktop cannot display" +
+                    "wallpapers until you have entered a valid location, so that it can " +
+                    "calculate sunrise and sunset times for your location. Are you sure you want " +
+                    "to cancel and quit the program?", "Question", MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
 
                 if (result == DialogResult.Yes)
                 {

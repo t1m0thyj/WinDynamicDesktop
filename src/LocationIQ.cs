@@ -27,7 +27,7 @@ namespace WinDynamicDesktop
     {
         private static string apiKey = Encoding.UTF8.GetString(Convert.FromBase64String(
             "cGsuYmRhNTk1NDRhN2VjZWMxYjAxMDZkNzg5MzdlMDQzOTk ="));
-        
+
         public static LocationIQData GetLocationData(string locationStr)
         {
             var client = new RestClient("https://us1.locationiq.org");

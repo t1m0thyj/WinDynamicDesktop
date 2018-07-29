@@ -10,6 +10,7 @@ namespace WinDynamicDesktop
 {
     abstract class StartupManager
     {
+        internal bool startOnBoot;
         internal MenuItem _menuItem;
 
         public StartupManager(MenuItem startupMenuItem)
@@ -56,6 +57,18 @@ namespace WinDynamicDesktop
             else
             {
                 return new UwpStartupManager(startupMenuItem);
+            }
+        }
+
+        public static void SetWallpaper(string imageFilename)
+        {
+            if (!IsRunningAsUwp())
+            {
+                DesktopHelper.SetWallpaper(imageFilename);
+            }
+            else
+            {
+                UwpHelper.SetWallpaper(imageFilename);
             }
         }
     }

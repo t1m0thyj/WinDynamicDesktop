@@ -245,8 +245,8 @@ namespace WinDynamicDesktop
         public static void EnableTransitions()
         {
             IntPtr result = IntPtr.Zero;
-            SendMessageTimeout(FindWindow("Progman", IntPtr.Zero), 0x52c, IntPtr.Zero, IntPtr.Zero, 0, 500,
-                out result);
+            SendMessageTimeout(FindWindow("Progman", IntPtr.Zero), 0x52c, IntPtr.Zero, IntPtr.Zero,
+                0, 500, out result);
         }
 
         public static void SetWallpaper(string imagePath)
