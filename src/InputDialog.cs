@@ -55,8 +55,8 @@ namespace WinDynamicDesktop
                 }
 
                 MessageBox.Show("Location set successfully to: " + data.display_name +
-                    Environment.NewLine + "(Latitude = " + data.lat + ", Longitude = " + data.lon +
-                    ")", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    "\n(Latitude = " + data.lat + ", Longitude = " + data.lon + ")", "Success",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 this.Close();
             }

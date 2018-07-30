@@ -26,7 +26,7 @@ namespace WinDynamicDesktop
 
         static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            string errorMessage = ((Exception)e.ExceptionObject).ToString() + Environment.NewLine;
+            string errorMessage = ((Exception)e.ExceptionObject).ToString() + "\n";
             string logFilename = Path.Combine(Directory.GetCurrentDirectory(),
                 Environment.GetCommandLineArgs()[0] + ".log");
 
@@ -39,9 +39,8 @@ namespace WinDynamicDesktop
             }
             catch
             {
-                MessageBox.Show("The logfile '" + logFilename + "' could not be opened:" +
-                    Environment.NewLine + " " + errorMessage, "Errors occurred",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("The logfile '" + logFilename + "' could not be opened:\n " +
+                    errorMessage, "Errors occurred", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

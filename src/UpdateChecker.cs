@@ -90,9 +90,8 @@ namespace WinDynamicDesktop
             else if (IsUpdateAvailable(currentVersion, latestVersion))
             {
                 DialogResult result = MessageBox.Show("There is a newer version of " +
-                    "WinDynamicDesktop available. Would you like to visit the download page?" +
-                    Environment.NewLine + Environment.NewLine + "Current Version: " +
-                    currentVersion + Environment.NewLine + "Latest Version: " + latestVersion,
+                    "WinDynamicDesktop available. Would you like to visit the download page?\n\n" +
+                    "Current Version: " + currentVersion + "\nLatest Version: " + latestVersion,
                     "Update Available", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (result == DialogResult.Yes)
