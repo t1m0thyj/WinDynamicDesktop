@@ -41,17 +41,17 @@ namespace WinDynamicDesktop
             {
                 case Windows.ApplicationModel.StartupTaskState.Disabled:
                     startOnBoot = false;
-                    _menuItem.Checked = startOnBoot;
                     break;
                 case Windows.ApplicationModel.StartupTaskState.DisabledByUser:
                     startOnBoot = false;
-                    _menuItem.Checked = startOnBoot;
+                    _menuItem.Enabled = false;
                     break;
                 case Windows.ApplicationModel.StartupTaskState.Enabled:
                     startOnBoot = true;
-                    _menuItem.Checked = startOnBoot;
                     break;
             }
+
+            _menuItem.Checked = startOnBoot;
         }
 
         public override async void ToggleStartOnBoot()
@@ -66,23 +66,20 @@ namespace WinDynamicDesktop
                 switch (state)
                 {
                     case Windows.ApplicationModel.StartupTaskState.DisabledByUser:
-                        //MessageBox.Show("The task has been disabled by the user");
                         startOnBoot = false;
-                        _menuItem.Checked = startOnBoot;
                         break;
                     case Windows.ApplicationModel.StartupTaskState.Enabled:
                         startOnBoot = true;
-                        _menuItem.Checked = startOnBoot;
                         break;
                 }
             }
             else
             {
                 startupTask.Disable();
-
                 startOnBoot = false;
-                _menuItem.Checked = startOnBoot;
             }
+
+            _menuItem.Checked = startOnBoot;
         }
     }
 }

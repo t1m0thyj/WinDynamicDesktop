@@ -20,7 +20,7 @@ namespace WinDynamicDesktop
 
         public static WeatherData GetWeatherData(string lat, string lon, string dateStr)
         {
-            DateTime date = DateTime.Parse(dateStr);
+            DateTime date = DateTime.Parse(dateStr, cultureInfo);
             double latitude = Double.Parse(lat, cultureInfo);
             double longitude = Double.Parse(lon, cultureInfo);
 

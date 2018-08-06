@@ -16,7 +16,7 @@ namespace WinDynamicDesktop
         private int[] nightImages;
         private string lastDate = "yyyy-MM-dd";
         private int lastImageId = -1;
-        private long timerError = TimeSpan.TicksPerMillisecond * 55;
+        private TimeSpan timerError = new TimeSpan(TimeSpan.TicksPerMillisecond * 55);
 
         private WeatherData yesterdaysData;
         private WeatherData todaysData;
@@ -70,12 +70,12 @@ namespace WinDynamicDesktop
         {
             TimeSpan elapsedTime = DateTime.Now - startTime;
 
-            return (int)((elapsedTime.Ticks + timerError) / timerLength.Ticks);
+            return (int)((elapsedTime.Ticks + timerError.Ticks) / timerLength.Ticks);
         }
 
         private void StartTimer(long intervalTicks, TimeSpan maxInterval)
         {
-            if (intervalTicks < timerError)
+            if (intervalTicks < timerError.Ticks)
             {
                 intervalTicks += maxInterval.Ticks;
             }
@@ -107,7 +107,7 @@ namespace WinDynamicDesktop
                 lastDate = currentDate;
             }
 
-            if (DateTime.Now < todaysData.SunriseTime)
+            if (DateTime.Now < todaysData.SunriseTime + timerError)
             {
                 // Before sunrise
                 if (shouldRefresh || yesterdaysData == null)
@@ -117,7 +117,7 @@ namespace WinDynamicDesktop
 
                 tomorrowsData = null;
             }
-            else if (DateTime.Now > todaysData.SunsetTime)
+            else if (DateTime.Now >= todaysData.SunsetTime - timerError)
             {
                 // After sunset
                 yesterdaysData = null;

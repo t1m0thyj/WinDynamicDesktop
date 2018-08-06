@@ -123,7 +123,7 @@ namespace WinDynamicDesktop
                 _notifyIcon.ShowBalloonTip(10000);
             }
 
-            JsonConfig.settings.lastUpdateCheck = DateTime.Now.ToString("yyyy-MM-dd");
+            JsonConfig.settings.lastUpdateCheck = DateTime.Now.ToString();
             JsonConfig.SaveConfig();
         }
 

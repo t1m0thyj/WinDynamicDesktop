@@ -23,7 +23,7 @@ When the Dynamic Desktop feature was announced for macOS Mojave which shifts thr
 
 ### Can the lockscreen image be changed too?
 
-This is a commonly requested feature, and it would be nice to mimic the behavior of macOS and many Linux distros where the lockscreen image is the same as the desktop wallpaper. This functionality would likely only be possible in the Microsoft Store version of the app, since there isn't a good API for changing the Windows lockscreen image in a .NET app. Currently I have decided not to implement this feature, because I would like to keep functionality consistent between both versions.
+This is a commonly requested feature, and it would be nice to mimic the behavior of macOS and many Linux distros where the lockscreen image is the same as the desktop wallpaper. Unfortunately Windows 10 doesn't have a reliable API for changing the lockscreen image, which means I can't really implement this feature in the app unless Microsoft adds a desktop wallpaper option to Windows for the lockscreen.
 
 ### How can I hide the tray icon?
 
