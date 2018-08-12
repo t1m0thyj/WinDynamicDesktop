@@ -14,15 +14,17 @@ namespace WinDynamicDesktop
     {
         private int[] dayImages;
         private int[] nightImages;
-        private string lastDate = "yyyy-MM-dd";
-        private int lastImageId = -1;
-        private TimeSpan timerError = new TimeSpan(TimeSpan.TicksPerMillisecond * 55);
+        private string lastDate;
+        private int lastImageId;
+
+        public static bool isDayNow;
 
         private WeatherData yesterdaysData;
         private WeatherData todaysData;
         private WeatherData tomorrowsData;
 
         private Timer wallpaperTimer = new Timer();
+        private TimeSpan timerError = new TimeSpan(TimeSpan.TicksPerMillisecond * 55);
 
         public WallpaperChangeScheduler()
         {
@@ -34,11 +36,11 @@ namespace WinDynamicDesktop
 
         public void LoadImageLists()
         {
-            nightImages = JsonConfig.imageSettings.nightImageList;
+            nightImages = JsonConfig.themeSettings.nightImageList;
 
             if (!JsonConfig.settings.darkMode)
             {
-                dayImages = JsonConfig.imageSettings.dayImageList;
+                dayImages = JsonConfig.themeSettings.dayImageList;
             }
             else
             {
@@ -88,7 +90,7 @@ namespace WinDynamicDesktop
 
         private void SetWallpaper(int imageId)
         {
-            string imageFilename = String.Format(JsonConfig.imageSettings.imageFilename, imageId);
+            string imageFilename = String.Format(JsonConfig.themeSettings.imageFilename, imageId);
             UwpDesktop.SetWallpaper(imageFilename);
 
             lastImageId = imageId;
@@ -134,9 +136,10 @@ namespace WinDynamicDesktop
                 tomorrowsData = null;
             }
 
+            isDayNow = (yesterdaysData == null && tomorrowsData == null);
             lastImageId = -1;
 
-            if (yesterdaysData == null && tomorrowsData == null)
+            if (isDayNow)
             {
                 UpdateDayImage();
             }
@@ -144,6 +147,8 @@ namespace WinDynamicDesktop
             {
                 UpdateNightImage();
             }
+
+            SystemThemeChanger.TryUpdateSystemTheme();
         }
 
         private void UpdateDayImage()

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -46,12 +47,11 @@ namespace WinDynamicDesktop
 
         private void EnforceSingleInstance()
         {
-            bool isNewInstance;
-            _mutex = new Mutex(true, @"Global\WinDynamicDesktop", out isNewInstance);
+            _mutex = new Mutex(true, @"Global\WinDynamicDesktop", out bool isFirstInstance);
 
             GC.KeepAlive(_mutex);
 
-            if (!isNewInstance)
+            if (!isFirstInstance)
             {
                 MessageBox.Show("Another instance of WinDynamicDesktop is already running. " +
                     "You can access it by right-clicking the icon in the system tray.", "Error",
@@ -89,11 +89,14 @@ namespace WinDynamicDesktop
 
             notifyIcon.ContextMenu.MenuItems[0].Enabled = false;
             notifyIcon.ContextMenu.MenuItems[5].Checked = JsonConfig.settings.darkMode;
+            notifyIcon.MouseUp += new MouseEventHandler(OnNotifyIconMouseUp);
 
             if (!UwpDesktop.IsRunningAsUwp())
             {
                 UpdateChecker.Initialize(notifyIcon);
             }
+
+            SystemThemeChanger.Initialize(notifyIcon);
         }
 
         private void OnLocationItemClick(object sender, EventArgs e)
@@ -126,9 +129,20 @@ namespace WinDynamicDesktop
             Application.Exit();
         }
 
+        private void OnNotifyIconMouseUp(object sender, MouseEventArgs e)
+        {
+            // Hack to show menu on left click from https://stackoverflow.com/a/2208910/5504760
+            if (e.Button == MouseButtons.Left)
+            {
+                MethodInfo mi = typeof(NotifyIcon).GetMethod("ShowContextMenu",
+                    BindingFlags.Instance | BindingFlags.NonPublic);
+                mi.Invoke(notifyIcon, null);
+            }
+        }
+
         public void DownloadImages()
         {
-            string imagesZipUri = JsonConfig.imageSettings.imagesZipUri;
+            string imagesZipUri = JsonConfig.themeSettings.imagesZipUri;
 
             if (imagesZipUri == null)
             {

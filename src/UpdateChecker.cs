@@ -32,8 +32,9 @@ namespace WinDynamicDesktop
     class UpdateChecker
     {
         private static string updateLink = "https://github.com/t1m0thyj/WinDynamicDesktop/releases";
-
-        internal static NotifyIcon _notifyIcon;
+        
+        private static NotifyIcon _notifyIcon;
+        private static MenuItem menuItem;
 
         public static void Initialize(NotifyIcon notifyIcon)
         {
@@ -42,6 +43,7 @@ namespace WinDynamicDesktop
                 OnUpdateItemClick));
             _notifyIcon.ContextMenu.MenuItems.Add(9, new MenuItem(
                 "C&heck Automatically Once a Week", OnAutoUpdateItemClick));
+            menuItem = _notifyIcon.ContextMenu.MenuItems[9];
             _notifyIcon.ContextMenu.MenuItems[9].Checked = !JsonConfig.settings.disableAutoUpdate;
             _notifyIcon.ContextMenu.MenuItems.Add(10, new MenuItem("-"));
 
@@ -151,7 +153,7 @@ namespace WinDynamicDesktop
         private static void ToggleAutoUpdate()
         {
             JsonConfig.settings.disableAutoUpdate ^= true;
-            _notifyIcon.ContextMenu.MenuItems[9].Checked = !JsonConfig.settings.disableAutoUpdate;
+            menuItem.Checked = !JsonConfig.settings.disableAutoUpdate;
 
             TryCheckAuto(true);
             JsonConfig.SaveConfig();

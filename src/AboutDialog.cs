@@ -48,7 +48,7 @@ namespace WinDynamicDesktop
                 "Roundicons from flaticon.com for the icon (licensed by CC 3.0 BY)"
             };
 
-            return String.Join("\n    ", lines);
+            return String.Join(Environment.NewLine + "    ", lines);
         }
 
         private void websiteLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

@@ -17,9 +17,10 @@ namespace WinDynamicDesktop
         public bool hideTrayIcon { get; set; }
         public bool disableAutoUpdate { get; set; }
         public string lastUpdateCheck { get; set; }
+        public bool changeSystemTheme { get; set; }
     }
 
-    public class ImagesConfig
+    public class ThemeConfig
     {
         public string themeName { get; set; }
         public string imagesZipUri { get; set; }
@@ -31,7 +32,7 @@ namespace WinDynamicDesktop
     class JsonConfig
     {
         public static AppConfig settings = new AppConfig();
-        public static ImagesConfig imageSettings = new ImagesConfig();
+        public static ThemeConfig themeSettings = new ThemeConfig();
         public static bool firstRun = !File.Exists("settings.conf");
 
         public static void LoadConfig()
@@ -53,7 +54,7 @@ namespace WinDynamicDesktop
                 imagesConf = Encoding.UTF8.GetString(Properties.Resources.imagesConf);
             }
 
-            imageSettings = JsonConvert.DeserializeObject<ImagesConfig>(imagesConf);
+            themeSettings = JsonConvert.DeserializeObject<ThemeConfig>(imagesConf);
         }
 
         public static void SaveConfig()
