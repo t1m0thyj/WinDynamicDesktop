@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.IO;
-using System.Net;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
@@ -14,34 +12,30 @@ namespace WinDynamicDesktop
     class AppContext : ApplicationContext
     {
         private Mutex _mutex;
-        private ProgressDialog downloadDialog;
-        private InputDialog locationDialog;
-        private NotifyIcon notifyIcon;
+        private StartupManager startupManager;
 
-        public StartupManager _startupManager;
-        public WallpaperChangeScheduler _wcsService;
+        public static NotifyIcon notifyIcon;
+        public static WallpaperChangeScheduler wcsService;
 
         public AppContext()
         {
             EnforceSingleInstance();
 
             JsonConfig.LoadConfig();
-            InitializeComponent();
+            InitializeGUI();
 
-            _startupManager = UwpDesktop.GetStartupManager(notifyIcon.ContextMenu.MenuItems[6]);
-            _wcsService = new WallpaperChangeScheduler();
+            startupManager = UwpDesktop.GetStartupManager(notifyIcon.ContextMenu.MenuItems[6]);
+            wcsService = new WallpaperChangeScheduler();
 
-            if (!Directory.Exists("images"))
+            ThemeManager.Initialize();
+
+            if (JsonConfig.settings.location == null)
             {
-                DownloadImages();
-            }
-            else if (JsonConfig.settings.location == null)
-            {
-                UpdateLocation();
+                LocationManager.UpdateLocation();
             }
             else
             {
-                _wcsService.RunScheduler();
+                wcsService.RunScheduler();
             }
         }
 
@@ -61,7 +55,7 @@ namespace WinDynamicDesktop
             }
         }
 
-        private void InitializeComponent()
+        private void InitializeGUI()
         {
             Application.ApplicationExit += new EventHandler(OnApplicationExit);
 
@@ -93,20 +87,46 @@ namespace WinDynamicDesktop
 
             if (!UwpDesktop.IsRunningAsUwp())
             {
-                UpdateChecker.Initialize(notifyIcon);
+                UpdateChecker.Initialize();
             }
 
-            SystemThemeChanger.Initialize(notifyIcon);
+            SystemThemeChanger.Initialize();
+        }
+
+        public static void BackgroundNotify()
+        {
+            if (!JsonConfig.firstRun || !LocationManager.isReady || !ThemeManager.isReady)
+            {
+                return;
+            }
+
+            notifyIcon.BalloonTipTitle = "WinDynamicDesktop";
+            notifyIcon.BalloonTipText = "The app is still running in the background. " +
+                "You can access it at any time by right-clicking on this icon.";
+            notifyIcon.ShowBalloonTip(10000);
+
+            JsonConfig.firstRun = false;    // Don't show this message again
+        }
+
+        private void ToggleDarkMode()
+        {
+            JsonConfig.settings.darkMode ^= true;
+            notifyIcon.ContextMenu.MenuItems[5].Checked = JsonConfig.settings.darkMode;
+
+            wcsService.LoadImageLists();
+            wcsService.RunScheduler();
+
+            JsonConfig.SaveConfig();
         }
 
         private void OnLocationItemClick(object sender, EventArgs e)
         {
-            UpdateLocation();
+            LocationManager.UpdateLocation();
         }
 
         private void OnRefreshItemClick(object sender, EventArgs e)
         {
-            _wcsService.RunScheduler(true);
+            wcsService.RunScheduler(true);
         }
 
         private void OnDarkModeClick(object sender, EventArgs e)
@@ -116,7 +136,7 @@ namespace WinDynamicDesktop
 
         private void OnStartOnBootClick(object sender, EventArgs e)
         {
-            _startupManager.ToggleStartOnBoot();
+            startupManager.ToggleStartOnBoot();
         }
 
         private void OnAboutItemClick(object sender, EventArgs e)
@@ -140,117 +160,11 @@ namespace WinDynamicDesktop
             }
         }
 
-        public void DownloadImages()
-        {
-            string imagesZipUri = JsonConfig.themeSettings.imagesZipUri;
-
-            if (imagesZipUri == null)
-            {
-                MessageBox.Show("Images folder not found. The program will quit now.", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-                Environment.Exit(0);
-            }
-
-            downloadDialog = new ProgressDialog();
-            downloadDialog.FormClosed += OnDownloadDialogClosed;
-            downloadDialog.Show();
-
-            using (WebClient client = new WebClient())
-            {
-                client.DownloadProgressChanged += downloadDialog.OnDownloadProgressChanged;
-                client.DownloadFileCompleted += downloadDialog.OnDownloadFileCompleted;
-                client.DownloadFileAsync(new Uri(imagesZipUri), "images.zip");
-            }
-
-            if (JsonConfig.settings.location == null)
-            {
-                UpdateLocation();
-            }
-        }
-
-        private void OnDownloadDialogClosed(object sender, EventArgs e)
-        {
-            downloadDialog = null;
-
-            if (!Directory.Exists("images"))
-            {
-                DialogResult result = MessageBox.Show("Failed to download images. Click Retry to " +
-                    "try again or Cancel to exit the program.", "Error",
-                    MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
-
-                if (result == DialogResult.Retry)
-                {
-                    DownloadImages();
-                }
-                else
-                {
-                    Environment.Exit(0);
-                }
-            }
-            else if (locationDialog == null)
-            {
-                _wcsService.RunScheduler();
-                BackgroundNotify();
-            }
-        }
-
-        public void UpdateLocation()
-        {
-            if (locationDialog == null)
-            {
-                locationDialog = new InputDialog { _wcsService = _wcsService };
-                locationDialog.FormClosed += OnLocationDialogClosed;
-                locationDialog.Show();
-            }
-            else
-            {
-                locationDialog.Activate();
-            }
-        }
-
-        private void OnLocationDialogClosed(object sender, EventArgs e)
-        {
-            locationDialog = null;
-            BackgroundNotify();
-        }
-
-        private void ToggleDarkMode()
-        {
-            JsonConfig.settings.darkMode ^= true;
-            notifyIcon.ContextMenu.MenuItems[5].Checked = JsonConfig.settings.darkMode;
-
-            _wcsService.LoadImageLists();
-            _wcsService.RunScheduler();
-
-            JsonConfig.SaveConfig();
-        }
-
-        private void BackgroundNotify()
-        {
-            if (!JsonConfig.firstRun || downloadDialog != null || locationDialog != null)
-            {
-                return;
-            }
-
-            notifyIcon.BalloonTipTitle = "WinDynamicDesktop";
-            notifyIcon.BalloonTipText = "The app is still running in the background. " +
-                "You can access it at any time by right-clicking on this icon.";
-            notifyIcon.ShowBalloonTip(10000);
-
-            JsonConfig.firstRun = false;    // Don't show this message again
-        }
-
         private void OnApplicationExit(object sender, EventArgs e)
         {
-            if (downloadDialog != null)
+            foreach (Form form in Application.OpenForms)
             {
-                downloadDialog.Close();
-            }
-
-            if (locationDialog != null)
-            {
-                locationDialog.Close();
+                form.Close();
             }
 
             if (notifyIcon != null)

@@ -33,18 +33,17 @@ namespace WinDynamicDesktop
     {
         private static string updateLink = "https://github.com/t1m0thyj/WinDynamicDesktop/releases";
         
-        private static NotifyIcon _notifyIcon;
         private static MenuItem menuItem;
 
-        public static void Initialize(NotifyIcon notifyIcon)
+        public static void Initialize()
         {
-            _notifyIcon = notifyIcon;
+            NotifyIcon _notifyIcon = AppContext.notifyIcon;
             _notifyIcon.ContextMenu.MenuItems.Add(8, new MenuItem("&Check for Updates Now",
                 OnUpdateItemClick));
             _notifyIcon.ContextMenu.MenuItems.Add(9, new MenuItem(
                 "C&heck Automatically Once a Week", OnAutoUpdateItemClick));
             menuItem = _notifyIcon.ContextMenu.MenuItems[9];
-            _notifyIcon.ContextMenu.MenuItems[9].Checked = !JsonConfig.settings.disableAutoUpdate;
+            menuItem.Checked = !JsonConfig.settings.disableAutoUpdate;
             _notifyIcon.ContextMenu.MenuItems.Add(10, new MenuItem("-"));
 
             _notifyIcon.BalloonTipClicked += OnBalloonTipClicked;
@@ -119,6 +118,7 @@ namespace WinDynamicDesktop
             }
             else if (IsUpdateAvailable(currentVersion, latestVersion))
             {
+                NotifyIcon _notifyIcon = AppContext.notifyIcon;
                 _notifyIcon.BalloonTipTitle = "Update Available";
                 _notifyIcon.BalloonTipText = "WinDynamicDesktop " + latestVersion +
                     " is available. Click here to download it.";
@@ -171,7 +171,7 @@ namespace WinDynamicDesktop
 
         private static void OnBalloonTipClicked(object sender, EventArgs e)
         {
-            if (_notifyIcon.BalloonTipTitle == "Update Available")
+            if (AppContext.notifyIcon.BalloonTipTitle == "Update Available")
             {
                 System.Diagnostics.Process.Start(updateLink);
             }

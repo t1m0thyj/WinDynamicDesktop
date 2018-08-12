@@ -10,8 +10,6 @@ namespace WinDynamicDesktop
 {
     public partial class InputDialog : Form
     {
-        internal WallpaperChangeScheduler _wcsService;
-
         public InputDialog()
         {
             InitializeComponent();
@@ -51,7 +49,7 @@ namespace WinDynamicDesktop
 
                 if (Directory.Exists("images"))
                 {
-                    _wcsService.RunScheduler(true);
+                    AppContext.wcsService.RunScheduler(true);
                 }
 
                 MessageBox.Show("Location set successfully to: " + data.display_name +

@@ -94,6 +94,7 @@
     </Compile>
     <Compile Include="JsonConfig.cs" />
     <Compile Include="LocationIQ.cs" />
+    <Compile Include="LocationManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProgressDialog.cs">
       <SubType>Form</SubType>
@@ -103,7 +104,8 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SunriseSunset.cs" />
-    <Compile Include="ThemeChanger.cs" />
+    <Compile Include="SystemThemeChanger.cs" />
+    <Compile Include="ThemeManager.cs" />
     <Compile Include="UpdateChecker.cs" />
     <Compile Include="UwpDesktop.cs" />
     <Compile Include="UwpHelper.cs" />

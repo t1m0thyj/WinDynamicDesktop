@@ -15,7 +15,7 @@ namespace WinDynamicDesktop
 
         private static MenuItem menuItem;
 
-        public static void Initialize(NotifyIcon notifyIcon)
+        public static void Initialize()
         {
             RegistryKey themeKey = Registry.CurrentUser.OpenSubKey(registryThemeLocation);
 
@@ -23,11 +23,11 @@ namespace WinDynamicDesktop
             {
                 themeKey.Close();
 
-                notifyIcon.ContextMenu.MenuItems.Add(6, new MenuItem("&Change Windows 10 Theme",
+                var _notifyIcon = AppContext.notifyIcon;
+                _notifyIcon.ContextMenu.MenuItems.Add(6, new MenuItem("&Change Windows 10 Theme",
                     OnThemeItemClick));
-                menuItem = notifyIcon.ContextMenu.MenuItems[6];
-                notifyIcon.ContextMenu.MenuItems[6].Checked =
-                    JsonConfig.settings.changeSystemTheme;
+                menuItem = _notifyIcon.ContextMenu.MenuItems[6];
+                menuItem.Checked = JsonConfig.settings.changeSystemTheme;
             }
             else
             {
