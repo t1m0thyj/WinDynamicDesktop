@@ -73,9 +73,19 @@ namespace WinDynamicDesktop.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] imagesConf {
+        internal static byte[] jsonMojaveDesert {
             get {
-                object obj = ResourceManager.GetObject("imagesConf", resourceCulture);
+                object obj = ResourceManager.GetObject("jsonMojaveDesert", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] jsonSolarGradients {
+            get {
+                object obj = ResourceManager.GetObject("jsonSolarGradients", resourceCulture);
                 return ((byte[])(obj));
             }
         }

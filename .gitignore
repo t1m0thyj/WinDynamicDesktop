@@ -1,15 +1,15 @@
 .vs/
+AppPackages/
+BundleArtifacts/
 bin/
+images/
 obj/
 output/
-src/*/images
-src/packages/
-uwp/AppPackages/
-uwp/BundleArtifacts/
+packages/
 
+*.pfx
+*.wapproj.user
+Package.StoreAssociation.xml
+_pkginfo.txt
 images.zip
 settings.conf
-uwp/*.pfx
-uwp/DesktopBridge.wapproj.user
-uwp/Package.StoreAssociation.xml
-uwp/_pkginfo.txt

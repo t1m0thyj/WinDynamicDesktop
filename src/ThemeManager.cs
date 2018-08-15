@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.IO;
 using System.Net;
+using System.Windows.Forms;
 
 namespace WinDynamicDesktop
 {
@@ -15,6 +15,8 @@ namespace WinDynamicDesktop
 
         public static void Initialize()
         {
+            Directory.CreateDirectory("themes");
+
             if (!Directory.Exists("images"))
             {
                 DownloadImages();
@@ -25,7 +27,27 @@ namespace WinDynamicDesktop
             }
         }
 
-        public static void DownloadImages()
+        public static List<ThemeConfig> GetInstalledThemes()
+        {
+            List<string> themeNames = new List<string>() { "Mojave_Desert", "Solar_Gradients" };
+
+            foreach (string filePath in Directory.EnumerateFiles("themes", "*.json"))
+            {
+                themeNames.Add(Path.GetFileNameWithoutExtension(filePath));
+            }
+
+            themeNames.Sort();
+            List<ThemeConfig> themes = new List<ThemeConfig>();
+
+            foreach (string name in themeNames)
+            {
+                themes.Add(JsonConfig.LoadTheme(name));
+            }
+
+            return themes;
+        }
+
+        private static void DownloadImages()
         {
             string imagesZipUri = JsonConfig.themeSettings.imagesZipUri;
 

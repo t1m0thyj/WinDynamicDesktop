@@ -1,7 +1,6 @@
 {
-  "themeName": "Mojave Default",
   "imagesZipUri": "https://files.rb.gd/mojave_dynamic.zip",
-  "imageFilename": "mojave_dynamic_{0}.jpeg",
+  "imageFilename": "mojave_dynamic_*.jpeg",
   "dayImageList": [
     2,
     3,

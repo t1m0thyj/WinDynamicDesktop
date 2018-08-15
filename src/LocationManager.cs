@@ -12,6 +12,18 @@ namespace WinDynamicDesktop
 
         private static InputDialog locationDialog;
 
+        public static void Initialize()
+        {
+            if (JsonConfig.settings.location == null)
+            {
+                UpdateLocation();
+            }
+            else
+            {
+                isReady = true;
+            }
+        }
+
         public static void UpdateLocation()
         {
             if (locationDialog == null)

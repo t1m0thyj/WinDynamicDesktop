@@ -18,6 +18,7 @@ namespace WinDynamicDesktop
         public bool disableAutoUpdate { get; set; }
         public string lastUpdateCheck { get; set; }
         public bool changeSystemTheme { get; set; }
+        public string themeName { get; set; } = "Mojave_Desert";
     }
 
     public class ThemeConfig
@@ -43,23 +44,35 @@ namespace WinDynamicDesktop
                     File.ReadAllText("settings.conf"));
             }
 
-            string imagesConf;
-
-            if (File.Exists("images.conf"))
-            {
-                imagesConf = File.ReadAllText("images.conf");
-            }
-            else
-            {
-                imagesConf = Encoding.UTF8.GetString(Properties.Resources.imagesConf);
-            }
-
-            themeSettings = JsonConvert.DeserializeObject<ThemeConfig>(imagesConf);
+            themeSettings = LoadTheme(settings.themeName);
         }
 
         public static void SaveConfig()
         {
             File.WriteAllText("settings.conf", JsonConvert.SerializeObject(settings));
+        }
+        
+        public static ThemeConfig LoadTheme(string name)
+        {
+            string themeJson;
+
+            if (name == "Mojave_Desert")
+            {
+                themeJson = Encoding.UTF8.GetString(Properties.Resources.jsonMojaveDesert);
+            }
+            else if (name == "Solar_Gradients")
+            {
+                themeJson = Encoding.UTF8.GetString(Properties.Resources.jsonSolarGradients);
+            }
+            else
+            {
+                themeJson = File.ReadAllText(name + ".json");
+            }
+
+            ThemeConfig theme = JsonConvert.DeserializeObject<ThemeConfig>(themeJson);
+            theme.themeName = name;
+
+            return theme;
         }
     }
 }

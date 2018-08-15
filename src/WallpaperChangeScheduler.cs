@@ -90,7 +90,7 @@ namespace WinDynamicDesktop
 
         private void SetWallpaper(int imageId)
         {
-            string imageFilename = String.Format(JsonConfig.themeSettings.imageFilename, imageId);
+            string imageFilename = JsonConfig.themeSettings.imageFilename.Replace("*", imageId.ToString());
             UwpDesktop.SetWallpaper(imageFilename);
 
             lastImageId = imageId;

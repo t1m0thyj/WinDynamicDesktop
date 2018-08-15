@@ -28,12 +28,12 @@ namespace WinDynamicDesktop
             wcsService = new WallpaperChangeScheduler();
 
             ThemeManager.Initialize();
+            LocationManager.Initialize();
 
-            if (JsonConfig.settings.location == null)
-            {
-                LocationManager.UpdateLocation();
-            }
-            else
+            var dialog = new ThemeDialog();
+            dialog.Show();
+
+            if (LocationManager.isReady && ThemeManager.isReady)
             {
                 wcsService.RunScheduler();
             }
