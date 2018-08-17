@@ -12,7 +12,6 @@ namespace WinDynamicDesktop
     class AppContext : ApplicationContext
     {
         private Mutex _mutex;
-        private StartupManager startupManager;
 
         public static NotifyIcon notifyIcon;
         public static WallpaperChangeScheduler wcsService;
@@ -22,9 +21,8 @@ namespace WinDynamicDesktop
             EnforceSingleInstance();
 
             JsonConfig.LoadConfig();
-            InitializeGUI();
+            InitializeGui();
 
-            startupManager = UwpDesktop.GetStartupManager(notifyIcon.ContextMenu.MenuItems[6]);
             wcsService = new WallpaperChangeScheduler();
 
             ThemeManager.Initialize();
@@ -36,6 +34,11 @@ namespace WinDynamicDesktop
             if (LocationManager.isReady && ThemeManager.isReady)
             {
                 wcsService.RunScheduler();
+            }
+
+            if (!UwpDesktop.IsRunningAsUwp())
+            {
+                UpdateChecker.Initialize();
             }
         }
 
@@ -55,7 +58,7 @@ namespace WinDynamicDesktop
             }
         }
 
-        private void InitializeGUI()
+        private void InitializeGui()
         {
             Application.ApplicationExit += new EventHandler(OnApplicationExit);
 
@@ -65,32 +68,8 @@ namespace WinDynamicDesktop
                 Icon = Properties.Resources.AppIcon,
                 Text = "WinDynamicDesktop",
             };
-
-            notifyIcon.ContextMenu = new ContextMenu(new MenuItem[]
-            {
-                new MenuItem("WinDynamicDesktop"),
-                new MenuItem("-"),
-                new MenuItem("&Update Location...", OnLocationItemClick),
-                new MenuItem("&Refresh Wallpaper", OnRefreshItemClick),
-                new MenuItem("-"),
-                new MenuItem("&Dark Mode", OnDarkModeClick),
-                new MenuItem("&Start on Boot", OnStartOnBootClick),
-                new MenuItem("-"),
-                new MenuItem("&About", OnAboutItemClick),
-                new MenuItem("-"),
-                new MenuItem("E&xit", OnExitItemClick)
-            });
-
-            notifyIcon.ContextMenu.MenuItems[0].Enabled = false;
-            notifyIcon.ContextMenu.MenuItems[5].Checked = JsonConfig.settings.darkMode;
+            notifyIcon.ContextMenu = MainMenu.GetMenu();
             notifyIcon.MouseUp += new MouseEventHandler(OnNotifyIconMouseUp);
-
-            if (!UwpDesktop.IsRunningAsUwp())
-            {
-                UpdateChecker.Initialize();
-            }
-
-            SystemThemeChanger.Initialize();
         }
 
         public static void BackgroundNotify()
@@ -106,47 +85,6 @@ namespace WinDynamicDesktop
             notifyIcon.ShowBalloonTip(10000);
 
             JsonConfig.firstRun = false;    // Don't show this message again
-        }
-
-        private void ToggleDarkMode()
-        {
-            JsonConfig.settings.darkMode ^= true;
-            notifyIcon.ContextMenu.MenuItems[5].Checked = JsonConfig.settings.darkMode;
-
-            wcsService.LoadImageLists();
-            wcsService.RunScheduler();
-
-            JsonConfig.SaveConfig();
-        }
-
-        private void OnLocationItemClick(object sender, EventArgs e)
-        {
-            LocationManager.UpdateLocation();
-        }
-
-        private void OnRefreshItemClick(object sender, EventArgs e)
-        {
-            wcsService.RunScheduler(true);
-        }
-
-        private void OnDarkModeClick(object sender, EventArgs e)
-        {
-            ToggleDarkMode();
-        }
-
-        private void OnStartOnBootClick(object sender, EventArgs e)
-        {
-            startupManager.ToggleStartOnBoot();
-        }
-
-        private void OnAboutItemClick(object sender, EventArgs e)
-        {
-            (new AboutDialog()).Show();
-        }
-
-        private void OnExitItemClick(object sender, EventArgs e)
-        {
-            Application.Exit();
         }
 
         private void OnNotifyIconMouseUp(object sender, MouseEventArgs e)

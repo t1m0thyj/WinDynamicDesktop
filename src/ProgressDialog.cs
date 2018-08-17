@@ -5,14 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.IO;
-using System.IO.Compression;
 using System.Net;
 
 namespace WinDynamicDesktop
 {
     public partial class ProgressDialog : Form
     {
+        public int numDownloads = 0;
+        public List<string> downloadedThemes = new List<string>();
+
         public ProgressDialog()
         {
             InitializeComponent();
@@ -23,12 +24,20 @@ namespace WinDynamicDesktop
             progressBar1.Value = e.ProgressPercentage;
         }
 
-        public async void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+        public void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
-            await Task.Run(() => ZipFile.ExtractToDirectory("images.zip", "images"));
-            File.Delete("images.zip");
+            numDownloads--;
+            downloadedThemes.Add(e.UserState.ToString());
+            
+            if (numDownloads == 0)
+            {
+                progressBar1.Style = ProgressBarStyle.Marquee;
 
-            this.Close();
+                ThemeManager.ExtractThemes(downloadedThemes);
+                downloadedThemes.Clear();
+
+                this.Close();
+            }
         }
     }
 }

@@ -95,6 +95,7 @@
     <Compile Include="JsonConfig.cs" />
     <Compile Include="LocationIQ.cs" />
     <Compile Include="LocationManager.cs" />
+    <Compile Include="MainMenu.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProgressDialog.cs">
       <SubType>Form</SubType>

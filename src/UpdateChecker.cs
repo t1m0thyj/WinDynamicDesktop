@@ -37,18 +37,27 @@ namespace WinDynamicDesktop
 
         public static void Initialize()
         {
-            NotifyIcon _notifyIcon = AppContext.notifyIcon;
-            _notifyIcon.ContextMenu.MenuItems.Add(8, new MenuItem("&Check for Updates Now",
-                OnUpdateItemClick));
-            _notifyIcon.ContextMenu.MenuItems.Add(9, new MenuItem(
-                "C&heck Automatically Once a Week", OnAutoUpdateItemClick));
-            menuItem = _notifyIcon.ContextMenu.MenuItems[9];
-            menuItem.Checked = !JsonConfig.settings.disableAutoUpdate;
-            _notifyIcon.ContextMenu.MenuItems.Add(10, new MenuItem("-"));
-
-            _notifyIcon.BalloonTipClicked += OnBalloonTipClicked;
+            AppContext.notifyIcon.BalloonTipClicked += OnBalloonTipClicked;
 
             TryCheckAuto(true);
+        }
+
+        public static List<MenuItem> GetMenuItems()
+        {
+            if (UwpDesktop.IsRunningAsUwp())
+            {
+                return new List<MenuItem>();
+            }
+
+            menuItem = new MenuItem("C&heck Automatically Once a Week", OnAutoUpdateItemClick);
+            menuItem.Checked = !JsonConfig.settings.disableAutoUpdate;
+
+            return new List<MenuItem>()
+            {
+                new MenuItem("&Check for Updates Now", OnUpdateItemClick),
+                menuItem,
+                new MenuItem("-")
+            };
         }
 
         private static string GetLatestVersion()

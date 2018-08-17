@@ -42,6 +42,7 @@ namespace WinDynamicDesktop
         {
             locationDialog = null;
             isReady = true;
+
             AppContext.BackgroundNotify();
         }
     }

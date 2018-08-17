@@ -28,10 +28,26 @@ namespace WinDynamicDesktop
 
         public WallpaperChangeScheduler()
         {
-            LoadImageLists();
+            if (JsonConfig.themeSettings != null)
+            {
+                Initialize();
+            }
+        }
 
-            wallpaperTimer.Tick += new EventHandler(OnWallpaperTimerTick);
-            SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(OnPowerModeChanged);
+        public void Initialize()
+        {
+            if (JsonConfig.themeSettings != null)
+            {
+                LoadImageLists();
+
+                wallpaperTimer.Tick += new EventHandler(OnWallpaperTimerTick);
+                SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(OnPowerModeChanged);
+            }
+            else
+            {
+                wallpaperTimer.Tick -= OnWallpaperTimerTick;
+                SystemEvents.PowerModeChanged -= OnPowerModeChanged;
+            }
         }
 
         public void LoadImageLists()

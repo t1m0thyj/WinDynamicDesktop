@@ -16,7 +16,6 @@ namespace WinDynamicDesktop
         private int maxImageNumber;
         private int previewImage;
         private int selectedIndex;
-        private List<ThemeConfig> themeData;
         private string windowsWallpaper = Directory.GetFiles(@"C:\Windows\Web\Wallpaper\Windows")[0];
 
         public ThemeDialog()
@@ -30,7 +29,7 @@ namespace WinDynamicDesktop
 
             if (selectedIndex > 0)
             {
-                ThemeConfig theme = themeData[selectedIndex - 1];
+                ThemeConfig theme = ThemeManager.themeData[selectedIndex - 1];
                 max = theme.nightImageList.Length;
 
                 if (!darkModeCheckbox.Checked)
@@ -44,36 +43,38 @@ namespace WinDynamicDesktop
 
         private void LoadPreviewImage(int imageNumber)
         {
+            if (pictureBox1.Image != null)
+            {
+                pictureBox1.Image.Dispose();    // Free up memory
+            }
+
             if (selectedIndex == 0)
             {
-                pictureBox1.ImageLocation = windowsWallpaper;
+                pictureBox1.Image = Image.FromFile(windowsWallpaper);
             }
             else
             {
-                ThemeConfig theme = themeData[selectedIndex - 1];
+                ThemeConfig theme = ThemeManager.themeData[selectedIndex - 1];
                 int imageId;
 
-                if (!darkModeCheckbox.Checked)
-                {
-                    if (imageNumber <= theme.dayImageList.Length)
-                    {
-                        imageId = theme.dayImageList[imageNumber - 1];
-                    }
-                    else
-                    {
-                        imageId = theme.nightImageList[imageNumber - theme.dayImageList.Length - 1];
-                    }
-                }
-                else
+                if (darkModeCheckbox.Checked)
                 {
                     imageId = theme.nightImageList[imageNumber - 1];
                 }
+                else if (imageNumber <= theme.dayImageList.Length)
+                {
+                    imageId = theme.dayImageList[imageNumber - 1];
+                }
+                else
+                {
+                    imageId = theme.nightImageList[imageNumber - theme.dayImageList.Length - 1];
+                }
 
                 string imageFilename = theme.imageFilename.Replace("*", imageId.ToString());
-                pictureBox1.ImageLocation = Path.Combine("images", imageFilename);
+                pictureBox1.Image = Image.FromFile(Path.Combine("images", imageFilename));
             }
 
-            label1.Text = "Image " + imageNumber + " of " + maxImageNumber;
+            imageNumberLabel.Text = "Image " + imageNumber + " of " + maxImageNumber;
             firstButton.Enabled = (imageNumber > 1);
             previousButton.Enabled = (imageNumber > 1);
             nextButton.Enabled = (imageNumber < maxImageNumber);
@@ -84,8 +85,6 @@ namespace WinDynamicDesktop
 
         private void ThemeDialog_Load(object sender, EventArgs e)
         {
-            themeData = ThemeManager.GetInstalledThemes();
-
             darkModeCheckbox.Checked = JsonConfig.settings.darkMode;
 
             ImageList imageList = new ImageList();
@@ -96,16 +95,18 @@ namespace WinDynamicDesktop
             imageList.Images.Add(Image.FromFile(windowsWallpaper));
             listView1.Items.Add("None", 0);
 
-            for (int i = 0; i < themeData.Count; i++)
+            string currentTheme = JsonConfig.settings.themeName ?? "Mojave_Desert";
+
+            for (int i = 0; i < ThemeManager.themeData.Count; i++)
             {
-                ThemeConfig theme = themeData[i];
+                ThemeConfig theme = ThemeManager.themeData[i];
                 int imageId = theme.nightImageList.Last();
                 string imageFilename = theme.imageFilename.Replace("*", imageId.ToString());
 
                 imageList.Images.Add(Image.FromFile(Path.Combine("images", imageFilename)));
                 listView1.Items.Add(theme.themeName.Replace('_', ' '), i + 1);
 
-                if (theme.themeName == JsonConfig.settings.themeName)
+                if (theme.themeName == currentTheme)
                 {
                     listView1.Items[i + 1].Selected = true;
                 }
@@ -156,7 +157,29 @@ namespace WinDynamicDesktop
 
         private void okButton_Click(object sender, EventArgs e)
         {
+            string newThemeName = listView1.SelectedItems[0].Name;
+            JsonConfig.settings.themeName = newThemeName;
 
+            foreach (ThemeConfig theme in ThemeManager.themeData)
+            {
+                if (theme.themeName == newThemeName)
+                {
+                    JsonConfig.themeSettings = theme;
+                    break;
+                }
+            }
+
+            JsonConfig.settings.darkMode = darkModeCheckbox.Checked;
+            AppContext.notifyIcon.ContextMenu.MenuItems[6].Checked = darkModeCheckbox.Checked;
+
+            if (LocationManager.isReady)
+            {
+                AppContext.wcsService.Initialize();
+                AppContext.wcsService.RunScheduler();
+            }
+
+            ThemeManager.isReady = true;
+            JsonConfig.SaveConfig();
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
