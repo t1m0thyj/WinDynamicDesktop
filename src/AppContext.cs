@@ -21,15 +21,13 @@ namespace WinDynamicDesktop
             EnforceSingleInstance();
 
             JsonConfig.LoadConfig();
-            InitializeGui();
+            ThemeManager.Initialize();
 
+            InitializeGui();
             wcsService = new WallpaperChangeScheduler();
 
-            ThemeManager.Initialize();
+            ThemeManager.DownloadMissingImages();
             LocationManager.Initialize();
-
-            var dialog = new ThemeDialog();
-            dialog.Show();
 
             if (LocationManager.isReady && ThemeManager.isReady)
             {
@@ -45,7 +43,6 @@ namespace WinDynamicDesktop
         private void EnforceSingleInstance()
         {
             _mutex = new Mutex(true, @"Global\WinDynamicDesktop", out bool isFirstInstance);
-
             GC.KeepAlive(_mutex);
 
             if (!isFirstInstance)

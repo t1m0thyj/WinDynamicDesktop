@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Globalization;
-using System.IO;
 using System.Windows.Forms;
 using Microsoft.Win32;
 
@@ -28,15 +27,15 @@ namespace WinDynamicDesktop
 
         public WallpaperChangeScheduler()
         {
-            if (JsonConfig.themeSettings != null)
+            if (ThemeManager.currentTheme != null)
             {
-                Initialize();
+                HandleNewTheme();
             }
         }
 
-        public void Initialize()
+        public void HandleNewTheme()
         {
-            if (JsonConfig.themeSettings != null)
+            if (ThemeManager.currentTheme != null)
             {
                 LoadImageLists();
 
@@ -52,11 +51,11 @@ namespace WinDynamicDesktop
 
         public void LoadImageLists()
         {
-            nightImages = JsonConfig.themeSettings.nightImageList;
+            nightImages = ThemeManager.currentTheme.nightImageList;
 
             if (!JsonConfig.settings.darkMode)
             {
-                dayImages = JsonConfig.themeSettings.dayImageList;
+                dayImages = ThemeManager.currentTheme.dayImageList;
             }
             else
             {
@@ -106,7 +105,7 @@ namespace WinDynamicDesktop
 
         private void SetWallpaper(int imageId)
         {
-            string imageFilename = JsonConfig.themeSettings.imageFilename.Replace("*", imageId.ToString());
+            string imageFilename = ThemeManager.currentTheme.imageFilename.Replace("*", imageId.ToString());
             UwpDesktop.SetWallpaper(imageFilename);
 
             lastImageId = imageId;
@@ -114,6 +113,11 @@ namespace WinDynamicDesktop
 
         public void RunScheduler(bool forceRefresh = false)
         {
+            if (ThemeManager.currentTheme == null)
+            {
+                return;
+            }
+
             wallpaperTimer.Stop();
 
             string currentDate = GetDateString();

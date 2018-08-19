@@ -30,13 +30,13 @@ namespace WinDynamicDesktop
     {
         private string registryStartupLocation = @"Software\Microsoft\Windows\CurrentVersion\Run";
 
-        public DesktopStartupManager(MenuItem startupMenuItem) : base(startupMenuItem)
+        internal override void UpdateStatus()
         {
             RegistryKey startupKey = Registry.CurrentUser.OpenSubKey(registryStartupLocation);
             startOnBoot = startupKey.GetValue("WinDynamicDesktop") != null;
             startupKey.Close();
 
-            _menuItem.Checked = startOnBoot;
+            MainMenu.startOnBootItem.Checked = startOnBoot;
         }
 
         public override void ToggleStartOnBoot()
@@ -56,7 +56,7 @@ namespace WinDynamicDesktop
                 startOnBoot = false;
             }
 
-            _menuItem.Checked = startOnBoot;
+            MainMenu.startOnBootItem.Checked = startOnBoot;
         }
     }
 }

@@ -24,7 +24,7 @@ namespace WinDynamicDesktop
             progressBar1.Value = e.ProgressPercentage;
         }
 
-        public void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+        public async void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
             numDownloads--;
             downloadedThemes.Add(e.UserState.ToString());
@@ -33,9 +33,9 @@ namespace WinDynamicDesktop
             {
                 progressBar1.Style = ProgressBarStyle.Marquee;
 
-                ThemeManager.ExtractThemes(downloadedThemes);
-                downloadedThemes.Clear();
+                await Task.Run(() => ThemeManager.ExtractThemes(downloadedThemes));
 
+                downloadedThemes.Clear();
                 this.Close();
             }
         }

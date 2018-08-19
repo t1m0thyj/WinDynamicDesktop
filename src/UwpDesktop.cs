@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using DesktopBridge;
 
 namespace WinDynamicDesktop
@@ -11,12 +10,13 @@ namespace WinDynamicDesktop
     abstract class StartupManager
     {
         internal bool startOnBoot;
-        internal MenuItem _menuItem;
 
-        public StartupManager(MenuItem startupMenuItem)
+        public StartupManager()
         {
-            _menuItem = startupMenuItem;
+            UpdateStatus();
         }
+
+        internal abstract void UpdateStatus();
 
         public abstract void ToggleStartOnBoot();
     }
@@ -48,15 +48,15 @@ namespace WinDynamicDesktop
             }
         }
 
-        public static StartupManager GetStartupManager(MenuItem startupMenuItem)
+        public static StartupManager GetStartupManager()
         {
             if (!IsRunningAsUwp())
             {
-                return new DesktopStartupManager(startupMenuItem);
+                return new DesktopStartupManager();
             }
             else
             {
-                return new UwpStartupManager(startupMenuItem);
+                return new UwpStartupManager();
             }
         }
 

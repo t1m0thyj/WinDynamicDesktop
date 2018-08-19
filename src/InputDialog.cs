@@ -47,7 +47,7 @@ namespace WinDynamicDesktop
                 JsonConfig.settings.longitude = data.lon;
                 JsonConfig.SaveConfig();
 
-                if (Directory.Exists("images"))
+                if (ThemeManager.isReady)
                 {
                     AppContext.wcsService.RunScheduler(true);
                 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace WinDynamicDesktop
 {
@@ -27,12 +26,7 @@ namespace WinDynamicDesktop
 
     class UwpStartupManager : StartupManager
     {
-        public UwpStartupManager(MenuItem startupMenuItem) : base(startupMenuItem)
-        {
-            UpdateStatus();
-        }
-
-        private async void UpdateStatus()
+        internal override async void UpdateStatus()
         {
             var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync(
                 "WinDynamicDesktopUwp");
@@ -44,14 +38,14 @@ namespace WinDynamicDesktop
                     break;
                 case Windows.ApplicationModel.StartupTaskState.DisabledByUser:
                     startOnBoot = false;
-                    _menuItem.Enabled = false;
+                    MainMenu.startOnBootItem.Enabled = false;
                     break;
                 case Windows.ApplicationModel.StartupTaskState.Enabled:
                     startOnBoot = true;
                     break;
             }
 
-            _menuItem.Checked = startOnBoot;
+            MainMenu.startOnBootItem.Checked = startOnBoot;
         }
 
         public override async void ToggleStartOnBoot()
@@ -79,7 +73,7 @@ namespace WinDynamicDesktop
                 startOnBoot = false;
             }
 
-            _menuItem.Checked = startOnBoot;
+            MainMenu.startOnBootItem.Checked = startOnBoot;
         }
     }
 }

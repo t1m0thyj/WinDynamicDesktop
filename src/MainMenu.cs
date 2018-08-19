@@ -9,15 +9,17 @@ namespace WinDynamicDesktop
 {
     class MainMenu
     {
-        private static MenuItem darkModeItem;
-        private static MenuItem startOnBootItem;
+        public static MenuItem themeItem;
+        public static MenuItem darkModeItem;
+        public static MenuItem startOnBootItem;
+
         private static StartupManager startupManager;
 
         public static ContextMenu GetMenu()
         {
             List<MenuItem> menuItems = GetMenuItems();
 
-            startupManager = UwpDesktop.GetStartupManager(startOnBootItem);
+            startupManager = UwpDesktop.GetStartupManager();
 
             return new ContextMenu(menuItems.ToArray());
         }
@@ -26,11 +28,12 @@ namespace WinDynamicDesktop
         {
             List<MenuItem> items = new List<MenuItem>();
 
+            themeItem = new MenuItem("&Select Theme...", OnThemeItemClick);
             items.AddRange(new List<MenuItem>()
             {
                 new MenuItem("WinDynamicDesktop"),
                 new MenuItem("-"),
-                new MenuItem("&Select Theme...", OnThemeItemClick),
+                themeItem,
                 new MenuItem("&Update Location...", OnLocationItemClick),
                 new MenuItem("&Refresh Wallpaper", OnRefreshItemClick),
                 new MenuItem("-"),
