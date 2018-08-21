@@ -25,6 +25,22 @@ namespace WinDynamicDesktop
             this.FormClosing += OnFormClosing;
         }
 
+        private Bitmap ShrinkImage(string filename, int width, int height)
+        {
+            // Image scaling code from https://stackoverflow.com/a/7677163/5504760
+            using (var tempImage = Image.FromFile(filename))
+            {
+                Bitmap bmp = new Bitmap(width, height);
+
+                using (Graphics g = Graphics.FromImage(bmp))
+                {
+                    g.DrawImage(tempImage, new Rectangle(0, 0, bmp.Width, bmp.Height));
+                }
+
+                return bmp;
+            }
+        }
+
         private int GetMaxImageNumber()
         {
             int max = 1;
@@ -45,11 +61,12 @@ namespace WinDynamicDesktop
 
         private void LoadPreviewImage(int imageNumber)
         {
-            pictureBox1.Image?.Dispose();    // Free up memory
+            int w = pictureBox1.Size.Width;
+            int h = pictureBox1.Size.Height;
 
             if (selectedIndex == 0)
             {
-                pictureBox1.Image = Image.FromFile(windowsWallpaper);
+                pictureBox1.Image = ShrinkImage(windowsWallpaper, w, h);
             }
             else
             {
@@ -70,7 +87,7 @@ namespace WinDynamicDesktop
                 }
 
                 string imageFilename = theme.imageFilename.Replace("*", imageId.ToString());
-                pictureBox1.Image = Image.FromFile(Path.Combine("images", imageFilename));
+                pictureBox1.Image = ShrinkImage(Path.Combine("images", imageFilename), w, h);
             }
 
             imageNumberLabel.Text = "Image " + imageNumber + " of " + maxImageNumber;
@@ -91,7 +108,7 @@ namespace WinDynamicDesktop
             imageList.ImageSize = new Size(192, 108);
             listView1.LargeImageList = imageList;
 
-            imageList.Images.Add(Image.FromFile(windowsWallpaper));
+            imageList.Images.Add(ShrinkImage(windowsWallpaper, 192, 108));
             listView1.Items.Add("None", 0);
 
             for (int i = 0; i < ThemeManager.themeSettings.Count; i++)
@@ -100,7 +117,7 @@ namespace WinDynamicDesktop
                 int imageId = theme.nightImageList.Last();
                 string imageFilename = theme.imageFilename.Replace("*", imageId.ToString());
 
-                imageList.Images.Add(Image.FromFile(Path.Combine("images", imageFilename)));
+                imageList.Images.Add(ShrinkImage(Path.Combine("images", imageFilename), 192, 108));
                 listView1.Items.Add(theme.themeName.Replace('_', ' '), i + 1);
 
                 if (theme.themeName == JsonConfig.settings.themeName)
@@ -155,7 +172,6 @@ namespace WinDynamicDesktop
         private void okButton_Click(object sender, EventArgs e)
         {
             JsonConfig.settings.themeName = listView1.SelectedItems[0].Name.Replace(' ', '_');
-            ThemeManager.isReady = true;
 
             if (selectedIndex > 0)
             {
@@ -169,6 +185,8 @@ namespace WinDynamicDesktop
             JsonConfig.settings.darkMode = darkModeCheckbox.Checked;
             MainMenu.darkModeItem.Checked = darkModeCheckbox.Checked;
 
+            ThemeManager.isReady = true;
+
             if (LocationManager.isReady)
             {
                 AppContext.wcsService.HandleNewTheme();
@@ -179,7 +197,7 @@ namespace WinDynamicDesktop
                 }
                 else
                 {
-                    UwpDesktop.SetWallpaper(windowsWallpaper);
+                    UwpDesktop.GetHelper().SetWallpaper(windowsWallpaper);
                 }
             }
 
@@ -196,9 +214,9 @@ namespace WinDynamicDesktop
         {
             if (ThemeManager.currentTheme == null)
             {
-                DialogResult result = MessageBox.Show("WinDynamicDesktop cannot display" +
-                    "wallpapers until you have selected a theme. Are you sure you want " +
-                    "to cancel and quit the program?", "Question", MessageBoxButtons.YesNo,
+                DialogResult result = MessageBox.Show("WinDynamicDesktop cannot display " +
+                    "wallpapers until you have selected a theme. Are you sure you want to " +
+                    "cancel and quit the program?", "Question", MessageBoxButtons.YesNo,
                     MessageBoxIcon.Warning);
 
                 if (result == DialogResult.Yes)
@@ -209,10 +227,6 @@ namespace WinDynamicDesktop
                 {
                     e.Cancel = true;
                 }
-            }
-            else
-            {
-                pictureBox1.Image?.Dispose();    // Free up memory
             }
         }
     }

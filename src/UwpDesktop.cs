@@ -7,23 +7,23 @@ using DesktopBridge;
 
 namespace WinDynamicDesktop
 {
-    abstract class StartupManager
+    abstract class PlatformHelper
     {
-        internal bool startOnBoot;
+        public abstract string GetCurrentDirectory();
 
-        public StartupManager()
-        {
-            UpdateStatus();
-        }
-
-        internal abstract void UpdateStatus();
+        public abstract void CheckStartOnBoot();
 
         public abstract void ToggleStartOnBoot();
+
+        public abstract void SetWallpaper(string imageFilename);
     }
 
     class UwpDesktop
     {
         private static bool? _isRunningAsUwp;
+        private static PlatformHelper helper;
+
+        public static bool hasLocationAccess;
 
         public static bool IsRunningAsUwp()
         {
@@ -36,39 +36,32 @@ namespace WinDynamicDesktop
             return _isRunningAsUwp.Value;
         }
 
-        public static string GetCurrentDirectory()
+        public static PlatformHelper GetHelper()
         {
-            if (!IsRunningAsUwp())
+            if (helper == null)
             {
-                return DesktopHelper.GetCurrentDirectory();
+                if (!IsRunningAsUwp())
+                {
+                    helper = new DesktopHelper();
+                }
+                else
+                {
+                    helper = new UwpHelper();
+                }
             }
-            else
-            {
-                return UwpHelper.GetCurrentDirectory();
-            }
+
+            return helper;
         }
 
-        public static StartupManager GetStartupManager()
+        public static void RequestLocationAccess()
         {
             if (!IsRunningAsUwp())
             {
-                return new DesktopStartupManager();
+                hasLocationAccess = false;
             }
             else
             {
-                return new UwpStartupManager();
-            }
-        }
-
-        public static void SetWallpaper(string imageFilename)
-        {
-            if (!IsRunningAsUwp())
-            {
-                DesktopHelper.SetWallpaper(imageFilename);
-            }
-            else
-            {
-                UwpHelper.SetWallpaper(imageFilename);
+                UwpLocation.RequestAccess();
             }
         }
     }

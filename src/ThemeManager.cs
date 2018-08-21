@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.IO.Compression;
-using System.Net;
 using System.Windows.Forms;
 
 namespace WinDynamicDesktop
@@ -20,6 +19,7 @@ namespace WinDynamicDesktop
 
         public static void Initialize()
         {
+            Directory.CreateDirectory("images");
             Directory.CreateDirectory("themes");
 
             List<string> themeNames = new List<string>() { "Mojave_Desert", "Solar_Gradients" };
@@ -39,6 +39,11 @@ namespace WinDynamicDesktop
                 {
                     currentTheme = theme;
                 }
+            }
+
+            if (JsonConfig.settings.themeName == null)
+            {
+                JsonConfig.settings.themeName = "Mojave_Desert";
             }
         }
 
@@ -61,15 +66,12 @@ namespace WinDynamicDesktop
             }
         }
 
-        public static void ExtractThemes(List<string> themeNames)
+        public static void ExtractTheme(string themeName)
         {
-            foreach (string name in themeNames)
-            {
-                string imagesZip = name + "_images.zip";
+            string imagesZip = themeName + "_images.zip";
 
-                ZipFile.ExtractToDirectory(imagesZip, "images");
-                File.Delete(imagesZip);
-            }
+            ZipFile.ExtractToDirectory(imagesZip, "images");
+            File.Delete(imagesZip);
         }
 
         private static List<ThemeConfig> FindMissingThemes()
@@ -103,34 +105,11 @@ namespace WinDynamicDesktop
             ProgressDialog downloadDialog = new ProgressDialog();
             downloadDialog.FormClosed += OnDownloadDialogClosed;
             downloadDialog.Show();
+
             MainMenu.themeItem.Enabled = false;
-
-            using (WebClient client = new WebClient())
-            {
-                client.DownloadProgressChanged += downloadDialog.OnDownloadProgressChanged;
-                client.DownloadFileCompleted += downloadDialog.OnDownloadFileCompleted;
-
-                foreach (ThemeConfig theme in missingThemes)
-                {
-                    if (theme.imagesZipUri != null)
-                    {
-                        downloadDialog.numDownloads++;
-                        client.DownloadFileAsync(new Uri(theme.imagesZipUri),
-                            theme.themeName + "_images.zip", theme.themeName);
-                    }
-                }
-            }
-        }
-
-        private static void SetReady()
-        {
-            isReady = true;
-
-            if (LocationManager.isReady)
-            {
-                AppContext.wcsService.RunScheduler();
-                AppContext.BackgroundNotify();
-            }
+            downloadDialog.LoadQueue(missingThemes.FindAll(
+                theme => theme.imagesZipUri != null));
+            downloadDialog.DownloadNext();
         }
 
         private static void OnDownloadDialogClosed(object sender, EventArgs e)
@@ -140,13 +119,12 @@ namespace WinDynamicDesktop
 
             if (missingThemes.Count == 0)
             {
-                if (currentTheme == null)
+                isReady = true;
+
+                if (LocationManager.isReady)
                 {
-                    SelectTheme();
-                }
-                else
-                {
-                    SetReady();
+                    AppContext.wcsService.RunScheduler();
+                    AppContext.RunInBackground();
                 }
             }
             else if (currentTheme != null && missingThemes.Contains(currentTheme))
@@ -186,7 +164,7 @@ namespace WinDynamicDesktop
 
         private static void OnThemeDialogClosed(object sender, EventArgs e)
         {
-            SetReady();
+            AppContext.RunInBackground();
         }
     }
 }

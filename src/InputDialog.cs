@@ -76,7 +76,7 @@ namespace WinDynamicDesktop
         {
             if (JsonConfig.settings.location == null)
             {
-                DialogResult result = MessageBox.Show("WinDynamicDesktop cannot display" +
+                DialogResult result = MessageBox.Show("WinDynamicDesktop cannot display " +
                     "wallpapers until you have entered a valid location, so that it can " +
                     "calculate sunrise and sunset times for your location. Are you sure you want " +
                     "to cancel and quit the program?", "Question", MessageBoxButtons.YesNo,

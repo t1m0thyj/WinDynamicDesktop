@@ -6,27 +6,16 @@ using System.Threading.Tasks;
 
 namespace WinDynamicDesktop
 {
-    class UwpHelper
+    class UwpHelper : PlatformHelper
     {
-        public static string GetCurrentDirectory()
+        private bool startOnBoot;
+
+        public override string GetCurrentDirectory()
         {
             return Windows.Storage.ApplicationData.Current.LocalFolder.Path;
         }
 
-        public static async void SetWallpaper(string imageFilename)
-        {
-            var uri = new Uri("ms-appdata:///local/images/" + imageFilename);
-            var file = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri);
-
-            var profileSettings =
-                Windows.System.UserProfile.UserProfilePersonalizationSettings.Current;
-            await profileSettings.TrySetWallpaperImageAsync(file);
-        }
-    }
-
-    class UwpStartupManager : StartupManager
-    {
-        internal override async void UpdateStatus()
+        public override async void CheckStartOnBoot()
         {
             var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync(
                 "WinDynamicDesktopUwp");
@@ -74,6 +63,16 @@ namespace WinDynamicDesktop
             }
 
             MainMenu.startOnBootItem.Checked = startOnBoot;
+        }
+
+        public override async void SetWallpaper(string imageFilename)
+        {
+            var uri = new Uri("ms-appdata:///local/images/" + imageFilename);
+            var file = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri);
+
+            var profileSettings =
+                Windows.System.UserProfile.UserProfilePersonalizationSettings.Current;
+            await profileSettings.TrySetWallpaperImageAsync(file);
         }
     }
 }

@@ -13,7 +13,6 @@ namespace WinDynamicDesktop
     {
         private int[] dayImages;
         private int[] nightImages;
-        private string lastDate;
         private int lastImageId;
 
         public static bool isDayNow;
@@ -106,7 +105,7 @@ namespace WinDynamicDesktop
         private void SetWallpaper(int imageId)
         {
             string imageFilename = ThemeManager.currentTheme.imageFilename.Replace("*", imageId.ToString());
-            UwpDesktop.SetWallpaper(imageFilename);
+            UwpDesktop.GetHelper().SetWallpaper(imageFilename);
 
             lastImageId = imageId;
         }
@@ -120,34 +119,25 @@ namespace WinDynamicDesktop
 
             wallpaperTimer.Stop();
 
-            string currentDate = GetDateString();
-            bool shouldRefresh = currentDate != lastDate || forceRefresh;
-
-            if (shouldRefresh)
+            if (UwpDesktop.hasLocationAccess)
             {
-                todaysData = GetWeatherData(currentDate);
-                lastDate = currentDate;
+                UwpLocation.UpdateGeoposition();
             }
 
+            string currentDate = GetDateString();
+            todaysData = GetWeatherData(currentDate);
+            
             if (DateTime.Now < todaysData.SunriseTime + timerError)
             {
                 // Before sunrise
-                if (shouldRefresh || yesterdaysData == null)
-                {
-                    yesterdaysData = GetWeatherData(GetDateString(-1));
-                }
-
+                yesterdaysData = GetWeatherData(GetDateString(-1));
                 tomorrowsData = null;
             }
             else if (DateTime.Now >= todaysData.SunsetTime - timerError)
             {
                 // After sunset
                 yesterdaysData = null;
-
-                if (shouldRefresh || tomorrowsData == null)
-                {
-                    tomorrowsData = GetWeatherData(GetDateString(1));
-                }
+                tomorrowsData = GetWeatherData(GetDateString(1));
             }
             else
             {

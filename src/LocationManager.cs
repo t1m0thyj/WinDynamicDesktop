@@ -14,13 +14,25 @@ namespace WinDynamicDesktop
 
         public static void Initialize()
         {
-            if (JsonConfig.settings.location == null)
+            if (JsonConfig.settings.location != null)
+            {
+                isReady = true;
+            }
+            else if (!UwpDesktop.hasLocationAccess)
             {
                 UpdateLocation();
             }
             else
             {
-                isReady = true;
+                try
+                {
+                    UwpLocation.UnsafeUpdateGeoposition();
+                    isReady = true;
+                }
+                catch
+                {
+                    UpdateLocation();
+                }
             }
         }
 
@@ -43,7 +55,7 @@ namespace WinDynamicDesktop
             locationDialog = null;
             isReady = true;
 
-            AppContext.BackgroundNotify();
+            AppContext.RunInBackground();
         }
     }
 }

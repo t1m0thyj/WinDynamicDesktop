@@ -9,28 +9,17 @@ using Microsoft.Win32;
 
 namespace WinDynamicDesktop
 {
-    class DesktopHelper
+    class DesktopHelper : PlatformHelper
     {
-        public static string GetCurrentDirectory()
+        private string registryStartupLocation = @"Software\Microsoft\Windows\CurrentVersion\Run";
+        private bool startOnBoot;
+
+        public override string GetCurrentDirectory()
         {
             return Path.GetDirectoryName(Application.ExecutablePath);
         }
 
-        public static void SetWallpaper(string imageFilename)
-        {
-            string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "images",
-                imageFilename);
-
-            WallpaperChanger.EnableTransitions();
-            WallpaperChanger.SetWallpaper(imagePath);
-        }
-    }
-
-    class DesktopStartupManager : StartupManager
-    {
-        private string registryStartupLocation = @"Software\Microsoft\Windows\CurrentVersion\Run";
-
-        internal override void UpdateStatus()
+        public override void CheckStartOnBoot()
         {
             RegistryKey startupKey = Registry.CurrentUser.OpenSubKey(registryStartupLocation);
             startOnBoot = startupKey.GetValue("WinDynamicDesktop") != null;
@@ -57,6 +46,15 @@ namespace WinDynamicDesktop
             }
 
             MainMenu.startOnBootItem.Checked = startOnBoot;
+        }
+
+        public override void SetWallpaper(string imageFilename)
+        {
+            string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "images",
+                imageFilename);
+
+            WallpaperChanger.EnableTransitions();
+            WallpaperChanger.SetWallpaper(imagePath);
         }
     }
 }

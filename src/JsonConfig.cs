@@ -18,7 +18,7 @@ namespace WinDynamicDesktop
         public bool disableAutoUpdate { get; set; }
         public string lastUpdateCheck { get; set; }
         public bool changeSystemTheme { get; set; }
-        public string themeName { get; set; } = "Mojave_Desert";
+        public string themeName { get; set; }
     }
 
     public class ThemeConfig
@@ -32,6 +32,8 @@ namespace WinDynamicDesktop
 
     class JsonConfig
     {
+        private static string lastJson;
+
         public static AppConfig settings = new AppConfig();
         public static bool firstRun = !File.Exists("settings.conf");
 
@@ -39,14 +41,20 @@ namespace WinDynamicDesktop
         {
             if (!firstRun)
             {
-                settings = JsonConvert.DeserializeObject<AppConfig>(
-                    File.ReadAllText("settings.conf"));
+                lastJson = File.ReadAllText("settings.conf");
+                settings = JsonConvert.DeserializeObject<AppConfig>(lastJson);
             }
         }
 
         public static void SaveConfig()
         {
-            File.WriteAllText("settings.conf", JsonConvert.SerializeObject(settings));
+            string newJson = JsonConvert.SerializeObject(settings);
+
+            if (newJson != lastJson)
+            {
+                File.WriteAllText("settings.conf", newJson);
+                lastJson = newJson;
+            }
         }
         
         public static ThemeConfig LoadTheme(string name)

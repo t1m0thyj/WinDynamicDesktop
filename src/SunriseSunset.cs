@@ -21,8 +21,8 @@ namespace WinDynamicDesktop
         public static WeatherData GetWeatherData(string lat, string lon, string dateStr)
         {
             DateTime date = DateTime.Parse(dateStr, cultureInfo);
-            double latitude = Double.Parse(lat, cultureInfo);
-            double longitude = Double.Parse(lon, cultureInfo);
+            double latitude = double.Parse(lat, cultureInfo);
+            double longitude = double.Parse(lon, cultureInfo);
 
             SolarTimes solarTimes = new SolarTimes(date, latitude, longitude);
 

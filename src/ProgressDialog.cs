@@ -11,33 +11,51 @@ namespace WinDynamicDesktop
 {
     public partial class ProgressDialog : Form
     {
-        public int numDownloads = 0;
-        public List<string> downloadedThemes = new List<string>();
+        private WebClient client = new WebClient();
+        private Queue<ThemeConfig> downloadQueue;
+        private int numDownloads;
 
         public ProgressDialog()
         {
             InitializeComponent();
+
+            client.DownloadProgressChanged += OnDownloadProgressChanged;
+            client.DownloadFileCompleted += OnDownloadFileCompleted;
+        }
+
+        public void LoadQueue(List<ThemeConfig> themeList)
+        {
+            downloadQueue = new Queue<ThemeConfig>(themeList);
+            numDownloads = downloadQueue.Count;
+        }
+
+        public void DownloadNext()
+        {
+            if (downloadQueue.Count > 0)
+            {
+                ThemeConfig theme = downloadQueue.Peek();
+                client.DownloadFileAsync(new Uri(theme.imagesZipUri),
+                    theme.themeName + "_images.zip", theme.themeName);
+            }
+            else
+            {
+                client?.Dispose();
+                this.Close();
+            }
         }
 
         public void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            progressBar1.Value = e.ProgressPercentage;
+            progressBar1.Value = ((numDownloads - downloadQueue.Count) * 100 +
+                e.ProgressPercentage) / numDownloads;
         }
 
         public async void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
-            numDownloads--;
-            downloadedThemes.Add(e.UserState.ToString());
-            
-            if (numDownloads == 0)
-            {
-                progressBar1.Style = ProgressBarStyle.Marquee;
+            ThemeConfig theme = downloadQueue.Dequeue();
+            await Task.Run(() => ThemeManager.ExtractTheme(theme.themeName));
 
-                await Task.Run(() => ThemeManager.ExtractThemes(downloadedThemes));
-
-                downloadedThemes.Clear();
-                this.Close();
-            }
+            DownloadNext();
         }
     }
 }

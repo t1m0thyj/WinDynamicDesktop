@@ -13,13 +13,10 @@ namespace WinDynamicDesktop
         public static MenuItem darkModeItem;
         public static MenuItem startOnBootItem;
 
-        private static StartupManager startupManager;
-
         public static ContextMenu GetMenu()
         {
             List<MenuItem> menuItems = GetMenuItems();
-
-            startupManager = UwpDesktop.GetStartupManager();
+            UwpDesktop.GetHelper().CheckStartOnBoot();
 
             return new ContextMenu(menuItems.ToArray());
         }
@@ -33,16 +30,23 @@ namespace WinDynamicDesktop
             {
                 new MenuItem("WinDynamicDesktop"),
                 new MenuItem("-"),
-                themeItem,
-                new MenuItem("&Update Location...", OnLocationItemClick),
-                new MenuItem("&Refresh Wallpaper", OnRefreshItemClick),
-                new MenuItem("-"),
+                themeItem
             });
             items[0].Enabled = false;
 
-            darkModeItem = new MenuItem("&Dark Mode", OnDarkModeClick);
+            if (!UwpDesktop.hasLocationAccess)
+            {
+                items.Add(new MenuItem("&Update Location...", OnLocationItemClick));
+            }
+
+            darkModeItem = new MenuItem("Enable &Dark Mode", OnDarkModeClick);
             darkModeItem.Checked = JsonConfig.settings.darkMode;
-            items.Add(darkModeItem);
+            items.AddRange(new List<MenuItem>()
+            {
+                new MenuItem("&Refresh Wallpaper", OnRefreshItemClick),
+                new MenuItem("-"),
+                darkModeItem
+            });
 
             items.AddRange(SystemThemeChanger.GetMenuItems());
 
@@ -50,7 +54,7 @@ namespace WinDynamicDesktop
             items.AddRange(new List<MenuItem>()
             {
                 startOnBootItem,
-                new MenuItem("-"),
+                new MenuItem("-")
             });
 
             items.AddRange(UpdateChecker.GetMenuItems());
@@ -98,7 +102,7 @@ namespace WinDynamicDesktop
 
         private static void OnStartOnBootClick(object sender, EventArgs e)
         {
-            startupManager.ToggleStartOnBoot();
+            UwpDesktop.GetHelper().ToggleStartOnBoot();
         }
 
         private static void OnAboutItemClick(object sender, EventArgs e)

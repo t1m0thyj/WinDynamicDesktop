@@ -37,6 +37,11 @@ namespace WinDynamicDesktop
 
         public static void Initialize()
         {
+            if (UwpDesktop.IsRunningAsUwp())
+            {
+                return;
+            }
+
             AppContext.notifyIcon.BalloonTipClicked += OnBalloonTipClicked;
 
             TryCheckAuto(true);

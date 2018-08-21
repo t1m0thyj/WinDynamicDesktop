@@ -30,12 +30,12 @@
         {
             this.listView1 = new System.Windows.Forms.ListView();
             this.previewBox = new System.Windows.Forms.GroupBox();
-            this.lastButton = new System.Windows.Forms.Button();
-            this.nextButton = new System.Windows.Forms.Button();
-            this.imageNumberLabel = new System.Windows.Forms.Label();
-            this.previousButton = new System.Windows.Forms.Button();
-            this.firstButton = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.firstButton = new System.Windows.Forms.Button();
+            this.previousButton = new System.Windows.Forms.Button();
+            this.imageNumberLabel = new System.Windows.Forms.Label();
+            this.nextButton = new System.Windows.Forms.Button();
+            this.lastButton = new System.Windows.Forms.Button();
             this.darkModeCheckbox = new System.Windows.Forms.CheckBox();
             this.okButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
@@ -45,6 +45,7 @@
             // 
             // listView1
             // 
+            this.listView1.HideSelection = false;
             this.listView1.Location = new System.Drawing.Point(13, 13);
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
@@ -68,44 +69,13 @@
             this.previewBox.TabStop = false;
             this.previewBox.Text = "Preview";
             // 
-            // lastButton
+            // pictureBox1
             // 
-            this.lastButton.Location = new System.Drawing.Point(344, 240);
-            this.lastButton.Name = "lastButton";
-            this.lastButton.Size = new System.Drawing.Size(50, 26);
-            this.lastButton.TabIndex = 12;
-            this.lastButton.Text = ">>";
-            this.lastButton.UseVisualStyleBackColor = true;
-            this.lastButton.Click += new System.EventHandler(this.lastButton_Click);
-            // 
-            // nextButton
-            // 
-            this.nextButton.Location = new System.Drawing.Point(279, 240);
-            this.nextButton.Name = "nextButton";
-            this.nextButton.Size = new System.Drawing.Size(50, 26);
-            this.nextButton.TabIndex = 11;
-            this.nextButton.Text = ">";
-            this.nextButton.UseVisualStyleBackColor = true;
-            this.nextButton.Click += new System.EventHandler(this.nextButton_Click);
-            // 
-            // imageNumberLabel
-            // 
-            this.imageNumberLabel.Location = new System.Drawing.Point(150, 245);
-            this.imageNumberLabel.Name = "imageNumberLabel";
-            this.imageNumberLabel.Size = new System.Drawing.Size(114, 15);
-            this.imageNumberLabel.TabIndex = 10;
-            this.imageNumberLabel.Text = "label1";
-            this.imageNumberLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // previousButton
-            // 
-            this.previousButton.Location = new System.Drawing.Point(85, 240);
-            this.previousButton.Name = "previousButton";
-            this.previousButton.Size = new System.Drawing.Size(50, 26);
-            this.previousButton.TabIndex = 9;
-            this.previousButton.Text = "<";
-            this.previousButton.UseVisualStyleBackColor = true;
-            this.previousButton.Click += new System.EventHandler(this.previousButton_Click);
+            this.pictureBox1.Location = new System.Drawing.Point(15, 19);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(384, 216);
+            this.pictureBox1.TabIndex = 7;
+            this.pictureBox1.TabStop = false;
             // 
             // firstButton
             // 
@@ -117,14 +87,44 @@
             this.firstButton.UseVisualStyleBackColor = true;
             this.firstButton.Click += new System.EventHandler(this.firstButton_Click);
             // 
-            // pictureBox1
+            // previousButton
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(15, 19);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(384, 216);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox1.TabIndex = 7;
-            this.pictureBox1.TabStop = false;
+            this.previousButton.Location = new System.Drawing.Point(85, 240);
+            this.previousButton.Name = "previousButton";
+            this.previousButton.Size = new System.Drawing.Size(50, 26);
+            this.previousButton.TabIndex = 9;
+            this.previousButton.Text = "<";
+            this.previousButton.UseVisualStyleBackColor = true;
+            this.previousButton.Click += new System.EventHandler(this.previousButton_Click);
+            // 
+            // imageNumberLabel
+            // 
+            this.imageNumberLabel.Location = new System.Drawing.Point(150, 245);
+            this.imageNumberLabel.Name = "imageNumberLabel";
+            this.imageNumberLabel.Size = new System.Drawing.Size(114, 15);
+            this.imageNumberLabel.TabIndex = 10;
+            this.imageNumberLabel.Text = "label1";
+            this.imageNumberLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // nextButton
+            // 
+            this.nextButton.Location = new System.Drawing.Point(279, 240);
+            this.nextButton.Name = "nextButton";
+            this.nextButton.Size = new System.Drawing.Size(50, 26);
+            this.nextButton.TabIndex = 11;
+            this.nextButton.Text = ">";
+            this.nextButton.UseVisualStyleBackColor = true;
+            this.nextButton.Click += new System.EventHandler(this.nextButton_Click);
+            // 
+            // lastButton
+            // 
+            this.lastButton.Location = new System.Drawing.Point(344, 240);
+            this.lastButton.Name = "lastButton";
+            this.lastButton.Size = new System.Drawing.Size(50, 26);
+            this.lastButton.TabIndex = 12;
+            this.lastButton.Text = ">>";
+            this.lastButton.UseVisualStyleBackColor = true;
+            this.lastButton.Click += new System.EventHandler(this.lastButton_Click);
             // 
             // darkModeCheckbox
             // 

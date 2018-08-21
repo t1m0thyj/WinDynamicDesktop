@@ -19,6 +19,7 @@ namespace WinDynamicDesktop
         public AppContext()
         {
             EnforceSingleInstance();
+            UwpDesktop.RequestLocationAccess();
 
             JsonConfig.LoadConfig();
             ThemeManager.Initialize();
@@ -34,10 +35,7 @@ namespace WinDynamicDesktop
                 wcsService.RunScheduler();
             }
 
-            if (!UwpDesktop.IsRunningAsUwp())
-            {
-                UpdateChecker.Initialize();
-            }
+            UpdateChecker.Initialize();
         }
 
         private void EnforceSingleInstance()
@@ -69,10 +67,16 @@ namespace WinDynamicDesktop
             notifyIcon.MouseUp += new MouseEventHandler(OnNotifyIconMouseUp);
         }
 
-        public static void BackgroundNotify()
+        public static void RunInBackground()
         {
             if (!JsonConfig.firstRun || !LocationManager.isReady || !ThemeManager.isReady)
             {
+                return;
+            }
+
+            if (ThemeManager.currentTheme == null)
+            {
+                ThemeManager.SelectTheme();
                 return;
             }
 
