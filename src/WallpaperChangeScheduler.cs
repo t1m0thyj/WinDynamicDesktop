@@ -119,11 +119,6 @@ namespace WinDynamicDesktop
 
             wallpaperTimer.Stop();
 
-            if (UwpDesktop.hasLocationAccess)
-            {
-                UwpLocation.UpdateGeoposition();
-            }
-
             string currentDate = GetDateString();
             todaysData = GetWeatherData(currentDate);
             

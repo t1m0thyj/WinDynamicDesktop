@@ -19,7 +19,7 @@ namespace WinDynamicDesktop
         public AppContext()
         {
             EnforceSingleInstance();
-            UwpDesktop.RequestLocationAccess();
+            //UwpDesktop.RequestLocationAccess();
 
             JsonConfig.LoadConfig();
             ThemeManager.Initialize();
@@ -69,7 +69,7 @@ namespace WinDynamicDesktop
 
         public static void RunInBackground()
         {
-            if (!JsonConfig.firstRun || !LocationManager.isReady || !ThemeManager.isReady)
+            if (!LocationManager.isReady || !ThemeManager.isReady)
             {
                 return;
             }
@@ -77,15 +77,16 @@ namespace WinDynamicDesktop
             if (ThemeManager.currentTheme == null)
             {
                 ThemeManager.SelectTheme();
-                return;
             }
+            else if (JsonConfig.firstRun)
+            {
+                notifyIcon.BalloonTipTitle = "WinDynamicDesktop";
+                notifyIcon.BalloonTipText = "The app is still running in the background. " +
+                    "You can access it at any time by right-clicking on this icon.";
+                notifyIcon.ShowBalloonTip(10000);
 
-            notifyIcon.BalloonTipTitle = "WinDynamicDesktop";
-            notifyIcon.BalloonTipText = "The app is still running in the background. " +
-                "You can access it at any time by right-clicking on this icon.";
-            notifyIcon.ShowBalloonTip(10000);
-
-            JsonConfig.firstRun = false;    // Don't show this message again
+                JsonConfig.firstRun = false;    // Don't show this message again
+            }
         }
 
         private void OnNotifyIconMouseUp(object sender, MouseEventArgs e)

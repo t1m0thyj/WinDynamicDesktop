@@ -30,8 +30,13 @@ namespace WinDynamicDesktop
 
         public static async void UnsafeUpdateGeoposition()
         {
-            var geolocator = new Windows.Devices.Geolocation.Geolocator { DesiredAccuracyInMeters = 0 };
-            var pos = await geolocator.GetGeopositionAsync();
+            var geolocator = new Windows.Devices.Geolocation.Geolocator
+            {
+                DesiredAccuracyInMeters = 0
+            };
+
+            var pos = await geolocator.GetGeopositionAsync(maximumAge: TimeSpan.FromMinutes(5),
+                timeout: TimeSpan.FromSeconds(10));
 
             JsonConfig.settings.latitude = pos.Coordinate.Point.Position.Latitude.ToString();
             JsonConfig.settings.longitude = pos.Coordinate.Point.Position.Longitude.ToString();

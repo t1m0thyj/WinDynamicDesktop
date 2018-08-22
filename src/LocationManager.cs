@@ -22,18 +22,6 @@ namespace WinDynamicDesktop
             {
                 UpdateLocation();
             }
-            else
-            {
-                try
-                {
-                    UwpLocation.UnsafeUpdateGeoposition();
-                    isReady = true;
-                }
-                catch
-                {
-                    UpdateLocation();
-                }
-            }
         }
 
         public static void UpdateLocation()

@@ -35,7 +35,7 @@ namespace WinDynamicDesktop
             {
                 ThemeConfig theme = downloadQueue.Peek();
                 client.DownloadFileAsync(new Uri(theme.imagesZipUri),
-                    theme.themeName + "_images.zip", theme.themeName);
+                    theme.themeName + "_images.zip");
             }
             else
             {
@@ -53,7 +53,11 @@ namespace WinDynamicDesktop
         public async void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
             ThemeConfig theme = downloadQueue.Dequeue();
-            await Task.Run(() => ThemeManager.ExtractTheme(theme.themeName));
+
+            if (e.Error == null)
+            {
+                await Task.Run(() => ThemeManager.ExtractTheme(theme.themeName));
+            }
 
             DownloadNext();
         }

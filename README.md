@@ -9,7 +9,7 @@ Port of macOS Mojave Dynamic Desktop feature to Windows 10, available for downlo
 
 ## Getting Started
 
-The first time you run WinDynamicDesktop, it will automatically download the macOS Mojave wallpapers from [here](https://files.rb.gd/mojave_dynamic.zip) and extract them to your disk. I have not included the files directly in this repository for copyright reasons. If you want to select a different set of images, see the section below for how to do so.
+The first time you run WinDynamicDesktop, it will automatically download the macOS Mojave wallpapers from [here](https://files.rb.gd/mojave_dynamic.zip) and [here](https://onedrive.live.com/download?cid=CC2E3BD0360C1775&resid=CC2E3BD0360C1775%21721&authkey=AK4kktXlvN1KJzQ) and extract them to your disk. I have not included the files directly in this repository for copyright reasons. If you want to select a different set of images, see the section below for how to do so.
 
 You will also need to input your location when running the program for the first time. This location is not used for any purpose other than to determine the times of sunrise and sunset where you live.
 
@@ -31,15 +31,16 @@ If you want to run the app silently with no icon in the system tray, you can do 
 
 ### How can I customize the images?
 
-By default WinDynamicDesktop uses the Mojave wallpapers, but if you create an `images.conf` file in the same folder as the EXE you can customize the images that are used. The default `images.conf` can be found [here](src/images.conf). It is formatted in JSON and must contain the following values:
+By default WinDynamicDesktop uses the Mojave wallpapers, but you can add your own themes and customize the images that are used by creating JSON files in the *themes* folder. Sample theme JSON files can be found [here](src/themes).
 
-* `themeName` - String which is the name of the wallpaper theme (e.g., "Mojave Default")
+The name of the file should be the name of the theme, with any spaces replaced by underscores, plus the `.json` extension (e.g., `Mojave_Desert.json`). Theme files are formatted in JSON and must contain the following values:
+
 * `imagesZipUri` - String containing URL to download images.zip file from, or *null* if the content in the images subfolder is provided by the user
-* `imageFilename` - String containing the filename of each wallpaper image, with `{0}` substituted for the image number
+* `imageFilename` - String containing the filename of each wallpaper image, with `*` (an asterisk) substituted for the image number
 * `dayImageList` - Array of numbers listing the image numbers to display throughout the day (between sunrise and sunset)
 * `nightImageList` - Array of numbers listing the image numbers to display throughout the night (between sunset and sunrise)
 
 ## Legal and Privacy Stuff
-I do not own the Mojave wallpaper pictures used by WinDynamicDesktop, they belong to Apple. The icon used in this program was made by [Roundicons](https://www.flaticon.com/authors/roundicons) from [flaticon.com](https://www.flaticon.com/) and is licensed by [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/).
+I do not own the wallpaper images used by WinDynamicDesktop, they belong to Apple. The icon used in this program was made by [Roundicons](https://www.flaticon.com/authors/roundicons) from [flaticon.com](https://www.flaticon.com/) and is licensed by [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/).
 
-When you enter your location, WinDynamicDesktop uses the [LocationIQ service](https://locationiq.org/) to convert your location to latitude and longitude. Your location info is never sent anywhere without your consent.
+When you enter your location, WinDynamicDesktop uses the [LocationIQ service](https://locationiq.org/) to convert it to latitude and longitude. Your location info is never sent anywhere without your consent.
