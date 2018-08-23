@@ -46,7 +46,7 @@ namespace WinDynamicDesktop
             if (!isFirstInstance)
             {
                 MessageBox.Show("Another instance of WinDynamicDesktop is already running. " +
-                    "You can access it by right-clicking the icon in the system tray.", "Error",
+                    "You can access it by clicking on the icon in the system tray.", "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                 Environment.Exit(0);
@@ -82,7 +82,7 @@ namespace WinDynamicDesktop
             {
                 notifyIcon.BalloonTipTitle = "WinDynamicDesktop";
                 notifyIcon.BalloonTipText = "The app is still running in the background. " +
-                    "You can access it at any time by right-clicking on this icon.";
+                    "You can access it at any time by clicking on the icon in the system tray.";
                 notifyIcon.ShowBalloonTip(10000);
 
                 JsonConfig.firstRun = false;    // Don't show this message again

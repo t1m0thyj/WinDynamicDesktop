@@ -46,10 +46,10 @@
             // listView1
             // 
             this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(13, 13);
+            this.listView1.Location = new System.Drawing.Point(12, 12);
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(474, 340);
+            this.listView1.Size = new System.Drawing.Size(491, 342);
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
@@ -62,16 +62,16 @@
             this.previewBox.Controls.Add(this.imageNumberLabel);
             this.previewBox.Controls.Add(this.nextButton);
             this.previewBox.Controls.Add(this.lastButton);
-            this.previewBox.Location = new System.Drawing.Point(502, 10);
+            this.previewBox.Location = new System.Drawing.Point(514, 9);
             this.previewBox.Name = "previewBox";
-            this.previewBox.Size = new System.Drawing.Size(414, 275);
+            this.previewBox.Size = new System.Drawing.Size(404, 275);
             this.previewBox.TabIndex = 10;
             this.previewBox.TabStop = false;
             this.previewBox.Text = "Preview";
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(15, 19);
+            this.pictureBox1.Location = new System.Drawing.Point(10, 19);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(384, 216);
             this.pictureBox1.TabIndex = 7;
@@ -79,7 +79,7 @@
             // 
             // firstButton
             // 
-            this.firstButton.Location = new System.Drawing.Point(20, 240);
+            this.firstButton.Location = new System.Drawing.Point(15, 240);
             this.firstButton.Name = "firstButton";
             this.firstButton.Size = new System.Drawing.Size(50, 26);
             this.firstButton.TabIndex = 8;
@@ -89,7 +89,7 @@
             // 
             // previousButton
             // 
-            this.previousButton.Location = new System.Drawing.Point(85, 240);
+            this.previousButton.Location = new System.Drawing.Point(80, 240);
             this.previousButton.Name = "previousButton";
             this.previousButton.Size = new System.Drawing.Size(50, 26);
             this.previousButton.TabIndex = 9;
@@ -99,7 +99,7 @@
             // 
             // imageNumberLabel
             // 
-            this.imageNumberLabel.Location = new System.Drawing.Point(150, 245);
+            this.imageNumberLabel.Location = new System.Drawing.Point(145, 245);
             this.imageNumberLabel.Name = "imageNumberLabel";
             this.imageNumberLabel.Size = new System.Drawing.Size(114, 15);
             this.imageNumberLabel.TabIndex = 10;
@@ -108,7 +108,7 @@
             // 
             // nextButton
             // 
-            this.nextButton.Location = new System.Drawing.Point(279, 240);
+            this.nextButton.Location = new System.Drawing.Point(274, 240);
             this.nextButton.Name = "nextButton";
             this.nextButton.Size = new System.Drawing.Size(50, 26);
             this.nextButton.TabIndex = 11;
@@ -118,7 +118,7 @@
             // 
             // lastButton
             // 
-            this.lastButton.Location = new System.Drawing.Point(344, 240);
+            this.lastButton.Location = new System.Drawing.Point(339, 240);
             this.lastButton.Name = "lastButton";
             this.lastButton.Size = new System.Drawing.Size(50, 26);
             this.lastButton.TabIndex = 12;
@@ -129,7 +129,7 @@
             // darkModeCheckbox
             // 
             this.darkModeCheckbox.AutoSize = true;
-            this.darkModeCheckbox.Location = new System.Drawing.Point(517, 294);
+            this.darkModeCheckbox.Location = new System.Drawing.Point(526, 295);
             this.darkModeCheckbox.Name = "darkModeCheckbox";
             this.darkModeCheckbox.Size = new System.Drawing.Size(122, 19);
             this.darkModeCheckbox.TabIndex = 9;
@@ -139,7 +139,7 @@
             // 
             // okButton
             // 
-            this.okButton.Location = new System.Drawing.Point(610, 322);
+            this.okButton.Location = new System.Drawing.Point(610, 323);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(88, 26);
             this.okButton.TabIndex = 7;
@@ -150,7 +150,7 @@
             // cancelButton
             // 
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(733, 322);
+            this.cancelButton.Location = new System.Drawing.Point(733, 323);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(88, 26);
             this.cancelButton.TabIndex = 8;
@@ -171,6 +171,7 @@
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.cancelButton);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = global::WinDynamicDesktop.Properties.Resources.AppIcon;
             this.MaximizeBox = false;
             this.Name = "ThemeDialog";

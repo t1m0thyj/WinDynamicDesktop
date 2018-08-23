@@ -171,7 +171,7 @@ namespace WinDynamicDesktop
 
         private void okButton_Click(object sender, EventArgs e)
         {
-            JsonConfig.settings.themeName = listView1.SelectedItems[0].Name.Replace(' ', '_');
+            JsonConfig.settings.themeName = listView1.SelectedItems[0].Text.Replace(' ', '_');
 
             if (selectedIndex > 0)
             {
