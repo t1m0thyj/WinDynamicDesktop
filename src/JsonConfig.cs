@@ -19,6 +19,7 @@ namespace WinDynamicDesktop
         public string lastUpdateCheck { get; set; }
         public bool changeSystemTheme { get; set; }
         public string themeName { get; set; }
+        //public bool changeLockScreen { get; set; }
     }
 
     public class ThemeConfig

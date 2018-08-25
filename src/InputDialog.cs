@@ -49,7 +49,7 @@ namespace WinDynamicDesktop
 
                 if (ThemeManager.isReady)
                 {
-                    AppContext.wcsService.RunScheduler(true);
+                    AppContext.wcsService.RunScheduler();
                 }
 
                 MessageBox.Show("Location set successfully to: " + data.display_name +

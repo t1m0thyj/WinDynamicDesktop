@@ -172,6 +172,7 @@ namespace WinDynamicDesktop
         private void okButton_Click(object sender, EventArgs e)
         {
             JsonConfig.settings.themeName = listView1.SelectedItems[0].Text.Replace(' ', '_');
+            JsonConfig.settings.darkMode = darkModeCheckbox.Checked;
 
             if (selectedIndex > 0)
             {
@@ -182,18 +183,17 @@ namespace WinDynamicDesktop
                 ThemeManager.currentTheme = null;
             }
 
-            JsonConfig.settings.darkMode = darkModeCheckbox.Checked;
-            MainMenu.darkModeItem.Checked = darkModeCheckbox.Checked;
-
             ThemeManager.isReady = true;
 
             if (LocationManager.isReady)
             {
+                this.Hide();
+
                 AppContext.wcsService.HandleNewTheme();
 
                 if (ThemeManager.currentTheme != null)
                 {
-                    AppContext.wcsService.RunScheduler(true);
+                    AppContext.wcsService.RunScheduler();
                 }
                 else
                 {

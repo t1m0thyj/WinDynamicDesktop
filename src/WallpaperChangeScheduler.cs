@@ -110,7 +110,7 @@ namespace WinDynamicDesktop
             lastImageId = imageId;
         }
 
-        public void RunScheduler(bool forceRefresh = false)
+        public void RunScheduler()
         {
             if (ThemeManager.currentTheme == null)
             {

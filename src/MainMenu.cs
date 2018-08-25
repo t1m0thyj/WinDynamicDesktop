@@ -10,7 +10,6 @@ namespace WinDynamicDesktop
     class MainMenu
     {
         public static MenuItem themeItem;
-        public static MenuItem darkModeItem;
         public static MenuItem startOnBootItem;
 
         public static ContextMenu GetMenu()
@@ -26,6 +25,9 @@ namespace WinDynamicDesktop
             List<MenuItem> items = new List<MenuItem>();
 
             themeItem = new MenuItem("&Select Theme...", OnThemeItemClick);
+            MenuItem optionsItem = new MenuItem("&Options");
+            optionsItem.MenuItems.AddRange(GetOptionsMenuItems().ToArray());
+
             items.AddRange(new List<MenuItem>()
             {
                 new MenuItem("WinDynamicDesktop"),
@@ -38,26 +40,19 @@ namespace WinDynamicDesktop
             {
                 items.Add(new MenuItem("&Update Location...", OnLocationItemClick));
             }
-
-            darkModeItem = new MenuItem("Enable &Dark Mode", OnDarkModeClick);
-            darkModeItem.Checked = JsonConfig.settings.darkMode;
+            
             items.AddRange(new List<MenuItem>()
             {
                 new MenuItem("&Refresh Wallpaper", OnRefreshItemClick),
                 new MenuItem("-"),
-                darkModeItem
-            });
-
-            items.AddRange(SystemThemeChanger.GetMenuItems());
-
-            startOnBootItem = new MenuItem("S&tart on Boot", OnStartOnBootClick);
-            items.AddRange(new List<MenuItem>()
-            {
-                startOnBootItem,
+                optionsItem,
                 new MenuItem("-")
             });
 
-            items.AddRange(UpdateChecker.GetMenuItems());
+            if (!UwpDesktop.hasLocationAccess)
+            {
+                items.Add(new MenuItem("&Check for Updates", OnUpdateItemClick));
+            }
 
             items.AddRange(new List<MenuItem>()
             {
@@ -69,15 +64,17 @@ namespace WinDynamicDesktop
             return items;
         }
 
-        private static void ToggleDarkMode()
+        private static List<MenuItem> GetOptionsMenuItems()
         {
-            JsonConfig.settings.darkMode ^= true;
-            darkModeItem.Checked = JsonConfig.settings.darkMode;
+            List<MenuItem> items = new List<MenuItem>();
 
-            AppContext.wcsService.LoadImageLists();
-            AppContext.wcsService.RunScheduler();
+            startOnBootItem = new MenuItem("&Start when Windows boots", OnStartOnBootClick);
+            items.Add(startOnBootItem);
 
-            JsonConfig.SaveConfig();
+            items.AddRange(SystemThemeChanger.GetMenuItems());
+            items.AddRange(UpdateChecker.GetMenuItems());
+
+            return items;
         }
 
         private static void OnThemeItemClick(object sender, EventArgs e)
@@ -92,17 +89,17 @@ namespace WinDynamicDesktop
 
         private static void OnRefreshItemClick(object sender, EventArgs e)
         {
-            AppContext.wcsService.RunScheduler(true);
-        }
-
-        private static void OnDarkModeClick(object sender, EventArgs e)
-        {
-            ToggleDarkMode();
+            AppContext.wcsService.RunScheduler();
         }
 
         private static void OnStartOnBootClick(object sender, EventArgs e)
         {
             UwpDesktop.GetHelper().ToggleStartOnBoot();
+        }
+
+        private static void OnUpdateItemClick(object sender, EventArgs e)
+        {
+            UpdateChecker.CheckManual();
         }
 
         private static void OnAboutItemClick(object sender, EventArgs e)

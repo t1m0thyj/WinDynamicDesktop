@@ -164,6 +164,8 @@ namespace WinDynamicDesktop
 
         private static void OnThemeDialogClosed(object sender, EventArgs e)
         {
+            themeDialog = null;
+
             AppContext.RunInBackground();
         }
     }

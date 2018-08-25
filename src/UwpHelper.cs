@@ -73,6 +73,11 @@ namespace WinDynamicDesktop
             var profileSettings =
                 Windows.System.UserProfile.UserProfilePersonalizationSettings.Current;
             await profileSettings.TrySetWallpaperImageAsync(file);
+
+            //if (JsonConfig.settings.changeLockScreen)
+            //{
+            //    await profileSettings.TrySetLockScreenImageAsync(file);
+            //}
         }
     }
 }

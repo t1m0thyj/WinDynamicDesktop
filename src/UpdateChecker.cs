@@ -49,20 +49,18 @@ namespace WinDynamicDesktop
 
         public static List<MenuItem> GetMenuItems()
         {
-            if (UwpDesktop.IsRunningAsUwp())
+            if (!UwpDesktop.IsRunningAsUwp())
+            {
+                menuItem = new MenuItem("Check for &updates automatically once a week",
+                    OnAutoUpdateItemClick);
+                menuItem.Checked = !JsonConfig.settings.disableAutoUpdate;
+
+                return new List<MenuItem>() { menuItem };
+            }
+            else
             {
                 return new List<MenuItem>();
             }
-
-            menuItem = new MenuItem("C&heck Automatically Once a Week", OnAutoUpdateItemClick);
-            menuItem.Checked = !JsonConfig.settings.disableAutoUpdate;
-
-            return new List<MenuItem>()
-            {
-                new MenuItem("&Check for Updates Now", OnUpdateItemClick),
-                menuItem,
-                new MenuItem("-")
-            };
         }
 
         private static string GetLatestVersion()
@@ -171,11 +169,6 @@ namespace WinDynamicDesktop
 
             TryCheckAuto(true);
             JsonConfig.SaveConfig();
-        }
-
-        private static void OnUpdateItemClick(object sender, EventArgs e)
-        {
-            CheckManual();
         }
 
         private static void OnAutoUpdateItemClick(object sender, EventArgs e)

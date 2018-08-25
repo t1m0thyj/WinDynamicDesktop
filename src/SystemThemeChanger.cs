@@ -23,7 +23,7 @@ namespace WinDynamicDesktop
             {
                 themeKey.Close();
 
-                menuItem = new MenuItem("&Change Windows 10 Theme", OnThemeItemClick);
+                menuItem = new MenuItem("&Change Windows 10 theme color", OnThemeItemClick);
                 menuItem.Checked = JsonConfig.settings.changeSystemTheme;
 
                 return new List<MenuItem>() { menuItem };
@@ -43,9 +43,10 @@ namespace WinDynamicDesktop
                 return;
             }
 
+            bool darkTheme = !WallpaperChangeScheduler.isDayNow || JsonConfig.settings.darkMode;
             RegistryKey themeKey = Registry.CurrentUser.OpenSubKey(registryThemeLocation, true);
 
-            if (!WallpaperChangeScheduler.isDayNow || JsonConfig.settings.darkMode)
+            if (darkTheme)
             {
                 themeKey.SetValue("AppsUseLightTheme", 0);  // Dark theme
             }
@@ -57,7 +58,7 @@ namespace WinDynamicDesktop
             themeKey.Close();
         }
 
-        public static void ToggleChangeTheme()
+        private static void ToggleChangeSystemTheme()
         {
             JsonConfig.settings.changeSystemTheme ^= true;
             menuItem.Checked = JsonConfig.settings.changeSystemTheme;
@@ -68,7 +69,7 @@ namespace WinDynamicDesktop
 
         private static void OnThemeItemClick(object sender, EventArgs e)
         {
-            ToggleChangeTheme();
+            ToggleChangeSystemTheme();
         }
     }
 }
