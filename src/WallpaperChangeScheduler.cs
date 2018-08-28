@@ -162,6 +162,12 @@ namespace WinDynamicDesktop
             TimeSpan timerLength = new TimeSpan(dayTime.Ticks / dayImages.Length);
             int imageNumber = GetImageNumber(todaysData.SunriseTime, timerLength);
 
+            if (imageNumber >= dayImages.Length)
+            {
+                UpdateNightImage();
+                return;
+            }
+
             StartTimer(todaysData.SunriseTime.Ticks + timerLength.Ticks * (imageNumber + 1)
                 - DateTime.Now.Ticks, timerLength);
 
@@ -179,6 +185,12 @@ namespace WinDynamicDesktop
             TimeSpan nightTime = day2Data.SunriseTime - day1Data.SunsetTime;
             TimeSpan timerLength = new TimeSpan(nightTime.Ticks / nightImages.Length);
             int imageNumber = GetImageNumber(day1Data.SunsetTime, timerLength);
+
+            if (imageNumber >= nightImages.Length)
+            {
+                UpdateDayImage();
+                return;
+            }
 
             StartTimer(day1Data.SunsetTime.Ticks + timerLength.Ticks * (imageNumber + 1)
                 - DateTime.Now.Ticks, timerLength);
