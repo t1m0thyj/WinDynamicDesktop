@@ -23,8 +23,6 @@ namespace WinDynamicDesktop
         private static bool? _isRunningAsUwp;
         private static PlatformHelper helper;
 
-        public static bool hasLocationAccess;
-
         public static bool IsRunningAsUwp()
         {
             if (!_isRunningAsUwp.HasValue)
@@ -51,18 +49,6 @@ namespace WinDynamicDesktop
             }
 
             return helper;
-        }
-
-        public static void RequestLocationAccess()
-        {
-            if (!IsRunningAsUwp())
-            {
-                hasLocationAccess = false;
-            }
-            else
-            {
-                UwpLocation.RequestAccess();
-            }
         }
     }
 }

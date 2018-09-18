@@ -32,7 +32,7 @@
             this.inputBox = new System.Windows.Forms.TextBox();
             this.okButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
+            this.locationCheckBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // label1
@@ -56,7 +56,7 @@
             // okButton
             // 
             this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.okButton.Location = new System.Drawing.Point(132, 81);
+            this.okButton.Location = new System.Drawing.Point(132, 98);
             this.okButton.Margin = new System.Windows.Forms.Padding(4);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(88, 26);
@@ -68,7 +68,7 @@
             // cancelButton
             // 
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(228, 81);
+            this.cancelButton.Location = new System.Drawing.Point(228, 98);
             this.cancelButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(88, 26);
@@ -77,13 +77,16 @@
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
-            // label2
+            // locationCheckBox
             // 
-            this.label2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label2.Location = new System.Drawing.Point(10, 69);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(310, 2);
-            this.label2.TabIndex = 3;
+            this.locationCheckBox.AutoSize = true;
+            this.locationCheckBox.Location = new System.Drawing.Point(15, 70);
+            this.locationCheckBox.Name = "locationCheckBox";
+            this.locationCheckBox.Size = new System.Drawing.Size(182, 19);
+            this.locationCheckBox.TabIndex = 3;
+            this.locationCheckBox.Text = "Use Windows location service";
+            this.locationCheckBox.UseVisualStyleBackColor = true;
+            this.locationCheckBox.CheckedChanged += new System.EventHandler(this.locationCheckBox_CheckedChanged);
             // 
             // InputDialog
             // 
@@ -91,8 +94,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(330, 117);
-            this.Controls.Add(this.label2);
+            this.ClientSize = new System.Drawing.Size(330, 134);
+            this.Controls.Add(this.locationCheckBox);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.okButton);
@@ -118,7 +121,7 @@
         private System.Windows.Forms.TextBox inputBox;
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.Button cancelButton;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.CheckBox locationCheckBox;
     }
 }
 

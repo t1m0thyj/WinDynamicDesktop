@@ -27,6 +27,9 @@ namespace WinDynamicDesktop
             {
                 okButton.Enabled = false;
             }
+
+            locationCheckBox.Checked = JsonConfig.settings.useWindowsLocation;
+            locationCheckBox.Enabled = UwpDesktop.IsRunningAsUwp();
         }
 
         private void inputBox_TextChanged(object sender, EventArgs e)
@@ -34,34 +37,88 @@ namespace WinDynamicDesktop
             okButton.Enabled = inputBox.TextLength > 0;
         }
 
-        private void okButton_Click(object sender, EventArgs e)
+        private async void locationCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            okButton.Enabled = false;
+            locationCheckBox.Enabled = false;
 
-            LocationIQData data = LocationIQService.GetLocationData(inputBox.Text);
-
-            if (data != null)
+            if (locationCheckBox.Checked)
             {
-                JsonConfig.settings.location = inputBox.Text;
-                JsonConfig.settings.latitude = data.lat;
-                JsonConfig.settings.longitude = data.lon;
-                JsonConfig.SaveConfig();
+                locationCheckBox.CheckedChanged -= locationCheckBox_CheckedChanged;
+                locationCheckBox.Checked = false;
 
-                if (ThemeManager.isReady)
+                bool accessGranted = await UwpLocation.RequestAccess(this);
+
+                if (accessGranted)
                 {
-                    AppContext.wcsService.RunScheduler();
+                    JsonConfig.settings.useWindowsLocation = true;
+                    locationCheckBox.Checked = true;
+                    inputBox.Enabled = false;
+                    okButton.Enabled = true;
                 }
 
-                MessageBox.Show("Location set successfully to: " + data.display_name +
-                    "\n(Latitude = " + data.lat + ", Longitude = " + data.lon + ")", "Success",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                this.Close();
+                locationCheckBox.CheckedChanged += locationCheckBox_CheckedChanged;
             }
             else
             {
-                MessageBox.Show("The location you entered was invalid, or you are not connected " +
-                    "to the Internet.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                JsonConfig.settings.useWindowsLocation = false;
+                inputBox.Enabled = true;
+            }
+
+            locationCheckBox.Enabled = true;
+            JsonConfig.SaveConfig();
+        }
+
+        private async void okButton_Click(object sender, EventArgs e)
+        {
+            okButton.Enabled = false;
+
+            if (!locationCheckBox.Checked)
+            {
+                LocationIQData data = LocationIQService.GetLocationData(inputBox.Text);
+
+                if (data != null)
+                {
+                    JsonConfig.settings.location = inputBox.Text;
+                    JsonConfig.settings.latitude = data.lat;
+                    JsonConfig.settings.longitude = data.lon;
+                    JsonConfig.SaveConfig();
+
+                    if (ThemeManager.isReady)
+                    {
+                        AppContext.wcsService.RunScheduler();
+                    }
+
+                    MessageBox.Show("Location set successfully to: " + data.display_name +
+                        "\n(Latitude = " + data.lat + ", Longitude = " + data.lon + ")", "Success",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("The location you entered was invalid, or you are not " +
+                        "connected to the Internet.", "Error", MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                }
+            }
+            else
+            {
+                bool locationUpdated = await UwpLocation.UpdateGeoposition();
+
+                if (locationUpdated)
+                {
+                    if (ThemeManager.isReady)
+                    {
+                        AppContext.wcsService.RunScheduler();
+                    }
+
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Failed to get location from Windows location service.",
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
 
             okButton.Enabled = true;
@@ -74,7 +131,7 @@ namespace WinDynamicDesktop
 
         private void OnFormClosing(object sender, FormClosingEventArgs e)
         {
-            if (JsonConfig.settings.location == null)
+            if (JsonConfig.settings.location == null && !locationCheckBox.Checked)
             {
                 DialogResult result = MessageBox.Show("WinDynamicDesktop cannot display " +
                     "wallpapers until you have entered a valid location, so that it can " +

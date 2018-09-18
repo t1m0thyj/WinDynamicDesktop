@@ -19,7 +19,6 @@ namespace WinDynamicDesktop
         public AppContext()
         {
             EnforceSingleInstance();
-            //UwpDesktop.RequestLocationAccess();
 
             JsonConfig.LoadConfig();
             ThemeManager.Initialize();

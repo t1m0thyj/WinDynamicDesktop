@@ -32,15 +32,11 @@ namespace WinDynamicDesktop
             {
                 new MenuItem("WinDynamicDesktop"),
                 new MenuItem("-"),
-                themeItem
+                themeItem,
+                new MenuItem("&Update Location...", OnLocationItemClick)
             });
             items[0].Enabled = false;
 
-            if (!UwpDesktop.hasLocationAccess)
-            {
-                items.Add(new MenuItem("&Update Location...", OnLocationItemClick));
-            }
-            
             items.AddRange(new List<MenuItem>()
             {
                 new MenuItem("&Refresh Wallpaper", OnRefreshItemClick),
@@ -49,7 +45,7 @@ namespace WinDynamicDesktop
                 new MenuItem("-")
             });
 
-            if (!UwpDesktop.hasLocationAccess)
+            if (!UwpDesktop.IsRunningAsUwp())
             {
                 items.Add(new MenuItem("&Check for Updates", OnUpdateItemClick));
             }
