@@ -21,6 +21,14 @@ namespace WinDynamicDesktop
         public string themeName { get; set; }
         public bool useWindowsLocation { get; set; }
         //public bool changeLockScreen { get; set; }
+
+        // Hack to make the object like a Python dictionary from
+        // https://stackoverflow.com/a/24919811/5504760
+        public object this[string propertyName]
+        {
+            get { return this.GetType().GetProperty(propertyName).GetValue(this, null); }
+            set { this.GetType().GetProperty(propertyName).SetValue(this, value, null); }
+        }
     }
 
     public class ThemeConfig
@@ -54,13 +62,23 @@ namespace WinDynamicDesktop
             }
         }
 
-        public static void SaveConfig()
+        public static void UpdateSetting<T>(string name, T value, bool saveConfig = true)
+        {
+            settings[name] = value;
+
+            if (saveConfig)
+            {
+                SaveConfig();
+            }
+        }
+
+        private static async void SaveConfig()
         {
             string newJson = JsonConvert.SerializeObject(settings);
 
             if (newJson != lastJson)
             {
-                File.WriteAllText("settings.conf", newJson);
+                await Task.Run(() => File.WriteAllText("settings.conf", newJson));
                 lastJson = newJson;
             }
         }

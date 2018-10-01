@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.27428.2043
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinDynamicDesktop", "WinDynamicDesktop.csproj", "{D752C033-AB46-423A-8611-E2E2A40CA80F}"
 EndProject
-Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "DesktopBridge", "..\uwp\DesktopBridge.wapproj", "{D10BBBDF-EFCF-4051-9BFD-9B0AFCD30EE4}"
+Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "WinDynamicDesktop.Package", "..\uwp\WinDynamicDesktop.Package.wapproj", "{D10BBBDF-EFCF-4051-9BFD-9B0AFCD30EE4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

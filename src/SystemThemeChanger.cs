@@ -60,11 +60,11 @@ namespace WinDynamicDesktop
 
         private static void ToggleChangeSystemTheme()
         {
-            JsonConfig.settings.changeSystemTheme ^= true;
-            menuItem.Checked = JsonConfig.settings.changeSystemTheme;
+            bool isEnabled = JsonConfig.settings.changeSystemTheme ^ true;
+            JsonConfig.UpdateSetting("changeSystemTheme", isEnabled);
+            menuItem.Checked = isEnabled;
 
             TryUpdateSystemTheme();
-            JsonConfig.SaveConfig();
         }
 
         private static void OnThemeItemClick(object sender, EventArgs e)

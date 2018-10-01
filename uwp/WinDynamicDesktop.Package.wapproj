@@ -38,7 +38,7 @@
     <TargetPlatformVersion>10.0.17134.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.14393.0</TargetPlatformMinVersion>
     <DefaultLanguage>en-US</DefaultLanguage>
-    <PackageCertificateKeyFile>DesktopBridge_StoreKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>WinDynamicDesktop.Package_StoreKey.pfx</PackageCertificateKeyFile>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxBundlePlatforms>neutral</AppxBundlePlatforms>
@@ -69,10 +69,10 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="DesktopBridge_TemporaryKey.pfx" />
+    <None Include="WinDynamicDesktop.Package_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="DesktopBridge_StoreKey.pfx" />
+    <None Include="WinDynamicDesktop.Package_StoreKey.pfx" />
     <Content Include="Images\LargeTile.scale-100.png" />
     <Content Include="Images\LargeTile.scale-125.png" />
     <Content Include="Images\LargeTile.scale-150.png" />

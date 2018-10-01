@@ -41,10 +41,7 @@ namespace WinDynamicDesktop
                 }
             }
 
-            if (JsonConfig.settings.themeName == null)
-            {
-                JsonConfig.settings.themeName = "Mojave_Desert";
-            }
+            // TODO Test not setting themename here, and test location on Windows 7 and async on Windows 10
         }
 
         public static void DownloadMissingImages()

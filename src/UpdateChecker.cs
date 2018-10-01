@@ -137,8 +137,7 @@ namespace WinDynamicDesktop
                 _notifyIcon.ShowBalloonTip(10000);
             }
 
-            JsonConfig.settings.lastUpdateCheck = DateTime.Now.ToString();
-            JsonConfig.SaveConfig();
+            JsonConfig.UpdateSetting("lastUpdateCheck", DateTime.Now.ToString());
         }
 
         public static async void TryCheckAuto(bool forceIfEnabled = false)
@@ -164,11 +163,11 @@ namespace WinDynamicDesktop
 
         private static void ToggleAutoUpdate()
         {
-            JsonConfig.settings.disableAutoUpdate ^= true;
-            menuItem.Checked = !JsonConfig.settings.disableAutoUpdate;
+            bool isEnabled = JsonConfig.settings.disableAutoUpdate ^ true;
+            JsonConfig.UpdateSetting("disableAutoUpdate", isEnabled);
+            menuItem.Checked = isEnabled;
 
             TryCheckAuto(true);
-            JsonConfig.SaveConfig();
         }
 
         private static void OnAutoUpdateItemClick(object sender, EventArgs e)

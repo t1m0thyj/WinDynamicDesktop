@@ -102,6 +102,7 @@ namespace WinDynamicDesktop
         private void ThemeDialog_Load(object sender, EventArgs e)
         {
             darkModeCheckbox.Checked = JsonConfig.settings.darkMode;
+            string currentTheme = JsonConfig.settings.themeName ?? "Mojave_Desert";
 
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
@@ -120,7 +121,7 @@ namespace WinDynamicDesktop
                 imageList.Images.Add(ShrinkImage(Path.Combine("images", imageFilename), 192, 108));
                 listView1.Items.Add(theme.themeName.Replace('_', ' '), i + 1);
 
-                if (theme.themeName == JsonConfig.settings.themeName)
+                if (theme.themeName == currentTheme)
                 {
                     listView1.Items[i + 1].Selected = true;
                 }
@@ -171,8 +172,9 @@ namespace WinDynamicDesktop
 
         private void okButton_Click(object sender, EventArgs e)
         {
-            JsonConfig.settings.themeName = listView1.SelectedItems[0].Text.Replace(' ', '_');
-            JsonConfig.settings.darkMode = darkModeCheckbox.Checked;
+            string themeName = listView1.SelectedItems[0].Text.Replace(' ', '_');
+            JsonConfig.UpdateSetting("themeName", themeName, false);
+            JsonConfig.UpdateSetting("darkMode", darkModeCheckbox.Checked);
 
             if (selectedIndex > 0)
             {
@@ -201,7 +203,6 @@ namespace WinDynamicDesktop
                 }
             }
 
-            JsonConfig.SaveConfig();
             this.Close();
         }
 

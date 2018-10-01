@@ -75,9 +75,8 @@ namespace WinDynamicDesktop
             try
             {
                 var pos = await UnsafeUpdateGeoposition();
-                JsonConfig.settings.latitude = pos.Latitude.ToString();
-                JsonConfig.settings.longitude = pos.Longitude.ToString();
-                JsonConfig.SaveConfig();
+                JsonConfig.UpdateSetting("latitude", pos.Latitude.ToString(), false);
+                JsonConfig.UpdateSetting("longitude", pos.Longitude.ToString());
 
                 return true;
             }

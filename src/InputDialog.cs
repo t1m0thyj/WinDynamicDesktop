@@ -50,7 +50,7 @@ namespace WinDynamicDesktop
 
                 if (accessGranted)
                 {
-                    JsonConfig.settings.useWindowsLocation = true;
+                    JsonConfig.UpdateSetting("useWindowsLocation", true);
                     locationCheckBox.Checked = true;
                     inputBox.Enabled = false;
                     okButton.Enabled = true;
@@ -60,12 +60,11 @@ namespace WinDynamicDesktop
             }
             else
             {
-                JsonConfig.settings.useWindowsLocation = false;
+                JsonConfig.UpdateSetting("useWindowsLocation", false);
                 inputBox.Enabled = true;
             }
 
             locationCheckBox.Enabled = true;
-            JsonConfig.SaveConfig();
         }
 
         private async void okButton_Click(object sender, EventArgs e)
@@ -78,10 +77,9 @@ namespace WinDynamicDesktop
 
                 if (data != null)
                 {
-                    JsonConfig.settings.location = inputBox.Text;
-                    JsonConfig.settings.latitude = data.lat;
-                    JsonConfig.settings.longitude = data.lon;
-                    JsonConfig.SaveConfig();
+                    JsonConfig.UpdateSetting("location", inputBox.Text, false);
+                    JsonConfig.UpdateSetting("latitude", data.lat, false);
+                    JsonConfig.UpdateSetting("longitude", data.lon);
 
                     if (ThemeManager.isReady)
                     {
