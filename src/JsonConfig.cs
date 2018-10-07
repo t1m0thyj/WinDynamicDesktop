@@ -22,7 +22,7 @@ namespace WinDynamicDesktop
         public bool useWindowsLocation { get; set; }
         //public bool changeLockScreen { get; set; }
 
-        // Hack to make the object like a Python dictionary from
+        // Function to make object like a Python dictionary from
         // https://stackoverflow.com/a/24919811/5504760
         public object this[string propertyName]
         {

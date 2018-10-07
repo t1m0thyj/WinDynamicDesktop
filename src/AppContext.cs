@@ -21,13 +21,11 @@ namespace WinDynamicDesktop
             EnforceSingleInstance();
 
             JsonConfig.LoadConfig();
-            ThemeManager.Initialize();
-
             InitializeGui();
-            wcsService = new WallpaperChangeScheduler();
 
-            ThemeManager.DownloadMissingImages();
+            ThemeManager.Initialize();
             LocationManager.Initialize();
+            wcsService = new WallpaperChangeScheduler();
 
             if (LocationManager.isReady && ThemeManager.isReady)
             {

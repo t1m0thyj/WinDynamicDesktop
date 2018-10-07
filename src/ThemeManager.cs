@@ -41,6 +41,10 @@ namespace WinDynamicDesktop
                 }
             }
 
+            if (currentTheme == null)
+            {
+                DownloadMissingImages();    // TODO Also do this before opening theme dialog
+            }
             // TODO Test not setting themename here, and test location on Windows 7 and async on Windows 10
         }
 

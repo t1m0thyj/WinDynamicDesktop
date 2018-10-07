@@ -26,7 +26,7 @@ namespace WinDynamicDesktop
 
         public WallpaperChangeScheduler()
         {
-            if (ThemeManager.currentTheme != null)
+            if (ThemeManager.currentTheme != null && ThemeManager.currentTheme.themeName != "None")
             {
                 HandleNewTheme();
             }
@@ -34,7 +34,7 @@ namespace WinDynamicDesktop
 
         public void HandleNewTheme()
         {
-            if (ThemeManager.currentTheme != null)
+            if (ThemeManager.currentTheme.themeName != "None")
             {
                 LoadImageLists();
 

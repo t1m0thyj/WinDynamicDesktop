@@ -41,6 +41,28 @@ namespace WinDynamicDesktop
             }
         }
 
+        private Bitmap GetThumbnailImage(ThemeConfig theme, int width, int height)
+        {
+            int imageId1 = theme.dayImageList[(theme.dayImageList.Length + 1) / 2];
+            string imageFilename1 = theme.imageFilename.Replace("*", imageId1.ToString());
+
+            int imageId2 = theme.nightImageList[(theme.nightImageList.Length + 1) / 2];
+            string imageFilename2 = theme.imageFilename.Replace("*", imageId2.ToString());
+
+            using (var bmp1 = ShrinkImage(Path.Combine("images", imageFilename1), width, height))
+            {
+                Bitmap bmp2 = ShrinkImage(Path.Combine("images", imageFilename2), width, height);
+
+                using (Graphics g = Graphics.FromImage(bmp2))
+                {
+                    g.DrawImage(bmp1, 0, 0, new Rectangle(0, 0, bmp1.Width / 2, bmp1.Height),
+                        GraphicsUnit.Pixel);
+                }
+
+                return bmp2;
+            }
+        }
+
         private int GetMaxImageNumber()
         {
             int max = 1;
@@ -115,10 +137,7 @@ namespace WinDynamicDesktop
             for (int i = 0; i < ThemeManager.themeSettings.Count; i++)
             {
                 ThemeConfig theme = ThemeManager.themeSettings[i];
-                int imageId = theme.nightImageList.Last();
-                string imageFilename = theme.imageFilename.Replace("*", imageId.ToString());
-
-                imageList.Images.Add(ShrinkImage(Path.Combine("images", imageFilename), 192, 108));
+                imageList.Images.Add(GetThumbnailImage(theme, 192, 108));
                 listView1.Items.Add(theme.themeName.Replace('_', ' '), i + 1);
 
                 if (theme.themeName == currentTheme)

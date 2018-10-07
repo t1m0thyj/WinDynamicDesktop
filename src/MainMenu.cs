@@ -25,7 +25,9 @@ namespace WinDynamicDesktop
             List<MenuItem> items = new List<MenuItem>();
 
             themeItem = new MenuItem("&Select Theme...", OnThemeItemClick);
-            MenuItem optionsItem = new MenuItem("&Options");
+            startOnBootItem = new MenuItem("&Start on Boot", OnStartOnBootClick);
+            
+            MenuItem optionsItem = new MenuItem("More &Options");
             optionsItem.MenuItems.AddRange(GetOptionsMenuItems().ToArray());
 
             items.AddRange(new List<MenuItem>()
@@ -41,6 +43,7 @@ namespace WinDynamicDesktop
             {
                 new MenuItem("&Refresh Wallpaper", OnRefreshItemClick),
                 new MenuItem("-"),
+                startOnBootItem,
                 optionsItem,
                 new MenuItem("-")
             });
@@ -63,9 +66,6 @@ namespace WinDynamicDesktop
         private static List<MenuItem> GetOptionsMenuItems()
         {
             List<MenuItem> items = new List<MenuItem>();
-
-            startOnBootItem = new MenuItem("&Start when Windows boots", OnStartOnBootClick);
-            items.Add(startOnBootItem);
 
             items.AddRange(SystemThemeChanger.GetMenuItems());
             items.AddRange(UpdateChecker.GetMenuItems());
