@@ -192,8 +192,8 @@ namespace WinDynamicDesktop
         private void okButton_Click(object sender, EventArgs e)
         {
             string themeName = listView1.SelectedItems[0].Text.Replace(' ', '_');
-            JsonConfig.UpdateSetting("themeName", themeName, false);
-            JsonConfig.UpdateSetting("darkMode", darkModeCheckbox.Checked);
+            JsonConfig.settings.themeName = themeName;
+            JsonConfig.settings.darkMode = darkModeCheckbox.Checked;
 
             if (selectedIndex > 0)
             {
@@ -201,7 +201,7 @@ namespace WinDynamicDesktop
             }
             else
             {
-                ThemeManager.currentTheme = null;
+                ThemeManager.currentTheme = ThemeManager.noTheme;
             }
 
             ThemeManager.isReady = true;
@@ -212,7 +212,7 @@ namespace WinDynamicDesktop
 
                 AppContext.wcsService.HandleNewTheme();
 
-                if (ThemeManager.currentTheme != null)
+                if (selectedIndex > 0)
                 {
                     AppContext.wcsService.RunScheduler();
                 }

@@ -66,16 +66,7 @@ namespace WinDynamicDesktop
 
         public static void RunInBackground()
         {
-            if (!LocationManager.isReady || !ThemeManager.isReady)
-            {
-                return;
-            }
-
-            if (ThemeManager.currentTheme == null)
-            {
-                ThemeManager.SelectTheme();
-            }
-            else if (JsonConfig.firstRun)
+            if (JsonConfig.firstRun && LocationManager.isReady && ThemeManager.isReady)
             {
                 notifyIcon.BalloonTipTitle = "WinDynamicDesktop";
                 notifyIcon.BalloonTipText = "The app is still running in the background. " +

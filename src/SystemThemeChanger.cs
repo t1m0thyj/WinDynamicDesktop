@@ -10,7 +10,7 @@ namespace WinDynamicDesktop
 {
     class SystemThemeChanger
     {
-        private static string registryThemeLocation =
+        private const string registryThemeLocation =
             @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize";
 
         private static MenuItem menuItem;
@@ -61,10 +61,11 @@ namespace WinDynamicDesktop
         private static void ToggleChangeSystemTheme()
         {
             bool isEnabled = JsonConfig.settings.changeSystemTheme ^ true;
-            JsonConfig.UpdateSetting("changeSystemTheme", isEnabled);
+            JsonConfig.settings.changeSystemTheme = isEnabled;
             menuItem.Checked = isEnabled;
 
             TryUpdateSystemTheme();
+            JsonConfig.SaveConfig();
         }
 
         private static void OnThemeItemClick(object sender, EventArgs e)

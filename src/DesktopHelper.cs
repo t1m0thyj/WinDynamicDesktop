@@ -11,7 +11,8 @@ namespace WinDynamicDesktop
 {
     class DesktopHelper : PlatformHelper
     {
-        private string registryStartupLocation = @"Software\Microsoft\Windows\CurrentVersion\Run";
+        private const string registryStartupLocation =
+            @"Software\Microsoft\Windows\CurrentVersion\Run";
         private bool startOnBoot;
 
         public override string GetCurrentDirectory()

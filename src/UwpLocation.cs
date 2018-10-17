@@ -16,44 +16,41 @@ namespace WinDynamicDesktop
             return (accessStatus == Windows.Devices.Geolocation.GeolocationAccessStatus.Allowed);
         }
 
-        public static async Task<bool> RequestAccess(Form dialog)
+        public static bool HasAccess()
         {
-            bool accessGranted = false;
+            bool hasAccess = false;
 
             try
             {
-                accessGranted = await UnsafeRequestAccess();
+                hasAccess = Task.Run(() => UnsafeRequestAccess()).Result;
             }
             catch   // Error when attempting to show UWP location prompt in WPF app
             {
-                accessGranted = false;
+                hasAccess = false;
             }
 
-            if (!accessGranted)
+            return hasAccess;
+        }
+
+        public static async Task<bool> RequestAccess()
+        {
+            bool hasAccess = HasAccess();
+
+            if (!hasAccess)
             {
-                bool result = await Windows.System.Launcher.LaunchUriAsync(
-                    new Uri("ms-settings:privacy-location"));
+                DialogResult result = MessageBox.Show("WinDynamicDesktop needs location access " +
+                    "for this feature. Click OK to open the Windows 10 location settings and " +
+                    "grant location access to the app, then select the checkbox again.",
+                    "Location Access", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
 
-                if (result)
+                if (result == DialogResult.OK)
                 {
-                    // MessageBox hack from https://stackoverflow.com/a/20729034/5504760
-                    MessageBox.Show("In the Windows 10 location settings, make sure that " +
-                        "location is enabled. Once it is, scroll down to \"Choose apps that can " +
-                        "use your precise location\", and turn on access for WinDynamicDesktop," +
-                        "then click OK.", "WinDynamicDesktop", MessageBoxButtons.OK,
-                        MessageBoxIcon.None, MessageBoxDefaultButton.Button1,
-                        (MessageBoxOptions)0x40000);    // MB_TOPMOST
-                    dialog.Activate();
-
-                    try
-                    {
-                        accessGranted = await UnsafeRequestAccess();
-                    }
-                    catch { }
+                    await Windows.System.Launcher.LaunchUriAsync(
+                        new Uri("ms-settings:privacy-location"));
                 }
             }
 
-            return accessGranted;
+            return hasAccess;
         }
 
         private static async Task<Windows.Devices.Geolocation.BasicGeoposition>
@@ -75,8 +72,8 @@ namespace WinDynamicDesktop
             try
             {
                 var pos = await UnsafeUpdateGeoposition();
-                JsonConfig.UpdateSetting("latitude", pos.Latitude.ToString(), false);
-                JsonConfig.UpdateSetting("longitude", pos.Longitude.ToString());
+                JsonConfig.settings.latitude = pos.Latitude.ToString();
+                JsonConfig.settings.longitude = pos.Longitude.ToString();
 
                 return true;
             }

@@ -18,6 +18,12 @@ namespace WinDynamicDesktop
             {
                 JsonConfig.settings.useWindowsLocation = false;
             }
+            else if (JsonConfig.settings.useWindowsLocation && !UwpLocation.HasAccess())
+            {
+                JsonConfig.settings.useWindowsLocation = false;
+                JsonConfig.settings.latitude = null;
+                JsonConfig.settings.longitude = null;
+            }
 
             if (JsonConfig.settings.latitude != null && JsonConfig.settings.longitude != null)
             {

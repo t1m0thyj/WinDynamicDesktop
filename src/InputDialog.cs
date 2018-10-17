@@ -17,40 +17,45 @@ namespace WinDynamicDesktop
             this.FormClosing += OnFormClosing;
         }
 
+        private void UpdateGuiState()
+        {
+            okButton.Enabled = inputBox.TextLength > 0 || locationCheckBox.Checked;
+        }
+
         private void InputDialog_Load(object sender, EventArgs e)
         {
             if (JsonConfig.settings.location != null)
             {
                 inputBox.Text = JsonConfig.settings.location;
             }
-            else
-            {
-                okButton.Enabled = false;
-            }
 
             locationCheckBox.Checked = JsonConfig.settings.useWindowsLocation;
             locationCheckBox.Enabled = UwpDesktop.IsRunningAsUwp();
+
+            UpdateGuiState();
+            locationCheckBox.CheckedChanged += locationCheckBox_CheckedChanged;
         }
 
         private void inputBox_TextChanged(object sender, EventArgs e)
         {
-            okButton.Enabled = inputBox.TextLength > 0;
+            UpdateGuiState();
         }
 
         private async void locationCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             locationCheckBox.Enabled = false;
+            okButton.Enabled = false;
 
             if (locationCheckBox.Checked)
             {
                 locationCheckBox.CheckedChanged -= locationCheckBox_CheckedChanged;
                 locationCheckBox.Checked = false;
 
-                bool accessGranted = await UwpLocation.RequestAccess(this);
+                bool hasAccess = await UwpLocation.RequestAccess();
 
-                if (accessGranted)
+                if (hasAccess)
                 {
-                    JsonConfig.UpdateSetting("useWindowsLocation", true);
+                    JsonConfig.settings.useWindowsLocation = true;
                     locationCheckBox.Checked = true;
                     inputBox.Enabled = false;
                     okButton.Enabled = true;
@@ -60,11 +65,12 @@ namespace WinDynamicDesktop
             }
             else
             {
-                JsonConfig.UpdateSetting("useWindowsLocation", false);
+                JsonConfig.settings.useWindowsLocation = false;
                 inputBox.Enabled = true;
             }
 
             locationCheckBox.Enabled = true;
+            UpdateGuiState();
         }
 
         private async void okButton_Click(object sender, EventArgs e)
@@ -77,9 +83,9 @@ namespace WinDynamicDesktop
 
                 if (data != null)
                 {
-                    JsonConfig.UpdateSetting("location", inputBox.Text, false);
-                    JsonConfig.UpdateSetting("latitude", data.lat, false);
-                    JsonConfig.UpdateSetting("longitude", data.lon);
+                    JsonConfig.settings.location = inputBox.Text;
+                    JsonConfig.settings.latitude = data.lat;
+                    JsonConfig.settings.longitude = data.lon;
 
                     if (ThemeManager.isReady)
                     {
@@ -129,7 +135,7 @@ namespace WinDynamicDesktop
 
         private void OnFormClosing(object sender, FormClosingEventArgs e)
         {
-            if (JsonConfig.settings.location == null && !locationCheckBox.Checked)
+            if (JsonConfig.settings.latitude == null || JsonConfig.settings.longitude == null)
             {
                 DialogResult result = MessageBox.Show("WinDynamicDesktop cannot display " +
                     "wallpapers until you have entered a valid location, so that it can " +

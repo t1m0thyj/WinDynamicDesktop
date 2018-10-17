@@ -86,7 +86,6 @@
             this.locationCheckBox.TabIndex = 3;
             this.locationCheckBox.Text = "Use Windows location service";
             this.locationCheckBox.UseVisualStyleBackColor = true;
-            this.locationCheckBox.CheckedChanged += new System.EventHandler(this.locationCheckBox_CheckedChanged);
             // 
             // InputDialog
             // 

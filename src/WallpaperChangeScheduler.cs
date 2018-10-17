@@ -26,7 +26,7 @@ namespace WinDynamicDesktop
 
         public WallpaperChangeScheduler()
         {
-            if (ThemeManager.currentTheme != null && ThemeManager.currentTheme.themeName != "None")
+            if (ThemeManager.currentTheme != null && ThemeManager.currentTheme.themeName != null)
             {
                 HandleNewTheme();
             }
@@ -34,7 +34,7 @@ namespace WinDynamicDesktop
 
         public void HandleNewTheme()
         {
-            if (ThemeManager.currentTheme.themeName != "None")
+            if (ThemeManager.currentTheme.themeName != null)
             {
                 LoadImageLists();
 
@@ -112,7 +112,7 @@ namespace WinDynamicDesktop
 
         public void RunScheduler()
         {
-            if (ThemeManager.currentTheme == null)
+            if (ThemeManager.currentTheme.themeName == null)
             {
                 return;
             }
@@ -159,6 +159,7 @@ namespace WinDynamicDesktop
             }
 
             SystemThemeChanger.TryUpdateSystemTheme();
+            JsonConfig.SaveConfig();
         }
 
         private void UpdateDayImage()

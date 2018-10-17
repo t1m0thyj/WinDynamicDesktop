@@ -11,6 +11,8 @@ namespace WinDynamicDesktop
 {
     class ThemeManager
     {
+        public readonly static ThemeConfig noTheme = new ThemeConfig();
+
         public static bool isReady = false;
         public static List<ThemeConfig> themeSettings = new List<ThemeConfig>();
         public static ThemeConfig currentTheme;
@@ -41,16 +43,13 @@ namespace WinDynamicDesktop
                 }
             }
 
-            if (currentTheme == null)
+            if (JsonConfig.settings.themeName == "None")
             {
-                DownloadMissingImages();    // TODO Also do this before opening theme dialog
+                currentTheme = noTheme;
             }
-            // TODO Test not setting themename here, and test location on Windows 7 and async on Windows 10
-        }
 
-        public static void DownloadMissingImages()
-        {
             DownloadMissingImages(FindMissingThemes());
+            // TODO Test not setting themename here, and test location on Win7 and async on Win10
         }
 
         public static void SelectTheme()
@@ -121,12 +120,6 @@ namespace WinDynamicDesktop
             if (missingThemes.Count == 0)
             {
                 isReady = true;
-
-                if (LocationManager.isReady)
-                {
-                    AppContext.wcsService.RunScheduler();
-                    AppContext.RunInBackground();
-                }
             }
             else if (currentTheme != null && missingThemes.Contains(currentTheme))
             {
@@ -137,6 +130,7 @@ namespace WinDynamicDesktop
                 if (result == DialogResult.Retry)
                 {
                     DownloadMissingImages(missingThemes);
+                    return;
                 }
                 else
                 {
@@ -152,6 +146,7 @@ namespace WinDynamicDesktop
                 if (result == DialogResult.Retry)
                 {
                     DownloadMissingImages(missingThemes);
+                    return;
                 }
                 else
                 {
@@ -159,6 +154,21 @@ namespace WinDynamicDesktop
                     {
                         themeSettings.Remove(theme);
                     }
+
+                    isReady = true;
+                }
+            }
+
+            if (isReady)
+            {
+                if (currentTheme == null)
+                {
+                    SelectTheme();
+                }
+                else if (LocationManager.isReady)
+                {
+                    AppContext.wcsService.RunScheduler();
+                    AppContext.RunInBackground();
                 }
             }
         }

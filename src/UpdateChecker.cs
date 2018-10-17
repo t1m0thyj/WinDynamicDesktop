@@ -44,7 +44,7 @@ namespace WinDynamicDesktop
 
             AppContext.notifyIcon.BalloonTipClicked += OnBalloonTipClicked;
 
-            TryCheckAuto(true);
+            TryCheckAuto();
         }
 
         public static List<MenuItem> GetMenuItems()
@@ -137,7 +137,7 @@ namespace WinDynamicDesktop
                 _notifyIcon.ShowBalloonTip(10000);
             }
 
-            JsonConfig.UpdateSetting("lastUpdateCheck", DateTime.Now.ToString());
+            JsonConfig.settings.lastUpdateCheck = DateTime.Now.ToString();
         }
 
         public static async void TryCheckAuto(bool forceIfEnabled = false)
@@ -150,9 +150,9 @@ namespace WinDynamicDesktop
             if (JsonConfig.settings.lastUpdateCheck != null && !forceIfEnabled)
             {
                 DateTime lastUpdateCheck = DateTime.Parse(JsonConfig.settings.lastUpdateCheck);
-                int dayDiff = (new TimeSpan(DateTime.Now.Ticks - lastUpdateCheck.Ticks)).Days;
+                TimeSpan timeDiff = new TimeSpan(DateTime.Now.Ticks - lastUpdateCheck.Ticks);
 
-                if (dayDiff < 7)
+                if (timeDiff.Days < 7)
                 {
                     return;
                 }
@@ -164,10 +164,11 @@ namespace WinDynamicDesktop
         private static void ToggleAutoUpdate()
         {
             bool isEnabled = JsonConfig.settings.disableAutoUpdate ^ true;
-            JsonConfig.UpdateSetting("disableAutoUpdate", isEnabled);
+            JsonConfig.settings.disableAutoUpdate = isEnabled;
             menuItem.Checked = isEnabled;
 
             TryCheckAuto(true);
+            JsonConfig.SaveConfig();
         }
 
         private static void OnAutoUpdateItemClick(object sender, EventArgs e)
