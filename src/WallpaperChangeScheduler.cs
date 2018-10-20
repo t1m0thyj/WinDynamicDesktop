@@ -26,25 +26,12 @@ namespace WinDynamicDesktop
 
         public WallpaperChangeScheduler()
         {
-            if (ThemeManager.currentTheme != null && ThemeManager.currentTheme.themeName != null)
-            {
-                HandleNewTheme();
-            }
-        }
+            wallpaperTimer.Tick += OnWallpaperTimerTick;
+            SystemEvents.PowerModeChanged += OnPowerModeChanged;
 
-        public void HandleNewTheme()
-        {
-            if (ThemeManager.currentTheme.themeName != null)
+            if (ThemeManager.currentTheme != null)
             {
                 LoadImageLists();
-
-                wallpaperTimer.Tick += new EventHandler(OnWallpaperTimerTick);
-                SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(OnPowerModeChanged);
-            }
-            else
-            {
-                wallpaperTimer.Tick -= OnWallpaperTimerTick;
-                SystemEvents.PowerModeChanged -= OnPowerModeChanged;
             }
         }
 
@@ -112,17 +99,12 @@ namespace WinDynamicDesktop
 
         public void RunScheduler()
         {
-            if (ThemeManager.currentTheme.themeName == null)
+            if (ThemeManager.currentTheme == null)
             {
                 return;
             }
 
             wallpaperTimer.Stop();
-
-            if (JsonConfig.settings.useWindowsLocation)
-            {
-                Task.Run(() => UwpLocation.UpdateGeoposition());
-            }
 
             string currentDate = GetDateString();
             todaysData = GetWeatherData(currentDate);
@@ -209,13 +191,23 @@ namespace WinDynamicDesktop
 
         private void OnWallpaperTimerTick(object sender, EventArgs e)
         {
-            RunScheduler();
+            if (ThemeManager.currentTheme != null)
+            {
+                if (JsonConfig.settings.useWindowsLocation)
+                {
+                    Task.Run(() => UwpLocation.UpdateGeoposition());
+                }
+
+                RunScheduler();
+            }
+            
             UpdateChecker.TryCheckAuto();
         }
 
         private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
         {
-            if (e.Mode == PowerModes.Resume && !wallpaperTimer.Enabled)
+            if (e.Mode == PowerModes.Resume && !wallpaperTimer.Enabled
+                    && ThemeManager.currentTheme != null)
             {
                 RunScheduler();
             }

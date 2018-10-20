@@ -201,25 +201,24 @@ namespace WinDynamicDesktop
             }
             else
             {
-                ThemeManager.currentTheme = ThemeManager.noTheme;
+                ThemeManager.currentTheme = null;
             }
 
-            ThemeManager.isReady = true;
+            MainMenu.darkModeItem.Checked = JsonConfig.settings.darkMode;
+            this.Hide();
 
-            if (LocationManager.isReady)
+            if (selectedIndex > 0)
             {
-                this.Hide();
+                AppContext.wcsService.LoadImageLists();
 
-                AppContext.wcsService.HandleNewTheme();
-
-                if (selectedIndex > 0)
+                if (LocationManager.isReady)
                 {
                     AppContext.wcsService.RunScheduler();
                 }
-                else
-                {
-                    UwpDesktop.GetHelper().SetWallpaper(windowsWallpaper);
-                }
+            }
+            else
+            {
+                UwpDesktop.GetHelper().SetWallpaper(windowsWallpaper);
             }
 
             this.Close();
@@ -232,18 +231,14 @@ namespace WinDynamicDesktop
 
         private void OnFormClosing(object sender, FormClosingEventArgs e)
         {
-            if (ThemeManager.currentTheme == null)
+            if (JsonConfig.firstRun && ThemeManager.currentTheme == null)
             {
-                DialogResult result = MessageBox.Show("WinDynamicDesktop cannot display " +
-                    "wallpapers until you have selected a theme. Are you sure you want to " +
-                    "cancel and quit the program?", "Question", MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning);
+                DialogResult result = MessageBox.Show("WinDynamicDesktop cannot dynamically " +
+                    "update your wallpaper until you have selected a theme. Are you sure you " +
+                    "want to continue without a theme selected?", "Question",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
-                if (result == DialogResult.Yes)
-                {
-                    Environment.Exit(0);
-                }
-                else
+                if (result != DialogResult.Yes)
                 {
                     e.Cancel = true;
                 }

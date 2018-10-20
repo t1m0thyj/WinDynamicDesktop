@@ -10,6 +10,7 @@ namespace WinDynamicDesktop
     class MainMenu
     {
         public static MenuItem themeItem;
+        public static MenuItem darkModeItem;
         public static MenuItem startOnBootItem;
 
         public static ContextMenu GetMenu()
@@ -25,10 +26,6 @@ namespace WinDynamicDesktop
             List<MenuItem> items = new List<MenuItem>();
 
             themeItem = new MenuItem("&Select Theme...", OnThemeItemClick);
-            startOnBootItem = new MenuItem("&Start on Boot", OnStartOnBootClick);
-            
-            MenuItem optionsItem = new MenuItem("More &Options");
-            optionsItem.MenuItems.AddRange(GetOptionsMenuItems().ToArray());
 
             items.AddRange(new List<MenuItem>()
             {
@@ -39,22 +36,22 @@ namespace WinDynamicDesktop
             });
             items[0].Enabled = false;
 
+            darkModeItem = new MenuItem("Enable &Dark Mode", OnDarkModeClick);
+            darkModeItem.Checked = JsonConfig.settings.darkMode;
+            startOnBootItem = new MenuItem("&Start on Boot", OnStartOnBootClick);
+
+            MenuItem optionsItem = new MenuItem("More &Options");
+            optionsItem.MenuItems.AddRange(GetOptionsMenuItems().ToArray());
+
             items.AddRange(new List<MenuItem>()
             {
                 new MenuItem("&Refresh Wallpaper", OnRefreshItemClick),
                 new MenuItem("-"),
+                darkModeItem,
                 startOnBootItem,
                 optionsItem,
-                new MenuItem("-")
-            });
-
-            if (!UwpDesktop.IsRunningAsUwp())
-            {
-                items.Add(new MenuItem("&Check for Updates", OnUpdateItemClick));
-            }
-
-            items.AddRange(new List<MenuItem>()
-            {
+                new MenuItem("-"),
+                new MenuItem("&Check for Updates", OnUpdateItemClick),
                 new MenuItem("&About", OnAboutItemClick),
                 new MenuItem("-"),
                 new MenuItem("E&xit", OnExitItemClick)
@@ -73,6 +70,16 @@ namespace WinDynamicDesktop
             return items;
         }
 
+        private static void ToggleDarkMode()
+        {
+            bool isEnabled = JsonConfig.settings.darkMode ^ true;
+            JsonConfig.settings.darkMode = isEnabled;
+            darkModeItem.Checked = isEnabled;
+
+            AppContext.wcsService.LoadImageLists();
+            AppContext.wcsService.RunScheduler();
+        }
+
         private static void OnThemeItemClick(object sender, EventArgs e)
         {
             ThemeManager.SelectTheme();
@@ -86,6 +93,11 @@ namespace WinDynamicDesktop
         private static void OnRefreshItemClick(object sender, EventArgs e)
         {
             AppContext.wcsService.RunScheduler();
+        }
+
+        private static void OnDarkModeClick(object sender, EventArgs e)
+        {
+            ToggleDarkMode();
         }
 
         private static void OnStartOnBootClick(object sender, EventArgs e)

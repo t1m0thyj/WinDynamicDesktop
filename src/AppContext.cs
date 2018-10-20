@@ -52,7 +52,7 @@ namespace WinDynamicDesktop
 
         private void InitializeGui()
         {
-            Application.ApplicationExit += new EventHandler(OnApplicationExit);
+            Application.ApplicationExit += OnApplicationExit;
 
             notifyIcon = new NotifyIcon
             {
@@ -61,7 +61,7 @@ namespace WinDynamicDesktop
                 Text = "WinDynamicDesktop",
             };
             notifyIcon.ContextMenu = MainMenu.GetMenu();
-            notifyIcon.MouseUp += new MouseEventHandler(OnNotifyIconMouseUp);
+            notifyIcon.MouseUp += OnNotifyIconMouseUp;
         }
 
         public static void RunInBackground()

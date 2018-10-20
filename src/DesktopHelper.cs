@@ -13,6 +13,8 @@ namespace WinDynamicDesktop
     {
         private const string registryStartupLocation =
             @"Software\Microsoft\Windows\CurrentVersion\Run";
+        private const string updateLink = "https://github.com/t1m0thyj/WinDynamicDesktop/releases";
+
         private bool startOnBoot;
 
         public override string GetCurrentDirectory()
@@ -47,6 +49,11 @@ namespace WinDynamicDesktop
             }
 
             MainMenu.startOnBootItem.Checked = startOnBoot;
+        }
+
+        public override void OpenUpdateLink()
+        {
+            System.Diagnostics.Process.Start(updateLink);
         }
 
         public override void SetWallpaper(string imageFilename)

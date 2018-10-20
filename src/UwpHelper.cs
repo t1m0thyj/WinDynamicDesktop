@@ -65,6 +65,12 @@ namespace WinDynamicDesktop
             MainMenu.startOnBootItem.Checked = startOnBoot;
         }
 
+        public override async void OpenUpdateLink()
+        {
+            await Windows.System.Launcher.LaunchUriAsync(
+                new Uri("ms-windows-store://downloadsandupdates"));
+        }
+
         public override async void SetWallpaper(string imageFilename)
         {
             var uri = new Uri("ms-appdata:///local/images/" + imageFilename);

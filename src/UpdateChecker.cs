@@ -31,8 +31,6 @@ namespace WinDynamicDesktop
 
     class UpdateChecker
     {
-        private static string updateLink = "https://github.com/t1m0thyj/WinDynamicDesktop/releases";
-        
         private static MenuItem menuItem;
 
         public static void Initialize()
@@ -103,13 +101,13 @@ namespace WinDynamicDesktop
             else if (IsUpdateAvailable(currentVersion, latestVersion))
             {
                 DialogResult result = MessageBox.Show("There is a newer version of " +
-                    "WinDynamicDesktop available. Would you like to visit the download page?\n\n" +
+                    "WinDynamicDesktop available. Do you want to download the update now?\n\n" +
                     "Current Version: " + currentVersion + "\nLatest Version: " + latestVersion,
                     "Update Available", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (result == DialogResult.Yes)
                 {
-                    System.Diagnostics.Process.Start(updateLink);
+                    UwpDesktop.GetHelper().OpenUpdateLink();
                 }
             }
             else
@@ -138,6 +136,7 @@ namespace WinDynamicDesktop
             }
 
             JsonConfig.settings.lastUpdateCheck = DateTime.Now.ToString();
+            JsonConfig.SaveConfig();
         }
 
         public static async void TryCheckAuto(bool forceIfEnabled = false)
@@ -180,7 +179,7 @@ namespace WinDynamicDesktop
         {
             if (AppContext.notifyIcon.BalloonTipTitle == "Update Available")
             {
-                System.Diagnostics.Process.Start(updateLink);
+                UwpDesktop.GetHelper().OpenUpdateLink();
             }
         }
     }

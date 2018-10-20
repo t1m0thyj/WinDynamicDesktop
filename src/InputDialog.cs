@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.IO;
 
 namespace WinDynamicDesktop
 {
@@ -107,6 +106,8 @@ namespace WinDynamicDesktop
             }
             else
             {
+                progressBar1.Visible = true;
+
                 bool locationUpdated = await UwpLocation.UpdateGeoposition();
 
                 if (locationUpdated)
@@ -120,6 +121,8 @@ namespace WinDynamicDesktop
                 }
                 else
                 {
+                    progressBar1.Visible = false;
+
                     MessageBox.Show("Failed to get location from Windows location service.",
                         "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
