@@ -18,6 +18,7 @@ namespace WinDynamicDesktop
 
         private void UpdateGuiState()
         {
+            inputBox.Enabled = !locationCheckBox.Checked;
             okButton.Enabled = inputBox.TextLength > 0 || locationCheckBox.Checked;
         }
 
@@ -56,8 +57,6 @@ namespace WinDynamicDesktop
                 {
                     JsonConfig.settings.useWindowsLocation = true;
                     locationCheckBox.Checked = true;
-                    inputBox.Enabled = false;
-                    okButton.Enabled = true;
                 }
 
                 locationCheckBox.CheckedChanged += locationCheckBox_CheckedChanged;
@@ -65,7 +64,6 @@ namespace WinDynamicDesktop
             else
             {
                 JsonConfig.settings.useWindowsLocation = false;
-                inputBox.Enabled = true;
             }
 
             locationCheckBox.Enabled = true;
@@ -85,6 +83,8 @@ namespace WinDynamicDesktop
                     JsonConfig.settings.location = inputBox.Text;
                     JsonConfig.settings.latitude = data.lat;
                     JsonConfig.settings.longitude = data.lon;
+
+                    this.Hide();
 
                     if (ThemeManager.isReady)
                     {
@@ -106,8 +106,7 @@ namespace WinDynamicDesktop
             }
             else
             {
-                progressBar1.Visible = true;
-
+                this.Hide();
                 bool locationUpdated = await UwpLocation.UpdateGeoposition();
 
                 if (locationUpdated)
@@ -121,10 +120,10 @@ namespace WinDynamicDesktop
                 }
                 else
                 {
-                    progressBar1.Visible = false;
-
                     MessageBox.Show("Failed to get location from Windows location service.",
                         "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                    this.Show();
                 }
             }
 

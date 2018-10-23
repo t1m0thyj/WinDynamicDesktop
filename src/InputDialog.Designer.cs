@@ -33,7 +33,6 @@
             this.okButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
             this.locationCheckBox = new System.Windows.Forms.CheckBox();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.SuspendLayout();
             // 
             // label1
@@ -88,15 +87,6 @@
             this.locationCheckBox.Text = "Use Windows location service";
             this.locationCheckBox.UseVisualStyleBackColor = true;
             // 
-            // progressBar1
-            // 
-            this.progressBar1.Location = new System.Drawing.Point(15, 36);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(300, 23);
-            this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
-            this.progressBar1.TabIndex = 4;
-            this.progressBar1.Visible = false;
-            // 
             // InputDialog
             // 
             this.AcceptButton = this.okButton;
@@ -104,7 +94,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
             this.ClientSize = new System.Drawing.Size(330, 134);
-            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.locationCheckBox);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.label1);
@@ -132,7 +121,6 @@
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.CheckBox locationCheckBox;
-        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }
 

@@ -124,7 +124,7 @@ namespace WinDynamicDesktop
         private void ThemeDialog_Load(object sender, EventArgs e)
         {
             darkModeCheckbox.Checked = JsonConfig.settings.darkMode;
-            string currentTheme = JsonConfig.settings.themeName ?? "Mojave_Desert";
+            string currentTheme = JsonConfig.settings.themeName;
 
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
@@ -133,6 +133,18 @@ namespace WinDynamicDesktop
 
             imageList.Images.Add(ShrinkImage(windowsWallpaper, 192, 108));
             listView1.Items.Add("None", 0);
+
+            if (currentTheme == null)
+            {
+                if (JsonConfig.firstRun)
+                {
+                    currentTheme = "Mojave_Desert";
+                }
+                else
+                {
+                    listView1.Items[0].Selected = true;
+                }
+            }
 
             for (int i = 0; i < ThemeManager.themeSettings.Count; i++)
             {
@@ -191,6 +203,8 @@ namespace WinDynamicDesktop
 
         private void okButton_Click(object sender, EventArgs e)
         {
+            okButton.Enabled = false;
+
             string themeName = listView1.SelectedItems[0].Text.Replace(' ', '_');
             JsonConfig.settings.themeName = themeName;
             JsonConfig.settings.darkMode = darkModeCheckbox.Checked;
@@ -221,6 +235,7 @@ namespace WinDynamicDesktop
                 UwpDesktop.GetHelper().SetWallpaper(windowsWallpaper);
             }
 
+            okButton.Enabled = true;
             this.Close();
         }
 
@@ -241,6 +256,7 @@ namespace WinDynamicDesktop
                 if (result != DialogResult.Yes)
                 {
                     e.Cancel = true;
+                    this.Show();
                 }
             }
         }
