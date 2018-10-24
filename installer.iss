@@ -26,7 +26,29 @@ OutputDir=output
 OutputBaseFilename={#MyAppName}_{#MyAppVersion}_Setup
 Compression=lzma
 SolidCompression=yes
+CloseApplications=force
 PrivilegesRequired=lowest
+
+[Code]
+function IsNet45OrNewer(): Boolean;
+var
+  readVal: cardinal;
+  success: Boolean;
+begin
+  success := RegQueryDWordValue(HKLM, 'Software\Microsoft\NET Framework Setup\NDP\v4\Full', 'Release', readVal);
+  Result := success and (readVal >= 378389);
+end;
+
+function InitializeSetup(): Boolean;
+begin
+  if not IsNet45OrNewer() then begin
+    MsgBox('{#MyAppName} requires Microsoft .NET Framework 4.5 or newer to be installed.'#13#13
+      'Download and install .NET Framework from'#13
+      'http://www.microsoft.com/net/ and then rerun Setup.', mbCriticalError, MB_OK);
+    Result := false;
+  end else
+    Result := true;
+end;
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
