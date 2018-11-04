@@ -1,5 +1,5 @@
 {
-  "imagesZipUri": "https://files.rb.gd/mojave_dynamic.zip",
+  "imagesZipUri": "https://files.rb.gd/mojave_dynamic.zip|https://box.heliohost.org/mojave_desert.zip",
   "imageFilename": "mojave_dynamic_*.jpeg",
   "dayImageList": [
     2,
