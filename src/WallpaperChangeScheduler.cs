@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Globalization;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using System.IO;
 
 namespace WinDynamicDesktop
 {
@@ -91,8 +92,12 @@ namespace WinDynamicDesktop
 
         private void SetWallpaper(int imageId)
         {
-            string imageFilename = ThemeManager.currentTheme.imageFilename.Replace("*", imageId.ToString());
-            UwpDesktop.GetHelper().SetWallpaper(imageFilename);
+            string imageFilename = ThemeManager.currentTheme.imageFilename.Replace("*",
+                imageId.ToString());
+            string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "images",
+                imageFilename);
+
+            WallpaperApi.SetWallpaper(imagePath);
 
             lastImageId = imageId;
         }

@@ -232,7 +232,7 @@ namespace WinDynamicDesktop
             }
             else
             {
-                UwpDesktop.GetHelper().SetWallpaper(windowsWallpaper);
+                WallpaperApi.SetWallpaper(windowsWallpaper);
             }
 
             okButton.Enabled = true;

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Threading;
 
 namespace WinDynamicDesktop
 {
@@ -16,6 +17,7 @@ namespace WinDynamicDesktop
         static void Main()
         {
             Environment.CurrentDirectory = UwpDesktop.GetHelper().GetCurrentDirectory();
+            Application.ThreadException += OnThreadException;
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
             Application.EnableVisualStyles();
@@ -23,9 +25,19 @@ namespace WinDynamicDesktop
             Application.Run(new AppContext());
         }
 
+        static void OnThreadException(object sender, ThreadExceptionEventArgs e)
+        {
+            LogError(e.Exception);
+        }
+
         static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            string errorMessage = ((Exception)e.ExceptionObject).ToString() + "\n";
+            LogError(e.ExceptionObject as Exception);
+        }
+
+        static void LogError(Exception exc)
+        {
+            string errorMessage = exc.ToString() + "\n";
             string logFilename = Path.Combine(Directory.GetCurrentDirectory(),
                 Environment.GetCommandLineArgs()[0] + ".log");
 

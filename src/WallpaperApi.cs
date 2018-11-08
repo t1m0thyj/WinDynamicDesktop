@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace WinDynamicDesktop
 {
@@ -209,51 +210,52 @@ namespace WinDynamicDesktop
         int AddUrl(IntPtr hwnd, [MarshalAs(UnmanagedType.LPWStr)] string pszSource, ref COMPONENT pcomp, AddURL dwFlags);
         [PreserveSig]
         int GetDesktopItemBySource([MarshalAs(UnmanagedType.LPWStr)] string pwszSource, ref COMPONENT pcomp, int dwReserved);
-
     }
 
-    /// <summary>
-    /// Summary description for shlobj.
-    /// Written by: Eber Irigoyen
-    /// on: 11/23/2005
-    /// </summary>
-    public class WallpaperChanger
+    public class ActiveDesktopWrapper
     {
-        public static readonly Guid CLSID_ActiveDesktop =
+        static readonly Guid CLSID_ActiveDesktop =
             new Guid("{75048700-EF1F-11D0-9888-006097DEACF9}");
 
         public static IActiveDesktop GetActiveDesktop()
         {
-            Type typeActiveDesktop = Type.GetTypeFromCLSID(WallpaperChanger.CLSID_ActiveDesktop);
+            Type typeActiveDesktop = Type.GetTypeFromCLSID(CLSID_ActiveDesktop);
             return (IActiveDesktop)Activator.CreateInstance(typeActiveDesktop);
         }
+    }
+
+    public class WallpaperApi
+    {
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern int SendMessageTimeout(
-            IntPtr hWnd,      // handle to destination window
-            uint Msg,         // message
-            IntPtr wParam,    // first message parameter
-            IntPtr lParam,    // second message parameter
-            uint fuFlags,
-            uint uTimeout,
-            out IntPtr result
-        );
+        private static extern int SendMessageTimeout(IntPtr hWnd, uint Msg, IntPtr wParam,
+            IntPtr lParam, uint fuFlags, uint uTimeout, out IntPtr result);
 
-        [DllImport("user32.dll", SetLastError = true)]
-        static extern IntPtr FindWindow(string lpClassName, IntPtr ZeroOnly);
-
-        public static void EnableTransitions()
+        private static void EnableTransitions()
         {
             IntPtr result = IntPtr.Zero;
-            SendMessageTimeout(FindWindow("Progman", IntPtr.Zero), 0x52c, IntPtr.Zero, IntPtr.Zero,
+            SendMessageTimeout(FindWindow("Progman", null), 0x52c, IntPtr.Zero, IntPtr.Zero,
                 0, 500, out result);
         }
 
         public static void SetWallpaper(string imagePath)
         {
-            IActiveDesktop iad = GetActiveDesktop();
-            iad.SetWallpaper(imagePath, 0);
-            iad.ApplyChanges(AD_Apply.ALL | AD_Apply.FORCE | AD_Apply.BUFFERED_REFRESH);
+            EnableTransitions();
+
+            ThreadStart threadStarter = () =>
+            {
+                IActiveDesktop _activeDesktop = ActiveDesktopWrapper.GetActiveDesktop();
+                _activeDesktop.SetWallpaper(imagePath, 0);
+                _activeDesktop.ApplyChanges(AD_Apply.ALL | AD_Apply.FORCE);
+
+                Marshal.ReleaseComObject(_activeDesktop);
+            };
+            Thread thread = new Thread(threadStarter);
+            thread.SetApartmentState(ApartmentState.STA);   // Set the thread to STA (required!)
+            thread.Start();
+            thread.Join(2000);
         }
     }
 }

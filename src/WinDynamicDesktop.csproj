@@ -118,7 +118,7 @@
     <Compile Include="UwpDesktop.cs" />
     <Compile Include="UwpHelper.cs" />
     <Compile Include="UwpLocation.cs" />
-    <Compile Include="WallpaperChanger.cs" />
+    <Compile Include="WallpaperApi.cs" />
     <Compile Include="WallpaperChangeScheduler.cs" />
     <EmbeddedResource Include="AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>
