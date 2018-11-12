@@ -16,7 +16,7 @@ namespace WinDynamicDesktop
 
     class SunriseSunsetService
     {
-        private static CultureInfo cultureInfo = CultureInfo.GetCultureInfo("en-US");
+		private static CultureInfo cultureInfo = CultureInfo.CurrentCulture;
 
         public static WeatherData GetWeatherData(string lat, string lon, string dateStr)
         {
