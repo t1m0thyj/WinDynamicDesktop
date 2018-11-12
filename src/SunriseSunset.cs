@@ -8,7 +8,7 @@ using Innovative.SolarCalculator;
 
 namespace WinDynamicDesktop
 {
-    public class WeatherData
+    public class SolarData
     {
         public DateTime SunriseTime { get; set; }
         public DateTime SunsetTime { get; set; }
@@ -16,17 +16,14 @@ namespace WinDynamicDesktop
 
     class SunriseSunsetService
     {
-        private static CultureInfo cultureInfo = CultureInfo.GetCultureInfo("en-US");
-
-        public static WeatherData GetWeatherData(string lat, string lon, string dateStr)
+        public static SolarData GetSolarData(string lat, string lon, DateTime date)
         {
-            DateTime date = DateTime.Parse(dateStr, cultureInfo);
-            double latitude = double.Parse(lat, cultureInfo);
-            double longitude = double.Parse(lon, cultureInfo);
+            double latitude = double.Parse(lat, CultureInfo.InvariantCulture);
+            double longitude = double.Parse(lon, CultureInfo.InvariantCulture);
 
             SolarTimes solarTimes = new SolarTimes(date, latitude, longitude);
 
-            WeatherData data = new WeatherData();
+            SolarData data = new SolarData();
             data.SunriseTime = solarTimes.Sunrise;
             data.SunsetTime = solarTimes.Sunset;
 

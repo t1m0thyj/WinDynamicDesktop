@@ -44,12 +44,6 @@ namespace WinDynamicDesktop
             {
                 lastJson = File.ReadAllText("settings.conf");
                 settings = JsonConvert.DeserializeObject<AppConfig>(lastJson);
-
-                // HACK TO FIX BUG INTRODUCED IN LAST VERSION
-                if (settings.themeName == "")
-                {
-                    settings.themeName = "Mojave_Desert";
-                }
             }
         }
 

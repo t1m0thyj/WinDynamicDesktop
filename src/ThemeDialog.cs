@@ -128,7 +128,7 @@ namespace WinDynamicDesktop
         private void ThemeDialog_Load(object sender, EventArgs e)
         {
             darkModeCheckbox.Checked = JsonConfig.settings.darkMode;
-            string currentTheme = JsonConfig.settings.themeName;
+            string currentTheme = ThemeManager.currentTheme?.themeName;
 
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
@@ -140,7 +140,7 @@ namespace WinDynamicDesktop
 
             if (currentTheme == null)
             {
-                if (JsonConfig.firstRun)
+                if (JsonConfig.firstRun || JsonConfig.settings.themeName != null)
                 {
                     currentTheme = "Mojave_Desert";
                 }

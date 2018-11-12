@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -72,8 +73,9 @@ namespace WinDynamicDesktop
             try
             {
                 var pos = await UnsafeUpdateGeoposition();
-                JsonConfig.settings.latitude = pos.Latitude.ToString();
-                JsonConfig.settings.longitude = pos.Longitude.ToString();
+                JsonConfig.settings.latitude = pos.Latitude.ToString(CultureInfo.InvariantCulture);
+                JsonConfig.settings.longitude = pos.Longitude.ToString(
+                    CultureInfo.InvariantCulture);
 
                 return true;
             }

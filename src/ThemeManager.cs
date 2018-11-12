@@ -97,7 +97,7 @@ namespace WinDynamicDesktop
         }
 
         public static void CopyLocalTheme(ThemeConfig theme, string localPath,
-            Action<int> updatePercentage = null)
+            Action<int> updatePercentage)
         {
             string[] imageFiles = Directory.GetFiles(theme.imageFilename);
 
@@ -105,7 +105,7 @@ namespace WinDynamicDesktop
             {
                 string filename = imageFiles[i];
                 File.Copy(Path.Combine(localPath, filename), Path.Combine("images", filename));
-                updatePercentage?.Invoke((i + 1) / imageFiles.Length);
+                updatePercentage.Invoke((i + 1) / imageFiles.Length);
             }
         }
 
@@ -131,7 +131,8 @@ namespace WinDynamicDesktop
 
         private static void ReadyUp()
         {
-            if (JsonConfig.firstRun && currentTheme == null)
+            if (currentTheme == null && (JsonConfig.firstRun
+                || JsonConfig.settings.themeName != null))
             {
                 SelectTheme();
             }

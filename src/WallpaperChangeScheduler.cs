@@ -18,9 +18,9 @@ namespace WinDynamicDesktop
 
         public static bool isDayNow;
 
-        private WeatherData yesterdaysData;
-        private WeatherData todaysData;
-        private WeatherData tomorrowsData;
+        private SolarData yesterdaysData;
+        private SolarData todaysData;
+        private SolarData tomorrowsData;
 
         private Timer wallpaperTimer = new Timer();
         private TimeSpan timerError = new TimeSpan(TimeSpan.TicksPerMillisecond * 55);
@@ -50,22 +50,10 @@ namespace WinDynamicDesktop
             }
         }
 
-        private string GetDateString(int todayDelta = 0)
+        private SolarData GetSolarData(DateTime date)
         {
-            DateTime date = DateTime.Today;
-
-            if (todayDelta != 0)
-            {
-                date = date.AddDays(todayDelta);
-            }
-
-            return date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-        }
-
-        private WeatherData GetWeatherData(string dateStr)
-        {
-            WeatherData data = SunriseSunsetService.GetWeatherData(
-                JsonConfig.settings.latitude, JsonConfig.settings.longitude, dateStr);
+            SolarData data = SunriseSunsetService.GetSolarData(
+                JsonConfig.settings.latitude, JsonConfig.settings.longitude, date);
 
             return data;
         }
@@ -111,20 +99,20 @@ namespace WinDynamicDesktop
 
             wallpaperTimer.Stop();
 
-            string currentDate = GetDateString();
-            todaysData = GetWeatherData(currentDate);
+            DateTime today = DateTime.Today;
+            todaysData = GetSolarData(today);
             
             if (DateTime.Now < todaysData.SunriseTime + timerError)
             {
                 // Before sunrise
-                yesterdaysData = GetWeatherData(GetDateString(-1));
+                yesterdaysData = GetSolarData(today.AddDays(-1));
                 tomorrowsData = null;
             }
             else if (DateTime.Now >= todaysData.SunsetTime - timerError)
             {
                 // After sunset
                 yesterdaysData = null;
-                tomorrowsData = GetWeatherData(GetDateString(1));
+                tomorrowsData = GetSolarData(today.AddDays(1));
             }
             else
             {
@@ -172,8 +160,8 @@ namespace WinDynamicDesktop
 
         private void UpdateNightImage()
         {
-            WeatherData day1Data = (yesterdaysData == null) ? todaysData : yesterdaysData;
-            WeatherData day2Data = (yesterdaysData == null) ? tomorrowsData : todaysData;
+            SolarData day1Data = (yesterdaysData == null) ? todaysData : yesterdaysData;
+            SolarData day2Data = (yesterdaysData == null) ? tomorrowsData : todaysData;
 
             TimeSpan nightTime = day2Data.SunriseTime - day1Data.SunsetTime;
             TimeSpan timerLength = new TimeSpan(nightTime.Ticks / nightImages.Length);
