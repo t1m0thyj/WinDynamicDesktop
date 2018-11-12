@@ -16,7 +16,11 @@ namespace WinDynamicDesktop
         private int maxImageNumber;
         private int previewImage;
         private int selectedIndex;
-        private string windowsWallpaper = Directory.GetFiles(@"C:\Windows\Web\Wallpaper\Windows")[0];
+        private ThemeConfig tempTheme;
+
+        private const string themeLink = "https://github.com/t1m0thyj/WinDynamicDesktop/wiki";
+        private readonly string windowsWallpaper = Directory.GetFiles(
+            @"C:\Windows\Web\Wallpaper\Windows")[0];
 
         public ThemeDialog()
         {
@@ -201,6 +205,31 @@ namespace WinDynamicDesktop
             LoadPreviewImage(1);
         }
 
+        private void importButton_Click(object sender, EventArgs e)
+        {
+            DialogResult result = openFileDialog1.ShowDialog();
+
+            if (result != DialogResult.OK)
+            {
+                return;
+            }
+
+            string themeJson = openFileDialog1.FileName;
+            tempTheme = ThemeManager.ImportTheme(themeJson);
+
+            ProgressDialog downloadDialog = new ProgressDialog();
+            downloadDialog.FormClosed += OnDownloadDialogClosed;
+            downloadDialog.Show();
+
+            downloadDialog.LoadQueue(new List<ThemeConfig>() { tempTheme });
+            downloadDialog.DownloadNext();
+        }
+
+        private void themeLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(themeLink);
+        }
+
         private void okButton_Click(object sender, EventArgs e)
         {
             okButton.Enabled = false;
@@ -242,6 +271,31 @@ namespace WinDynamicDesktop
         private void cancelButton_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void OnDownloadDialogClosed(object sender, EventArgs e)
+        {
+            List<ThemeConfig> missingThemes = ThemeManager.FindMissingThemes();
+            bool isInstalled = true;
+
+            foreach (ThemeConfig theme in missingThemes)
+            {
+                if (theme == tempTheme)
+                {
+                    isInstalled = false;
+                    break;
+                }
+            }
+
+            if (isInstalled)
+            {
+                // TODO Add to themeSettings, determine sorted position, show in listbox
+            }
+            else
+            {
+                MessageBox.Show("Failed to install the '" + tempTheme.themeName + "' theme.",
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
 
         private void OnFormClosing(object sender, FormClosingEventArgs e)

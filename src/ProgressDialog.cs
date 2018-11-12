@@ -34,10 +34,19 @@ namespace WinDynamicDesktop
             if (downloadQueue.Count > 0)
             {
                 ThemeConfig theme = downloadQueue.Peek();
-                List<string> imagesZipUris = theme.imagesZipUri.Split('|').ToList();
 
-                client.DownloadFileAsync(new Uri(imagesZipUris.First()),
-                    theme.themeName + "_images.zip", imagesZipUris.Skip(1).ToList());
+                if (theme.imagesZipUri.StartsWith("file://"))
+                {
+                    string themePath = (new Uri(theme.imagesZipUri)).LocalPath;
+                    ThemeManager.CopyLocalTheme(downloadQueue.Dequeue(), themePath,
+                        this.UpdateTotalPercentage);
+                }
+                else
+                {
+                    List<string> imagesZipUris = theme.imagesZipUri.Split('|').ToList();
+                    client.DownloadFileAsync(new Uri(imagesZipUris.First()),
+                        theme.themeName + "_images.zip", imagesZipUris.Skip(1).ToList());
+                }
             }
             else
             {
@@ -46,10 +55,15 @@ namespace WinDynamicDesktop
             }
         }
 
-        public void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        private void UpdateTotalPercentage(int themePercentage)
         {
             progressBar1.Value = ((numDownloads - downloadQueue.Count) * 100 +
-                e.ProgressPercentage) / numDownloads;
+                themePercentage) / numDownloads;
+        }
+
+        public void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        {
+            UpdateTotalPercentage(e.ProgressPercentage);
         }
 
         public async void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)

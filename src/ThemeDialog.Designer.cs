@@ -39,6 +39,9 @@
             this.darkModeCheckbox = new System.Windows.Forms.CheckBox();
             this.okButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
+            this.themeLinkLabel = new System.Windows.Forms.LinkLabel();
+            this.importButton = new System.Windows.Forms.Button();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.previewBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -49,7 +52,7 @@
             this.listView1.Location = new System.Drawing.Point(12, 12);
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(491, 342);
+            this.listView1.Size = new System.Drawing.Size(491, 302);
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
@@ -158,6 +161,34 @@
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
+            // themeLinkLabel
+            // 
+            this.themeLinkLabel.AutoSize = true;
+            this.themeLinkLabel.Location = new System.Drawing.Point(158, 331);
+            this.themeLinkLabel.Name = "themeLinkLabel";
+            this.themeLinkLabel.Size = new System.Drawing.Size(134, 15);
+            this.themeLinkLabel.TabIndex = 12;
+            this.themeLinkLabel.TabStop = true;
+            this.themeLinkLabel.Text = "Get more themes online";
+            this.themeLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.themeLinkLabel_LinkClicked);
+            // 
+            // importButton
+            // 
+            this.importButton.Location = new System.Drawing.Point(13, 325);
+            this.importButton.Name = "importButton";
+            this.importButton.Size = new System.Drawing.Size(125, 26);
+            this.importButton.TabIndex = 13;
+            this.importButton.Text = "Import from file...";
+            this.importButton.UseVisualStyleBackColor = true;
+            this.importButton.Click += new System.EventHandler(this.importButton_Click);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.DefaultExt = "json";
+            this.openFileDialog1.Filter = "JSON files|*.json|All files|*.*";
+            this.openFileDialog1.InitialDirectory = "shell:Downloads";
+            this.openFileDialog1.Title = "Import Theme";
+            // 
             // ThemeDialog
             // 
             this.AcceptButton = this.okButton;
@@ -165,6 +196,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
             this.ClientSize = new System.Drawing.Size(929, 366);
+            this.Controls.Add(this.importButton);
+            this.Controls.Add(this.themeLinkLabel);
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.previewBox);
             this.Controls.Add(this.darkModeCheckbox);
@@ -198,5 +231,8 @@
         private System.Windows.Forms.CheckBox darkModeCheckbox;
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.Button cancelButton;
+        private System.Windows.Forms.LinkLabel themeLinkLabel;
+        private System.Windows.Forms.Button importButton;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }

@@ -58,6 +58,36 @@ namespace WinDynamicDesktop
             }
         }
 
+        public static ThemeConfig ImportTheme(string themeJson)
+        {
+            string themeName = Path.GetFileNameWithoutExtension(themeJson);
+            bool isInstalled = false;
+
+            foreach (ThemeConfig theme in themeSettings)
+            {
+                if (theme.themeName == themeName)
+                {
+                    isInstalled = true;
+                    break;
+                }
+            }
+
+            if (isInstalled)
+            {
+                DialogResult result = MessageBox.Show("The theme '" + themeName.Replace('_', ' ') +
+                    "' is already installed. Do you want to overwrite it?", "Question",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (result != DialogResult.Yes)
+                {
+                    return null;
+                }
+            }
+
+            File.Copy(themeJson, Path.Combine("themes", themeName + ".json"));
+            return JsonConfig.LoadTheme(themeName);
+        }
+
         public static void ExtractTheme(string themeName)
         {
             string imagesZip = themeName + "_images.zip";
@@ -66,7 +96,20 @@ namespace WinDynamicDesktop
             File.Delete(imagesZip);
         }
 
-        private static List<ThemeConfig> FindMissingThemes()
+        public static void CopyLocalTheme(ThemeConfig theme, string localPath,
+            Action<int> updatePercentage = null)
+        {
+            string[] imageFiles = Directory.GetFiles(theme.imageFilename);
+
+            for (int i = 0; i < imageFiles.Length; i++)
+            {
+                string filename = imageFiles[i];
+                File.Copy(Path.Combine(localPath, filename), Path.Combine("images", filename));
+                updatePercentage?.Invoke((i + 1) / imageFiles.Length);
+            }
+        }
+
+        public static List<ThemeConfig> FindMissingThemes()
         {
             List<ThemeConfig> missingThemes = new List<ThemeConfig>();
 
