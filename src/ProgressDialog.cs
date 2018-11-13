@@ -38,8 +38,11 @@ namespace WinDynamicDesktop
                 if (theme.imagesZipUri.StartsWith("file://"))
                 {
                     string themePath = (new Uri(theme.imagesZipUri)).LocalPath;
-                    ThemeManager.CopyLocalTheme(downloadQueue.Dequeue(), themePath,
+                    ThemeManager.CopyLocalTheme(theme, themePath,
                         this.UpdateTotalPercentage);
+
+                    downloadQueue.Dequeue();
+                    DownloadNext();
                 }
                 else
                 {

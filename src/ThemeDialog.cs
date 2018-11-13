@@ -27,6 +27,8 @@ namespace WinDynamicDesktop
             InitializeComponent();
 
             this.FormClosing += OnFormClosing;
+            listView1.ContextMenuStrip = contextMenuStrip1;
+            listView1.ListViewItemSorter = new CompareByIndex(listView1);
         }
 
         private Bitmap ShrinkImage(string filename, int width, int height)
@@ -273,7 +275,37 @@ namespace WinDynamicDesktop
             this.Close();
         }
 
-        private void OnDownloadDialogClosed(object sender, EventArgs e)
+        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
+        {
+            var hitTestInfo = listView1.HitTest(listView1.PointToClient(Cursor.Position));
+            int itemIndex = hitTestInfo.Item?.Index ?? -1;
+
+            if (itemIndex <= 0 || ThemeManager.defaultThemes.Contains(
+                ThemeManager.themeSettings[itemIndex - 1].themeName))
+            {
+                e.Cancel = true;
+            }
+        }
+
+        private async void removeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int itemIndex = listView1.FocusedItem.Index;
+            ThemeConfig theme = ThemeManager.themeSettings[itemIndex - 1];
+
+            DialogResult result = MessageBox.Show("Are you sure you want to remove the theme '" +
+                theme.themeName.Replace('_', ' ') + "'?", "Question", MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                listView1.Items.RemoveAt(itemIndex);
+                listView1.Items[itemIndex - 1].Selected = true;
+
+                await Task.Run(() => ThemeManager.RemoveTheme(theme));
+            }
+        }
+
+        private async void OnDownloadDialogClosed(object sender, EventArgs e)
         {
             List<ThemeConfig> missingThemes = ThemeManager.FindMissingThemes();
             bool isInstalled = true;
@@ -289,12 +321,31 @@ namespace WinDynamicDesktop
 
             if (isInstalled)
             {
-                // TODO Add to themeSettings, determine sorted position, show in listbox
+                ThemeManager.themeSettings.Add(tempTheme);
+                ThemeManager.themeSettings.Sort((t1, t2) => t1.themeName.CompareTo(t2.themeName));
+                int itemIndex = 1;
+
+                for (int i = 0; i < ThemeManager.themeSettings.Count; i++)
+                {
+                    if (ThemeManager.themeSettings[i] == tempTheme)
+                    {
+                        itemIndex += i;
+                        break;
+                    }
+                }
+
+                listView1.LargeImageList.Images.Add(GetThumbnailImage(tempTheme, 192, 108));
+                listView1.Items.Insert(itemIndex, tempTheme.themeName.Replace('_', ' '),
+                    listView1.LargeImageList.Images.Count - 1);
+                listView1.Items[itemIndex].Selected = true;
+
+                tempTheme = null;
             }
             else
             {
-                MessageBox.Show("Failed to install the '" + tempTheme.themeName + "' theme.",
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Failed to install the '" + tempTheme.themeName.Replace('_', ' ') +
+                    "' theme.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                await Task.Run(() => ThemeManager.RemoveTheme(tempTheme));
             }
         }
 
@@ -313,6 +364,25 @@ namespace WinDynamicDesktop
                     this.Show();
                 }
             }
+        }
+    }
+
+    // Class to force ListView control to sort correctly
+    // Code from https://stackoverflow.com/a/30536933/5504760
+    public class CompareByIndex : System.Collections.IComparer
+    {
+        private readonly ListView _listView;
+
+        public CompareByIndex(ListView listView)
+        {
+            this._listView = listView;
+        }
+
+        public int Compare(object x, object y)
+        {
+            int i = this._listView.Items.IndexOf((ListViewItem)x);
+            int j = this._listView.Items.IndexOf((ListViewItem)y);
+            return i - j;
         }
     }
 }

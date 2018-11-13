@@ -12,6 +12,7 @@ namespace WinDynamicDesktop
     class ThemeManager
     {
         public static bool isReady = false;
+        public static string[] defaultThemes = new string[] { "Mojave_Desert", "Solar_Gradients" };
         public static List<ThemeConfig> themeSettings = new List<ThemeConfig>();
         public static ThemeConfig currentTheme;
 
@@ -22,7 +23,7 @@ namespace WinDynamicDesktop
             Directory.CreateDirectory("images");
             Directory.CreateDirectory("themes");
 
-            List<string> themeNames = new List<string>() { "Mojave_Desert", "Solar_Gradients" };
+            List<string> themeNames = defaultThemes.ToList();
 
             foreach (string filePath in Directory.EnumerateFiles("themes", "*.json"))
             {
@@ -84,7 +85,7 @@ namespace WinDynamicDesktop
                 }
             }
 
-            File.Copy(themeJson, Path.Combine("themes", themeName + ".json"));
+            File.Copy(themeJson, Path.Combine("themes", themeName + ".json"), true);
             return JsonConfig.LoadTheme(themeName);
         }
 
@@ -92,20 +93,31 @@ namespace WinDynamicDesktop
         {
             string imagesZip = themeName + "_images.zip";
 
-            ZipFile.ExtractToDirectory(imagesZip, "images");
-            File.Delete(imagesZip);
+            try
+            {
+                ZipFile.ExtractToDirectory(imagesZip, "images");
+                File.Delete(imagesZip);
+            }
+            catch { }
         }
 
         public static void CopyLocalTheme(ThemeConfig theme, string localPath,
             Action<int> updatePercentage)
         {
-            string[] imageFiles = Directory.GetFiles(theme.imageFilename);
+            string[] imagePaths = Directory.GetFiles(localPath, theme.imageFilename);
 
-            for (int i = 0; i < imageFiles.Length; i++)
+            for (int i = 0; i < imagePaths.Length; i++)
             {
-                string filename = imageFiles[i];
-                File.Copy(Path.Combine(localPath, filename), Path.Combine("images", filename));
-                updatePercentage.Invoke((i + 1) / imageFiles.Length);
+                string imagePath = imagePaths[i];
+
+                try
+                {
+                    File.Copy(imagePath, Path.Combine("images", Path.GetFileName(imagePath)),
+                        true);
+                }
+                catch { }
+
+                updatePercentage.Invoke((int)((i + 1) / (float)imagePaths.Length * 100));
             }
         }
 
@@ -127,6 +139,25 @@ namespace WinDynamicDesktop
             }
 
             return missingThemes;
+        }
+
+        public static void RemoveTheme(ThemeConfig theme)
+        {
+            if (themeSettings.Contains(theme))
+            {
+                themeSettings.Remove(theme);
+            }
+
+            try
+            {
+                File.Delete(Path.Combine("themes", theme.themeName + ".json"));
+
+                foreach (string imagePath in Directory.GetFiles("images", theme.imageFilename))
+                {
+                    File.Delete(imagePath);
+                }
+            }
+            catch { }
         }
 
         private static void ReadyUp()

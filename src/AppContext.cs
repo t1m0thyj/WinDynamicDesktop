@@ -79,7 +79,8 @@ namespace WinDynamicDesktop
 
         private void OnNotifyIconMouseUp(object sender, MouseEventArgs e)
         {
-            // Hack to show menu on left click from https://stackoverflow.com/a/2208910/5504760
+            // Show context menu when taskbar icon is left clicked
+            // Code from https://stackoverflow.com/a/2208910/5504760
             if (e.Button == MouseButtons.Left)
             {
                 MethodInfo mi = typeof(NotifyIcon).GetMethod("ShowContextMenu",

@@ -63,7 +63,7 @@
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "ProgressDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Welcome to WinDynamicDesktop";
+            this.Text = "WinDynamicDesktop";
             this.ResumeLayout(false);
             this.PerformLayout();
 
