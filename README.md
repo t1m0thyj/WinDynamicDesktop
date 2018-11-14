@@ -33,7 +33,7 @@ This is a commonly requested feature, and it would be nice to mimic the behavior
 
 ### How can you customize the images?
 
-You are not limited to the Mojave themes that come preinstalled with the app. Custom themes created by the community can be downloaded [here](/wiki/Community-created-themes). You can also create your own theme that uses whatever wallpaper images you want, by following the instructions in [this tutorial](/wiki/Creating-custom-themes).
+You are not limited to the Mojave themes that come preinstalled with the app. Custom themes created by the community can be downloaded [here](https://github.com/t1m0thyj/WinDynamicDesktop/wiki/Community-created-themes). You can also create your own theme that uses whatever wallpaper images you want, by following the instructions in [this tutorial](https://github.com/t1m0thyj/WinDynamicDesktop/wiki/Creating-custom-themes).
 
 ### How can you hide the tray icon?
 
