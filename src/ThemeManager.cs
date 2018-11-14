@@ -75,8 +75,8 @@ namespace WinDynamicDesktop
 
             if (isInstalled)
             {
-                DialogResult result = MessageBox.Show("The theme '" + themeName.Replace('_', ' ') +
-                    "' is already installed. Do you want to overwrite it?", "Question",
+                DialogResult result = MessageBox.Show("The '" + themeName.Replace('_', ' ') +
+                    "' theme is already installed. Do you want to overwrite it?", "Question",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (result != DialogResult.Yes)

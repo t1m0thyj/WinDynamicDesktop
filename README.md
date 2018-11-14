@@ -1,5 +1,5 @@
 # WinDynamicDesktop
-Port of macOS Mojave Dynamic Desktop feature to Windows 10, available for download on GitHub and the Microsoft Store
+Port of macOS Mojave Dynamic Desktop feature to Windows 10, available on GitHub and the Microsoft Store
 
 [![GitHub releases](https://img.shields.io/github/downloads/t1m0thyj/WinDynamicDesktop/total.svg)](https://github.com/t1m0thyj/WinDynamicDesktop/releases)
 [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/t1m0thyj/WinDynamicDesktop)
@@ -9,38 +9,37 @@ Port of macOS Mojave Dynamic Desktop feature to Windows 10, available for downlo
 
 ## Getting Started
 
-The first time you run WinDynamicDesktop, it will automatically download the macOS Mojave wallpapers from [here](https://files.rb.gd/mojave_dynamic.zip) and [here](https://onedrive.live.com/download?cid=CC2E3BD0360C1775&resid=CC2E3BD0360C1775%21721&authkey=AK4kktXlvN1KJzQ) and extract them to your disk. I have not included the files directly in this repository for copyright reasons. If you want to select a different set of images, see the section below for how to do so.
+WinDynamicDesktop should run on any version of Windows that has .NET Framework 4.5 or newer installed. If you are using Windows 7 or Vista and your version of .NET Framework is too old, you can install a newer one from [here](https://www.microsoft.com/net/download).
 
-You will also need to input your location when running the program for the first time. This location is not used for any purpose other than to determine the times of sunrise and sunset where you live.
+The first time you run WinDynamicDesktop, it will automatically download the wallpapers for the macOS Mojave themes (Mojave Desert and Solar Gradients) and extract them to your disk. I have not included the files directly in this repository for copyright reasons. The app will ask you to choose a theme and you can also import custom themes that have been created by other users.
 
-After you enter your location, the program will minimize to your system tray and it will run in the background. Right-clicking on the system tray icon opens a menu with options to update the location, refresh the wallpaper manually if necessary, or exit the program. You can also choose to start WinDynamicDesktop when Windows boots or enable dark mode from this menu.
+You will also need to input your location when running the app for the first time. This location is not used for any purpose other than to determine the times of sunrise and sunset where you live. If you are using the Microsoft Store version of the app, you can opt to use the Windows location service instead which will update automatically.
+
+After you have chosen a theme and entered your location, the app will minimize to your system tray and run in the background. Right-clicking on the system tray icon opens a menu with options to change the theme, update the location, refresh the wallpaper manually if necessary, or exit the program. You can also choose to start WinDynamicDesktop when Windows boots or enable dark mode from this menu.
 
 ## Frequently Asked Questions
 
-### Why did you develop this?
+### Why did I develop this?
 
-When the Dynamic Desktop feature was announced for macOS Mojave which shifts through 16 images of the same desert scene taken at different times of day, I wanted to write a Windows program that would do the same thing. Windows has the ability built-in to cycle through different wallpapers, but only at regular intervals, not based on the times of sunrise and sunset. This program adds that feature for the Mojave wallpapers to the Windows desktop.
+When the Dynamic Desktop feature was announced for macOS Mojave which shifts through 16 images of the same desert scene taken at different times of day, I wanted to make a Windows program that would do the same thing. Windows 10 natively supports cycling through multiple wallpapers, but not based on the times of sunrise and sunset. WinDynamicDesktop adds that feature to the Windows desktop.
+
+### Can the Windows 10 theme be changed too?
+
+There is an option to enable this in the "More Options" section of the system tray menu. Unfortunately its functionality is limited by the way the system theme setting works in Windows 10. In Windows 10 version 1809 which added a dark theme to File Explorer, it is necessary to restart Explorer before the system theme will change in it. Also the theme for Microsoft Edge is separate from the Windows 10 theme and cannot be controlled by WinDynamicDesktop.
 
 ### Can the lockscreen image be changed too?
 
-This is a commonly requested feature, and it would be nice to mimic the behavior of macOS and many Linux distros where the lockscreen image is the same as the desktop wallpaper. Unfortunately Windows 10 doesn't have a reliable API for changing the lockscreen image, which means I can't really implement this feature in the app unless Microsoft adds a desktop wallpaper option to Windows for the lockscreen.
+This is a commonly requested feature, and it would be nice to mimic the behavior of macOS and many Linux distros where the lockscreen image is the same as the desktop wallpaper. Windows doesn't have a reliable API for changing the lockscreen image, which means I can't really implement this feature in the app right now. Hopefully Microsoft will add an option in a future version of Windows to make the lockscreen image mirror the desktop wallpaper.
 
-### How can I hide the tray icon?
+### How can you customize the images?
+
+You are not limited to the Mojave themes that come preinstalled with the app. Custom themes created by the community can be downloaded [here](/wiki/Community-created-themes). You can also create your own theme that uses whatever wallpaper images you want, by following the instructions in [this tutorial](/wiki/Creating-custom-themes).
+
+### How can you hide the tray icon?
 
 If you want to run the app silently with no icon in the system tray, you can do this by editing the `settings.conf` file which is in the same folder as the EXE. Change the setting `"hideTrayIcon":false` to `"hideTrayIcon":true` (or add it if it doesn't exist), then restart the app.
-
-### How can I customize the images?
-
-By default WinDynamicDesktop uses the Mojave wallpapers, but you can add your own themes and customize the images that are used by creating JSON files in the *themes* folder. Sample theme JSON files can be found [here](src/themes).
-
-The name of the file should be the name of the theme, with any spaces replaced by underscores, plus the `.json` extension (e.g., `Mojave_Desert.json`). Theme files are formatted in JSON and must contain the following values:
-
-* `imagesZipUri` - String containing URL to download images.zip file from, or *null* if the content in the images subfolder is provided by the user
-* `imageFilename` - String containing the filename of each wallpaper image, with `*` (an asterisk) substituted for the image number
-* `dayImageList` - Array of numbers listing the image numbers to display throughout the day (between sunrise and sunset)
-* `nightImageList` - Array of numbers listing the image numbers to display throughout the night (between sunset and sunrise)
 
 ## Legal and Privacy Stuff
 I do not own the wallpaper images used by WinDynamicDesktop, they belong to Apple. The icon used in this program was made by [Roundicons](https://www.flaticon.com/authors/roundicons) from [flaticon.com](https://www.flaticon.com/) and is licensed by [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/).
 
-When you enter your location, WinDynamicDesktop uses the [LocationIQ service](https://locationiq.org/) to convert it to latitude and longitude. Your location info is never sent anywhere without your consent.
+When you enter your location, WinDynamicDesktop uses the [LocationIQ API](https://locationiq.org/) to convert it to latitude and longitude. The Microsoft Store version uses the Windows location API instead if permission is granted. Location data is anonymous and never saved without your consent.

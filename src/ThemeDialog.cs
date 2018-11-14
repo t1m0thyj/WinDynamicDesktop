@@ -223,6 +223,7 @@ namespace WinDynamicDesktop
             downloadDialog.FormClosed += OnDownloadDialogClosed;
             downloadDialog.Show();
 
+            this.Enabled = false;
             downloadDialog.LoadQueue(new List<ThemeConfig>() { tempTheme });
             downloadDialog.DownloadNext();
         }
@@ -292,9 +293,9 @@ namespace WinDynamicDesktop
             int itemIndex = listView1.FocusedItem.Index;
             ThemeConfig theme = ThemeManager.themeSettings[itemIndex - 1];
 
-            DialogResult result = MessageBox.Show("Are you sure you want to remove the theme '" +
-                theme.themeName.Replace('_', ' ') + "'?", "Question", MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
+            DialogResult result = MessageBox.Show("Are you sure you want to remove the '" +
+                theme.themeName.Replace('_', ' ') + "' theme?", "Question",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (result == DialogResult.Yes)
             {
@@ -307,6 +308,7 @@ namespace WinDynamicDesktop
 
         private async void OnDownloadDialogClosed(object sender, EventArgs e)
         {
+            this.Enabled = true;
             List<ThemeConfig> missingThemes = ThemeManager.FindMissingThemes();
             bool isInstalled = true;
 
