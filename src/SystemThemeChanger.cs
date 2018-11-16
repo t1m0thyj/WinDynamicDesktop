@@ -49,10 +49,12 @@ namespace WinDynamicDesktop
             if (darkTheme)
             {
                 themeKey.SetValue("AppsUseLightTheme", 0);  // Dark theme
+                themeKey.SetValue("SystemUsesLightTheme", 0); // Dark system theme
             }
             else
             {
                 themeKey.SetValue("AppsUseLightTheme", 1);  // Light theme
+                themeKey.SetValue("SystemUsesLightTheme", 1); // Light system theme
             }
 
             themeKey.Close();
