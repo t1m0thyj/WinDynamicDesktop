@@ -59,19 +59,11 @@ namespace WinDynamicDesktop
             }
         }
 
-        public static ThemeConfig ImportTheme(string themeJson)
+        public static ThemeConfig ImportTheme(string themePath)
         {
-            string themeName = Path.GetFileNameWithoutExtension(themeJson);
-            bool isInstalled = false;
-
-            foreach (ThemeConfig theme in themeSettings)
-            {
-                if (theme.themeName == themeName)
-                {
-                    isInstalled = true;
-                    break;
-                }
-            }
+            string themeName = Path.GetFileNameWithoutExtension(themePath);
+            bool isInstalled = themeSettings.FindIndex(
+                theme => theme.themeName == themeName) != -1;
 
             if (isInstalled)
             {
@@ -85,18 +77,52 @@ namespace WinDynamicDesktop
                 }
             }
 
-            File.Copy(themeJson, Path.Combine("themes", themeName + ".json"), true);
-            return JsonConfig.LoadTheme(themeName);
-        }
-
-        public static void ExtractTheme(string themeName)
-        {
-            string imagesZip = themeName + "_images.zip";
-
             try
             {
-                ZipFile.ExtractToDirectory(imagesZip, "images");
-                File.Delete(imagesZip);
+                if (Path.GetExtension(themePath) == ".zip")
+                {
+                    using (ZipArchive archive = ZipFile.OpenRead(themePath))
+                    {
+                        ZipArchiveEntry themeJson = archive.Entries.Single(
+                            entry => Path.GetExtension(entry.Name) == ".json");
+                        themeJson.ExtractToFile(Path.Combine("themes", themeName + ".json"), true);
+                    }
+
+                    ExtractTheme(themePath);
+                }
+                else
+                {
+                    File.Copy(themePath, Path.Combine("themes", themeName + ".json"), true);
+                }
+
+                return JsonConfig.LoadTheme(themeName);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Failed to import theme:\n" + e.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return null;
+            }
+        }
+
+        public static void ExtractTheme(string imagesZip, bool deleteZip = false)
+        {
+            try
+            {
+                using (ZipArchive archive = ZipFile.OpenRead(imagesZip))
+                {
+                    foreach (ZipArchiveEntry imageEntry in archive.Entries.Where(
+                        entry => Path.GetDirectoryName(entry.FullName) == ""
+                        && Path.GetExtension(entry.Name) != ".json"))
+                    {
+                        imageEntry.ExtractToFile(Path.Combine("images", imageEntry.Name), true);
+                    }
+                }
+
+                if (deleteZip)
+                {
+                    File.Delete(imagesZip);
+                }
             }
             catch { }
         }

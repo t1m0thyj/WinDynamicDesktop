@@ -48,19 +48,19 @@ namespace WinDynamicDesktop
 
             if (darkTheme)
             {
-                themeKey.SetValue("AppsUseLightTheme", 0);  // Dark theme
-                themeKey.SetValue("SystemUsesLightTheme", 0); // Dark system theme
+                themeKey.SetValue("AppsUseLightTheme", 0);      // Dark app theme
+                themeKey.SetValue("SystemUsesLightTheme", 0);   // Dark system theme
             }
             else
             {
-                themeKey.SetValue("AppsUseLightTheme", 1);  // Light theme
-                themeKey.SetValue("SystemUsesLightTheme", 1); // Light system theme
+                themeKey.SetValue("AppsUseLightTheme", 1);      // Light app theme
+                themeKey.SetValue("SystemUsesLightTheme", 1);   // Light system theme
             }
 
             themeKey.Close();
         }
 
-        private static void ToggleChangeSystemTheme()
+        private static void OnThemeItemClick(object sender, EventArgs e)
         {
             bool isEnabled = JsonConfig.settings.changeSystemTheme ^ true;
             JsonConfig.settings.changeSystemTheme = isEnabled;
@@ -68,11 +68,6 @@ namespace WinDynamicDesktop
 
             TryUpdateSystemTheme();
             JsonConfig.SaveConfig();
-        }
-
-        private static void OnThemeItemClick(object sender, EventArgs e)
-        {
-            ToggleChangeSystemTheme();
         }
     }
 }

@@ -27,11 +27,11 @@ namespace WinDynamicDesktop
             iconBox.Image = (new Icon(Properties.Resources.AppIcon, 64, 64)).ToBitmap();
 
             string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            nameLabel.Text += " " + version;
+            nameLabel.Text += " " + version.Remove(version.Length - 2);
 
-            if (!UwpDesktop.IsRunningAsUwp())
+            if (UwpDesktop.IsRunningAsUwp())
             {
-                donateButton.Visible = true;
+                nameLabel.Text += " (UWP)";
             }
 
             creditsBox.Text = GetCreditsText();
@@ -48,7 +48,7 @@ namespace WinDynamicDesktop
                 "Roundicons from flaticon.com for the icon (licensed by CC 3.0 BY)"
             };
 
-            return String.Join(Environment.NewLine + "    ", lines);
+            return string.Join(Environment.NewLine + "    ", lines);
         }
 
         private void websiteLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

@@ -118,7 +118,6 @@
             this.donateButton.TabIndex = 3;
             this.donateButton.Text = "Donate";
             this.donateButton.UseVisualStyleBackColor = true;
-            this.donateButton.Visible = false;
             this.donateButton.Click += new System.EventHandler(this.donateButton_Click);
             // 
             // creditsBox

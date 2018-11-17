@@ -18,7 +18,8 @@ namespace WinDynamicDesktop
         private int selectedIndex;
         private ThemeConfig tempTheme;
 
-        private const string themeLink = "https://github.com/t1m0thyj/WinDynamicDesktop/wiki";
+        private const string themeLink = 
+            "https://github.com/t1m0thyj/WinDynamicDesktop/wiki/Community-created-themes";
         private readonly string windowsWallpaper = Directory.GetFiles(
             @"C:\Windows\Web\Wallpaper\Windows")[0];
 
@@ -127,6 +128,32 @@ namespace WinDynamicDesktop
             previewImage = imageNumber;
         }
 
+        private async void LoadImportedTheme()
+        {
+            ThemeManager.themeSettings.Add(tempTheme);
+            ThemeManager.themeSettings.Sort((t1, t2) => t1.themeName.CompareTo(t2.themeName));
+
+            List<ThemeConfig> missingThemes = ThemeManager.FindMissingThemes();
+            bool isInstalled = missingThemes.IndexOf(tempTheme) == -1;
+
+            if (isInstalled)
+            {
+                int itemIndex = ThemeManager.themeSettings.IndexOf(tempTheme) + 1;
+                listView1.LargeImageList.Images.Add(GetThumbnailImage(tempTheme, 192, 108));
+                listView1.Items.Insert(itemIndex, tempTheme.themeName.Replace('_', ' '),
+                    listView1.LargeImageList.Images.Count - 1);
+                listView1.Items[itemIndex].Selected = true;
+            }
+            else
+            {
+                MessageBox.Show("Failed to install the '" + tempTheme.themeName.Replace('_', ' ') +
+                    "' theme.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                await Task.Run(() => ThemeManager.RemoveTheme(tempTheme));
+            }
+
+            tempTheme = null;
+        }
+
         private void ThemeDialog_Load(object sender, EventArgs e)
         {
             darkModeCheckbox.Checked = JsonConfig.settings.darkMode;
@@ -216,16 +243,27 @@ namespace WinDynamicDesktop
                 return;
             }
 
-            string themeJson = openFileDialog1.FileName;
-            tempTheme = ThemeManager.ImportTheme(themeJson);
+            string themePath = openFileDialog1.FileName;
+            tempTheme = ThemeManager.ImportTheme(themePath);
 
-            ProgressDialog downloadDialog = new ProgressDialog();
-            downloadDialog.FormClosed += OnDownloadDialogClosed;
-            downloadDialog.Show();
+            if (tempTheme == null)
+            {
+                return;
+            }
+            else if (Path.GetExtension(themePath) == ".zip")
+            {
+                LoadImportedTheme();
+            }
+            else
+            {
+                ProgressDialog downloadDialog = new ProgressDialog();
+                downloadDialog.FormClosed += OnDownloadDialogClosed;
+                downloadDialog.Show();
 
-            this.Enabled = false;
-            downloadDialog.LoadQueue(new List<ThemeConfig>() { tempTheme });
-            downloadDialog.DownloadNext();
+                this.Enabled = false;
+                downloadDialog.LoadQueue(new List<ThemeConfig>() { tempTheme });
+                downloadDialog.DownloadNext();
+            }
         }
 
         private void themeLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -306,49 +344,10 @@ namespace WinDynamicDesktop
             }
         }
 
-        private async void OnDownloadDialogClosed(object sender, EventArgs e)
+        private void OnDownloadDialogClosed(object sender, EventArgs e)
         {
             this.Enabled = true;
-            List<ThemeConfig> missingThemes = ThemeManager.FindMissingThemes();
-            bool isInstalled = true;
-
-            foreach (ThemeConfig theme in missingThemes)
-            {
-                if (theme == tempTheme)
-                {
-                    isInstalled = false;
-                    break;
-                }
-            }
-
-            if (isInstalled)
-            {
-                ThemeManager.themeSettings.Add(tempTheme);
-                ThemeManager.themeSettings.Sort((t1, t2) => t1.themeName.CompareTo(t2.themeName));
-                int itemIndex = 1;
-
-                for (int i = 0; i < ThemeManager.themeSettings.Count; i++)
-                {
-                    if (ThemeManager.themeSettings[i] == tempTheme)
-                    {
-                        itemIndex += i;
-                        break;
-                    }
-                }
-
-                listView1.LargeImageList.Images.Add(GetThumbnailImage(tempTheme, 192, 108));
-                listView1.Items.Insert(itemIndex, tempTheme.themeName.Replace('_', ' '),
-                    listView1.LargeImageList.Images.Count - 1);
-                listView1.Items[itemIndex].Selected = true;
-
-                tempTheme = null;
-            }
-            else
-            {
-                MessageBox.Show("Failed to install the '" + tempTheme.themeName.Replace('_', ' ') +
-                    "' theme.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                await Task.Run(() => ThemeManager.RemoveTheme(tempTheme));
-            }
+            LoadImportedTheme();
         }
 
         private void OnFormClosing(object sender, FormClosingEventArgs e)

@@ -160,7 +160,7 @@ namespace WinDynamicDesktop
             await Task.Run(() => CheckAuto());
         }
 
-        private static void ToggleAutoUpdate()
+        private static void OnAutoUpdateItemClick(object sender, EventArgs e)
         {
             bool isEnabled = JsonConfig.settings.disableAutoUpdate ^ true;
             JsonConfig.settings.disableAutoUpdate = isEnabled;
@@ -168,11 +168,6 @@ namespace WinDynamicDesktop
 
             TryCheckAuto(true);
             JsonConfig.SaveConfig();
-        }
-
-        private static void OnAutoUpdateItemClick(object sender, EventArgs e)
-        {
-            ToggleAutoUpdate();
         }
 
         private static void OnBalloonTipClicked(object sender, EventArgs e)

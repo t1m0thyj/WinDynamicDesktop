@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Globalization;
-using System.Windows.Forms;
 using Microsoft.Win32;
 using System.IO;
+using System.Windows.Forms;
 
 namespace WinDynamicDesktop
 {
@@ -182,27 +182,31 @@ namespace WinDynamicDesktop
             }
         }
 
-        private void OnWallpaperTimerTick(object sender, EventArgs e)
+        private void HandleTimerEvent(bool updateLocation)
         {
             if (ThemeManager.currentTheme != null)
             {
-                if (JsonConfig.settings.useWindowsLocation)
+                if (updateLocation && JsonConfig.settings.useWindowsLocation)
                 {
                     Task.Run(() => UwpLocation.UpdateGeoposition());
                 }
 
                 RunScheduler();
             }
-            
+
             UpdateChecker.TryCheckAuto();
+        }
+
+        private void OnWallpaperTimerTick(object sender, EventArgs e)
+        {
+            HandleTimerEvent(true);
         }
 
         private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
         {
-            if (e.Mode == PowerModes.Resume && !wallpaperTimer.Enabled
-                    && ThemeManager.currentTheme != null)
+            if (e.Mode == PowerModes.Resume && !wallpaperTimer.Enabled)
             {
-                RunScheduler();
+                HandleTimerEvent(false);
             }
         }
     }

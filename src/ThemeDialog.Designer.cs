@@ -168,7 +168,7 @@
             // themeLinkLabel
             // 
             this.themeLinkLabel.AutoSize = true;
-            this.themeLinkLabel.Location = new System.Drawing.Point(158, 330);
+            this.themeLinkLabel.Location = new System.Drawing.Point(159, 330);
             this.themeLinkLabel.Name = "themeLinkLabel";
             this.themeLinkLabel.Size = new System.Drawing.Size(134, 15);
             this.themeLinkLabel.TabIndex = 12;
@@ -178,7 +178,7 @@
             // 
             // importButton
             // 
-            this.importButton.Location = new System.Drawing.Point(13, 325);
+            this.importButton.Location = new System.Drawing.Point(17, 325);
             this.importButton.Name = "importButton";
             this.importButton.Size = new System.Drawing.Size(125, 26);
             this.importButton.TabIndex = 13;
@@ -188,8 +188,7 @@
             // 
             // openFileDialog1
             // 
-            this.openFileDialog1.DefaultExt = "json";
-            this.openFileDialog1.Filter = "JSON files|*.json|All files|*.*";
+            this.openFileDialog1.Filter = "Theme files|*.json;*.zip|All files|*.*";
             this.openFileDialog1.InitialDirectory = "shell:Downloads";
             this.openFileDialog1.Title = "Import Theme";
             // 
