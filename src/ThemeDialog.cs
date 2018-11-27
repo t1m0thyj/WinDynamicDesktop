@@ -8,10 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using DarkUI.Forms;
 
 namespace WinDynamicDesktop
 {
-    public partial class ThemeDialog : Form
+    public partial class ThemeDialog : DarkForm
     {
         private int maxImageNumber;
         private int previewImage;

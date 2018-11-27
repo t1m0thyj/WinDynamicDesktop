@@ -8,10 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.Windows.Forms;
+using DarkUI.Forms;
 
 namespace WinDynamicDesktop
 {
-    public partial class AboutDialog : Form
+    public partial class AboutDialog : DarkForm
     {
         private static string websiteLink = "https://github.com/t1m0thyj/WinDynamicDesktop";
         private static string donateLink =
@@ -61,7 +62,7 @@ namespace WinDynamicDesktop
             this.Close();
         }
 
-        private void creditsButton_CheckedChanged(object sender, EventArgs e)
+        private void creditsButton_Click(object sender, EventArgs e)
         {
             creditsBox.Visible ^= true;
         }

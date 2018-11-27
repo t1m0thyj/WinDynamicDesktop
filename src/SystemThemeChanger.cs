@@ -13,9 +13,9 @@ namespace WinDynamicDesktop
         private const string registryThemeLocation =
             @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize";
 
-        private static MenuItem menuItem;
+        private static ToolStripMenuItem menuItem;
 
-        public static List<MenuItem> GetMenuItems()
+        public static List<ToolStripItem> GetMenuItems()
         {
             RegistryKey themeKey = Registry.CurrentUser.OpenSubKey(registryThemeLocation);
 
@@ -23,16 +23,17 @@ namespace WinDynamicDesktop
             {
                 themeKey.Close();
 
-                menuItem = new MenuItem("&Change Windows 10 theme color", OnThemeItemClick);
+                menuItem = new ToolStripMenuItem("&Change Windows 10 theme color", null,
+                    OnThemeItemClick);
                 menuItem.Checked = JsonConfig.settings.changeSystemTheme;
 
-                return new List<MenuItem>() { menuItem };
+                return new List<ToolStripItem>() { menuItem };
             }
             else
             {
                 JsonConfig.settings.changeSystemTheme = false;
 
-                return new List<MenuItem>();
+                return new List<ToolStripItem>();
             }
         }
 

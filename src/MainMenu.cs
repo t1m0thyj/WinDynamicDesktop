@@ -4,65 +4,69 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DarkUI.Controls;
 
 namespace WinDynamicDesktop
 {
     class MainMenu
     {
-        public static MenuItem themeItem;
-        public static MenuItem darkModeItem;
-        public static MenuItem startOnBootItem;
+        public static ToolStripMenuItem themeItem;
+        public static ToolStripMenuItem darkModeItem;
+        public static ToolStripMenuItem startOnBootItem;
 
-        public static ContextMenu GetMenu()
+        public static DarkContextMenu GetMenu()
         {
-            List<MenuItem> menuItems = GetMenuItems();
+            List<ToolStripItem> menuItems = GetMenuItems();
             UwpDesktop.GetHelper().CheckStartOnBoot();
 
-            return new ContextMenu(menuItems.ToArray());
+            DarkContextMenu menuStrip = new DarkContextMenu();
+            menuStrip.Items.AddRange(menuItems.ToArray());
+
+            return menuStrip;
         }
 
-        private static List<MenuItem> GetMenuItems()
+        private static List<ToolStripItem> GetMenuItems()
         {
-            List<MenuItem> items = new List<MenuItem>();
+            List<ToolStripItem> items = new List<ToolStripItem>();
 
-            themeItem = new MenuItem("&Select Theme...", OnThemeItemClick);
+            themeItem = new ToolStripMenuItem("&Select Theme...", null, OnThemeItemClick);
 
-            items.AddRange(new List<MenuItem>()
+            items.AddRange(new List<ToolStripItem>()
             {
-                new MenuItem("WinDynamicDesktop"),
-                new MenuItem("-"),
+                new ToolStripMenuItem("WinDynamicDesktop"),
+                new ToolStripSeparator(),
                 themeItem,
-                new MenuItem("&Update Location...", OnLocationItemClick)
+                new ToolStripMenuItem("&Update Location...", null, OnLocationItemClick)
             });
             items[0].Enabled = false;
 
-            darkModeItem = new MenuItem("Enable &Dark Mode", OnDarkModeClick);
+            darkModeItem = new ToolStripMenuItem("Enable &Dark Mode", null, OnDarkModeClick);
             darkModeItem.Checked = JsonConfig.settings.darkMode;
-            startOnBootItem = new MenuItem("&Start on Boot", OnStartOnBootClick);
+            startOnBootItem = new ToolStripMenuItem("&Start on Boot", null, OnStartOnBootClick);
 
-            MenuItem optionsItem = new MenuItem("More &Options");
-            optionsItem.MenuItems.AddRange(GetOptionsMenuItems().ToArray());
+            ToolStripMenuItem optionsItem = new ToolStripMenuItem("More &Options");
+            optionsItem.DropDownItems.AddRange(GetOptionsMenuItems().ToArray());
 
-            items.AddRange(new List<MenuItem>()
+            items.AddRange(new List<ToolStripItem>()
             {
-                new MenuItem("&Refresh Wallpaper", OnRefreshItemClick),
-                new MenuItem("-"),
+                new ToolStripMenuItem("&Refresh Wallpaper", null, OnRefreshItemClick),
+                new ToolStripSeparator(),
                 darkModeItem,
                 startOnBootItem,
                 optionsItem,
-                new MenuItem("-"),
-                new MenuItem("&Check for Updates", OnUpdateItemClick),
-                new MenuItem("&About", OnAboutItemClick),
-                new MenuItem("-"),
-                new MenuItem("E&xit", OnExitItemClick)
+                new ToolStripSeparator(),
+                new ToolStripMenuItem("&Check for Updates", null, OnUpdateItemClick),
+                new ToolStripMenuItem("&About", null, OnAboutItemClick),
+                new ToolStripSeparator(),
+                new ToolStripMenuItem("E&xit", null, OnExitItemClick)
             });
 
             return items;
         }
 
-        private static List<MenuItem> GetOptionsMenuItems()
+        private static List<ToolStripItem> GetOptionsMenuItems()
         {
-            List<MenuItem> items = new List<MenuItem>();
+            List<ToolStripItem> items = new List<ToolStripItem>();
 
             items.AddRange(SystemThemeChanger.GetMenuItems());
             items.AddRange(UpdateChecker.GetMenuItems());

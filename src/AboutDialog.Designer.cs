@@ -29,14 +29,14 @@
         private void InitializeComponent()
         {
             this.iconBox = new System.Windows.Forms.PictureBox();
-            this.nameLabel = new System.Windows.Forms.Label();
-            this.copyrightLabel = new System.Windows.Forms.Label();
-            this.descriptionLabel = new System.Windows.Forms.Label();
+            this.nameLabel = new DarkUI.Controls.DarkLabel();
+            this.copyrightLabel = new DarkUI.Controls.DarkLabel();
+            this.descriptionLabel = new DarkUI.Controls.DarkLabel();
             this.websiteLabel = new System.Windows.Forms.LinkLabel();
-            this.closeButton = new System.Windows.Forms.Button();
-            this.creditsButton = new System.Windows.Forms.CheckBox();
-            this.donateButton = new System.Windows.Forms.Button();
-            this.creditsBox = new System.Windows.Forms.TextBox();
+            this.closeButton = new DarkUI.Controls.DarkButton();
+            this.creditsButton = new DarkUI.Controls.DarkButton();
+            this.donateButton = new DarkUI.Controls.DarkButton();
+            this.creditsBox = new DarkUI.Controls.DarkTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.iconBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -52,6 +52,7 @@
             // nameLabel
             // 
             this.nameLabel.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.nameLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.nameLabel.Location = new System.Drawing.Point(12, 6);
             this.nameLabel.Name = "nameLabel";
             this.nameLabel.Size = new System.Drawing.Size(428, 29);
@@ -61,6 +62,7 @@
             // 
             // copyrightLabel
             // 
+            this.copyrightLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.copyrightLabel.Location = new System.Drawing.Point(12, 38);
             this.copyrightLabel.Name = "copyrightLabel";
             this.copyrightLabel.Size = new System.Drawing.Size(428, 20);
@@ -70,6 +72,7 @@
             // 
             // descriptionLabel
             // 
+            this.descriptionLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.descriptionLabel.Location = new System.Drawing.Point(11, 59);
             this.descriptionLabel.Name = "descriptionLabel";
             this.descriptionLabel.Size = new System.Drawing.Size(432, 20);
@@ -79,6 +82,7 @@
             // 
             // websiteLabel
             // 
+            this.websiteLabel.LinkColor = System.Drawing.Color.Gainsboro;
             this.websiteLabel.Location = new System.Drawing.Point(13, 80);
             this.websiteLabel.Name = "websiteLabel";
             this.websiteLabel.Size = new System.Drawing.Size(428, 20);
@@ -92,36 +96,38 @@
             // 
             this.closeButton.Location = new System.Drawing.Point(302, 112);
             this.closeButton.Name = "closeButton";
+            this.closeButton.Padding = new System.Windows.Forms.Padding(5);
             this.closeButton.Size = new System.Drawing.Size(88, 26);
             this.closeButton.TabIndex = 0;
             this.closeButton.Text = "Close";
-            this.closeButton.UseVisualStyleBackColor = true;
             this.closeButton.Click += new System.EventHandler(this.closeButton_Click);
             // 
             // creditsButton
             // 
-            this.creditsButton.Appearance = System.Windows.Forms.Appearance.Button;
+            this.creditsButton.ButtonStyle = DarkUI.Controls.DarkButtonStyle.Toggle;
             this.creditsButton.Location = new System.Drawing.Point(9, 112);
             this.creditsButton.Name = "creditsButton";
+            this.creditsButton.Padding = new System.Windows.Forms.Padding(5);
             this.creditsButton.Size = new System.Drawing.Size(75, 26);
             this.creditsButton.TabIndex = 2;
             this.creditsButton.Text = "Credits";
-            this.creditsButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.creditsButton.UseVisualStyleBackColor = true;
-            this.creditsButton.CheckedChanged += new System.EventHandler(this.creditsButton_CheckedChanged);
+            this.creditsButton.Click += new System.EventHandler(this.creditsButton_Click);
             // 
             // donateButton
             // 
             this.donateButton.Location = new System.Drawing.Point(93, 112);
             this.donateButton.Name = "donateButton";
+            this.donateButton.Padding = new System.Windows.Forms.Padding(5);
             this.donateButton.Size = new System.Drawing.Size(75, 26);
             this.donateButton.TabIndex = 3;
             this.donateButton.Text = "Donate";
-            this.donateButton.UseVisualStyleBackColor = true;
             this.donateButton.Click += new System.EventHandler(this.donateButton_Click);
             // 
             // creditsBox
             // 
+            this.creditsBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.creditsBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.creditsBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.creditsBox.Location = new System.Drawing.Point(5, 5);
             this.creditsBox.Multiline = true;
             this.creditsBox.Name = "creditsBox";
@@ -164,13 +170,13 @@
         #endregion
 
         private System.Windows.Forms.PictureBox iconBox;
-        private System.Windows.Forms.Label nameLabel;
-        private System.Windows.Forms.Label copyrightLabel;
-        private System.Windows.Forms.Label descriptionLabel;
+        private DarkUI.Controls.DarkLabel nameLabel;
+        private DarkUI.Controls.DarkLabel copyrightLabel;
+        private DarkUI.Controls.DarkLabel descriptionLabel;
         private System.Windows.Forms.LinkLabel websiteLabel;
-        private System.Windows.Forms.Button closeButton;
-        private System.Windows.Forms.CheckBox creditsButton;
-        private System.Windows.Forms.Button donateButton;
-        private System.Windows.Forms.TextBox creditsBox;
+        private DarkUI.Controls.DarkButton closeButton;
+        private DarkUI.Controls.DarkButton creditsButton;
+        private DarkUI.Controls.DarkButton donateButton;
+        private DarkUI.Controls.DarkTextBox creditsBox;
     }
 }

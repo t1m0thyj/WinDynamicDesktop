@@ -60,7 +60,7 @@ namespace WinDynamicDesktop
                 Icon = Properties.Resources.AppIcon,
                 Text = "WinDynamicDesktop",
             };
-            notifyIcon.ContextMenu = MainMenu.GetMenu();
+            notifyIcon.ContextMenuStrip = MainMenu.GetMenu();
             notifyIcon.MouseUp += OnNotifyIconMouseUp;
         }
 

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.Windows.Forms;
+using DarkUI.Forms;
 using RestSharp;
 
 namespace WinDynamicDesktop
@@ -31,7 +32,7 @@ namespace WinDynamicDesktop
 
     class UpdateChecker
     {
-        private static MenuItem menuItem;
+        private static ToolStripMenuItem menuItem;
 
         public static void Initialize()
         {
@@ -45,19 +46,19 @@ namespace WinDynamicDesktop
             TryCheckAuto();
         }
 
-        public static List<MenuItem> GetMenuItems()
+        public static List<ToolStripItem> GetMenuItems()
         {
             if (!UwpDesktop.IsRunningAsUwp())
             {
-                menuItem = new MenuItem("Check for &updates automatically once a week",
-                    OnAutoUpdateItemClick);
+                menuItem = new ToolStripMenuItem("Check for &updates automatically once a week",
+                    null, OnAutoUpdateItemClick);
                 menuItem.Checked = !JsonConfig.settings.disableAutoUpdate;
 
-                return new List<MenuItem>() { menuItem };
+                return new List<ToolStripItem>() { menuItem };
             }
             else
             {
-                return new List<MenuItem>();
+                return new List<ToolStripItem>();
             }
         }
 
@@ -112,8 +113,9 @@ namespace WinDynamicDesktop
             }
             else
             {
-                MessageBox.Show("You already have the latest version of WinDynamicDesktop " +
-                    "installed.", "Up To Date", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                // TODO Use DarkMessageBox everywhere
+                DarkMessageBox.ShowInformation("You already have the latest version of " +
+                    "WinDynamicDesktop installed.", "Up To Date");
             }
         }
 

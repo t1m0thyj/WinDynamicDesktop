@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DarkUI.Forms;
 
 namespace WinDynamicDesktop
 {
-    public partial class InputDialog : Form
+    public partial class InputDialog : DarkForm
     {
         public InputDialog()
         {
