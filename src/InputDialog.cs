@@ -92,17 +92,16 @@ namespace WinDynamicDesktop
                         AppContext.wcsService.RunScheduler();
                     }
 
-                    MessageBox.Show("Location set successfully to: " + data.display_name +
-                        "\n(Latitude = " + data.lat + ", Longitude = " + data.lon + ")", "Success",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    DarkMessageBox.ShowInformation("Location set successfully to: " +
+                        data.display_name + "\n(Latitude = " + data.lat + ", Longitude = " +
+                        data.lon + ")", "Success");
 
                     this.Close();
                 }
                 else
                 {
-                    MessageBox.Show("The location you entered was invalid, or you are not " +
-                        "connected to the Internet.", "Error", MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
+                    DarkMessageBox.ShowWarning("The location you entered was invalid, or you " +
+                        "are not connected to the Internet.", "Error");
                 }
             }
             else
@@ -121,8 +120,8 @@ namespace WinDynamicDesktop
                 }
                 else
                 {
-                    MessageBox.Show("Failed to get location from Windows location service.",
-                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    DarkMessageBox.ShowWarning("Failed to get location from Windows location " +
+                        "service.", "Error");
 
                     this.Show();
                 }
@@ -140,11 +139,10 @@ namespace WinDynamicDesktop
         {
             if (JsonConfig.settings.latitude == null || JsonConfig.settings.longitude == null)
             {
-                DialogResult result = MessageBox.Show("WinDynamicDesktop cannot display " +
-                    "wallpapers until you have entered a valid location, so that it can " +
-                    "calculate sunrise and sunset times for your location. Are you sure you want " +
-                    "to cancel and quit the program?", "Question", MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning);
+                DialogResult result = DarkMessageBox.ShowWarning("WinDynamicDesktop cannot " +
+                    "display wallpapers until you have entered a valid location, so that it can " +
+                    "calculate sunrise and sunset times for your location. Are you sure you " +
+                    "want to cancel and quit the program?", "Question", DarkDialogButton.YesNo);
 
                 if (result == DialogResult.Yes)
                 {

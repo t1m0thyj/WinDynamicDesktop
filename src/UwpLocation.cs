@@ -5,6 +5,7 @@ using System.Text;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DarkUI.Forms;
 
 namespace WinDynamicDesktop
 {
@@ -39,10 +40,10 @@ namespace WinDynamicDesktop
 
             if (!hasAccess)
             {
-                DialogResult result = MessageBox.Show("WinDynamicDesktop needs location access " +
-                    "for this feature. Click OK to open the Windows 10 location settings and " +
-                    "grant location access to the app, then select the checkbox again.",
-                    "Location Access", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+                DialogResult result = DarkMessageBox.ShowInformation("WinDynamicDesktop needs " +
+                    "location access for this feature. Click OK to open the Windows 10 location " +
+                    "settings and grant location access to the app, then select the checkbox " +
+                    "again.", "Location Access", DarkDialogButton.OkCancel);
 
                 if (result == DialogResult.OK)
                 {

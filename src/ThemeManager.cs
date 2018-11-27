@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.IO.Compression;
 using System.Windows.Forms;
+using DarkUI.Forms;
 
 namespace WinDynamicDesktop
 {
@@ -67,9 +68,9 @@ namespace WinDynamicDesktop
 
             if (isInstalled)
             {
-                DialogResult result = MessageBox.Show("The '" + themeName.Replace('_', ' ') +
-                    "' theme is already installed. Do you want to overwrite it?", "Question",
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                DialogResult result = DarkMessageBox.ShowWarning("The '" +
+                    themeName.Replace('_', ' ') + "' theme is already installed. Do you want to " +
+                    "overwrite it?", "Question", DarkDialogButton.YesNo);
 
                 if (result != DialogResult.Yes)
                 {
@@ -99,8 +100,7 @@ namespace WinDynamicDesktop
             }
             catch (Exception e)
             {
-                MessageBox.Show("Failed to import theme:\n" + e.Message, "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                DarkMessageBox.ShowWarning("Failed to import theme:\n" + e.Message, "Error");
                 return null;
             }
         }
@@ -235,9 +235,9 @@ namespace WinDynamicDesktop
             }
             else if (currentTheme != null && missingThemes.Contains(currentTheme))
             {
-                DialogResult result = MessageBox.Show("Failed to download images. Click Retry " +
-                    "to try again or Cancel to exit the program.", "Error",
-                    MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
+                DialogResult result = DarkMessageBox.ShowError("Failed to download images. " +
+                    "Click Retry to try again or Cancel to exit the program.", "Error",
+                    DarkDialogButton.RetryCancel);
 
                 if (result == DialogResult.Retry)
                 {
@@ -250,9 +250,9 @@ namespace WinDynamicDesktop
             }
             else
             {
-                DialogResult result = MessageBox.Show("Failed to download images. Click Retry " +
-                    "to try again or Cancel to continue with some themes disabled.", "Error",
-                    MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning);
+                DialogResult result = DarkMessageBox.ShowWarning("Failed to download images. " +
+                    "Click Retry to try again or Cancel to continue with some themes disabled.",
+                    "Error", DarkDialogButton.RetryCancel);
 
                 if (result == DialogResult.Retry)
                 {

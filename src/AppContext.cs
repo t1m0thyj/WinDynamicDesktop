@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
+using DarkUI.Forms;
 
 namespace WinDynamicDesktop
 {
@@ -42,9 +43,9 @@ namespace WinDynamicDesktop
 
             if (!isFirstInstance)
             {
-                MessageBox.Show("Another instance of WinDynamicDesktop is already running. " +
-                    "You can access it by clicking on the icon in the system tray.", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                DarkMessageBox.ShowWarning("Another instance of WinDynamicDesktop is already " +
+                    "running. You can access it by clicking on the icon in the system tray.",
+                    "Error");
 
                 Environment.Exit(0);
             }

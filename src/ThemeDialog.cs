@@ -147,8 +147,8 @@ namespace WinDynamicDesktop
             }
             else
             {
-                MessageBox.Show("Failed to install the '" + tempTheme.themeName.Replace('_', ' ') +
-                    "' theme.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                DarkMessageBox.ShowWarning("Failed to install the '" +
+                    tempTheme.themeName.Replace('_', ' ') + "' theme.", "Error");
                 await Task.Run(() => ThemeManager.RemoveTheme(tempTheme));
             }
 
@@ -332,9 +332,9 @@ namespace WinDynamicDesktop
             int itemIndex = listView1.FocusedItem.Index;
             ThemeConfig theme = ThemeManager.themeSettings[itemIndex - 1];
 
-            DialogResult result = MessageBox.Show("Are you sure you want to remove the '" +
-                theme.themeName.Replace('_', ' ') + "' theme?", "Question",
-                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult result = DarkMessageBox.ShowWarning("Are you sure you want to remove " +
+                "the '" + theme.themeName.Replace('_', ' ') + "' theme?", "Question",
+                DarkDialogButton.YesNo);
 
             if (result == DialogResult.Yes)
             {
@@ -355,10 +355,10 @@ namespace WinDynamicDesktop
         {
             if (JsonConfig.firstRun && ThemeManager.currentTheme == null)
             {
-                DialogResult result = MessageBox.Show("WinDynamicDesktop cannot dynamically " +
-                    "update your wallpaper until you have selected a theme. Are you sure you " +
-                    "want to continue without a theme selected?", "Question",
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                DialogResult result = DarkMessageBox.ShowWarning("WinDynamicDesktop cannot " +
+                    "dynamically update your wallpaper until you have selected a theme. Are you " +
+                    "sure you want to continue without a theme selected?", "Question",
+                    DarkDialogButton.YesNo);
 
                 if (result != DialogResult.Yes)
                 {

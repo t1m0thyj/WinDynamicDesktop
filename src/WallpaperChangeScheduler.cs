@@ -86,22 +86,16 @@ namespace WinDynamicDesktop
                 imageFilename);
 
             WallpaperApi.SetWallpaper(imagePath);
-
             lastImageId = imageId;
         }
 
         public void RunScheduler()
         {
-            if (ThemeManager.currentTheme == null)
-            {
-                return;
-            }
-
             wallpaperTimer.Stop();
 
             DateTime today = DateTime.Today;
             todaysData = GetSolarData(today);
-            
+
             if (DateTime.Now < todaysData.SunriseTime + timerError)
             {
                 // Before sunrise
@@ -140,21 +134,29 @@ namespace WinDynamicDesktop
         private void UpdateDayImage()
         {
             TimeSpan dayTime = todaysData.SunsetTime - todaysData.SunriseTime;
-            TimeSpan timerLength = new TimeSpan(dayTime.Ticks / dayImages.Length);
-            int imageNumber = GetImageNumber(todaysData.SunriseTime, timerLength);
 
-            if (imageNumber >= dayImages.Length)
+            if (ThemeManager.currentTheme != null)
             {
-                UpdateNightImage();
-                return;
+                TimeSpan timerLength = new TimeSpan(dayTime.Ticks / dayImages.Length);
+                int imageNumber = GetImageNumber(todaysData.SunriseTime, timerLength);
+
+                if (imageNumber >= dayImages.Length)
+                {
+                    UpdateNightImage();
+                    return;
+                }
+
+                StartTimer(todaysData.SunriseTime.Ticks + timerLength.Ticks * (imageNumber + 1)
+                    - DateTime.Now.Ticks, timerLength);
+
+                if (dayImages[imageNumber] != lastImageId)
+                {
+                    SetWallpaper(dayImages[imageNumber]);
+                }
             }
-
-            StartTimer(todaysData.SunriseTime.Ticks + timerLength.Ticks * (imageNumber + 1)
-                - DateTime.Now.Ticks, timerLength);
-
-            if (dayImages[imageNumber] != lastImageId)
+            else
             {
-                SetWallpaper(dayImages[imageNumber]);
+                StartTimer(todaysData.SunsetTime.Ticks - DateTime.Now.Ticks, dayTime);
             }
         }
 
@@ -164,36 +166,40 @@ namespace WinDynamicDesktop
             SolarData day2Data = (yesterdaysData == null) ? tomorrowsData : todaysData;
 
             TimeSpan nightTime = day2Data.SunriseTime - day1Data.SunsetTime;
-            TimeSpan timerLength = new TimeSpan(nightTime.Ticks / nightImages.Length);
-            int imageNumber = GetImageNumber(day1Data.SunsetTime, timerLength);
 
-            if (imageNumber >= nightImages.Length)
+            if (ThemeManager.currentTheme != null)
             {
-                UpdateDayImage();
-                return;
+                TimeSpan timerLength = new TimeSpan(nightTime.Ticks / nightImages.Length);
+                int imageNumber = GetImageNumber(day1Data.SunsetTime, timerLength);
+
+                if (imageNumber >= nightImages.Length)
+                {
+                    UpdateDayImage();
+                    return;
+                }
+
+                StartTimer(day1Data.SunsetTime.Ticks + timerLength.Ticks * (imageNumber + 1)
+                    - DateTime.Now.Ticks, timerLength);
+
+                if (nightImages[imageNumber] != lastImageId)
+                {
+                    SetWallpaper(nightImages[imageNumber]);
+                }
             }
-
-            StartTimer(day1Data.SunsetTime.Ticks + timerLength.Ticks * (imageNumber + 1)
-                - DateTime.Now.Ticks, timerLength);
-
-            if (nightImages[imageNumber] != lastImageId)
+            else
             {
-                SetWallpaper(nightImages[imageNumber]);
+                StartTimer(day2Data.SunriseTime.Ticks - DateTime.Now.Ticks, nightTime);
             }
         }
 
         private void HandleTimerEvent(bool updateLocation)
         {
-            if (ThemeManager.currentTheme != null)
+            if (updateLocation && JsonConfig.settings.useWindowsLocation)
             {
-                if (updateLocation && JsonConfig.settings.useWindowsLocation)
-                {
-                    Task.Run(() => UwpLocation.UpdateGeoposition());
-                }
-
-                RunScheduler();
+                Task.Run(() => UwpLocation.UpdateGeoposition());
             }
 
+            RunScheduler();
             UpdateChecker.TryCheckAuto();
         }
 

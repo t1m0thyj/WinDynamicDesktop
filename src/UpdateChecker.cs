@@ -96,15 +96,15 @@ namespace WinDynamicDesktop
 
             if (latestVersion == null)
             {
-                MessageBox.Show("WinDynamicDesktop could not connect to the Internet to check " +
-                    "for updates.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                DarkMessageBox.ShowWarning("WinDynamicDesktop could not connect to the Internet " +
+                    "to check for updates.", "Error");
             }
             else if (IsUpdateAvailable(currentVersion, latestVersion))
             {
-                DialogResult result = MessageBox.Show("There is a newer version of " +
-                    "WinDynamicDesktop available. Do you want to download the update now?\n\n" +
+                DialogResult result = DarkMessageBox.ShowInformation("There is a newer version " +
+                    "of WinDynamicDesktop available. Do you want to download the update now?\n\n" +
                     "Current Version: " + currentVersion + "\nLatest Version: " + latestVersion,
-                    "Update Available", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    "Update Available", DarkDialogButton.YesNo);
 
                 if (result == DialogResult.Yes)
                 {
@@ -113,7 +113,6 @@ namespace WinDynamicDesktop
             }
             else
             {
-                // TODO Use DarkMessageBox everywhere
                 DarkMessageBox.ShowInformation("You already have the latest version of " +
                     "WinDynamicDesktop installed.", "Up To Date");
             }
