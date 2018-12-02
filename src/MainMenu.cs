@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using DarkUI.Controls;
 
 namespace WinDynamicDesktop
 {
@@ -14,12 +13,12 @@ namespace WinDynamicDesktop
         public static ToolStripMenuItem darkModeItem;
         public static ToolStripMenuItem startOnBootItem;
 
-        public static DarkContextMenu GetMenu()
+        public static ContextMenuStrip GetMenu()
         {
             List<ToolStripItem> menuItems = GetMenuItems();
             UwpDesktop.GetHelper().CheckStartOnBoot();
 
-            DarkContextMenu menuStrip = new DarkContextMenu();
+            ContextMenuStrip menuStrip = new ContextMenuStrip();
             menuStrip.Items.AddRange(menuItems.ToArray());
 
             return menuStrip;

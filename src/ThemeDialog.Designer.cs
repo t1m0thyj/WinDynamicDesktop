@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.listView1 = new System.Windows.Forms.ListView();
-            this.previewBox = new DarkUI.Controls.DarkTitle();
+            this.previewBox = new DarkUI.Controls.DarkSectionPanel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.firstButton = new DarkUI.Controls.DarkButton();
             this.previousButton = new DarkUI.Controls.DarkButton();
@@ -44,6 +44,7 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.contextMenuStrip1 = new DarkUI.Controls.DarkContextMenu();
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.creditsLabel = new DarkUI.Controls.DarkLabel();
             this.previewBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
@@ -57,7 +58,7 @@
             this.listView1.Location = new System.Drawing.Point(12, 12);
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(491, 302);
+            this.listView1.Size = new System.Drawing.Size(491, 300);
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
@@ -70,15 +71,15 @@
             this.previewBox.Controls.Add(this.imageNumberLabel);
             this.previewBox.Controls.Add(this.nextButton);
             this.previewBox.Controls.Add(this.lastButton);
-            this.previewBox.Location = new System.Drawing.Point(519, 11);
+            this.previewBox.Location = new System.Drawing.Point(519, 12);
             this.previewBox.Name = "previewBox";
-            this.previewBox.Size = new System.Drawing.Size(394, 280);
+            this.previewBox.SectionHeader = "Preview";
+            this.previewBox.Size = new System.Drawing.Size(394, 282);
             this.previewBox.TabIndex = 10;
-            this.previewBox.Text = "Preview";
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(5, 22);
+            this.pictureBox1.Location = new System.Drawing.Point(5, 29);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(384, 216);
             this.pictureBox1.TabIndex = 7;
@@ -86,7 +87,7 @@
             // 
             // firstButton
             // 
-            this.firstButton.Location = new System.Drawing.Point(10, 245);
+            this.firstButton.Location = new System.Drawing.Point(10, 250);
             this.firstButton.Name = "firstButton";
             this.firstButton.Padding = new System.Windows.Forms.Padding(5);
             this.firstButton.Size = new System.Drawing.Size(50, 26);
@@ -96,7 +97,7 @@
             // 
             // previousButton
             // 
-            this.previousButton.Location = new System.Drawing.Point(75, 245);
+            this.previousButton.Location = new System.Drawing.Point(75, 250);
             this.previousButton.Name = "previousButton";
             this.previousButton.Padding = new System.Windows.Forms.Padding(5);
             this.previousButton.Size = new System.Drawing.Size(50, 26);
@@ -107,7 +108,7 @@
             // imageNumberLabel
             // 
             this.imageNumberLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.imageNumberLabel.Location = new System.Drawing.Point(140, 250);
+            this.imageNumberLabel.Location = new System.Drawing.Point(140, 255);
             this.imageNumberLabel.Name = "imageNumberLabel";
             this.imageNumberLabel.Size = new System.Drawing.Size(114, 15);
             this.imageNumberLabel.TabIndex = 10;
@@ -116,7 +117,7 @@
             // 
             // nextButton
             // 
-            this.nextButton.Location = new System.Drawing.Point(269, 245);
+            this.nextButton.Location = new System.Drawing.Point(269, 250);
             this.nextButton.Name = "nextButton";
             this.nextButton.Padding = new System.Windows.Forms.Padding(5);
             this.nextButton.Size = new System.Drawing.Size(50, 26);
@@ -126,7 +127,7 @@
             // 
             // lastButton
             // 
-            this.lastButton.Location = new System.Drawing.Point(334, 245);
+            this.lastButton.Location = new System.Drawing.Point(334, 250);
             this.lastButton.Name = "lastButton";
             this.lastButton.Padding = new System.Windows.Forms.Padding(5);
             this.lastButton.Size = new System.Drawing.Size(50, 26);
@@ -137,7 +138,7 @@
             // darkModeCheckbox
             // 
             this.darkModeCheckbox.AutoSize = true;
-            this.darkModeCheckbox.Location = new System.Drawing.Point(526, 295);
+            this.darkModeCheckbox.Location = new System.Drawing.Point(381, 328);
             this.darkModeCheckbox.Name = "darkModeCheckbox";
             this.darkModeCheckbox.Size = new System.Drawing.Size(122, 19);
             this.darkModeCheckbox.TabIndex = 9;
@@ -146,7 +147,7 @@
             // 
             // okButton
             // 
-            this.okButton.Location = new System.Drawing.Point(610, 323);
+            this.okButton.Location = new System.Drawing.Point(610, 325);
             this.okButton.Name = "okButton";
             this.okButton.Padding = new System.Windows.Forms.Padding(5);
             this.okButton.Size = new System.Drawing.Size(88, 26);
@@ -157,7 +158,7 @@
             // cancelButton
             // 
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(733, 323);
+            this.cancelButton.Location = new System.Drawing.Point(733, 325);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Padding = new System.Windows.Forms.Padding(5);
             this.cancelButton.Size = new System.Drawing.Size(88, 26);
@@ -212,6 +213,16 @@
             this.removeToolStripMenuItem.Text = "Remove";
             this.removeToolStripMenuItem.Click += new System.EventHandler(this.removeToolStripMenuItem_Click);
             // 
+            // creditsLabel
+            // 
+            this.creditsLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(153)))), ((int)(((byte)(153)))));
+            this.creditsLabel.Location = new System.Drawing.Point(519, 299);
+            this.creditsLabel.Name = "creditsLabel";
+            this.creditsLabel.Size = new System.Drawing.Size(394, 13);
+            this.creditsLabel.TabIndex = 14;
+            this.creditsLabel.Text = "label2";
+            this.creditsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // ThemeDialog
             // 
             this.AcceptButton = this.okButton;
@@ -219,6 +230,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
             this.ClientSize = new System.Drawing.Size(929, 366);
+            this.Controls.Add(this.creditsLabel);
             this.Controls.Add(this.importButton);
             this.Controls.Add(this.themeLinkLabel);
             this.Controls.Add(this.listView1);
@@ -245,7 +257,7 @@
         #endregion
 
         private System.Windows.Forms.ListView listView1;
-        private DarkUI.Controls.DarkTitle previewBox;
+        private DarkUI.Controls.DarkSectionPanel previewBox;
         private System.Windows.Forms.PictureBox pictureBox1;
         private DarkUI.Controls.DarkButton firstButton;
         private DarkUI.Controls.DarkButton previousButton;
@@ -260,5 +272,6 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private DarkUI.Controls.DarkContextMenu contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
+        private DarkUI.Controls.DarkLabel creditsLabel;
     }
 }

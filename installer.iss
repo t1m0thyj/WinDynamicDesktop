@@ -32,10 +32,11 @@ PrivilegesRequired=lowest
 [Code]
 function IsNet45OrNewer(): Boolean;
 var
-  readVal: cardinal;
+  readVal: Cardinal;
   success: Boolean;
 begin
-  success := RegQueryDWordValue(HKLM, 'Software\Microsoft\NET Framework Setup\NDP\v4\Full', 'Release', readVal);
+  success := RegQueryDWordValue(HKLM, 'Software\Microsoft\NET Framework Setup\NDP\v4\Full',
+    'Release', readVal);
   Result := success and (readVal >= 378389);
 end;
 
@@ -50,6 +51,24 @@ begin
     Result := true;
 end;
 
+procedure DeleteUserData;
+begin
+  DelTree(ExpandConstant('{app}\images'), true, true, false);
+  DelTree(ExpandConstant('{app}\themes'), true, true, false);
+  DeleteFile(ExpandConstant('{app}\settings.conf'));
+  DeleteFile(ExpandConstant('{app}\{#MyAppExeName}.log'));
+  RemoveDir(ExpandConstant('{app}'));
+end;
+
+procedure CurUninstallStepChanged(CurUninstallStep : TUninstallStep);
+begin
+  if CurUninstallStep = usPostUninstall then begin
+    if MsgBox('Do you want to delete user data ({#MyAppName} settings and theme files)?',
+        mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES then
+      DeleteUserData;
+  end;
+end;
+
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
@@ -58,7 +77,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "startonboot"; Description: "&Start {#MyAppName} with Windows"; GroupDescription: "Other tasks:"
 
 [Files]
-Source: "src\bin\Release\WinDynamicDesktop.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "src\bin\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
