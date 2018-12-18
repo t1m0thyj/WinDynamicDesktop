@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using DarkUI.Forms;
 
 namespace WinDynamicDesktop
 {
-    public partial class InputDialog : DarkForm
+    public partial class InputDialog : Form
     {
         public InputDialog()
         {
@@ -92,16 +91,17 @@ namespace WinDynamicDesktop
                         AppContext.wcsService.RunScheduler();
                     }
 
-                    DarkMessageBox.ShowInformation("Location set successfully to: " +
-                        data.display_name + "\n(Latitude = " + data.lat + ", Longitude = " +
-                        data.lon + ")", "Success");
+                    MessageBox.Show("Location set successfully to: " + data.display_name +
+                        "\n(Latitude = " + data.lat + ", Longitude = " + data.lon + ")", "Success",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     this.Close();
                 }
                 else
                 {
-                    DarkMessageBox.ShowWarning("The location you entered was invalid, or you " +
-                        "are not connected to the Internet.", "Error");
+                    MessageBox.Show("The location you entered was invalid, or you are not " +
+                        "connected to the Internet.", "Error", MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
                 }
             }
             else
@@ -120,8 +120,8 @@ namespace WinDynamicDesktop
                 }
                 else
                 {
-                    DarkMessageBox.ShowWarning("Failed to get location from Windows location " +
-                        "service.", "Error");
+                    MessageBox.Show("Failed to get location from Windows location service.",
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                     this.Show();
                 }
@@ -139,10 +139,11 @@ namespace WinDynamicDesktop
         {
             if (JsonConfig.settings.latitude == null || JsonConfig.settings.longitude == null)
             {
-                DialogResult result = DarkMessageBox.ShowWarning("WinDynamicDesktop cannot " +
-                    "display wallpapers until you have entered a valid location, so that it can " +
+                DialogResult result = MessageBox.Show("WinDynamicDesktop cannot display " +
+                    "wallpapers until you have entered a valid location, so that it can " +
                     "calculate sunrise and sunset times for your location. Are you sure you " +
-                    "want to cancel and quit the program?", "Question", DarkDialogButton.YesNo);
+                    "want to cancel and quit the program?", "Question", MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
 
                 if (result == DialogResult.Yes)
                 {

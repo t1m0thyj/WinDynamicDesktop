@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new DarkUI.Controls.DarkLabel();
+            this.label1 = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.SuspendLayout();
             // 
@@ -71,7 +71,7 @@
 
         #endregion
 
-        private DarkUI.Controls.DarkLabel label1;
+        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ProgressBar progressBar1;
     }
 }

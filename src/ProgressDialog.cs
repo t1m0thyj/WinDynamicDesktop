@@ -6,11 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net;
-using DarkUI.Forms;
 
 namespace WinDynamicDesktop
 {
-    public partial class ProgressDialog : DarkForm
+    public partial class ProgressDialog : Form
     {
         private WebClient client = new WebClient();
         private Queue<ThemeConfig> downloadQueue;

@@ -27,6 +27,7 @@ namespace WinDynamicDesktop
         public string themeName { get; set; }
         public string imagesZipUri { get; set; }
         public string imageFilename { get; set; }
+        public string imageCredits { get; set; }
         public int[] dayImageList { get; set; }
         public int[] nightImageList { get; set; }
     }

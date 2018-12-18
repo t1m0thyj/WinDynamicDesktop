@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.IO;
 using System.IO.Compression;
 using System.Windows.Forms;
-using DarkUI.Forms;
 
 namespace WinDynamicDesktop
 {
@@ -68,9 +67,9 @@ namespace WinDynamicDesktop
 
             if (isInstalled)
             {
-                DialogResult result = DarkMessageBox.ShowWarning("The '" +
-                    themeName.Replace('_', ' ') + "' theme is already installed. Do you want to " +
-                    "overwrite it?", "Question", DarkDialogButton.YesNo);
+                DialogResult result = MessageBox.Show("The '" + themeName.Replace('_', ' ') +
+                    "' theme is already installed. Do you want to overwrite it?", "Question",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
                 if (result != DialogResult.Yes)
                 {
@@ -100,7 +99,8 @@ namespace WinDynamicDesktop
             }
             catch (Exception e)
             {
-                DarkMessageBox.ShowWarning("Failed to import theme:\n" + e.Message, "Error");
+                MessageBox.Show("Failed to import theme:\n" + e.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return null;
             }
         }
@@ -169,6 +169,11 @@ namespace WinDynamicDesktop
 
         public static void RemoveTheme(ThemeConfig theme)
         {
+            if (currentTheme == theme)
+            {
+                currentTheme = null;
+            }
+
             if (themeSettings.Contains(theme))
             {
                 themeSettings.Remove(theme);
@@ -235,9 +240,9 @@ namespace WinDynamicDesktop
             }
             else if (currentTheme != null && missingThemes.Contains(currentTheme))
             {
-                DialogResult result = DarkMessageBox.ShowError("Failed to download images. " +
-                    "Click Retry to try again or Cancel to exit the program.", "Error",
-                    DarkDialogButton.RetryCancel);
+                DialogResult result = MessageBox.Show("Failed to download images. Click Retry " +
+                    "to try again or Cancel to exit the program.", "Error",
+                    MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
 
                 if (result == DialogResult.Retry)
                 {
@@ -250,9 +255,9 @@ namespace WinDynamicDesktop
             }
             else
             {
-                DialogResult result = DarkMessageBox.ShowWarning("Failed to download images. " +
-                    "Click Retry to try again or Cancel to continue with some themes disabled.",
-                    "Error", DarkDialogButton.RetryCancel);
+                DialogResult result = MessageBox.Show("Failed to download images. Click Retry " +
+                    "to try again or Cancel to continue with some themes disabled.", "Error",
+                    MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning);
 
                 if (result == DialogResult.Retry)
                 {

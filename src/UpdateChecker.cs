@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.Windows.Forms;
-using DarkUI.Forms;
 using RestSharp;
 
 namespace WinDynamicDesktop
@@ -96,15 +95,15 @@ namespace WinDynamicDesktop
 
             if (latestVersion == null)
             {
-                DarkMessageBox.ShowWarning("WinDynamicDesktop could not connect to the Internet " +
-                    "to check for updates.", "Error");
+                MessageBox.Show("WinDynamicDesktop could not connect to the Internet to check " +
+                    "for updates.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             else if (IsUpdateAvailable(currentVersion, latestVersion))
             {
-                DialogResult result = DarkMessageBox.ShowInformation("There is a newer version " +
-                    "of WinDynamicDesktop available. Do you want to download the update now?\n\n" +
+                DialogResult result = MessageBox.Show("There is a newer version of " +
+                    "WinDynamicDesktop available. Do you want to download the update now?\n\n" +
                     "Current Version: " + currentVersion + "\nLatest Version: " + latestVersion,
-                    "Update Available", DarkDialogButton.YesNo);
+                    "Update Available", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 
                 if (result == DialogResult.Yes)
                 {
@@ -113,8 +112,8 @@ namespace WinDynamicDesktop
             }
             else
             {
-                DarkMessageBox.ShowInformation("You already have the latest version of " +
-                    "WinDynamicDesktop installed.", "Up To Date");
+                MessageBox.Show("You already have the latest version of WinDynamicDesktop " +
+                    "installed.", "Up To Date", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 

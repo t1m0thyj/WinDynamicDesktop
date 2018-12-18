@@ -8,11 +8,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
-using DarkUI.Forms;
 
 namespace WinDynamicDesktop
 {
-    public partial class ThemeDialog : DarkForm
+    public partial class ThemeDialog : Form
     {
         private int maxImageNumber;
         private int previewImage;
@@ -69,6 +68,25 @@ namespace WinDynamicDesktop
 
                 return bmp2;
             }
+        }
+
+        private string GetCreditsText()
+        {
+            if (selectedIndex == 0)
+            {
+                return "Image Credits: Microsoft";
+            }
+            else
+            {
+                ThemeConfig theme = ThemeManager.themeSettings[selectedIndex - 1];
+
+                if (theme.imageCredits != null)
+                {
+                    return "Image Credits: " + theme.imageCredits;
+                }
+            }
+
+            return "";
         }
 
         private int GetMaxImageNumber()
@@ -147,8 +165,8 @@ namespace WinDynamicDesktop
             }
             else
             {
-                DarkMessageBox.ShowWarning("Failed to install the '" +
-                    tempTheme.themeName.Replace('_', ' ') + "' theme.", "Error");
+                MessageBox.Show("Failed to install the '" + tempTheme.themeName.Replace('_', ' ') +
+                    "' theme.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 await Task.Run(() => ThemeManager.RemoveTheme(tempTheme));
             }
 
@@ -198,9 +216,11 @@ namespace WinDynamicDesktop
             if (listView1.SelectedItems.Count > 0)
             {
                 selectedIndex = listView1.SelectedIndices[0];
+                creditsLabel.Text = GetCreditsText();
+
                 maxImageNumber = GetMaxImageNumber();
-                
                 LoadPreviewImage(1);
+
                 okButton.Enabled = true;
             }
             else
@@ -332,9 +352,9 @@ namespace WinDynamicDesktop
             int itemIndex = listView1.FocusedItem.Index;
             ThemeConfig theme = ThemeManager.themeSettings[itemIndex - 1];
 
-            DialogResult result = DarkMessageBox.ShowWarning("Are you sure you want to remove " +
-                "the '" + theme.themeName.Replace('_', ' ') + "' theme?", "Question",
-                DarkDialogButton.YesNo);
+            DialogResult result = MessageBox.Show("Are you sure you want to remove the '" +
+                theme.themeName.Replace('_', ' ') + "' theme?", "Question",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
             if (result == DialogResult.Yes)
             {
@@ -355,10 +375,10 @@ namespace WinDynamicDesktop
         {
             if (JsonConfig.firstRun && ThemeManager.currentTheme == null)
             {
-                DialogResult result = DarkMessageBox.ShowWarning("WinDynamicDesktop cannot " +
-                    "dynamically update your wallpaper until you have selected a theme. Are you " +
-                    "sure you want to continue without a theme selected?", "Question",
-                    DarkDialogButton.YesNo);
+                DialogResult result = MessageBox.Show("WinDynamicDesktop cannot dynamically " +
+                    "update your wallpaper until you have selected a theme. Are you sure you " +
+                    "want to continue without a theme selected?", "Question",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
                 if (result != DialogResult.Yes)
                 {
