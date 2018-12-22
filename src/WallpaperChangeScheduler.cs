@@ -29,6 +29,7 @@ namespace WinDynamicDesktop
         {
             wallpaperTimer.Tick += OnWallpaperTimerTick;
             SystemEvents.PowerModeChanged += OnPowerModeChanged;
+            SystemEvents.TimeChanged += OnTimeChanged;
 
             if (ThemeManager.currentTheme != null)
             {
@@ -48,14 +49,6 @@ namespace WinDynamicDesktop
             {
                 dayImages = nightImages;
             }
-        }
-
-        private SolarData GetSolarData(DateTime date)
-        {
-            SolarData data = SunriseSunsetService.GetSolarData(
-                JsonConfig.settings.latitude, JsonConfig.settings.longitude, date);
-
-            return data;
         }
 
         private int GetImageNumber(DateTime startTime, TimeSpan timerLength)
@@ -94,19 +87,19 @@ namespace WinDynamicDesktop
             wallpaperTimer.Stop();
 
             DateTime today = DateTime.Today;
-            todaysData = GetSolarData(today);
+            todaysData = SunriseSunsetService.GetSolarData(today);
 
             if (DateTime.Now < todaysData.SunriseTime + timerError)
             {
                 // Before sunrise
-                yesterdaysData = GetSolarData(today.AddDays(-1));
+                yesterdaysData = SunriseSunsetService.GetSolarData(today.AddDays(-1));
                 tomorrowsData = null;
             }
             else if (DateTime.Now >= todaysData.SunsetTime - timerError)
             {
                 // After sunset
                 yesterdaysData = null;
-                tomorrowsData = GetSolarData(today.AddDays(1));
+                tomorrowsData = SunriseSunsetService.GetSolarData(today.AddDays(1));
             }
             else
             {
@@ -214,6 +207,11 @@ namespace WinDynamicDesktop
             {
                 HandleTimerEvent(false);
             }
+        }
+
+        private void OnTimeChanged(object sender, EventArgs e)
+        {
+            HandleTimerEvent(false);
         }
     }
 }

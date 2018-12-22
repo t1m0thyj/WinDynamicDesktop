@@ -16,6 +16,11 @@ namespace WinDynamicDesktop
 
     class SunriseSunsetService
     {
+        public static SolarData GetSolarData(DateTime date)
+        {
+            return GetSolarData(JsonConfig.settings.latitude, JsonConfig.settings.longitude, date);
+        }
+
         public static SolarData GetSolarData(string lat, string lon, DateTime date)
         {
             double latitude = double.Parse(lat, CultureInfo.InvariantCulture);

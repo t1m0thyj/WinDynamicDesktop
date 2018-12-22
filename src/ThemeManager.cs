@@ -54,8 +54,8 @@ namespace WinDynamicDesktop
         private static void UpdateThemeFileStructure()
         {
             List<string> filePaths = Directory.GetFiles("themes", "*.json").ToList();
-            filePaths.Add(Path.Combine("themes", defaultThemes[0] + ".json"));
-            filePaths.Add(Path.Combine("themes", defaultThemes[1] + ".json"));
+            filePaths.AddRange(defaultThemes.Select(
+                themeName => Path.Combine("themes", themeName + ".json")));
 
             foreach (string filePath in filePaths)
             {
@@ -149,14 +149,16 @@ namespace WinDynamicDesktop
         {
             try
             {
+                string themePath = Path.Combine("themes", themeName);
+                Directory.CreateDirectory(themePath);
+
                 using (ZipArchive archive = ZipFile.OpenRead(imagesZip))
                 {
                     foreach (ZipArchiveEntry imageEntry in archive.Entries.Where(
                         entry => Path.GetDirectoryName(entry.FullName) == ""
                         && Path.GetExtension(entry.Name) != ".json"))
                     {
-                        imageEntry.ExtractToFile(Path.Combine("themes", themeName,
-                            imageEntry.Name), true);
+                        imageEntry.ExtractToFile(Path.Combine(themePath, imageEntry.Name), true);
                     }
                 }
 
@@ -194,8 +196,14 @@ namespace WinDynamicDesktop
 
             foreach (ThemeConfig theme in themeSettings)
             {
-                int imageFileCount = Directory.GetFiles(Path.Combine("themes", theme.themeName),
-                    theme.imageFilename).Length;
+                int imageFileCount = 0;
+                string themePath = Path.Combine("themes", theme.themeName);
+
+                if (Directory.Exists(themePath))
+                {
+                    imageFileCount = Directory.GetFiles(themePath, theme.imageFilename).Length;
+                }
+
                 List<int> imageIds = new List<int>();
                 imageIds.AddRange(theme.dayImageList);
                 imageIds.AddRange(theme.nightImageList);
@@ -275,21 +283,6 @@ namespace WinDynamicDesktop
             {
                 ReadyUp();
             }
-            else if (currentTheme != null && missingThemes.Contains(currentTheme))
-            {
-                DialogResult result = MessageBox.Show("Failed to download images. Click Retry " +
-                    "to try again or Cancel to exit the program.", "Error",
-                    MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
-
-                if (result == DialogResult.Retry)
-                {
-                    DownloadMissingImages(missingThemes);
-                }
-                else
-                {
-                    Environment.Exit(0);
-                }
-            }
             else
             {
                 DialogResult result = MessageBox.Show("Failed to download images. Click Retry " +
@@ -305,6 +298,11 @@ namespace WinDynamicDesktop
                     foreach (ThemeConfig theme in missingThemes)
                     {
                         themeSettings.Remove(theme);
+                    }
+
+                    if (missingThemes.Contains(currentTheme))
+                    {
+                        currentTheme = null;
                     }
 
                     ReadyUp();

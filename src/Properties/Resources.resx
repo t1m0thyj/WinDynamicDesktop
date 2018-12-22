@@ -121,10 +121,10 @@
   <data name="AppIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\WinDynamicDesktop.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="jsonMojaveDesert" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="Mojave_Desert_json" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\themes\Mojave_Desert.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="jsonSolarGradients" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="Solar_Gradients_json" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\themes\Solar_Gradients.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

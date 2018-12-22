@@ -63,13 +63,10 @@ namespace WinDynamicDesktop
         {
             string themeJson;
 
-            if (name == "Mojave_Desert")
+            if (ThemeManager.defaultThemes.Contains(name))
             {
-                themeJson = Encoding.UTF8.GetString(Properties.Resources.jsonMojaveDesert);
-            }
-            else if (name == "Solar_Gradients")
-            {
-                themeJson = Encoding.UTF8.GetString(Properties.Resources.jsonSolarGradients);
+                themeJson = Encoding.UTF8.GetString((byte[])Properties.Resources.ResourceManager.
+                    GetObject(name + "_json"));
             }
             else
             {
