@@ -73,7 +73,7 @@ namespace WinDynamicDesktop
             }
             else
             {
-                themeJson = File.ReadAllText(Path.Combine("themes", name + ".json"));
+                themeJson = File.ReadAllText(Path.Combine("themes", name, "theme.json"));
             }
 
             ThemeConfig theme = JsonConvert.DeserializeObject<ThemeConfig>(themeJson);

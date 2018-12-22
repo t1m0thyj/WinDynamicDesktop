@@ -86,7 +86,7 @@ namespace WinDynamicDesktop
                 if (e.Error == null)
                 {
                     await Task.Run(() => ThemeManager.ExtractTheme(
-                        theme.themeName + "_images.zip", true));
+                        theme.themeName + "_images.zip", theme.themeName, true));
                 }
 
                 DownloadNext();

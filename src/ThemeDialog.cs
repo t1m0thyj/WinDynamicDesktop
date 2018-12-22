@@ -56,9 +56,11 @@ namespace WinDynamicDesktop
             int imageId2 = theme.nightImageList[(theme.nightImageList.Length + 1) / 2];
             string imageFilename2 = theme.imageFilename.Replace("*", imageId2.ToString());
 
-            using (var bmp1 = ShrinkImage(Path.Combine("images", imageFilename1), width, height))
+            using (var bmp1 = ShrinkImage(Path.Combine("themes", theme.themeName, imageFilename1),
+                width, height))
             {
-                Bitmap bmp2 = ShrinkImage(Path.Combine("images", imageFilename2), width, height);
+                Bitmap bmp2 = ShrinkImage(Path.Combine("themes", theme.themeName, imageFilename2),
+                    width, height);
 
                 using (Graphics g = Graphics.FromImage(bmp2))
                 {
@@ -135,7 +137,8 @@ namespace WinDynamicDesktop
                 }
 
                 string imageFilename = theme.imageFilename.Replace("*", imageId.ToString());
-                pictureBox1.Image = ShrinkImage(Path.Combine("images", imageFilename), w, h);
+                pictureBox1.Image = ShrinkImage(Path.Combine("themes", theme.themeName,
+                    imageFilename), w, h);
             }
 
             imageNumberLabel.Text = "Image " + imageNumber + " of " + maxImageNumber;

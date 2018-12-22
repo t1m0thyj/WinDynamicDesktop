@@ -1,3 +1,4 @@
+import glob
 import json
 import sys
 from PIL import Image
@@ -7,12 +8,11 @@ theme_name = sys.argv[1]
 with open(theme_name + ".json", 'r') as fileobj:
     theme_config = json.load(fileobj)
 
-image_filename = theme_config["imageFilename"].replace("*", "{}")
 image_data = []
 print("Analyzing images", end="", flush=True)
 
-for i in range(len(theme_config["dayImageList"] + theme_config["nightImageList"])):
-    img = Image.open(image_filename.format(i + 1))
+for i, filename in enumerate(glob.glob(theme_config["imageFilename"])):
+    img = Image.open(filename)
     image_data.append(0)
     print('.', end="", flush=True)
 

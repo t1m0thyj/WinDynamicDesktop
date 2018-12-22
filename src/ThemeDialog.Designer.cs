@@ -70,7 +70,7 @@
             this.previewBox.Controls.Add(this.imageNumberLabel);
             this.previewBox.Controls.Add(this.nextButton);
             this.previewBox.Controls.Add(this.lastButton);
-            this.previewBox.Location = new System.Drawing.Point(514, 12);
+            this.previewBox.Location = new System.Drawing.Point(514, 11);
             this.previewBox.Name = "previewBox";
             this.previewBox.Size = new System.Drawing.Size(404, 275);
             this.previewBox.TabIndex = 10;

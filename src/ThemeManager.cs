@@ -20,14 +20,20 @@ namespace WinDynamicDesktop
 
         public static void Initialize()
         {
-            Directory.CreateDirectory("images");
             Directory.CreateDirectory("themes");
+
+            // TODO Remove after everyone has new file structure
+            if (Directory.Exists("images"))
+            {
+                UpdateThemeFileStructure();
+            }
 
             List<string> themeNames = defaultThemes.ToList();
 
-            foreach (string filePath in Directory.EnumerateFiles("themes", "*.json"))
+            foreach (string filePath in Directory.EnumerateFiles("themes", "*.json",
+                SearchOption.AllDirectories))
             {
-                themeNames.Add(Path.GetFileNameWithoutExtension(filePath));
+                themeNames.Add(Path.GetFileName(Path.GetDirectoryName(filePath)));
             }
             themeNames.Sort();
 
@@ -43,6 +49,37 @@ namespace WinDynamicDesktop
             }
 
             DownloadMissingImages(FindMissingThemes());
+        }
+
+        private static void UpdateThemeFileStructure()
+        {
+            List<string> filePaths = Directory.GetFiles("themes", "*.json").ToList();
+            filePaths.Add(Path.Combine("themes", defaultThemes[0] + ".json"));
+            filePaths.Add(Path.Combine("themes", defaultThemes[1] + ".json"));
+
+            foreach (string filePath in filePaths)
+            {
+                string themeName = Path.GetFileNameWithoutExtension(filePath);
+                Directory.CreateDirectory(Path.Combine("themes", themeName));
+
+                if (File.Exists(filePath))
+                {
+                    File.Move(filePath, Path.Combine("themes", themeName, "theme.json"));
+                }
+
+                ThemeConfig theme = JsonConfig.LoadTheme(themeName);
+                foreach (string imagePath in Directory.GetFiles("images", theme.imageFilename))
+                {
+                    File.Move(imagePath,
+                        Path.Combine("themes", themeName, Path.GetFileName(imagePath)));
+                }
+            }
+
+            if (Directory.GetFiles("images").Length == 0 &&
+                Directory.GetDirectories("images").Length == 0)
+            {
+                Directory.Delete("images", false);
+            }
         }
 
         public static void SelectTheme()
@@ -79,20 +116,23 @@ namespace WinDynamicDesktop
 
             try
             {
+                Directory.CreateDirectory(Path.Combine("themes", themeName));
+
                 if (Path.GetExtension(themePath) == ".zip")
                 {
                     using (ZipArchive archive = ZipFile.OpenRead(themePath))
                     {
                         ZipArchiveEntry themeJson = archive.Entries.Single(
                             entry => Path.GetExtension(entry.Name) == ".json");
-                        themeJson.ExtractToFile(Path.Combine("themes", themeName + ".json"), true);
+                        themeJson.ExtractToFile(Path.Combine("themes", themeName, "theme.json"),
+                            true);
                     }
 
-                    ExtractTheme(themePath);
+                    ExtractTheme(themePath, themeName);
                 }
                 else
                 {
-                    File.Copy(themePath, Path.Combine("themes", themeName + ".json"), true);
+                    File.Copy(themePath, Path.Combine("themes", themeName, "theme.json"), true);
                 }
 
                 return JsonConfig.LoadTheme(themeName);
@@ -105,7 +145,7 @@ namespace WinDynamicDesktop
             }
         }
 
-        public static void ExtractTheme(string imagesZip, bool deleteZip = false)
+        public static void ExtractTheme(string imagesZip, string themeName, bool deleteZip = false)
         {
             try
             {
@@ -115,7 +155,8 @@ namespace WinDynamicDesktop
                         entry => Path.GetDirectoryName(entry.FullName) == ""
                         && Path.GetExtension(entry.Name) != ".json"))
                     {
-                        imageEntry.ExtractToFile(Path.Combine("images", imageEntry.Name), true);
+                        imageEntry.ExtractToFile(Path.Combine("themes", themeName,
+                            imageEntry.Name), true);
                     }
                 }
 
@@ -138,8 +179,8 @@ namespace WinDynamicDesktop
 
                 try
                 {
-                    File.Copy(imagePath, Path.Combine("images", Path.GetFileName(imagePath)),
-                        true);
+                    File.Copy(imagePath, Path.Combine("themes", theme.themeName,
+                        Path.GetFileName(imagePath)), true);
                 }
                 catch { }
 
@@ -153,7 +194,8 @@ namespace WinDynamicDesktop
 
             foreach (ThemeConfig theme in themeSettings)
             {
-                int imageFileCount = Directory.GetFiles("images", theme.imageFilename).Length;
+                int imageFileCount = Directory.GetFiles(Path.Combine("themes", theme.themeName),
+                    theme.imageFilename).Length;
                 List<int> imageIds = new List<int>();
                 imageIds.AddRange(theme.dayImageList);
                 imageIds.AddRange(theme.nightImageList);
@@ -181,12 +223,7 @@ namespace WinDynamicDesktop
 
             try
             {
-                File.Delete(Path.Combine("themes", theme.themeName + ".json"));
-
-                foreach (string imagePath in Directory.GetFiles("images", theme.imageFilename))
-                {
-                    File.Delete(imagePath);
-                }
+                Directory.Delete(Path.Combine("themes", theme.themeName), true);
             }
             catch { }
         }

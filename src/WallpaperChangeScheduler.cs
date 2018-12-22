@@ -82,8 +82,8 @@ namespace WinDynamicDesktop
         {
             string imageFilename = ThemeManager.currentTheme.imageFilename.Replace("*",
                 imageId.ToString());
-            string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "images",
-                imageFilename);
+            string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "themes",
+                ThemeManager.currentTheme.themeName, imageFilename);
 
             WallpaperApi.SetWallpaper(imagePath);
             lastImageId = imageId;
