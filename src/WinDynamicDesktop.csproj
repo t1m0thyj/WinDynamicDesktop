@@ -88,6 +88,7 @@
     </Compile>
     <Compile Include="AppContext.cs" />
     <Compile Include="DesktopHelper.cs" />
+    <Compile Include="FullScreenApi.cs" />
     <Compile Include="InputDialog.cs">
       <SubType>Form</SubType>
     </Compile>

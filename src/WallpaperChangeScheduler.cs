@@ -22,11 +22,14 @@ namespace WinDynamicDesktop
         private SolarData todaysData;
         private SolarData tomorrowsData;
 
+        private FullScreenApi fullScreenChecker;
         private Timer wallpaperTimer = new Timer();
         private TimeSpan timerError = new TimeSpan(TimeSpan.TicksPerMillisecond * 55);
 
         public WallpaperChangeScheduler()
         {
+            fullScreenChecker = new FullScreenApi(this);
+
             wallpaperTimer.Tick += OnWallpaperTimerTick;
             SystemEvents.PowerModeChanged += OnPowerModeChanged;
             SystemEvents.TimeChanged += OnTimeChanged;
@@ -185,8 +188,14 @@ namespace WinDynamicDesktop
             }
         }
 
-        private void HandleTimerEvent(bool updateLocation)
+        public void HandleTimerEvent(bool updateLocation)
         {
+            if (fullScreenChecker.runningFullScreen)
+            {
+                fullScreenChecker.timerEventPending = true;
+                return;
+            }
+
             if (updateLocation && JsonConfig.settings.useWindowsLocation)
             {
                 Task.Run(() => UwpLocation.UpdateGeoposition());
