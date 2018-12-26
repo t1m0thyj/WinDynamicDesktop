@@ -103,7 +103,7 @@ namespace WinDynamicDesktop
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode, Pack = 8)]
     public struct COMPONENT
     {
-        private const int INTERNET_MAX_URL_LENGTH = 2084; // = INTERNET_MAX_SCHEME_LENGTH (32) + "://\0".Length +   INTERNET_MAX_PATH_LENGTH (2048)
+        private const int INTERNET_MAX_URL_LENGTH = 2084;
         public static readonly int SizeOf = Marshal.SizeOf(typeof(COMPONENT));
 
         public int dwSize;

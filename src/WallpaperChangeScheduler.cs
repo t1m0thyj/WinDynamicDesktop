@@ -79,6 +79,12 @@ namespace WinDynamicDesktop
                 ThemeManager.currentTheme.themeName, imageFilename);
 
             WallpaperApi.SetWallpaper(imagePath);
+
+            if (UwpDesktop.IsRunningAsUwp() && JsonConfig.settings.changeLockScreen)
+            {
+                UwpHelper.SetLockScreenImage(imagePath);
+            }
+
             lastImageId = imageId;
         }
 

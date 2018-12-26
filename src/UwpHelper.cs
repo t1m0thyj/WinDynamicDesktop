@@ -70,5 +70,16 @@ namespace WinDynamicDesktop
             await Windows.System.Launcher.LaunchUriAsync(
                 new Uri("ms-windows-store://downloadsandupdates"));
         }
+
+        public static async void SetLockScreenImage(string imageFilename)
+        {
+            var uri = new Uri("ms-appdata:///local/themes/" + ThemeManager.currentTheme.themeName +
+                "/" + imageFilename);
+            var file = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri);
+
+            var profileSettings =
+                Windows.System.UserProfile.UserProfilePersonalizationSettings.Current;
+            await profileSettings.TrySetLockScreenImageAsync(file);
+        }
     }
 }
