@@ -25,11 +25,11 @@ When the Dynamic Desktop feature was announced for macOS Mojave which shifts thr
 
 ### Can the Windows 10 theme be changed too?
 
-There is an option to enable this in the "More Options" section of the system tray menu. Unfortunately its functionality is limited by the way the system theme setting works in Windows 10. In Windows 10 version 1809 which added a dark theme to File Explorer, it is necessary to restart Explorer before the system theme will change in it. Also the theme for Microsoft Edge is separate from the Windows 10 theme and cannot be controlled by WinDynamicDesktop.
+There is an option to enable this in the "More Options" section of the system tray menu. Unfortunately its functionality is limited by the way the system theme setting works in Windows 10. In Windows 10 version 1809 which added a dark theme to File Explorer, it is necessary to restart Explorer before the system theme will change in it (this should be fixed in the next release of Windows). Also the theme for Microsoft Edge is separate from the Windows 10 theme and cannot be controlled by WinDynamicDesktop.
 
 ### Can the lockscreen image be changed too?
 
-This is a commonly requested feature, and it would be nice to mimic the behavior of macOS and many Linux distros where the lockscreen image is the same as the desktop wallpaper. Windows doesn't have a reliable API for changing the lockscreen image, which means I can't really implement this feature in the app right now. Hopefully Microsoft will add an option in a future version of Windows to make the lockscreen image mirror the desktop wallpaper.
+This is a commonly requested feature to mimic the behavior of macOS and many Linux distros where the lockscreen image is the same as the desktop wallpaper. If you are using the Microsoft Store version of WinDynamicDesktop, you can enable changing the lockscreen image as an experimental feature by editing the `settings.conf` file which is in the same folder as the EXE. Change the setting `"changeLockScreen":false` to `"changeLockScreen":true` (or add it if it doesn't exist), and make sure in the Windows 10 settings app that *Personalization* -> *Lock screen* -> *Background* is set to *Picture*. In order for this to work reliably on Windows, it would be ideal if Microsoft added an option in a future version of Windows to make the lockscreen image mirror the desktop wallpaper.
 
 ### How can you customize the images?
 
