@@ -2,15 +2,20 @@
   "imagesZipUri": "https://files.rb.gd/mojave_dynamic.zip|https://bitbucket.org/t1m0thyj/wdd-themes/downloads/Mojave_Desert_images.zip",
   "imageFilename": "mojave_dynamic_*.jpeg",
   "imageCredits": "Apple",
-  "dayImageList": [
+  "sunriseImageList": [
+    1,
     2,
-    3,
+    3
+  ],
+  "dayImageList": [
     4,
     5,
     6,
     7,
     8,
-    9,
+    9
+  ],
+  "sunsetImageList": [
     10,
     11,
     12
@@ -19,7 +24,6 @@
     13,
     14,
     15,
-    16,
-    1
+    16
   ]
 }

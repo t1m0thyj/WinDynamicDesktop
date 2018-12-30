@@ -6,48 +6,104 @@ using System.Threading.Tasks;
 using System.Globalization;
 using Microsoft.Win32;
 using System.IO;
-using System.Windows.Forms;
+using System.Timers;
 
 namespace WinDynamicDesktop
 {
     class WallpaperChangeScheduler
     {
-        private int[] dayImages;
-        private int[] nightImages;
-        private int lastImageId;
+        private enum DaySegment { Sunrise, Day, Sunset, Night };
 
-        public static bool isDayNow;
+        private DateTime? nextUpdateTime;
 
-        private SolarData yesterdaysData;
-        private SolarData todaysData;
-        private SolarData tomorrowsData;
+        public static bool isNightNow;  // TODO Determine how dark mode should work
 
-        private Timer wallpaperTimer = new Timer();
-        private TimeSpan timerError = new TimeSpan(TimeSpan.TicksPerMillisecond * 55);
+        private Timer backgroundTimer = new Timer();
+        private Timer schedulerTimer = new Timer();
+        private const long timerError = (long)(TimeSpan.TicksPerMillisecond * 15.6);
 
         public WallpaperChangeScheduler()
         {
-            wallpaperTimer.Tick += OnWallpaperTimerTick;
+            backgroundTimer.AutoReset = true;
+            backgroundTimer.Interval = 60e3;
+            backgroundTimer.Elapsed += OnBackgroundTimerElapsed;
+            backgroundTimer.Start();
+
+            schedulerTimer.Elapsed += OnSchedulerTimerElapsed;
             SystemEvents.PowerModeChanged += OnPowerModeChanged;
             SystemEvents.TimeChanged += OnTimeChanged;
-
-            if (ThemeManager.currentTheme != null)
-            {
-                LoadImageLists();
-            }
+            // TODO Change system theme at sunrise/sunset not at these intervals
         }
 
-        public void LoadImageLists()
+        public void RunScheduler()
         {
-            nightImages = ThemeManager.currentTheme.nightImageList;
+            schedulerTimer.Stop();
 
-            if (!JsonConfig.settings.darkMode)
+            SolarData todaysData = SunriseSunsetService.GetSolarData(DateTime.Today);
+            DaySegment currentSegment;
+
+            DateTime[] solarTimes = new DateTime[4];
+            solarTimes[0] = GetSolarTime(todaysData, DaySegment.Sunrise);
+            solarTimes[1] = GetSolarTime(todaysData, DaySegment.Day);
+            solarTimes[2] = GetSolarTime(todaysData, DaySegment.Sunset);
+            solarTimes[3] = GetSolarTime(todaysData, DaySegment.Night);
+
+            if (solarTimes[0] <= DateTime.Now && DateTime.Now < solarTimes[1])
             {
-                dayImages = ThemeManager.currentTheme.dayImageList;
+                currentSegment = DaySegment.Sunrise;
+            }
+            else if (solarTimes[1] <= DateTime.Now && DateTime.Now < solarTimes[2])
+            {
+                currentSegment = DaySegment.Day;
+            }
+            else if (solarTimes[2] <= DateTime.Now && DateTime.Now < solarTimes[3])
+            {
+                currentSegment = DaySegment.Sunset;
             }
             else
             {
-                dayImages = nightImages;
+                currentSegment = DaySegment.Night;
+            }
+
+            isNightNow = (currentSegment == DaySegment.Night);
+
+            if (ThemeManager.currentTheme != null)
+            {
+                nextUpdateTime = UpdateImage(solarTimes, currentSegment);
+            }
+            else if (!isNightNow)
+            {
+                nextUpdateTime = solarTimes[3];
+            }
+            else if (DateTime.Now < solarTimes[0])
+            {
+                nextUpdateTime = solarTimes[0];
+            }
+            else
+            {
+                SolarData tomorrowsData = SunriseSunsetService.GetSolarData(
+                    DateTime.Today.AddDays(1));
+                nextUpdateTime = GetSolarTime(tomorrowsData, DaySegment.Sunrise);
+            }
+
+            SystemThemeChanger.TryUpdateSystemTheme();
+            JsonConfig.SaveConfig();
+
+            StartTimer(nextUpdateTime.Value);
+        }
+
+        private DateTime GetSolarTime(SolarData data, DaySegment segment)
+        {
+            switch (segment)
+            {
+                case DaySegment.Sunrise:
+                    return new DateTime(data.SunriseTime.Ticks - TimeSpan.TicksPerHour);
+                case DaySegment.Day:
+                    return new DateTime(data.SunriseTime.Ticks + TimeSpan.TicksPerHour);
+                case DaySegment.Sunset:
+                    return new DateTime(data.SunsetTime.Ticks - TimeSpan.TicksPerHour);
+                default:
+                    return new DateTime(data.SunsetTime.Ticks + TimeSpan.TicksPerHour);
             }
         }
 
@@ -55,20 +111,7 @@ namespace WinDynamicDesktop
         {
             TimeSpan elapsedTime = DateTime.Now - startTime;
 
-            return (int)((elapsedTime.Ticks + timerError.Ticks) / timerLength.Ticks);
-        }
-
-        private void StartTimer(long intervalTicks, TimeSpan maxInterval)
-        {
-            if (intervalTicks < timerError.Ticks)
-            {
-                intervalTicks += maxInterval.Ticks;
-            }
-
-            TimeSpan interval = new TimeSpan(intervalTicks);
-
-            wallpaperTimer.Interval = (int)interval.TotalMilliseconds;
-            wallpaperTimer.Start();
+            return (int)(elapsedTime.Ticks / timerLength.Ticks);
         }
 
         private void SetWallpaper(int imageId)
@@ -82,117 +125,84 @@ namespace WinDynamicDesktop
 
             if (UwpDesktop.IsRunningAsUwp() && JsonConfig.settings.changeLockScreen)
             {
-                UwpHelper.SetLockScreenImage(imagePath);
-            }
-
-            lastImageId = imageId;
-        }
-
-        public void RunScheduler()
-        {
-            wallpaperTimer.Stop();
-
-            DateTime today = DateTime.Today;
-            todaysData = SunriseSunsetService.GetSolarData(today);
-
-            if (DateTime.Now < todaysData.SunriseTime + timerError)
-            {
-                // Before sunrise
-                yesterdaysData = SunriseSunsetService.GetSolarData(today.AddDays(-1));
-                tomorrowsData = null;
-            }
-            else if (DateTime.Now >= todaysData.SunsetTime - timerError)
-            {
-                // After sunset
-                yesterdaysData = null;
-                tomorrowsData = SunriseSunsetService.GetSolarData(today.AddDays(1));
-            }
-            else
-            {
-                // Between sunrise and sunset
-                yesterdaysData = null;
-                tomorrowsData = null;
-            }
-
-            isDayNow = (yesterdaysData == null && tomorrowsData == null);
-            lastImageId = -1;
-
-            if (isDayNow)
-            {
-                UpdateDayImage();
-            }
-            else
-            {
-                UpdateNightImage();
-            }
-
-            SystemThemeChanger.TryUpdateSystemTheme();
-            JsonConfig.SaveConfig();
-        }
-
-        private void UpdateDayImage()
-        {
-            TimeSpan dayTime = todaysData.SunsetTime - todaysData.SunriseTime;
-
-            if (ThemeManager.currentTheme != null)
-            {
-                TimeSpan timerLength = new TimeSpan(dayTime.Ticks / dayImages.Length);
-                int imageNumber = GetImageNumber(todaysData.SunriseTime, timerLength);
-
-                if (imageNumber >= dayImages.Length)
-                {
-                    UpdateNightImage();
-                    return;
-                }
-
-                StartTimer(todaysData.SunriseTime.Ticks + timerLength.Ticks * (imageNumber + 1)
-                    - DateTime.Now.Ticks, timerLength);
-
-                if (dayImages[imageNumber] != lastImageId)
-                {
-                    SetWallpaper(dayImages[imageNumber]);
-                }
-            }
-            else
-            {
-                StartTimer(todaysData.SunsetTime.Ticks - DateTime.Now.Ticks, dayTime);
+                UwpHelper.SetLockScreenImage(imageFilename);
             }
         }
 
-        private void UpdateNightImage()
+        private DateTime UpdateImage(DateTime[] solarTimes, DaySegment segment)
         {
-            SolarData day1Data = (yesterdaysData == null) ? todaysData : yesterdaysData;
-            SolarData day2Data = (yesterdaysData == null) ? tomorrowsData : todaysData;
+            int[] imageList;
+            DateTime segmentStart;
+            DateTime segmentEnd;
 
-            TimeSpan nightTime = day2Data.SunriseTime - day1Data.SunsetTime;
-
-            if (ThemeManager.currentTheme != null)
+            switch (segment)
             {
-                TimeSpan timerLength = new TimeSpan(nightTime.Ticks / nightImages.Length);
-                int imageNumber = GetImageNumber(day1Data.SunsetTime, timerLength);
+                case DaySegment.Sunrise:
+                    imageList = ThemeManager.currentTheme.sunriseImageList;
+                    segmentStart = solarTimes[0];
+                    segmentEnd = solarTimes[1];
+                    break;
+                case DaySegment.Day:
+                    imageList = ThemeManager.currentTheme.dayImageList;
+                    segmentStart = solarTimes[1];
+                    segmentEnd = solarTimes[2];
+                    TimeSpan dayTime = solarTimes[2] - solarTimes[1];
+                    break;
+                case DaySegment.Sunset:
+                    imageList = ThemeManager.currentTheme.sunsetImageList;
+                    segmentStart = solarTimes[2];
+                    segmentEnd = solarTimes[3];
+                    break;
+                default:
+                    imageList = ThemeManager.currentTheme.nightImageList;
 
-                if (imageNumber >= nightImages.Length)
-                {
-                    UpdateDayImage();
-                    return;
-                }
+                    if (DateTime.Now < solarTimes[0])
+                    {
+                        SolarData yesterdaysData = SunriseSunsetService.GetSolarData(
+                            DateTime.Today.AddDays(-1));
+                        segmentStart = GetSolarTime(yesterdaysData, DaySegment.Night);
+                        segmentEnd = solarTimes[0];
+                    }
+                    else
+                    {
+                        segmentStart = solarTimes[3];
+                        SolarData tomorrowsData = SunriseSunsetService.GetSolarData(
+                            DateTime.Today.AddDays(1));
+                        segmentEnd = GetSolarTime(tomorrowsData, DaySegment.Sunrise);
+                    }
 
-                StartTimer(day1Data.SunsetTime.Ticks + timerLength.Ticks * (imageNumber + 1)
-                    - DateTime.Now.Ticks, timerLength);
-
-                if (nightImages[imageNumber] != lastImageId)
-                {
-                    SetWallpaper(nightImages[imageNumber]);
-                }
+                    break;
             }
-            else
+
+            TimeSpan segmentLength = segmentEnd - segmentStart;
+            TimeSpan timerLength = new TimeSpan(segmentLength.Ticks / imageList.Length);
+
+            int imageNumber = GetImageNumber(segmentStart, timerLength);
+            long nextUpdateTicks = segmentStart.Ticks + timerLength.Ticks * (imageNumber + 1);
+
+            SetWallpaper(imageList[imageNumber]);
+
+            return new DateTime(nextUpdateTicks);
+        }
+
+        private void StartTimer(DateTime futureTime)
+        {
+            long intervalTicks = futureTime.Ticks - DateTime.Now.Ticks;
+
+            if (intervalTicks < timerError)
             {
-                StartTimer(day2Data.SunriseTime.Ticks - DateTime.Now.Ticks, nightTime);
+                intervalTicks = 0;
             }
+
+            TimeSpan interval = new TimeSpan(intervalTicks);
+
+            schedulerTimer.Interval = interval.TotalMilliseconds;
+            schedulerTimer.Start();
         }
 
         private void HandleTimerEvent(bool updateLocation)
         {
+            // TODO Figure out how to handle no theme correctly
             if (updateLocation && JsonConfig.settings.useWindowsLocation)
             {
                 Task.Run(() => UwpLocation.UpdateGeoposition());
@@ -202,14 +212,22 @@ namespace WinDynamicDesktop
             UpdateChecker.TryCheckAuto();
         }
 
-        private void OnWallpaperTimerTick(object sender, EventArgs e)
+        private void OnBackgroundTimerElapsed(object sender, EventArgs e)
+        {
+            if (nextUpdateTime.HasValue && DateTime.Now >= nextUpdateTime.Value)
+            {
+                HandleTimerEvent(true);
+            }
+        }
+
+        private void OnSchedulerTimerElapsed(object sender, EventArgs e)
         {
             HandleTimerEvent(true);
         }
 
         private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
         {
-            if (e.Mode == PowerModes.Resume && !wallpaperTimer.Enabled)
+            if (e.Mode == PowerModes.Resume)
             {
                 HandleTimerEvent(false);
             }

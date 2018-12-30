@@ -26,7 +26,7 @@ namespace WinDynamicDesktop
         public ThemeDialog()
         {
             InitializeComponent();
-
+            // TODO Handle 4 segments in image preview, generate thumbnails differently?
             this.FormClosing += OnFormClosing;
             listView1.ContextMenuStrip = contextMenuStrip1;
             listView1.ListViewItemSorter = new CompareByIndex(listView1);
@@ -274,7 +274,7 @@ namespace WinDynamicDesktop
             {
                 return;
             }
-            else if (Path.GetExtension(themePath) == ".zip")
+            else if (Path.GetExtension(themePath) != ".json")
             {
                 LoadImportedTheme();
             }
@@ -317,7 +317,7 @@ namespace WinDynamicDesktop
 
             if (selectedIndex > 0)
             {
-                AppContext.wcsService.LoadImageLists();
+                //AppContext.wcsService.LoadImageLists();
 
                 if (LocationManager.isReady)
                 {

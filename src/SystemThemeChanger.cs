@@ -44,7 +44,7 @@ namespace WinDynamicDesktop
                 return;
             }
 
-            bool darkTheme = !WallpaperChangeScheduler.isDayNow || JsonConfig.settings.darkMode;
+            bool darkTheme = WallpaperChangeScheduler.isNightNow || JsonConfig.settings.darkMode;
             RegistryKey themeKey = Registry.CurrentUser.OpenSubKey(registryThemeLocation, true);
 
             if (darkTheme)

@@ -118,7 +118,7 @@ namespace WinDynamicDesktop
             {
                 Directory.CreateDirectory(Path.Combine("themes", themeName));
 
-                if (Path.GetExtension(themePath) == ".zip")
+                if (Path.GetExtension(themePath) != ".json")
                 {
                     using (ZipArchive archive = ZipFile.OpenRead(themePath))
                     {
@@ -205,7 +205,9 @@ namespace WinDynamicDesktop
                 }
 
                 List<int> imageIds = new List<int>();
+                imageIds.AddRange(theme.sunriseImageList);
                 imageIds.AddRange(theme.dayImageList);
+                imageIds.AddRange(theme.sunsetImageList);
                 imageIds.AddRange(theme.nightImageList);
 
                 if (imageFileCount < imageIds.Distinct().Count())
