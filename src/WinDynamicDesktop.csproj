@@ -44,17 +44,14 @@
     <Reference Include="DesktopBridge.Helpers, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\DesktopBridge.Helpers.1.1\lib\net45\DesktopBridge.Helpers.dll</HintPath>
     </Reference>
-    <Reference Include="Innovative.Geometry.Angle, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Angle.2.0.0\lib\netstandard1.2\Innovative.Geometry.Angle.dll</HintPath>
-    </Reference>
-    <Reference Include="Innovative.SolarCalculator, Version=2.0.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\SolarCalculator.2.0.4\lib\netstandard1.2\Innovative.SolarCalculator.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="RestSharp, Version=106.6.1.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
-      <HintPath>packages\RestSharp.106.6.1\lib\net452\RestSharp.dll</HintPath>
+    <Reference Include="RestSharp, Version=106.6.2.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>packages\RestSharp.106.6.2\lib\net452\RestSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="SunCalcNet, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\SunCalcNet.1.0.2\lib\net461\SunCalcNet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -169,7 +166,7 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('packages\Costura.Fody.3.2.1\build\Costura.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Costura.Fody.3.2.1\build\Costura.Fody.props'))" />
-    <Error Condition="!Exists('packages\Fody.3.3.4\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Fody.3.3.4\build\Fody.targets'))" />
+    <Error Condition="!Exists('packages\Fody.3.3.5\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Fody.3.3.5\build\Fody.targets'))" />
   </Target>
-  <Import Project="packages\Fody.3.3.4\build\Fody.targets" Condition="Exists('packages\Fody.3.3.4\build\Fody.targets')" />
+  <Import Project="packages\Fody.3.3.5\build\Fody.targets" Condition="Exists('packages\Fody.3.3.5\build\Fody.targets')" />
 </Project>

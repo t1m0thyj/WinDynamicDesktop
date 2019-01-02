@@ -25,7 +25,8 @@ namespace WinDynamicDesktop
 
     public class ThemeConfig
     {
-        public string themeName { get; set; }
+        public string themeId { get; set; }
+        public string displayName { get; set; }
         public string imagesZipUri { get; set; }
         public string imageFilename { get; set; }
         public string imageCredits { get; set; }
@@ -77,7 +78,7 @@ namespace WinDynamicDesktop
             }
 
             ThemeConfig theme = JsonConvert.DeserializeObject<ThemeConfig>(themeJson);
-            theme.themeName = name;
+            theme.themeId = name;
 
             return theme;
         }

@@ -79,7 +79,6 @@ namespace WinDynamicDesktop
             JsonConfig.settings.darkMode = isEnabled;
             darkModeItem.Checked = isEnabled;
 
-            //AppContext.wcsService.LoadImageLists();
             AppContext.wcsService.RunScheduler();
         }
 

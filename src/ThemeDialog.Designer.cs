@@ -46,6 +46,7 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.creditsLabel = new System.Windows.Forms.Label();
+            this.applyButton = new System.Windows.Forms.Button();
             this.previewBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
@@ -73,7 +74,7 @@
             this.previewBox.Location = new System.Drawing.Point(514, 11);
             this.previewBox.Name = "previewBox";
             this.previewBox.Size = new System.Drawing.Size(404, 275);
-            this.previewBox.TabIndex = 10;
+            this.previewBox.TabIndex = 1;
             this.previewBox.TabStop = false;
             this.previewBox.Text = "Preview";
             // 
@@ -90,7 +91,7 @@
             this.firstButton.Location = new System.Drawing.Point(15, 240);
             this.firstButton.Name = "firstButton";
             this.firstButton.Size = new System.Drawing.Size(50, 26);
-            this.firstButton.TabIndex = 8;
+            this.firstButton.TabIndex = 0;
             this.firstButton.Text = "<<";
             this.firstButton.UseVisualStyleBackColor = true;
             this.firstButton.Click += new System.EventHandler(this.firstButton_Click);
@@ -100,7 +101,7 @@
             this.previousButton.Location = new System.Drawing.Point(80, 240);
             this.previousButton.Name = "previousButton";
             this.previousButton.Size = new System.Drawing.Size(50, 26);
-            this.previousButton.TabIndex = 9;
+            this.previousButton.TabIndex = 1;
             this.previousButton.Text = "<";
             this.previousButton.UseVisualStyleBackColor = true;
             this.previousButton.Click += new System.EventHandler(this.previousButton_Click);
@@ -119,7 +120,7 @@
             this.nextButton.Location = new System.Drawing.Point(274, 240);
             this.nextButton.Name = "nextButton";
             this.nextButton.Size = new System.Drawing.Size(50, 26);
-            this.nextButton.TabIndex = 11;
+            this.nextButton.TabIndex = 2;
             this.nextButton.Text = ">";
             this.nextButton.UseVisualStyleBackColor = true;
             this.nextButton.Click += new System.EventHandler(this.nextButton_Click);
@@ -129,7 +130,7 @@
             this.lastButton.Location = new System.Drawing.Point(339, 240);
             this.lastButton.Name = "lastButton";
             this.lastButton.Size = new System.Drawing.Size(50, 26);
-            this.lastButton.TabIndex = 12;
+            this.lastButton.TabIndex = 3;
             this.lastButton.Text = ">>";
             this.lastButton.UseVisualStyleBackColor = true;
             this.lastButton.Click += new System.EventHandler(this.lastButton_Click);
@@ -140,17 +141,17 @@
             this.darkModeCheckbox.Location = new System.Drawing.Point(381, 330);
             this.darkModeCheckbox.Name = "darkModeCheckbox";
             this.darkModeCheckbox.Size = new System.Drawing.Size(122, 19);
-            this.darkModeCheckbox.TabIndex = 9;
+            this.darkModeCheckbox.TabIndex = 4;
             this.darkModeCheckbox.Text = "Enable Dark Mode";
             this.darkModeCheckbox.UseVisualStyleBackColor = true;
             this.darkModeCheckbox.CheckedChanged += new System.EventHandler(this.darkModeCheckbox_CheckedChanged);
             // 
             // okButton
             // 
-            this.okButton.Location = new System.Drawing.Point(610, 325);
+            this.okButton.Location = new System.Drawing.Point(548, 325);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(88, 26);
-            this.okButton.TabIndex = 7;
+            this.okButton.TabIndex = 5;
             this.okButton.Text = "OK";
             this.okButton.UseVisualStyleBackColor = true;
             this.okButton.Click += new System.EventHandler(this.okButton_Click);
@@ -158,10 +159,10 @@
             // cancelButton
             // 
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(733, 325);
+            this.cancelButton.Location = new System.Drawing.Point(671, 325);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(88, 26);
-            this.cancelButton.TabIndex = 8;
+            this.cancelButton.TabIndex = 6;
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
@@ -172,7 +173,7 @@
             this.themeLinkLabel.Location = new System.Drawing.Point(159, 330);
             this.themeLinkLabel.Name = "themeLinkLabel";
             this.themeLinkLabel.Size = new System.Drawing.Size(134, 15);
-            this.themeLinkLabel.TabIndex = 12;
+            this.themeLinkLabel.TabIndex = 3;
             this.themeLinkLabel.TabStop = true;
             this.themeLinkLabel.Text = "Get more themes online";
             this.themeLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.themeLinkLabel_LinkClicked);
@@ -182,7 +183,7 @@
             this.importButton.Location = new System.Drawing.Point(17, 325);
             this.importButton.Name = "importButton";
             this.importButton.Size = new System.Drawing.Size(125, 26);
-            this.importButton.TabIndex = 13;
+            this.importButton.TabIndex = 2;
             this.importButton.Text = "Import from file...";
             this.importButton.UseVisualStyleBackColor = true;
             this.importButton.Click += new System.EventHandler(this.importButton_Click);
@@ -219,6 +220,17 @@
             this.creditsLabel.Text = "label2";
             this.creditsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // applyButton
+            // 
+            this.applyButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.applyButton.Location = new System.Drawing.Point(794, 325);
+            this.applyButton.Name = "applyButton";
+            this.applyButton.Size = new System.Drawing.Size(88, 26);
+            this.applyButton.TabIndex = 7;
+            this.applyButton.Text = "Apply";
+            this.applyButton.UseVisualStyleBackColor = true;
+            this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
+            // 
             // ThemeDialog
             // 
             this.AcceptButton = this.okButton;
@@ -226,6 +238,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
             this.ClientSize = new System.Drawing.Size(929, 366);
+            this.Controls.Add(this.applyButton);
             this.Controls.Add(this.creditsLabel);
             this.Controls.Add(this.importButton);
             this.Controls.Add(this.themeLinkLabel);
@@ -269,5 +282,6 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
         private System.Windows.Forms.Label creditsLabel;
+        private System.Windows.Forms.Button applyButton;
     }
 }
