@@ -186,6 +186,7 @@ namespace WinDynamicDesktop
                 listView1.Items.Insert(itemIndex, GetThemeName(tempTheme),
                     listView1.LargeImageList.Images.Count - 1);
                 listView1.Items[itemIndex].Selected = true;
+                listView1.EnsureVisible(itemIndex);
             }
             else
             {
@@ -324,6 +325,8 @@ namespace WinDynamicDesktop
             }
 
             string themePath = openFileDialog1.FileName;
+            openFileDialog1.InitialDirectory = Path.GetDirectoryName(themePath);
+            openFileDialog1.FileName = "";
             tempTheme = ThemeManager.ImportTheme(themePath);
 
             if (tempTheme == null)

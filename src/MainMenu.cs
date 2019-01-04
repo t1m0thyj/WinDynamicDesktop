@@ -94,7 +94,7 @@ namespace WinDynamicDesktop
 
         private static void OnRefreshItemClick(object sender, EventArgs e)
         {
-            AppContext.wcsService.RunScheduler();
+            AppContext.wcsService.RunScheduler(true);
         }
 
         private static void OnDarkModeClick(object sender, EventArgs e)

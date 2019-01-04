@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Globalization;
 using Microsoft.Win32;
 using System.IO;
 using System.Timers;
@@ -35,7 +34,7 @@ namespace WinDynamicDesktop
             SystemEvents.TimeChanged += OnTimeChanged;
         }
 
-        public void RunScheduler()
+        public void RunScheduler(bool forceImageUpdate = false)
         {
             schedulerTimer.Stop();
 
@@ -64,6 +63,11 @@ namespace WinDynamicDesktop
 
             if (ThemeManager.currentTheme != null)
             {
+                if (forceImageUpdate)
+                {
+                    lastImagePath = null;
+                }
+
                 nextImageUpdateTime = UpdateImage(data, currentSegment);
             }
 

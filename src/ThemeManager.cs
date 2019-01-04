@@ -288,10 +288,15 @@ namespace WinDynamicDesktop
             else
             {
                 DialogResult result = MessageBox.Show("Failed to download images. Click Retry " +
-                    "to try again or Cancel to continue with some themes disabled.", "Error",
-                    MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning);
+                    "to try again, Ignore to continue with some themes disabled, or Abort to " +
+                    "exit the program.", "Error", MessageBoxButtons.AbortRetryIgnore,
+                    MessageBoxIcon.Warning);
 
-                if (result == DialogResult.Retry)
+                if (result == DialogResult.Abort)
+                {
+                    Environment.Exit(0);
+                }
+                else if (result == DialogResult.Retry)
                 {
                     DownloadMissingImages(missingThemes);
                 }
