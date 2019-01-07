@@ -31,11 +31,11 @@ namespace WinDynamicDesktop
             }
             else
             {
-                UpdateLocation();
+                ChangeLocation();
             }
         }
 
-        public static void UpdateLocation()
+        public static void ChangeLocation()
         {
             if (locationDialog == null)
             {

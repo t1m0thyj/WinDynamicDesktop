@@ -27,24 +27,38 @@ namespace WinDynamicDesktop
             {
                 UpdateThemeFileStructure();
             }
-            // TODO Warn people when they have themes with old format
+            
             List<string> themeIds = defaultThemes.ToList();
 
             foreach (string filePath in Directory.EnumerateFiles("themes", "*.json",
                 SearchOption.AllDirectories))
             {
-                themeIds.Add(Path.GetFileName(Path.GetDirectoryName(filePath)));
+                string themeId = Path.GetFileName(Path.GetDirectoryName(filePath));
+
+                if (!themeId.StartsWith("."))
+                {
+                    themeIds.Add(themeId);
+                }
             }
+
             themeIds.Sort();
 
             foreach (string themeId in themeIds)
             {
-                ThemeConfig theme = JsonConfig.LoadTheme(themeId);
-                themeSettings.Add(theme);
-
-                if (theme.themeId == JsonConfig.settings.themeName)
+                try
                 {
-                    currentTheme = theme;
+                    ThemeConfig theme = JsonConfig.LoadTheme(themeId);
+
+                    themeSettings.Add(theme);
+
+                    if (theme.themeId == JsonConfig.settings.themeName)
+                    {
+                        currentTheme = theme;
+                    }
+                }
+                catch
+                {
+                    DisableTheme(themeId);
                 }
             }
 
@@ -104,9 +118,9 @@ namespace WinDynamicDesktop
 
             if (isInstalled)
             {
-                DialogResult result = MessageBox.Show("A theme with the ID '" + themeId + "' is " +
-                    "already installed. Do you want to overwrite it?", "Question",
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                DialogResult result = MessageBox.Show("The '" + themeId + "' theme is already " +
+                    "installed. Do you want to overwrite it?", "Question", MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
 
                 if (result != DialogResult.Yes)
                 {
@@ -236,6 +250,16 @@ namespace WinDynamicDesktop
                 Directory.Delete(Path.Combine("themes", theme.themeId), true);
             }
             catch { }
+        }
+
+        private static void DisableTheme(string themeId)
+        {
+            Directory.Move(Path.Combine("themes", themeId), Path.Combine("themes", "." + themeId));
+
+            MessageBox.Show("The '" + themeId + "' theme could not be loaded and has been " +
+                "disabled. This is probably because it was developed for an older version of " +
+                "the app or its config file is formatted incorrectly.", "Error",
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
         private static void ReadyUp()

@@ -190,45 +190,12 @@ namespace WinDynamicDesktop
             }
             else
             {
-                MessageBox.Show("Failed to install the '" + GetThemeName(tempTheme) +
-                    "' theme.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Failed to install the " + GetThemeName(tempTheme) +
+                    " theme.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 await Task.Run(() => ThemeManager.RemoveTheme(tempTheme));
             }
 
             tempTheme = null;
-        }
-
-        private void Apply(bool hideWindow)
-        {
-            if (selectedIndex > 0)
-            {
-                ThemeManager.currentTheme = ThemeManager.themeSettings[selectedIndex - 1];
-            }
-            else
-            {
-                ThemeManager.currentTheme = null;
-            }
-
-            JsonConfig.settings.themeName = ThemeManager.currentTheme?.themeId;
-            JsonConfig.settings.darkMode = darkModeCheckbox.Checked;
-            MainMenu.darkModeItem.Checked = JsonConfig.settings.darkMode;
-
-            if (hideWindow)
-            {
-                this.Hide();
-            }
-
-            if (selectedIndex > 0)
-            {
-                if (LocationManager.isReady)
-                {
-                    AppContext.wcsService.RunScheduler();
-                }
-            }
-            else
-            {
-                WallpaperApi.SetWallpaper(windowsWallpaper);
-            }
         }
 
         private void ThemeDialog_Load(object sender, EventArgs e)
@@ -281,11 +248,11 @@ namespace WinDynamicDesktop
                 maxImageNumber = GetMaxImageNumber();
                 LoadPreviewImage(1);
 
-                okButton.Enabled = true;
+                applyButton.Enabled = true;
             }
             else
             {
-                okButton.Enabled = false;
+                applyButton.Enabled = false;
             }
         }
 
@@ -354,25 +321,38 @@ namespace WinDynamicDesktop
             System.Diagnostics.Process.Start(themeLink);
         }
 
-        private void okButton_Click(object sender, EventArgs e)
-        {
-            okButton.Enabled = false;
-            Apply(true);
-
-            okButton.Enabled = true;
-            this.Close();
-        }
-
-        private void cancelButton_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
         private void applyButton_Click(object sender, EventArgs e)
         {
             applyButton.Enabled = false;
-            Apply(false);
+
+            if (selectedIndex > 0)
+            {
+                ThemeManager.currentTheme = ThemeManager.themeSettings[selectedIndex - 1];
+            }
+            else
+            {
+                ThemeManager.currentTheme = null;
+            }
+
+            JsonConfig.settings.themeName = ThemeManager.currentTheme?.themeId;
+            JsonConfig.settings.darkMode = darkModeCheckbox.Checked;
+            MainMenu.darkModeItem.Checked = JsonConfig.settings.darkMode;
+
+            if (selectedIndex == 0)
+            {
+                WallpaperApi.SetWallpaper(windowsWallpaper);
+            }
+            else if (LocationManager.isReady)
+            {
+                AppContext.wcsService.RunScheduler();
+            }
+
             applyButton.Enabled = true;
+        }
+
+        private void closeButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
 
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
@@ -392,8 +372,8 @@ namespace WinDynamicDesktop
             int itemIndex = listView1.FocusedItem.Index;
             ThemeConfig theme = ThemeManager.themeSettings[itemIndex - 1];
 
-            DialogResult result = MessageBox.Show("Are you sure you want to remove the '" +
-                GetThemeName(theme) + "' theme?", "Question", MessageBoxButtons.YesNo,
+            DialogResult result = MessageBox.Show("Are you sure you want to remove the " +
+                GetThemeName(theme) + " theme?", "Question", MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning);
 
             if (result == DialogResult.Yes)

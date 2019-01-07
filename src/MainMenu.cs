@@ -35,7 +35,7 @@ namespace WinDynamicDesktop
                 new ToolStripMenuItem("WinDynamicDesktop"),
                 new ToolStripSeparator(),
                 themeItem,
-                new ToolStripMenuItem("&Update Location...", null, OnLocationItemClick)
+                new ToolStripMenuItem("&Change Location...", null, OnLocationItemClick)
             });
             items[0].Enabled = false;
 
@@ -89,7 +89,7 @@ namespace WinDynamicDesktop
 
         private static void OnLocationItemClick(object sender, EventArgs e)
         {
-            LocationManager.UpdateLocation();
+            LocationManager.ChangeLocation();
         }
 
         private static void OnRefreshItemClick(object sender, EventArgs e)

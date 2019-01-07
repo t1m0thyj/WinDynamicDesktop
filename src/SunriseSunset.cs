@@ -34,7 +34,6 @@ namespace WinDynamicDesktop
 
         public static SolarData GetSolarData(DateTime date)
         {
-            // TODO Why must I add 12 hrs for this to work?
             var sunPhases = GetSunPhases(date.AddHours(12).ToUniversalTime(),
                 JsonConfig.settings.latitude, JsonConfig.settings.longitude);
 
@@ -49,8 +48,7 @@ namespace WinDynamicDesktop
             data.solarTimes[1] = sunPhases[SunPhaseName.GoldenHourEnd.Value].ToLocalTime();
             data.solarTimes[2] = sunPhases[SunPhaseName.GoldenHour.Value].ToLocalTime();
             data.solarTimes[3] = sunPhases[SunPhaseName.NauticalDusk.Value].ToLocalTime();
-            //System.Windows.Forms.MessageBox.Show(date.ToUniversalTime().ToString() + ",,," + data.solarTimes[0].ToLocalTime().ToString() + "," + data.solarTimes[1].ToLocalTime().ToString() + "," + data.solarTimes[2].ToLocalTime().ToString() + "," + data.solarTimes[3].ToLocalTime().ToString() + ",");
-
+            
             return data;
         }
     }

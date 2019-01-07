@@ -107,7 +107,7 @@
             this.MinimizeBox = false;
             this.Name = "InputDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Set Location";
+            this.Text = "Change Location";
             this.Load += new System.EventHandler(this.InputDialog_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

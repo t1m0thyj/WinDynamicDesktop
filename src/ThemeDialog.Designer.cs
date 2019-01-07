@@ -38,15 +38,14 @@
             this.nextButton = new System.Windows.Forms.Button();
             this.lastButton = new System.Windows.Forms.Button();
             this.darkModeCheckbox = new System.Windows.Forms.CheckBox();
-            this.okButton = new System.Windows.Forms.Button();
-            this.cancelButton = new System.Windows.Forms.Button();
+            this.applyButton = new System.Windows.Forms.Button();
+            this.closeButton = new System.Windows.Forms.Button();
             this.themeLinkLabel = new System.Windows.Forms.LinkLabel();
             this.importButton = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.creditsLabel = new System.Windows.Forms.Label();
-            this.applyButton = new System.Windows.Forms.Button();
             this.previewBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
@@ -146,26 +145,26 @@
             this.darkModeCheckbox.UseVisualStyleBackColor = true;
             this.darkModeCheckbox.CheckedChanged += new System.EventHandler(this.darkModeCheckbox_CheckedChanged);
             // 
-            // okButton
+            // applyButton
             // 
-            this.okButton.Location = new System.Drawing.Point(548, 325);
-            this.okButton.Name = "okButton";
-            this.okButton.Size = new System.Drawing.Size(88, 26);
-            this.okButton.TabIndex = 5;
-            this.okButton.Text = "OK";
-            this.okButton.UseVisualStyleBackColor = true;
-            this.okButton.Click += new System.EventHandler(this.okButton_Click);
+            this.applyButton.Location = new System.Drawing.Point(610, 325);
+            this.applyButton.Name = "applyButton";
+            this.applyButton.Size = new System.Drawing.Size(88, 26);
+            this.applyButton.TabIndex = 5;
+            this.applyButton.Text = "Apply";
+            this.applyButton.UseVisualStyleBackColor = true;
+            this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
             // 
-            // cancelButton
+            // closeButton
             // 
-            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(671, 325);
-            this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(88, 26);
-            this.cancelButton.TabIndex = 6;
-            this.cancelButton.Text = "Cancel";
-            this.cancelButton.UseVisualStyleBackColor = true;
-            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+            this.closeButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.closeButton.Location = new System.Drawing.Point(733, 325);
+            this.closeButton.Name = "closeButton";
+            this.closeButton.Size = new System.Drawing.Size(88, 26);
+            this.closeButton.TabIndex = 6;
+            this.closeButton.Text = "Close";
+            this.closeButton.UseVisualStyleBackColor = true;
+            this.closeButton.Click += new System.EventHandler(this.closeButton_Click);
             // 
             // themeLinkLabel
             // 
@@ -220,33 +219,21 @@
             this.creditsLabel.Text = "label2";
             this.creditsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // applyButton
-            // 
-            this.applyButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.applyButton.Location = new System.Drawing.Point(794, 325);
-            this.applyButton.Name = "applyButton";
-            this.applyButton.Size = new System.Drawing.Size(88, 26);
-            this.applyButton.TabIndex = 7;
-            this.applyButton.Text = "Apply";
-            this.applyButton.UseVisualStyleBackColor = true;
-            this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
-            // 
             // ThemeDialog
             // 
-            this.AcceptButton = this.okButton;
+            this.AcceptButton = this.applyButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.cancelButton;
+            this.CancelButton = this.closeButton;
             this.ClientSize = new System.Drawing.Size(929, 366);
-            this.Controls.Add(this.applyButton);
             this.Controls.Add(this.creditsLabel);
             this.Controls.Add(this.importButton);
             this.Controls.Add(this.themeLinkLabel);
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.previewBox);
             this.Controls.Add(this.darkModeCheckbox);
-            this.Controls.Add(this.okButton);
-            this.Controls.Add(this.cancelButton);
+            this.Controls.Add(this.applyButton);
+            this.Controls.Add(this.closeButton);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = global::WinDynamicDesktop.Properties.Resources.AppIcon;
@@ -274,14 +261,13 @@
         private System.Windows.Forms.Button nextButton;
         private System.Windows.Forms.Button lastButton;
         private System.Windows.Forms.CheckBox darkModeCheckbox;
-        private System.Windows.Forms.Button okButton;
-        private System.Windows.Forms.Button cancelButton;
+        private System.Windows.Forms.Button applyButton;
+        private System.Windows.Forms.Button closeButton;
         private System.Windows.Forms.LinkLabel themeLinkLabel;
         private System.Windows.Forms.Button importButton;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
         private System.Windows.Forms.Label creditsLabel;
-        private System.Windows.Forms.Button applyButton;
     }
 }
