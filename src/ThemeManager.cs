@@ -21,13 +21,8 @@ namespace WinDynamicDesktop
         public static void Initialize()
         {
             Directory.CreateDirectory("themes");
+            Compatibility.CompatibilizeThemes();
 
-            // TODO Remove after everyone has new file structure
-            if (Directory.Exists("images"))
-            {
-                UpdateThemeFileStructure();
-            }
-            
             List<string> themeIds = defaultThemes.ToList();
 
             foreach (string filePath in Directory.EnumerateFiles("themes", "*.json",
@@ -45,55 +40,24 @@ namespace WinDynamicDesktop
 
             foreach (string themeId in themeIds)
             {
-                try
-                {
-                    ThemeConfig theme = JsonConfig.LoadTheme(themeId);
+                //try
+                //{
+                ThemeConfig theme = JsonConfig.LoadTheme(themeId);
 
-                    themeSettings.Add(theme);
+                themeSettings.Add(theme);
 
-                    if (theme.themeId == JsonConfig.settings.themeName)
-                    {
-                        currentTheme = theme;
-                    }
-                }
-                catch
+                if (theme.themeId == JsonConfig.settings.themeName)
                 {
-                    DisableTheme(themeId);
+                    currentTheme = theme;
                 }
+                //}
+                //catch
+                //{
+                //    DisableTheme(themeId);
+                //}
             }
 
             DownloadMissingImages(FindMissingThemes());
-        }
-
-        private static void UpdateThemeFileStructure()
-        {
-            List<string> filePaths = Directory.GetFiles("themes", "*.json").ToList();
-            filePaths.AddRange(defaultThemes.Select(
-                themeId => Path.Combine("themes", themeId + ".json")));
-
-            foreach (string filePath in filePaths)
-            {
-                string themeId = Path.GetFileNameWithoutExtension(filePath);
-                Directory.CreateDirectory(Path.Combine("themes", themeId));
-
-                if (File.Exists(filePath))
-                {
-                    File.Move(filePath, Path.Combine("themes", themeId, "theme.json"));
-                }
-
-                ThemeConfig theme = JsonConfig.LoadTheme(themeId);
-                foreach (string imagePath in Directory.GetFiles("images", theme.imageFilename))
-                {
-                    File.Move(imagePath,
-                        Path.Combine("themes", themeId, Path.GetFileName(imagePath)));
-                }
-            }
-
-            if (Directory.GetFiles("images").Length == 0 &&
-                Directory.GetDirectories("images").Length == 0)
-            {
-                Directory.Delete("images", false);
-            }
         }
 
         public static void SelectTheme()
@@ -257,8 +221,8 @@ namespace WinDynamicDesktop
             Directory.Move(Path.Combine("themes", themeId), Path.Combine("themes", "." + themeId));
 
             MessageBox.Show("The '" + themeId + "' theme could not be loaded and has been " +
-                "disabled. This is probably because it was developed for an older version of " +
-                "the app or its config file is formatted incorrectly.", "Error",
+                "disabled. This is probably because it was created for an older version of the " +
+                "app or its config file is formatted incorrectly.", "Error",
                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 

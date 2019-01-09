@@ -57,10 +57,10 @@ namespace WinDynamicDesktop
                 return Image.FromFile(thumbnailPath);
             }
 
-            int imageId1 = theme.dayImageList[(theme.dayImageList.Length + 1) / 2];
+            int imageId1 = theme.dayImageList[theme.dayImageList.Length / 2];
             string imageFilename1 = theme.imageFilename.Replace("*", imageId1.ToString());
 
-            int imageId2 = theme.nightImageList[(theme.nightImageList.Length + 1) / 2];
+            int imageId2 = theme.nightImageList[theme.nightImageList.Length / 2];
             string imageFilename2 = theme.imageFilename.Replace("*", imageId2.ToString());
 
             using (var bmp1 = ShrinkImage(Path.Combine("themes", theme.themeId, imageFilename1),
