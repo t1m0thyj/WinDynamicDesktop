@@ -21,65 +21,43 @@ namespace WinDynamicDesktop
         public static void Initialize()
         {
             Directory.CreateDirectory("themes");
+            Compatibility.CompatibilizeThemes();
 
-            // TODO Remove after everyone has new file structure
-            if (Directory.Exists("images"))
-            {
-                UpdateThemeFileStructure();
-            }
-
-            List<string> themeNames = defaultThemes.ToList();
+            List<string> themeIds = defaultThemes.ToList();
 
             foreach (string filePath in Directory.EnumerateFiles("themes", "*.json",
                 SearchOption.AllDirectories))
             {
-                themeNames.Add(Path.GetFileName(Path.GetDirectoryName(filePath)));
-            }
-            themeNames.Sort();
+                string themeId = Path.GetFileName(Path.GetDirectoryName(filePath));
 
-            foreach (string name in themeNames)
+                if (!themeId.StartsWith("."))
+                {
+                    themeIds.Add(themeId);
+                }
+            }
+
+            themeIds.Sort();
+
+            foreach (string themeId in themeIds)
             {
-                ThemeConfig theme = JsonConfig.LoadTheme(name);
+                //try
+                //{
+                ThemeConfig theme = JsonConfig.LoadTheme(themeId);
+
                 themeSettings.Add(theme);
 
-                if (theme.themeName == JsonConfig.settings.themeName)
+                if (theme.themeId == JsonConfig.settings.themeName)
                 {
                     currentTheme = theme;
                 }
+                //}
+                //catch
+                //{
+                //    DisableTheme(themeId);
+                //}
             }
 
             DownloadMissingImages(FindMissingThemes());
-        }
-
-        private static void UpdateThemeFileStructure()
-        {
-            List<string> filePaths = Directory.GetFiles("themes", "*.json").ToList();
-            filePaths.AddRange(defaultThemes.Select(
-                themeName => Path.Combine("themes", themeName + ".json")));
-
-            foreach (string filePath in filePaths)
-            {
-                string themeName = Path.GetFileNameWithoutExtension(filePath);
-                Directory.CreateDirectory(Path.Combine("themes", themeName));
-
-                if (File.Exists(filePath))
-                {
-                    File.Move(filePath, Path.Combine("themes", themeName, "theme.json"));
-                }
-
-                ThemeConfig theme = JsonConfig.LoadTheme(themeName);
-                foreach (string imagePath in Directory.GetFiles("images", theme.imageFilename))
-                {
-                    File.Move(imagePath,
-                        Path.Combine("themes", themeName, Path.GetFileName(imagePath)));
-                }
-            }
-
-            if (Directory.GetFiles("images").Length == 0 &&
-                Directory.GetDirectories("images").Length == 0)
-            {
-                Directory.Delete("images", false);
-            }
         }
 
         public static void SelectTheme()
@@ -98,15 +76,15 @@ namespace WinDynamicDesktop
 
         public static ThemeConfig ImportTheme(string themePath)
         {
-            string themeName = Path.GetFileNameWithoutExtension(themePath);
+            string themeId = Path.GetFileNameWithoutExtension(themePath);
             bool isInstalled = themeSettings.FindIndex(
-                theme => theme.themeName == themeName) != -1;
+                theme => theme.themeId == themeId) != -1;
 
             if (isInstalled)
             {
-                DialogResult result = MessageBox.Show("The '" + themeName.Replace('_', ' ') +
-                    "' theme is already installed. Do you want to overwrite it?", "Question",
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                DialogResult result = MessageBox.Show("The '" + themeId + "' theme is already " +
+                    "installed. Do you want to overwrite it?", "Question", MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
 
                 if (result != DialogResult.Yes)
                 {
@@ -116,26 +94,26 @@ namespace WinDynamicDesktop
 
             try
             {
-                Directory.CreateDirectory(Path.Combine("themes", themeName));
+                Directory.CreateDirectory(Path.Combine("themes", themeId));
 
-                if (Path.GetExtension(themePath) == ".zip")
+                if (Path.GetExtension(themePath) != ".json")
                 {
                     using (ZipArchive archive = ZipFile.OpenRead(themePath))
                     {
                         ZipArchiveEntry themeJson = archive.Entries.Single(
                             entry => Path.GetExtension(entry.Name) == ".json");
-                        themeJson.ExtractToFile(Path.Combine("themes", themeName, "theme.json"),
+                        themeJson.ExtractToFile(Path.Combine("themes", themeId, "theme.json"),
                             true);
                     }
 
-                    ExtractTheme(themePath, themeName);
+                    ExtractTheme(themePath, themeId);
                 }
                 else
                 {
-                    File.Copy(themePath, Path.Combine("themes", themeName, "theme.json"), true);
+                    File.Copy(themePath, Path.Combine("themes", themeId, "theme.json"), true);
                 }
 
-                return JsonConfig.LoadTheme(themeName);
+                return JsonConfig.LoadTheme(themeId);
             }
             catch (Exception e)
             {
@@ -145,11 +123,11 @@ namespace WinDynamicDesktop
             }
         }
 
-        public static void ExtractTheme(string imagesZip, string themeName, bool deleteZip = false)
+        public static void ExtractTheme(string imagesZip, string themeId, bool deleteZip = false)
         {
             try
             {
-                string themePath = Path.Combine("themes", themeName);
+                string themePath = Path.Combine("themes", themeId);
                 Directory.CreateDirectory(themePath);
 
                 using (ZipArchive archive = ZipFile.OpenRead(imagesZip))
@@ -181,7 +159,7 @@ namespace WinDynamicDesktop
 
                 try
                 {
-                    File.Copy(imagePath, Path.Combine("themes", theme.themeName,
+                    File.Copy(imagePath, Path.Combine("themes", theme.themeId,
                         Path.GetFileName(imagePath)), true);
                 }
                 catch { }
@@ -197,18 +175,20 @@ namespace WinDynamicDesktop
             foreach (ThemeConfig theme in themeSettings)
             {
                 int imageFileCount = 0;
-                string themePath = Path.Combine("themes", theme.themeName);
+                string themePath = Path.Combine("themes", theme.themeId);
 
                 if (Directory.Exists(themePath))
                 {
                     imageFileCount = Directory.GetFiles(themePath, theme.imageFilename).Length;
                 }
 
-                List<int> imageIds = new List<int>();
-                imageIds.AddRange(theme.dayImageList);
-                imageIds.AddRange(theme.nightImageList);
+                List<int> imageList = new List<int>();
+                imageList.AddRange(theme.sunriseImageList);
+                imageList.AddRange(theme.dayImageList);
+                imageList.AddRange(theme.sunsetImageList);
+                imageList.AddRange(theme.nightImageList);
 
-                if (imageFileCount < imageIds.Distinct().Count())
+                if (imageFileCount < imageList.Distinct().Count())
                 {
                     missingThemes.Add(theme);
                 }
@@ -231,9 +211,19 @@ namespace WinDynamicDesktop
 
             try
             {
-                Directory.Delete(Path.Combine("themes", theme.themeName), true);
+                Directory.Delete(Path.Combine("themes", theme.themeId), true);
             }
             catch { }
+        }
+
+        private static void DisableTheme(string themeId)
+        {
+            Directory.Move(Path.Combine("themes", themeId), Path.Combine("themes", "." + themeId));
+
+            MessageBox.Show("The '" + themeId + "' theme could not be loaded and has been " +
+                "disabled. This is probably because it was created for an older version of the " +
+                "app or its config file is formatted incorrectly.", "Error",
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
         private static void ReadyUp()
@@ -286,10 +276,15 @@ namespace WinDynamicDesktop
             else
             {
                 DialogResult result = MessageBox.Show("Failed to download images. Click Retry " +
-                    "to try again or Cancel to continue with some themes disabled.", "Error",
-                    MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning);
+                    "to try again, Ignore to continue with some themes disabled, or Abort to " +
+                    "exit the program.", "Error", MessageBoxButtons.AbortRetryIgnore,
+                    MessageBoxIcon.Warning);
 
-                if (result == DialogResult.Retry)
+                if (result == DialogResult.Abort)
+                {
+                    Environment.Exit(0);
+                }
+                else if (result == DialogResult.Retry)
                 {
                     DownloadMissingImages(missingThemes);
                 }

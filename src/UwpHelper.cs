@@ -73,7 +73,7 @@ namespace WinDynamicDesktop
 
         public static async void SetLockScreenImage(string imageFilename)
         {
-            var uri = new Uri("ms-appdata:///local/themes/" + ThemeManager.currentTheme.themeName +
+            var uri = new Uri("ms-appdata:///local/themes/" + ThemeManager.currentTheme.themeId +
                 "/" + imageFilename);
             var file = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri);
 

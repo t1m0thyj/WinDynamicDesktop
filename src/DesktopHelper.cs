@@ -19,7 +19,7 @@ namespace WinDynamicDesktop
 
         public override string GetCurrentDirectory()
         {
-            return Path.GetDirectoryName(Application.ExecutablePath);
+            return Application.StartupPath;
         }
 
         public override void CheckStartOnBoot()
@@ -37,9 +37,7 @@ namespace WinDynamicDesktop
 
             if (!startOnBoot)
             {
-                string exePath = Path.Combine(Directory.GetCurrentDirectory(),
-                    Environment.GetCommandLineArgs()[0]);
-                startupKey.SetValue("WinDynamicDesktop", exePath);
+                startupKey.SetValue("WinDynamicDesktop", Application.ExecutablePath);
                 startOnBoot = true;
             }
             else

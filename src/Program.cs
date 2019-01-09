@@ -16,7 +16,7 @@ namespace WinDynamicDesktop
         [STAThread]
         static void Main()
         {
-            Environment.CurrentDirectory = UwpDesktop.GetHelper().GetCurrentDirectory();
+            Directory.SetCurrentDirectory(UwpDesktop.GetHelper().GetCurrentDirectory());
             Application.ThreadException += OnThreadException;
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
@@ -39,7 +39,7 @@ namespace WinDynamicDesktop
         {
             string errorMessage = exc.ToString() + "\n";
             string logFilename = Path.Combine(Directory.GetCurrentDirectory(),
-                Environment.GetCommandLineArgs()[0] + ".log");
+                Path.GetFileName(Environment.GetCommandLineArgs()[0]) + ".log");
 
             try
             {

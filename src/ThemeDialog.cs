@@ -48,18 +48,25 @@ namespace WinDynamicDesktop
             }
         }
 
-        private Bitmap GetThumbnailImage(ThemeConfig theme, int width, int height)
+        private Image GetThumbnailImage(ThemeConfig theme, int width, int height)
         {
-            int imageId1 = theme.dayImageList[(theme.dayImageList.Length + 1) / 2];
+            string thumbnailPath = Path.Combine("themes", theme.themeId, "thumbnail.png");
+
+            if (File.Exists(thumbnailPath))
+            {
+                return Image.FromFile(thumbnailPath);
+            }
+
+            int imageId1 = theme.dayImageList[theme.dayImageList.Length / 2];
             string imageFilename1 = theme.imageFilename.Replace("*", imageId1.ToString());
 
-            int imageId2 = theme.nightImageList[(theme.nightImageList.Length + 1) / 2];
+            int imageId2 = theme.nightImageList[theme.nightImageList.Length / 2];
             string imageFilename2 = theme.imageFilename.Replace("*", imageId2.ToString());
 
-            using (var bmp1 = ShrinkImage(Path.Combine("themes", theme.themeName, imageFilename1),
+            using (var bmp1 = ShrinkImage(Path.Combine("themes", theme.themeId, imageFilename1),
                 width, height))
             {
-                Bitmap bmp2 = ShrinkImage(Path.Combine("themes", theme.themeName, imageFilename2),
+                Bitmap bmp2 = ShrinkImage(Path.Combine("themes", theme.themeId, imageFilename2),
                     width, height);
 
                 using (Graphics g = Graphics.FromImage(bmp2))
@@ -68,17 +75,25 @@ namespace WinDynamicDesktop
                         GraphicsUnit.Pixel);
                 }
 
+                bmp2.Save(thumbnailPath, System.Drawing.Imaging.ImageFormat.Png);
+
                 return bmp2;
             }
         }
 
+        private string GetThemeName(ThemeConfig theme)
+        {
+            if (theme.displayName != null)
+            {
+                return theme.displayName;
+            }
+
+            return theme.themeId.Replace('_', ' ');
+        }
+
         private string GetCreditsText()
         {
-            if (selectedIndex == 0)
-            {
-                return "Image Credits: Microsoft";
-            }
-            else
+            if (selectedIndex > 0)
             {
                 ThemeConfig theme = ThemeManager.themeSettings[selectedIndex - 1];
 
@@ -86,6 +101,10 @@ namespace WinDynamicDesktop
                 {
                     return "Image Credits: " + theme.imageCredits;
                 }
+            }
+            else
+            {
+                return "Image Credits: Microsoft";
             }
 
             return "";
@@ -102,7 +121,8 @@ namespace WinDynamicDesktop
 
                 if (!darkModeCheckbox.Checked)
                 {
-                    max += theme.dayImageList.Length;
+                    max += theme.sunriseImageList.Length + theme.dayImageList.Length +
+                        theme.sunsetImageList.Length;
                 }
             }
 
@@ -123,21 +143,22 @@ namespace WinDynamicDesktop
                 ThemeConfig theme = ThemeManager.themeSettings[selectedIndex - 1];
                 int imageId;
 
-                if (darkModeCheckbox.Checked)
+                if (!darkModeCheckbox.Checked)
                 {
-                    imageId = theme.nightImageList[imageNumber - 1];
-                }
-                else if (imageNumber <= theme.dayImageList.Length)
-                {
-                    imageId = theme.dayImageList[imageNumber - 1];
+                    List<int> imageList = new List<int>();
+                    imageList.AddRange(theme.sunriseImageList);
+                    imageList.AddRange(theme.dayImageList);
+                    imageList.AddRange(theme.sunsetImageList);
+                    imageList.AddRange(theme.nightImageList);
+                    imageId = imageList[imageNumber - 1];
                 }
                 else
                 {
-                    imageId = theme.nightImageList[imageNumber - theme.dayImageList.Length - 1];
+                    imageId = theme.nightImageList[imageNumber - 1];
                 }
 
                 string imageFilename = theme.imageFilename.Replace("*", imageId.ToString());
-                pictureBox1.Image = ShrinkImage(Path.Combine("themes", theme.themeName,
+                pictureBox1.Image = ShrinkImage(Path.Combine("themes", theme.themeId,
                     imageFilename), w, h);
             }
 
@@ -153,7 +174,7 @@ namespace WinDynamicDesktop
         private async void LoadImportedTheme()
         {
             ThemeManager.themeSettings.Add(tempTheme);
-            ThemeManager.themeSettings.Sort((t1, t2) => t1.themeName.CompareTo(t2.themeName));
+            ThemeManager.themeSettings.Sort((t1, t2) => t1.themeId.CompareTo(t2.themeId));
 
             List<ThemeConfig> missingThemes = ThemeManager.FindMissingThemes();
             bool isInstalled = missingThemes.IndexOf(tempTheme) == -1;
@@ -162,14 +183,15 @@ namespace WinDynamicDesktop
             {
                 int itemIndex = ThemeManager.themeSettings.IndexOf(tempTheme) + 1;
                 listView1.LargeImageList.Images.Add(GetThumbnailImage(tempTheme, 192, 108));
-                listView1.Items.Insert(itemIndex, tempTheme.themeName.Replace('_', ' '),
+                listView1.Items.Insert(itemIndex, GetThemeName(tempTheme),
                     listView1.LargeImageList.Images.Count - 1);
                 listView1.Items[itemIndex].Selected = true;
+                listView1.EnsureVisible(itemIndex);
             }
             else
             {
-                MessageBox.Show("Failed to install the '" + tempTheme.themeName.Replace('_', ' ') +
-                    "' theme.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Failed to install the " + GetThemeName(tempTheme) +
+                    " theme.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 await Task.Run(() => ThemeManager.RemoveTheme(tempTheme));
             }
 
@@ -179,7 +201,7 @@ namespace WinDynamicDesktop
         private void ThemeDialog_Load(object sender, EventArgs e)
         {
             darkModeCheckbox.Checked = JsonConfig.settings.darkMode;
-            string currentTheme = ThemeManager.currentTheme?.themeName;
+            applyButton.Enabled = LocationManager.isReady;
 
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
@@ -188,6 +210,8 @@ namespace WinDynamicDesktop
 
             imageList.Images.Add(ShrinkImage(windowsWallpaper, 192, 108));
             listView1.Items.Add("None", 0);
+
+            string currentTheme = ThemeManager.currentTheme?.themeId;
 
             if (currentTheme == null)
             {
@@ -205,9 +229,9 @@ namespace WinDynamicDesktop
             {
                 ThemeConfig theme = ThemeManager.themeSettings[i];
                 imageList.Images.Add(GetThumbnailImage(theme, 192, 108));
-                listView1.Items.Add(theme.themeName.Replace('_', ' '), i + 1);
+                listView1.Items.Add(GetThemeName(theme), i + 1);
 
-                if (theme.themeName == currentTheme)
+                if (theme.themeId == currentTheme)
                 {
                     listView1.Items[i + 1].Selected = true;
                 }
@@ -224,11 +248,11 @@ namespace WinDynamicDesktop
                 maxImageNumber = GetMaxImageNumber();
                 LoadPreviewImage(1);
 
-                okButton.Enabled = true;
+                applyButton.Enabled = true;
             }
             else
             {
-                okButton.Enabled = false;
+                applyButton.Enabled = false;
             }
         }
 
@@ -268,13 +292,15 @@ namespace WinDynamicDesktop
             }
 
             string themePath = openFileDialog1.FileName;
+            openFileDialog1.InitialDirectory = Path.GetDirectoryName(themePath);
+            openFileDialog1.FileName = "";
             tempTheme = ThemeManager.ImportTheme(themePath);
 
             if (tempTheme == null)
             {
                 return;
             }
-            else if (Path.GetExtension(themePath) == ".zip")
+            else if (Path.GetExtension(themePath) != ".json")
             {
                 LoadImportedTheme();
             }
@@ -295,13 +321,9 @@ namespace WinDynamicDesktop
             System.Diagnostics.Process.Start(themeLink);
         }
 
-        private void okButton_Click(object sender, EventArgs e)
+        private void applyButton_Click(object sender, EventArgs e)
         {
-            okButton.Enabled = false;
-
-            string themeName = listView1.SelectedItems[0].Text.Replace(' ', '_');
-            JsonConfig.settings.themeName = themeName;
-            JsonConfig.settings.darkMode = darkModeCheckbox.Checked;
+            applyButton.Enabled = false;
 
             if (selectedIndex > 0)
             {
@@ -312,28 +334,23 @@ namespace WinDynamicDesktop
                 ThemeManager.currentTheme = null;
             }
 
+            JsonConfig.settings.themeName = ThemeManager.currentTheme?.themeId;
+            JsonConfig.settings.darkMode = darkModeCheckbox.Checked;
             MainMenu.darkModeItem.Checked = JsonConfig.settings.darkMode;
-            this.Hide();
 
-            if (selectedIndex > 0)
-            {
-                AppContext.wcsService.LoadImageLists();
-
-                if (LocationManager.isReady)
-                {
-                    AppContext.wcsService.RunScheduler();
-                }
-            }
-            else
+            if (selectedIndex == 0)
             {
                 WallpaperApi.SetWallpaper(windowsWallpaper);
             }
+            else if (LocationManager.isReady)
+            {
+                AppContext.wcsService.RunScheduler();
+            }
 
-            okButton.Enabled = true;
-            this.Close();
+            applyButton.Enabled = true;
         }
 
-        private void cancelButton_Click(object sender, EventArgs e)
+        private void closeButton_Click(object sender, EventArgs e)
         {
             this.Close();
         }
@@ -344,7 +361,7 @@ namespace WinDynamicDesktop
             int itemIndex = hitTestInfo.Item?.Index ?? -1;
 
             if (itemIndex <= 0 || ThemeManager.defaultThemes.Contains(
-                ThemeManager.themeSettings[itemIndex - 1].themeName))
+                ThemeManager.themeSettings[itemIndex - 1].themeId))
             {
                 e.Cancel = true;
             }
@@ -355,9 +372,9 @@ namespace WinDynamicDesktop
             int itemIndex = listView1.FocusedItem.Index;
             ThemeConfig theme = ThemeManager.themeSettings[itemIndex - 1];
 
-            DialogResult result = MessageBox.Show("Are you sure you want to remove the '" +
-                theme.themeName.Replace('_', ' ') + "' theme?", "Question",
-                MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            DialogResult result = MessageBox.Show("Are you sure you want to remove the " +
+                GetThemeName(theme) + " theme?", "Question", MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
 
             if (result == DialogResult.Yes)
             {

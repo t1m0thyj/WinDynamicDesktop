@@ -84,8 +84,6 @@ namespace WinDynamicDesktop
                     JsonConfig.settings.latitude = data.lat;
                     JsonConfig.settings.longitude = data.lon;
 
-                    this.Hide();
-
                     if (ThemeManager.isReady)
                     {
                         AppContext.wcsService.RunScheduler();
@@ -106,7 +104,6 @@ namespace WinDynamicDesktop
             }
             else
             {
-                this.Hide();
                 bool locationUpdated = await UwpLocation.UpdateGeoposition();
 
                 if (locationUpdated)
@@ -122,8 +119,6 @@ namespace WinDynamicDesktop
                 {
                     MessageBox.Show("Failed to get location from Windows location service.",
                         "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-                    this.Show();
                 }
             }
 

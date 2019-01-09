@@ -60,7 +60,7 @@
             this.okButton.Margin = new System.Windows.Forms.Padding(4);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(88, 26);
-            this.okButton.TabIndex = 1;
+            this.okButton.TabIndex = 2;
             this.okButton.Text = "OK";
             this.okButton.UseVisualStyleBackColor = true;
             this.okButton.Click += new System.EventHandler(this.okButton_Click);
@@ -72,7 +72,7 @@
             this.cancelButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(88, 26);
-            this.cancelButton.TabIndex = 2;
+            this.cancelButton.TabIndex = 3;
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
@@ -83,7 +83,7 @@
             this.locationCheckBox.Location = new System.Drawing.Point(15, 70);
             this.locationCheckBox.Name = "locationCheckBox";
             this.locationCheckBox.Size = new System.Drawing.Size(182, 19);
-            this.locationCheckBox.TabIndex = 3;
+            this.locationCheckBox.TabIndex = 1;
             this.locationCheckBox.Text = "Use Windows location service";
             this.locationCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -107,7 +107,7 @@
             this.MinimizeBox = false;
             this.Name = "InputDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Set Location";
+            this.Text = "Change Location";
             this.Load += new System.EventHandler(this.InputDialog_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

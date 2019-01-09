@@ -48,7 +48,7 @@ namespace WinDynamicDesktop
                 {
                     List<string> imagesZipUris = theme.imagesZipUri.Split('|').ToList();
                     client.DownloadFileAsync(new Uri(imagesZipUris.First()),
-                        theme.themeName + "_images.zip", imagesZipUris.Skip(1).ToList());
+                        theme.themeId + "_images.zip", imagesZipUris.Skip(1).ToList());
                 }
             }
             else
@@ -77,7 +77,7 @@ namespace WinDynamicDesktop
             {
                 ThemeConfig theme = downloadQueue.Peek();
                 client.DownloadFileAsync(new Uri(imagesZipUris.First()),
-                    theme.themeName + "_images.zip", imagesZipUris.Skip(1).ToList());
+                    theme.themeId + "_images.zip", imagesZipUris.Skip(1).ToList());
             }
             else
             {
@@ -86,7 +86,7 @@ namespace WinDynamicDesktop
                 if (e.Error == null)
                 {
                     await Task.Run(() => ThemeManager.ExtractTheme(
-                        theme.themeName + "_images.zip", theme.themeName, true));
+                        theme.themeId + "_images.zip", theme.themeId, true));
                 }
 
                 DownloadNext();
