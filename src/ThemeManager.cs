@@ -40,21 +40,21 @@ namespace WinDynamicDesktop
 
             foreach (string themeId in themeIds)
             {
-                //try
-                //{
-                ThemeConfig theme = JsonConfig.LoadTheme(themeId);
-
-                themeSettings.Add(theme);
-
-                if (theme.themeId == JsonConfig.settings.themeName)
+                try
                 {
-                    currentTheme = theme;
+                    ThemeConfig theme = JsonConfig.LoadTheme(themeId);
+
+                    themeSettings.Add(theme);
+
+                    if (theme.themeId == JsonConfig.settings.themeName)
+                    {
+                        currentTheme = theme;
+                    }
                 }
-                //}
-                //catch
-                //{
-                //    DisableTheme(themeId);
-                //}
+                catch
+                {
+                    DisableTheme(themeId);
+                }
             }
 
             DownloadMissingImages(FindMissingThemes());
