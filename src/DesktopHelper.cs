@@ -17,7 +17,7 @@ namespace WinDynamicDesktop
 
         private bool startOnBoot;
 
-        public override string GetCurrentDirectory()
+        public override string GetLocalFolder()
         {
             return Application.StartupPath;
         }

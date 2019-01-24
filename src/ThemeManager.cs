@@ -117,8 +117,8 @@ namespace WinDynamicDesktop
             }
             catch (Exception e)
             {
-                MessageBox.Show("Failed to import theme:\n" + e.Message, "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Failed to import theme from " + themePath + "\n\n" + e.Message,
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return null;
             }
         }

@@ -16,29 +16,38 @@ namespace WinDynamicDesktop
         [STAThread]
         static void Main()
         {
-            Directory.SetCurrentDirectory(UwpDesktop.GetHelper().GetCurrentDirectory());
-            Application.ThreadException += OnThreadException;
-            AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+            string localFolder = UwpDesktop.GetHelper().GetLocalFolder();
+            Application.ThreadException +=
+                (sender, e) => OnThreadException(sender, e, localFolder);
+            AppDomain.CurrentDomain.UnhandledException +=
+                (sender, e) => OnUnhandledException(sender, e, localFolder);
 
+            string cwd = localFolder;
+            if (File.Exists(Path.Combine(localFolder, "WinDynamicDesktop.pth")))
+            {
+                cwd = File.ReadAllText(Path.Combine(localFolder, "WinDynamicDesktop.pth")).Trim();
+            }
+            Directory.SetCurrentDirectory(cwd);
+            
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new AppContext());
         }
 
-        static void OnThreadException(object sender, ThreadExceptionEventArgs e)
+        static void OnThreadException(object sender, ThreadExceptionEventArgs e, string cwd)
         {
-            LogError(e.Exception);
+            LogError(cwd, e.Exception);
         }
 
-        static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e, string cwd)
         {
-            LogError(e.ExceptionObject as Exception);
+            LogError(cwd, e.ExceptionObject as Exception);
         }
 
-        static void LogError(Exception exc)
+        static void LogError(string cwd, Exception exc)
         {
             string errorMessage = exc.ToString() + "\n";
-            string logFilename = Path.Combine(Directory.GetCurrentDirectory(),
+            string logFilename = Path.Combine(cwd,
                 Path.GetFileName(Environment.GetCommandLineArgs()[0]) + ".log");
 
             try
