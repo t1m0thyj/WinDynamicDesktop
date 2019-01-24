@@ -40,7 +40,7 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(7, 10);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(110, 15);
+            this.label1.Size = new System.Drawing.Size(111, 15);
             this.label1.TabIndex = 2;
             this.label1.Text = "Enter your location:";
             // 
@@ -49,7 +49,7 @@
             this.inputBox.Location = new System.Drawing.Point(15, 36);
             this.inputBox.Margin = new System.Windows.Forms.Padding(4);
             this.inputBox.Name = "inputBox";
-            this.inputBox.Size = new System.Drawing.Size(300, 23);
+            this.inputBox.Size = new System.Drawing.Size(300, 21);
             this.inputBox.TabIndex = 0;
             this.inputBox.TextChanged += new System.EventHandler(this.inputBox_TextChanged);
             // 
@@ -82,7 +82,7 @@
             this.locationCheckBox.AutoSize = true;
             this.locationCheckBox.Location = new System.Drawing.Point(15, 70);
             this.locationCheckBox.Name = "locationCheckBox";
-            this.locationCheckBox.Size = new System.Drawing.Size(182, 19);
+            this.locationCheckBox.Size = new System.Drawing.Size(188, 19);
             this.locationCheckBox.TabIndex = 1;
             this.locationCheckBox.Text = "Use Windows location service";
             this.locationCheckBox.UseVisualStyleBackColor = true;
@@ -99,7 +99,6 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.inputBox);
-            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = global::WinDynamicDesktop.Properties.Resources.AppIcon;
             this.Margin = new System.Windows.Forms.Padding(4);

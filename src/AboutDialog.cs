@@ -20,6 +20,8 @@ namespace WinDynamicDesktop
         public AboutDialog()
         {
             InitializeComponent();
+
+            this.Font = SystemFonts.MessageBoxFont;
         }
 
         private void AboutDialog_Load(object sender, EventArgs e)

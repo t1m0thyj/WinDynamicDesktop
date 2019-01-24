@@ -27,7 +27,9 @@ namespace WinDynamicDesktop
         {
             InitializeComponent();
 
+            this.Font = SystemFonts.MessageBoxFont;
             this.FormClosing += OnFormClosing;
+
             listView1.ContextMenuStrip = contextMenuStrip1;
             listView1.ListViewItemSorter = new CompareByIndex(listView1);
         }

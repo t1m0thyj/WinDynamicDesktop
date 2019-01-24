@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Drawing;
 using System.Net;
 
 namespace WinDynamicDesktop
@@ -18,6 +19,8 @@ namespace WinDynamicDesktop
         public ProgressDialog()
         {
             InitializeComponent();
+
+            this.Font = SystemFonts.MessageBoxFont;
 
             client.DownloadProgressChanged += OnDownloadProgressChanged;
             client.DownloadFileCompleted += OnDownloadFileCompleted;

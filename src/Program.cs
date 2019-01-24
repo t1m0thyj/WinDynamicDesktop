@@ -28,10 +28,36 @@ namespace WinDynamicDesktop
                 cwd = File.ReadAllText(Path.Combine(localFolder, "WinDynamicDesktop.pth")).Trim();
             }
             Directory.SetCurrentDirectory(cwd);
-            
+
+            SetDpiAwareness();
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new AppContext());
+        }
+
+        // Docs for PROCESS_DPI_AWARENESS and SetProcessDpiAwareness here:
+        // https://docs.microsoft.com/en-us/windows/desktop/api/shellscalingapi/
+        private enum ProcessDpiAwareness
+        {
+            DpiUnaware = 0,
+            SystemDpiAware = 1,
+            PerMonitorDpiAware = 2
+        }
+
+        [System.Runtime.InteropServices.DllImport("shcore.dll")]
+        private static extern int SetProcessDpiAwareness(ProcessDpiAwareness value);
+
+        static void SetDpiAwareness()
+        {
+            try
+            {
+                if (Environment.OSVersion.Version.Major >= 6)
+                {
+                    SetProcessDpiAwareness(ProcessDpiAwareness.PerMonitorDpiAware);
+                }
+            }
+            catch { }
         }
 
         static void OnThreadException(object sender, ThreadExceptionEventArgs e, string cwd)

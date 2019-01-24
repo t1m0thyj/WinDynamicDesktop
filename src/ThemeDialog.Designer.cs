@@ -234,7 +234,6 @@
             this.Controls.Add(this.darkModeCheckbox);
             this.Controls.Add(this.applyButton);
             this.Controls.Add(this.closeButton);
-            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = global::WinDynamicDesktop.Properties.Resources.AppIcon;
             this.MaximizeBox = false;
