@@ -40,21 +40,21 @@ namespace WinDynamicDesktop
 
             foreach (string themeId in themeIds)
             {
-                //try
-                //{
-                ThemeConfig theme = JsonConfig.LoadTheme(themeId);
-
-                themeSettings.Add(theme);
-
-                if (theme.themeId == JsonConfig.settings.themeName)
+                try
                 {
-                    currentTheme = theme;
+                    ThemeConfig theme = JsonConfig.LoadTheme(themeId);
+
+                    themeSettings.Add(theme);
+
+                    if (theme.themeId == JsonConfig.settings.themeName)
+                    {
+                        currentTheme = theme;
+                    }
                 }
-                //}
-                //catch
-                //{
-                //    DisableTheme(themeId);
-                //}
+                catch
+                {
+                    DisableTheme(themeId);
+                }
             }
 
             DownloadMissingImages(FindMissingThemes());
@@ -117,8 +117,8 @@ namespace WinDynamicDesktop
             }
             catch (Exception e)
             {
-                MessageBox.Show("Failed to import theme:\n" + e.Message, "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Failed to import theme from " + themePath + "\n\n" + e.Message,
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return null;
             }
         }

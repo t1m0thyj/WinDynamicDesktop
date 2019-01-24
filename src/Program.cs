@@ -16,29 +16,64 @@ namespace WinDynamicDesktop
         [STAThread]
         static void Main()
         {
-            Directory.SetCurrentDirectory(UwpDesktop.GetHelper().GetCurrentDirectory());
-            Application.ThreadException += OnThreadException;
-            AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+            string localFolder = UwpDesktop.GetHelper().GetLocalFolder();
+            Application.ThreadException +=
+                (sender, e) => OnThreadException(sender, e, localFolder);
+            AppDomain.CurrentDomain.UnhandledException +=
+                (sender, e) => OnUnhandledException(sender, e, localFolder);
+
+            string cwd = localFolder;
+            if (File.Exists(Path.Combine(localFolder, "WinDynamicDesktop.pth")))
+            {
+                cwd = File.ReadAllText(Path.Combine(localFolder, "WinDynamicDesktop.pth")).Trim();
+            }
+            Directory.SetCurrentDirectory(cwd);
+
+            SetDpiAwareness();
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new AppContext());
         }
 
-        static void OnThreadException(object sender, ThreadExceptionEventArgs e)
+        // Docs for PROCESS_DPI_AWARENESS and SetProcessDpiAwareness here:
+        // https://docs.microsoft.com/en-us/windows/desktop/api/shellscalingapi/
+        private enum ProcessDpiAwareness
         {
-            LogError(e.Exception);
+            DpiUnaware = 0,
+            SystemDpiAware = 1,
+            PerMonitorDpiAware = 2
         }
 
-        static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        [System.Runtime.InteropServices.DllImport("shcore.dll")]
+        private static extern int SetProcessDpiAwareness(ProcessDpiAwareness value);
+
+        static void SetDpiAwareness()
         {
-            LogError(e.ExceptionObject as Exception);
+            try
+            {
+                if (Environment.OSVersion.Version.Major >= 6)
+                {
+                    SetProcessDpiAwareness(ProcessDpiAwareness.PerMonitorDpiAware);
+                }
+            }
+            catch { }
         }
 
-        static void LogError(Exception exc)
+        static void OnThreadException(object sender, ThreadExceptionEventArgs e, string cwd)
+        {
+            LogError(cwd, e.Exception);
+        }
+
+        static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e, string cwd)
+        {
+            LogError(cwd, e.ExceptionObject as Exception);
+        }
+
+        static void LogError(string cwd, Exception exc)
         {
             string errorMessage = exc.ToString() + "\n";
-            string logFilename = Path.Combine(Directory.GetCurrentDirectory(),
+            string logFilename = Path.Combine(cwd,
                 Path.GetFileName(Environment.GetCommandLineArgs()[0]) + ".log");
 
             try

@@ -9,7 +9,7 @@ namespace WinDynamicDesktop
 {
     abstract class PlatformHelper
     {
-        public abstract string GetCurrentDirectory();
+        public abstract string GetLocalFolder();
 
         public abstract void CheckStartOnBoot();
 

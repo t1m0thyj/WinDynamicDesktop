@@ -119,7 +119,7 @@ namespace WinDynamicDesktop
                         theme.nightImageList = new int[] { 14, 15, 16, 2 };
                     }
 
-                    string newJson = JsonConvert.SerializeObject(theme);
+                    string newJson = JsonConvert.SerializeObject(theme, Formatting.Indented);
                     File.WriteAllText(filePath, newJson);
                 }
             }
