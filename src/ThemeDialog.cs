@@ -27,7 +27,9 @@ namespace WinDynamicDesktop
         {
             InitializeComponent();
 
+            this.Font = SystemFonts.MessageBoxFont;
             this.FormClosing += OnFormClosing;
+
             listView1.ContextMenuStrip = contextMenuStrip1;
             listView1.ListViewItemSorter = new CompareByIndex(listView1);
         }
@@ -200,15 +202,18 @@ namespace WinDynamicDesktop
 
         private void ThemeDialog_Load(object sender, EventArgs e)
         {
+            int scaledWidth = (int)(192 * this.AutoScaleDimensions.Width / 96);
+            int scaledHeight = (int)(108 * this.AutoScaleDimensions.Height / 96);
+
             darkModeCheckbox.Checked = JsonConfig.settings.darkMode;
             applyButton.Enabled = LocationManager.isReady;
 
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
-            imageList.ImageSize = new Size(192, 108);
+            imageList.ImageSize = new Size(scaledWidth, scaledHeight);
             listView1.LargeImageList = imageList;
 
-            imageList.Images.Add(ShrinkImage(windowsWallpaper, 192, 108));
+            imageList.Images.Add(ShrinkImage(windowsWallpaper, scaledWidth, scaledHeight));
             listView1.Items.Add("None", 0);
 
             string currentTheme = ThemeManager.currentTheme?.themeId;
@@ -228,7 +233,7 @@ namespace WinDynamicDesktop
             for (int i = 0; i < ThemeManager.themeSettings.Count; i++)
             {
                 ThemeConfig theme = ThemeManager.themeSettings[i];
-                imageList.Images.Add(GetThumbnailImage(theme, 192, 108));
+                imageList.Images.Add(GetThumbnailImage(theme, scaledWidth, scaledHeight));
                 listView1.Items.Add(GetThemeName(theme), i + 1);
 
                 if (theme.themeId == currentTheme)

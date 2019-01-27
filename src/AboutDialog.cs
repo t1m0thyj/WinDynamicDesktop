@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Drawing;
 
 namespace WinDynamicDesktop
 {
@@ -20,6 +21,9 @@ namespace WinDynamicDesktop
         public AboutDialog()
         {
             InitializeComponent();
+
+            this.Font = SystemFonts.MessageBoxFont;
+            this.nameLabel.Font = new Font(this.Font.Name, this.Font.Size * 1.2F, FontStyle.Bold);
         }
 
         private void AboutDialog_Load(object sender, EventArgs e)
