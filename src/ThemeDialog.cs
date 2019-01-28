@@ -23,15 +23,47 @@ namespace WinDynamicDesktop
         private readonly string windowsWallpaper = Directory.GetFiles(
             @"C:\Windows\Web\Wallpaper\Windows")[0];
 
-        public ThemeDialog()
+        public ThemeDialog()  // TODO Don't show until location entered
         {
             InitializeComponent();
 
             this.Font = SystemFonts.MessageBoxFont;
             this.FormClosing += OnFormClosing;
 
+            int extraWidth = GetThumbnailSize(false).Width * 2 - 384;
+
+            if (extraWidth > 0)
+            {
+                this.listView1.Size = new Size(this.listView1.Width + extraWidth,
+                    this.listView1.Height);
+                this.Size = new Size(this.Width + extraWidth, this.Height);
+            }
+
             listView1.ContextMenuStrip = contextMenuStrip1;
             listView1.ListViewItemSorter = new CompareByIndex(listView1);
+        }
+
+        private Size GetThumbnailSize(bool scaleFont = true)
+        {
+            int scaledWidth;
+
+            using (Graphics g = this.CreateGraphics())
+            {
+                scaledWidth = (int)(192 * g.DpiX / 96);
+            }
+
+            if (scaleFont)
+            {
+                scaledWidth = (int)(scaledWidth * this.AutoScaleDimensions.Width / 7);
+            }
+
+            if (scaledWidth > 256)
+            {
+                scaledWidth = 256;
+            }
+
+            Size scaledSize = new Size(scaledWidth, scaledWidth * 9 / 16);
+            return scaledSize;
         }
 
         private Bitmap ShrinkImage(string filename, int width, int height)
@@ -133,12 +165,22 @@ namespace WinDynamicDesktop
 
         private void LoadPreviewImage(int imageNumber)
         {
-            int w = pictureBox1.Size.Width;
-            int h = pictureBox1.Size.Height;
+            int width = pictureBox1.Size.Width;
+            int height = pictureBox1.Size.Height;
+            Rectangle screen = Screen.FromControl(this).Bounds;
+
+            if ((screen.Y / (double)screen.X) <= (height / (double)width))
+            {
+                height = width * 9 / 16;
+            }
+            else
+            {
+                width = height * 16 / 9;
+            }
 
             if (selectedIndex == 0)
             {
-                pictureBox1.Image = ShrinkImage(windowsWallpaper, w, h);
+                pictureBox1.Image = ShrinkImage(windowsWallpaper, width, height);
             }
             else
             {
@@ -161,7 +203,7 @@ namespace WinDynamicDesktop
 
                 string imageFilename = theme.imageFilename.Replace("*", imageId.ToString());
                 pictureBox1.Image = ShrinkImage(Path.Combine("themes", theme.themeId,
-                    imageFilename), w, h);
+                    imageFilename), width, height);
             }
 
             imageNumberLabel.Text = "Image " + imageNumber + " of " + maxImageNumber;
@@ -202,18 +244,18 @@ namespace WinDynamicDesktop
 
         private void ThemeDialog_Load(object sender, EventArgs e)
         {
-            int scaledWidth = (int)(192 * this.AutoScaleDimensions.Width / 96);
-            int scaledHeight = (int)(108 * this.AutoScaleDimensions.Height / 96);
+            Size thumbnailSize = GetThumbnailSize();
 
             darkModeCheckbox.Checked = JsonConfig.settings.darkMode;
             applyButton.Enabled = LocationManager.isReady;
 
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
-            imageList.ImageSize = new Size(scaledWidth, scaledHeight);
+            imageList.ImageSize = thumbnailSize;
             listView1.LargeImageList = imageList;
 
-            imageList.Images.Add(ShrinkImage(windowsWallpaper, scaledWidth, scaledHeight));
+            imageList.Images.Add(ShrinkImage(windowsWallpaper, thumbnailSize.Width,
+                thumbnailSize.Height));
             listView1.Items.Add("None", 0);
 
             string currentTheme = ThemeManager.currentTheme?.themeId;
@@ -233,7 +275,8 @@ namespace WinDynamicDesktop
             for (int i = 0; i < ThemeManager.themeSettings.Count; i++)
             {
                 ThemeConfig theme = ThemeManager.themeSettings[i];
-                imageList.Images.Add(GetThumbnailImage(theme, scaledWidth, scaledHeight));
+                imageList.Images.Add(GetThumbnailImage(theme, thumbnailSize.Width,
+                    thumbnailSize.Height));
                 listView1.Items.Add(GetThemeName(theme), i + 1);
 
                 if (theme.themeId == currentTheme)

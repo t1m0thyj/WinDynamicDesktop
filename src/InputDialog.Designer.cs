@@ -38,28 +38,26 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(7, 10);
+            this.label1.Location = new System.Drawing.Point(6, 9);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(110, 15);
+            this.label1.Size = new System.Drawing.Size(98, 13);
             this.label1.TabIndex = 2;
             this.label1.Text = "Enter your location:";
             // 
             // inputBox
             // 
-            this.inputBox.Location = new System.Drawing.Point(15, 36);
-            this.inputBox.Margin = new System.Windows.Forms.Padding(4);
+            this.inputBox.Location = new System.Drawing.Point(13, 31);
             this.inputBox.Name = "inputBox";
-            this.inputBox.Size = new System.Drawing.Size(300, 23);
+            this.inputBox.Size = new System.Drawing.Size(258, 20);
             this.inputBox.TabIndex = 0;
             this.inputBox.TextChanged += new System.EventHandler(this.inputBox_TextChanged);
             // 
             // okButton
             // 
             this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.okButton.Location = new System.Drawing.Point(132, 98);
-            this.okButton.Margin = new System.Windows.Forms.Padding(4);
+            this.okButton.Location = new System.Drawing.Point(113, 85);
             this.okButton.Name = "okButton";
-            this.okButton.Size = new System.Drawing.Size(88, 26);
+            this.okButton.Size = new System.Drawing.Size(75, 23);
             this.okButton.TabIndex = 2;
             this.okButton.Text = "OK";
             this.okButton.UseVisualStyleBackColor = true;
@@ -68,10 +66,9 @@
             // cancelButton
             // 
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(228, 98);
-            this.cancelButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.cancelButton.Location = new System.Drawing.Point(195, 85);
             this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(88, 26);
+            this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 3;
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
@@ -80,9 +77,9 @@
             // locationCheckBox
             // 
             this.locationCheckBox.AutoSize = true;
-            this.locationCheckBox.Location = new System.Drawing.Point(15, 70);
+            this.locationCheckBox.Location = new System.Drawing.Point(13, 61);
             this.locationCheckBox.Name = "locationCheckBox";
-            this.locationCheckBox.Size = new System.Drawing.Size(182, 19);
+            this.locationCheckBox.Size = new System.Drawing.Size(169, 17);
             this.locationCheckBox.TabIndex = 1;
             this.locationCheckBox.Text = "Use Windows location service";
             this.locationCheckBox.UseVisualStyleBackColor = true;
@@ -90,10 +87,10 @@
             // InputDialog
             // 
             this.AcceptButton = this.okButton;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(330, 134);
+            this.ClientSize = new System.Drawing.Size(283, 116);
             this.Controls.Add(this.locationCheckBox);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.label1);
@@ -101,7 +98,6 @@
             this.Controls.Add(this.inputBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = global::WinDynamicDesktop.Properties.Resources.AppIcon;
-            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "InputDialog";

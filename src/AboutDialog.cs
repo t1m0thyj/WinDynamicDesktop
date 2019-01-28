@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.Windows.Forms;
-using System.Drawing;
 
 namespace WinDynamicDesktop
 {
@@ -24,6 +23,15 @@ namespace WinDynamicDesktop
 
             this.Font = SystemFonts.MessageBoxFont;
             this.nameLabel.Font = new Font(this.Font.Name, this.Font.Size * 1.2F, FontStyle.Bold);
+
+            int minWidth = TextRenderer.MeasureText(this.descriptionLabel.Text, this.Font).Width;
+            minWidth = minWidth + (this.descriptionLabel.Width - minWidth) / 2 +
+                this.descriptionLabel.Location.X * 2;
+
+            if (this.Size.Width < minWidth)
+            {
+                this.Size = new Size(minWidth, this.Size.Height);
+            }
         }
 
         private void AboutDialog_Load(object sender, EventArgs e)

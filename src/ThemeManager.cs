@@ -164,7 +164,7 @@ namespace WinDynamicDesktop
                 }
                 catch { }
 
-                updatePercentage.Invoke((int)((i + 1) / (float)imagePaths.Length * 100));
+                updatePercentage.Invoke((int)((i + 1) / (double)imagePaths.Length * 100));
             }
         }
 
