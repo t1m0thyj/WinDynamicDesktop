@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("WinDynamicDesktop")]
-[assembly: AssemblyCopyright("Copyright © 2018 Timothy Johnson")]
+[assembly: AssemblyCopyright("Copyright © 2019 Timothy Johnson")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

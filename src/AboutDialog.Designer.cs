@@ -64,7 +64,7 @@
             this.copyrightLabel.Name = "copyrightLabel";
             this.copyrightLabel.Size = new System.Drawing.Size(367, 17);
             this.copyrightLabel.TabIndex = 7;
-            this.copyrightLabel.Text = "Copyright © 2018 Timothy Johnson";
+            this.copyrightLabel.Text = "Copyright © 2019 Timothy Johnson";
             this.copyrightLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // descriptionLabel

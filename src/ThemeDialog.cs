@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Collections;
 using System.IO;
 
 namespace WinDynamicDesktop
@@ -18,7 +19,7 @@ namespace WinDynamicDesktop
         private int selectedIndex;
         private ThemeConfig tempTheme;
 
-        private const string themeLink = 
+        private const string themeLink =
             "https://github.com/t1m0thyj/WinDynamicDesktop/wiki/Community-created-themes";
         private readonly string windowsWallpaper = Directory.GetFiles(
             @"C:\Windows\Web\Wallpaper\Windows")[0];
@@ -38,9 +39,6 @@ namespace WinDynamicDesktop
                     this.listView1.Height);
                 this.Size = new Size(this.Width + extraWidth, this.Height);
             }
-
-            listView1.ContextMenuStrip = contextMenuStrip1;
-            listView1.ListViewItemSorter = new CompareByIndex(listView1);
         }
 
         private Size GetThumbnailSize(bool scaleFont = true)
@@ -82,7 +80,7 @@ namespace WinDynamicDesktop
             }
         }
 
-        private Image GetThumbnailImage(ThemeConfig theme, int width, int height)
+        private Image GetThumbnailImage(ThemeConfig theme, Size size)
         {
             string thumbnailPath = Path.Combine("themes", theme.themeId, "thumbnail.png");
 
@@ -98,10 +96,10 @@ namespace WinDynamicDesktop
             string imageFilename2 = theme.imageFilename.Replace("*", imageId2.ToString());
 
             using (var bmp1 = ShrinkImage(Path.Combine("themes", theme.themeId, imageFilename1),
-                width, height))
+                size.Width, size.Height))
             {
                 Bitmap bmp2 = ShrinkImage(Path.Combine("themes", theme.themeId, imageFilename2),
-                    width, height);
+                    size.Width, size.Height);
 
                 using (Graphics g = Graphics.FromImage(bmp2))
                 {
@@ -226,10 +224,11 @@ namespace WinDynamicDesktop
             if (isInstalled)
             {
                 int itemIndex = ThemeManager.themeSettings.IndexOf(tempTheme) + 1;
-                listView1.LargeImageList.Images.Add(GetThumbnailImage(tempTheme, 192, 108));
-                listView1.Items.Insert(itemIndex, GetThemeName(tempTheme),
+                listView1.LargeImageList.Images.Add(GetThumbnailImage(tempTheme,
+                    GetThumbnailSize()));
+                ListViewItem newItem = listView1.Items.Insert(itemIndex, GetThemeName(tempTheme),
                     listView1.LargeImageList.Images.Count - 1);
-                listView1.Items[itemIndex].Selected = true;
+                newItem.Selected = true;
                 listView1.EnsureVisible(itemIndex);
             }
             else
@@ -244,13 +243,15 @@ namespace WinDynamicDesktop
 
         private void ThemeDialog_Load(object sender, EventArgs e)
         {
-            Size thumbnailSize = GetThumbnailSize();
+            listView1.ContextMenuStrip = contextMenuStrip1;
+            listView1.ListViewItemSorter = new CompareByIndex(listView1);
 
             darkModeCheckbox.Checked = JsonConfig.settings.darkMode;
             applyButton.Enabled = LocationManager.isReady;
 
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
+            Size thumbnailSize = GetThumbnailSize();
             imageList.ImageSize = thumbnailSize;
             listView1.LargeImageList = imageList;
 
@@ -275,8 +276,7 @@ namespace WinDynamicDesktop
             for (int i = 0; i < ThemeManager.themeSettings.Count; i++)
             {
                 ThemeConfig theme = ThemeManager.themeSettings[i];
-                imageList.Images.Add(GetThumbnailImage(theme, thumbnailSize.Width,
-                    thumbnailSize.Height));
+                imageList.Images.Add(GetThumbnailImage(theme, thumbnailSize));
                 listView1.Items.Add(GetThemeName(theme), i + 1);
 
                 if (theme.themeId == currentTheme)
@@ -459,7 +459,7 @@ namespace WinDynamicDesktop
 
     // Class to force ListView control to sort correctly
     // Code from https://stackoverflow.com/a/30536933/5504760
-    public class CompareByIndex : System.Collections.IComparer
+    public class CompareByIndex : IComparer
     {
         private readonly ListView _listView;
 

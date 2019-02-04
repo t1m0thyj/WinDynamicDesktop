@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Threading;
 using Newtonsoft.Json;
 
 namespace WinDynamicDesktop
@@ -39,6 +40,7 @@ namespace WinDynamicDesktop
     class JsonConfig
     {
         private static string lastJson;
+        private static readonly SemaphoreSlim writeLock = new SemaphoreSlim(1, 1);
 
         public static AppConfig settings = new AppConfig();
         public static bool firstRun = !File.Exists("settings.conf");
@@ -58,8 +60,17 @@ namespace WinDynamicDesktop
 
             if (newJson != lastJson)
             {
-                await Task.Run(() => File.WriteAllText("settings.conf", newJson));
-                lastJson = newJson;
+                await writeLock.WaitAsync();
+
+                try
+                {
+                    await Task.Run(() => File.WriteAllText("settings.conf", newJson));
+                    lastJson = newJson;
+                }
+                finally
+                {
+                    writeLock.Release();
+                }
             }
         }
         
