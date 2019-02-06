@@ -24,7 +24,7 @@ namespace WinDynamicDesktop
         private readonly string windowsWallpaper = Directory.GetFiles(
             @"C:\Windows\Web\Wallpaper\Windows")[0];
 
-        public ThemeDialog()  // TODO Don't show until location entered
+        public ThemeDialog()
         {
             InitializeComponent();
 
@@ -339,29 +339,32 @@ namespace WinDynamicDesktop
                 return;
             }
 
-            string themePath = openFileDialog1.FileName;
-            openFileDialog1.InitialDirectory = Path.GetDirectoryName(themePath);
+            foreach (string themePath in openFileDialog1.FileNames)
+            {
+                tempTheme = ThemeManager.ImportTheme(themePath);
+
+                if (tempTheme == null)
+                {
+                    return;
+                }
+                else if (Path.GetExtension(themePath) != ".json")
+                {
+                    LoadImportedTheme();
+                }
+                else  // TODO Don't use multiple dialogs here
+                {
+                    ProgressDialog downloadDialog = new ProgressDialog();
+                    downloadDialog.FormClosed += OnDownloadDialogClosed;
+                    downloadDialog.Show();
+
+                    this.Enabled = false;
+                    downloadDialog.LoadQueue(new List<ThemeConfig>() { tempTheme });
+                    downloadDialog.DownloadNext();
+                }
+            }
+
+            openFileDialog1.InitialDirectory = Path.GetDirectoryName(openFileDialog1.FileNames[0]);
             openFileDialog1.FileName = "";
-            tempTheme = ThemeManager.ImportTheme(themePath);
-
-            if (tempTheme == null)
-            {
-                return;
-            }
-            else if (Path.GetExtension(themePath) != ".json")
-            {
-                LoadImportedTheme();
-            }
-            else
-            {
-                ProgressDialog downloadDialog = new ProgressDialog();
-                downloadDialog.FormClosed += OnDownloadDialogClosed;
-                downloadDialog.Show();
-
-                this.Enabled = false;
-                downloadDialog.LoadQueue(new List<ThemeConfig>() { tempTheme });
-                downloadDialog.DownloadNext();
-            }
         }
 
         private void themeLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -392,7 +395,7 @@ namespace WinDynamicDesktop
             }
             else if (LocationManager.isReady)
             {
-                AppContext.wcsService.RunScheduler();
+                AppContext.wpEngine.RunScheduler();
             }
 
             applyButton.Enabled = true;

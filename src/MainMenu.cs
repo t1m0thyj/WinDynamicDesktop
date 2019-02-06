@@ -79,7 +79,7 @@ namespace WinDynamicDesktop
             JsonConfig.settings.darkMode = isEnabled;
             darkModeItem.Checked = isEnabled;
 
-            AppContext.wcsService.RunScheduler();
+            AppContext.wpEngine.RunScheduler();
         }
 
         private static void OnThemeItemClick(object sender, EventArgs e)
@@ -94,7 +94,7 @@ namespace WinDynamicDesktop
 
         private static void OnRefreshItemClick(object sender, EventArgs e)
         {
-            AppContext.wcsService.RunScheduler(true);
+            AppContext.wpEngine.RunScheduler(true);
         }
 
         private static void OnDarkModeClick(object sender, EventArgs e)

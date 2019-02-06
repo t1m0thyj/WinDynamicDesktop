@@ -32,6 +32,12 @@ namespace WinDynamicDesktop
             else
             {
                 ChangeLocation();
+
+                if (JsonConfig.firstRun)
+                {
+                    AppContext.ShowPopup("Welcome! Please enter your location so the app can " +
+                        "determine sunrise and sunset times.");
+                }
             }
         }
 

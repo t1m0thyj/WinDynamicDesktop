@@ -14,7 +14,7 @@ namespace WinDynamicDesktop
         private Mutex _mutex;
 
         public static NotifyIcon notifyIcon;
-        public static WallpaperChangeScheduler wcsService;
+        public static WallpaperChangeScheduler wpEngine;
 
         public AppContext()
         {
@@ -25,11 +25,11 @@ namespace WinDynamicDesktop
 
             ThemeManager.Initialize();
             LocationManager.Initialize();
-            wcsService = new WallpaperChangeScheduler();
+            wpEngine = new WallpaperChangeScheduler();
 
             if (LocationManager.isReady && ThemeManager.isReady)
             {
-                wcsService.RunScheduler();
+                wpEngine.RunScheduler();
             }
 
             UpdateChecker.Initialize();
@@ -64,16 +64,31 @@ namespace WinDynamicDesktop
             notifyIcon.MouseUp += OnNotifyIconMouseUp;
         }
 
+        public static void ShowPopup(string message, string title = null)
+        {
+            notifyIcon.BalloonTipTitle = title ?? "WinDynamicDesktop";
+            notifyIcon.BalloonTipText = message;
+            notifyIcon.ShowBalloonTip(10000);
+        }
+
         public static void RunInBackground()
         {
-            if (JsonConfig.firstRun && LocationManager.isReady && ThemeManager.isReady)
+            if (!LocationManager.isReady || !ThemeManager.isReady)
             {
-                notifyIcon.BalloonTipTitle = "WinDynamicDesktop";
-                notifyIcon.BalloonTipText = "The app is still running in the background. " +
-                    "You can access it at any time by clicking on the icon in the system tray.";
-                notifyIcon.ShowBalloonTip(10000);
+                return;
+            }
 
-                JsonConfig.firstRun = false;    // Don't show this message again
+            if (ThemeManager.currentTheme == null && (JsonConfig.firstRun
+                || JsonConfig.settings.themeName != null))
+            {
+                ThemeManager.SelectTheme();
+            }
+            else if (JsonConfig.firstRun)
+            {
+                ShowPopup("The app is still running in the background. You can still access it " +
+                    "at any time by clicking on the icon in the system tray.");
+
+                JsonConfig.firstRun = false;  // Don't show this message again
             }
         }
 

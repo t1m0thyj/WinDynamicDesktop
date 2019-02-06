@@ -88,7 +88,7 @@ namespace WinDynamicDesktop
 
                     if (ThemeManager.isReady)
                     {
-                        AppContext.wcsService.RunScheduler();
+                        AppContext.wpEngine.RunScheduler();
                     }
 
                     MessageBox.Show("Location set successfully to: " + data.display_name +
@@ -112,7 +112,7 @@ namespace WinDynamicDesktop
                 {
                     if (ThemeManager.isReady)
                     {
-                        AppContext.wcsService.RunScheduler();
+                        AppContext.wpEngine.RunScheduler();
                     }
 
                     this.Close();

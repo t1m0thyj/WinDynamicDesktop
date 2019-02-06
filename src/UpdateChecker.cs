@@ -128,11 +128,8 @@ namespace WinDynamicDesktop
             }
             else if (IsUpdateAvailable(currentVersion, latestVersion))
             {
-                NotifyIcon _notifyIcon = AppContext.notifyIcon;
-                _notifyIcon.BalloonTipTitle = "Update Available";
-                _notifyIcon.BalloonTipText = "WinDynamicDesktop " + latestVersion +
-                    " is available. Click here to download it.";
-                _notifyIcon.ShowBalloonTip(10000);
+                AppContext.ShowPopup("WinDynamicDesktop " + latestVersion + " is available. " +
+                    "Click here to download it.", "Update Available");
             }
 
             JsonConfig.settings.lastUpdateCheck = DateTime.Now.ToString();

@@ -228,22 +228,14 @@ namespace WinDynamicDesktop
 
         private static void ReadyUp()
         {
-            if (currentTheme == null && (JsonConfig.firstRun
-                || JsonConfig.settings.themeName != null))
-            {
-                SelectTheme();
-            }
-            else
-            {
-                isReady = true;
+            isReady = true;
 
-                if (LocationManager.isReady)
-                {
-                    AppContext.wcsService.RunScheduler();
-                }
-
-                AppContext.RunInBackground();
+            if (LocationManager.isReady)
+            {
+                AppContext.wpEngine.RunScheduler();
             }
+
+            AppContext.RunInBackground();
         }
 
         private static void DownloadMissingImages(List<ThemeConfig> missingThemes)
