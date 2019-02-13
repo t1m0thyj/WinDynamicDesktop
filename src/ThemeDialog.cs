@@ -257,7 +257,7 @@ namespace WinDynamicDesktop
 
             imageList.Images.Add(ShrinkImage(windowsWallpaper, thumbnailSize.Width,
                 thumbnailSize.Height));
-            listView1.Items.Add("None", 0);
+            ListViewItem lastItem = listView1.Items.Add("None", 0);
 
             string currentTheme = ThemeManager.currentTheme?.themeId;
 
@@ -269,7 +269,7 @@ namespace WinDynamicDesktop
                 }
                 else
                 {
-                    listView1.Items[0].Selected = true;
+                    lastItem.Selected = true;
                 }
             }
 
@@ -277,11 +277,11 @@ namespace WinDynamicDesktop
             {
                 ThemeConfig theme = ThemeManager.themeSettings[i];
                 imageList.Images.Add(GetThumbnailImage(theme, thumbnailSize));
-                listView1.Items.Add(GetThemeName(theme), i + 1);
+                lastItem = listView1.Items.Add(GetThemeName(theme), i + 1);
 
                 if (theme.themeId == currentTheme)
                 {
-                    listView1.Items[i + 1].Selected = true;
+                    lastItem.Selected = true;
                 }
             }
         }

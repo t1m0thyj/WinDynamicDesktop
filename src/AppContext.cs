@@ -21,7 +21,7 @@ namespace WinDynamicDesktop
             EnforceSingleInstance();
 
             JsonConfig.LoadConfig();
-            InitializeGui();
+            InitializeTrayIcon();
 
             ThemeManager.Initialize();
             LocationManager.Initialize();
@@ -50,7 +50,7 @@ namespace WinDynamicDesktop
             }
         }
 
-        private void InitializeGui()
+        private void InitializeTrayIcon()
         {
             Application.ApplicationExit += OnApplicationExit;
 
