@@ -136,7 +136,7 @@ namespace WinDynamicDesktop
             JsonConfig.SaveConfig();
         }
 
-        public static async void TryCheckAuto(bool forceIfEnabled = false)
+        public static void TryCheckAuto(bool forceIfEnabled = false)
         {
             if (UwpDesktop.IsRunningAsUwp() || JsonConfig.settings.disableAutoUpdate)
             {
@@ -154,7 +154,7 @@ namespace WinDynamicDesktop
                 }
             }
 
-            await Task.Run(() => CheckAuto());
+            Task.Run(() => CheckAuto());
         }
 
         private static void OnAutoUpdateItemClick(object sender, EventArgs e)

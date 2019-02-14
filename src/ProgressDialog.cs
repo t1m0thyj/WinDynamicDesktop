@@ -6,33 +6,51 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
+using System.IO;
 using System.Net;
 
 namespace WinDynamicDesktop
 {
     public partial class ProgressDialog : Form
     {
-        private WebClient client = new WebClient();
         private Queue<ThemeConfig> downloadQueue;
-        private int numDownloads;
+        private bool importMode;
+        private Queue<string> importQueue = null;
+        private int numJobs;
+
+        private WebClient client = new WebClient();
 
         public ProgressDialog()
         {
             InitializeComponent();
 
             this.Font = SystemFonts.MessageBoxFont;
+            this.FormClosing += OnFormClosing;
 
             client.DownloadProgressChanged += OnDownloadProgressChanged;
             client.DownloadFileCompleted += OnDownloadFileCompleted;
         }
 
-        public void LoadQueue(List<ThemeConfig> themeList)
+        public void InitDownload(List<ThemeConfig> themeList)
         {
+            importMode = false;
             downloadQueue = new Queue<ThemeConfig>(themeList);
-            numDownloads = downloadQueue.Count;
+            numJobs = downloadQueue.Count;
+
+            DownloadNext();
         }
 
-        public void DownloadNext()
+        public void InitImport(List<string> themePaths)
+        {
+            label1.Text = "Importing themes, please wait...";
+            importMode = true;
+            importQueue = new Queue<string>(themePaths);
+            numJobs = importQueue.Count;
+
+            Task.Run(() => ImportNext());
+        }
+
+        private void DownloadNext()
         {
             if (downloadQueue.Count > 0)
             {
@@ -45,7 +63,11 @@ namespace WinDynamicDesktop
                         this.UpdateTotalPercentage);
 
                     downloadQueue.Dequeue();
-                    DownloadNext();
+
+                    if (!importMode)
+                    {
+                        DownloadNext();
+                    }
                 }
                 else
                 {
@@ -54,25 +76,52 @@ namespace WinDynamicDesktop
                         theme.themeId + "_images.zip", imagesZipUris.Skip(1).ToList());
                 }
             }
+            else if (!importMode)
+            {
+                this.Close();
+            }
+        }
+
+        private void ImportNext()
+        {
+            if (importQueue.Count > 0)
+            {
+                this.Invoke(new Action(() => UpdateTotalPercentage(0)));
+                string themePath = importQueue.Peek();
+
+                ThemeConfig theme = ThemeManager.ImportTheme(themePath);
+
+                if (theme != null)
+                {
+                    if (Path.GetExtension(themePath) == ".json")
+                    {
+                        downloadQueue = new Queue<ThemeConfig>(new List<ThemeConfig>() { theme });
+                        DownloadNext();
+                    }
+
+                    importQueue.Dequeue();
+                    ThemeManager.importedThemes.Add(theme);
+                    ImportNext();
+                }
+            }
             else
             {
-                client?.Dispose();
-                this.Close();
+                this.Invoke(new Action(() => this.Close()));
             }
         }
 
         private void UpdateTotalPercentage(int themePercentage)
         {
-            progressBar1.Value = ((numDownloads - downloadQueue.Count) * 100 +
-                themePercentage) / numDownloads;
+            int numRemaining = importMode ? importQueue.Count : downloadQueue.Count;
+            progressBar1.Value = ((numJobs - numRemaining) * 100 + themePercentage) / numJobs;
         }
 
-        public void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        private void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
             UpdateTotalPercentage(e.ProgressPercentage);
         }
 
-        public async void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+        public void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
             List<string> imagesZipUris = (List<string>)e.UserState;
 
@@ -88,12 +137,16 @@ namespace WinDynamicDesktop
 
                 if (e.Error == null)
                 {
-                    await Task.Run(() => ThemeManager.ExtractTheme(
-                        theme.themeId + "_images.zip", theme.themeId, true));
+                    ThemeManager.ExtractTheme(theme.themeId + "_images.zip", theme.themeId, true);
                 }
 
                 DownloadNext();
             }
+        }
+
+        private void OnFormClosing(object sender, FormClosingEventArgs e)
+        {
+            client?.Dispose();
         }
     }
 }

@@ -17,7 +17,6 @@ namespace WinDynamicDesktop
         private int maxImageNumber;
         private int previewImage;
         private int selectedIndex;
-        private ThemeConfig tempTheme;
 
         private const string themeLink =
             "https://github.com/t1m0thyj/WinDynamicDesktop/wiki/Community-created-themes";
@@ -213,32 +212,35 @@ namespace WinDynamicDesktop
             previewImage = imageNumber;
         }
 
-        private async void LoadImportedTheme()
+        private void LoadImportedThemes(List<ThemeConfig> themes)
         {
-            ThemeManager.themeSettings.Add(tempTheme);
-            ThemeManager.themeSettings.Sort((t1, t2) => t1.themeId.CompareTo(t2.themeId));
-
             List<ThemeConfig> missingThemes = ThemeManager.FindMissingThemes();
-            bool isInstalled = missingThemes.IndexOf(tempTheme) == -1;
+            Size thumbnailSize = GetThumbnailSize();
 
-            if (isInstalled)
+            for (int i = 0; i < themes.Count; i++)
             {
-                int itemIndex = ThemeManager.themeSettings.IndexOf(tempTheme) + 1;
-                listView1.LargeImageList.Images.Add(GetThumbnailImage(tempTheme,
-                    GetThumbnailSize()));
-                ListViewItem newItem = listView1.Items.Insert(itemIndex, GetThemeName(tempTheme),
-                    listView1.LargeImageList.Images.Count - 1);
-                newItem.Selected = true;
-                listView1.EnsureVisible(itemIndex);
-            }
-            else
-            {
-                MessageBox.Show("Failed to install the " + GetThemeName(tempTheme) +
-                    " theme.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                await Task.Run(() => ThemeManager.RemoveTheme(tempTheme));
-            }
+                if (missingThemes.IndexOf(themes[i]) == -1)
+                {
+                    int itemIndex = ThemeManager.themeSettings.IndexOf(themes[i]) + 1;
+                    listView1.LargeImageList.Images.Add(GetThumbnailImage(themes[i],
+                        thumbnailSize));
+                    ListViewItem newItem = listView1.Items.Insert(itemIndex,
+                        GetThemeName(themes[i]), listView1.LargeImageList.Images.Count - 1);
 
-            tempTheme = null;
+                    if (i == themes.Count - 1)
+                    {
+                        newItem.Selected = true;
+                        listView1.EnsureVisible(itemIndex);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Failed to download images for the " +
+                        GetThemeName(themes[i]) + " theme.", "Error", MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    Task.Run(() => ThemeManager.RemoveTheme(themes[i]));
+                }
+            }
         }
 
         private void ThemeDialog_Load(object sender, EventArgs e)
@@ -339,29 +341,10 @@ namespace WinDynamicDesktop
                 return;
             }
 
-            foreach (string themePath in openFileDialog1.FileNames)
-            {
-                tempTheme = ThemeManager.ImportTheme(themePath);
-
-                if (tempTheme == null)
-                {
-                    return;
-                }
-                else if (Path.GetExtension(themePath) != ".json")
-                {
-                    LoadImportedTheme();
-                }
-                else  // TODO Don't use multiple dialogs here
-                {
-                    ProgressDialog downloadDialog = new ProgressDialog();
-                    downloadDialog.FormClosed += OnDownloadDialogClosed;
-                    downloadDialog.Show();
-
-                    this.Enabled = false;
-                    downloadDialog.LoadQueue(new List<ThemeConfig>() { tempTheme });
-                    downloadDialog.DownloadNext();
-                }
-            }
+            ProgressDialog importDialog = new ProgressDialog();
+            importDialog.FormClosing += OnImportDialogClosing;
+            importDialog.InitImport(openFileDialog1.FileNames.ToList());
+            importDialog.Show();
 
             openFileDialog1.InitialDirectory = Path.GetDirectoryName(openFileDialog1.FileNames[0]);
             openFileDialog1.FileName = "";
@@ -418,7 +401,7 @@ namespace WinDynamicDesktop
             }
         }
 
-        private async void removeToolStripMenuItem_Click(object sender, EventArgs e)
+        private void removeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             int itemIndex = listView1.FocusedItem.Index;
             ThemeConfig theme = ThemeManager.themeSettings[itemIndex - 1];
@@ -432,14 +415,15 @@ namespace WinDynamicDesktop
                 listView1.Items.RemoveAt(itemIndex);
                 listView1.Items[itemIndex - 1].Selected = true;
 
-                await Task.Run(() => ThemeManager.RemoveTheme(theme));
+                Task.Run(() => ThemeManager.RemoveTheme(theme));
             }
         }
 
-        private void OnDownloadDialogClosed(object sender, EventArgs e)
+        private void OnImportDialogClosing(object sender, FormClosingEventArgs e)
         {
+            LoadImportedThemes(ThemeManager.importedThemes);
+            ThemeManager.importedThemes.Clear();
             this.Enabled = true;
-            LoadImportedTheme();
         }
 
         private void OnFormClosing(object sender, FormClosingEventArgs e)

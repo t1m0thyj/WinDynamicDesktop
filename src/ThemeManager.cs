@@ -11,11 +11,12 @@ namespace WinDynamicDesktop
 {
     class ThemeManager
     {
-        public static bool isReady = false;
         public static string[] defaultThemes = new string[] { "Mojave_Desert", "Solar_Gradients" };
+        public static List<ThemeConfig> importedThemes = new List<ThemeConfig>();
+        public static bool isReady = false;
         public static List<ThemeConfig> themeSettings = new List<ThemeConfig>();
-        public static ThemeConfig currentTheme;
 
+        public static ThemeConfig currentTheme;
         private static ThemeDialog themeDialog;
 
         public static void Initialize()
@@ -77,8 +78,7 @@ namespace WinDynamicDesktop
         public static ThemeConfig ImportTheme(string themePath)
         {
             string themeId = Path.GetFileNameWithoutExtension(themePath);
-            bool isInstalled = themeSettings.FindIndex(
-                theme => theme.themeId == themeId) != -1;
+            bool isInstalled = themeSettings.FindIndex(t => t.themeId == themeId) != -1;
 
             if (isInstalled)
             {
@@ -113,12 +113,17 @@ namespace WinDynamicDesktop
                     File.Copy(themePath, Path.Combine("themes", themeId, "theme.json"), true);
                 }
 
-                return JsonConfig.LoadTheme(themeId);
+                ThemeConfig theme = JsonConfig.LoadTheme(themeId);
+                themeSettings.Add(theme);
+                themeSettings.Sort((t1, t2) => t1.themeId.CompareTo(t2.themeId));
+
+                return theme;
             }
             catch (Exception e)
             {
                 MessageBox.Show("Failed to import theme from " + themePath + "\n\n" + e.Message,
                     "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
                 return null;
             }
         }
@@ -251,9 +256,8 @@ namespace WinDynamicDesktop
             downloadDialog.Show();
 
             MainMenu.themeItem.Enabled = false;
-            downloadDialog.LoadQueue(missingThemes.FindAll(
+            downloadDialog.InitDownload(missingThemes.FindAll(
                 theme => theme.imagesZipUri != null));
-            downloadDialog.DownloadNext();
         }
 
         private static void OnDownloadDialogClosed(object sender, EventArgs e)
