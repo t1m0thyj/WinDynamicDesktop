@@ -40,6 +40,14 @@ namespace WinDynamicDesktop
             }
         }
 
+        public void ImportThemes(List<string> themePaths)
+        {
+            ProgressDialog importDialog = new ProgressDialog();
+            importDialog.FormClosing += OnImportDialogClosing;
+            importDialog.InitImport(themePaths);
+            importDialog.Show();
+        }
+
         private Size GetThumbnailSize(bool scaleFont = true)
         {
             int scaledWidth;
@@ -341,10 +349,7 @@ namespace WinDynamicDesktop
                 return;
             }
 
-            ProgressDialog importDialog = new ProgressDialog();
-            importDialog.FormClosing += OnImportDialogClosing;
-            importDialog.InitImport(openFileDialog1.FileNames.ToList());
-            importDialog.Show();
+            ImportThemes(openFileDialog1.FileNames.ToList());
 
             openFileDialog1.InitialDirectory = Path.GetDirectoryName(openFileDialog1.FileNames[0]);
             openFileDialog1.FileName = "";
@@ -423,6 +428,7 @@ namespace WinDynamicDesktop
         {
             LoadImportedThemes(ThemeManager.importedThemes);
             ThemeManager.importedThemes.Clear();
+
             this.Enabled = true;
         }
 

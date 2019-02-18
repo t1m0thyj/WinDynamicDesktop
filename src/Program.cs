@@ -14,7 +14,7 @@ namespace WinDynamicDesktop
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
             string localFolder = UwpDesktop.GetHelper().GetLocalFolder();
             Application.ThreadException +=
@@ -31,7 +31,7 @@ namespace WinDynamicDesktop
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new AppContext());
+            Application.Run(new AppContext(args));
         }
 
         static void OnThreadException(object sender, ThreadExceptionEventArgs e, string cwd)

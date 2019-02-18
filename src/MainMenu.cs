@@ -20,6 +20,7 @@ namespace WinDynamicDesktop
 
             ContextMenuStrip menuStrip = new ContextMenuStrip();
             menuStrip.Items.AddRange(menuItems.ToArray());
+            IntPtr handle = menuStrip.Handle;  // Handle needed for BeginInvoke to work
 
             return menuStrip;
         }

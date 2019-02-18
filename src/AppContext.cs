@@ -6,19 +6,21 @@ using System.Threading.Tasks;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
+using NamedPipeWrapper;
 
 namespace WinDynamicDesktop
 {
     class AppContext : ApplicationContext
     {
         private Mutex _mutex;
+        private NamedPipeServer<string> _namedPipe;
 
         public static NotifyIcon notifyIcon;
         public static WallpaperChangeScheduler wpEngine;
 
-        public AppContext()
+        public AppContext(string[] args)
         {
-            EnforceSingleInstance();
+            HandleMultiInstance(args.Where(System.IO.File.Exists).ToList());
 
             JsonConfig.LoadConfig();
             InitializeTrayIcon();
@@ -35,16 +37,34 @@ namespace WinDynamicDesktop
             UpdateChecker.Initialize();
         }
 
-        private void EnforceSingleInstance()
+        private void HandleMultiInstance(List<string> themePaths)
         {
             _mutex = new Mutex(true, @"Global\WinDynamicDesktop", out bool isFirstInstance);
             GC.KeepAlive(_mutex);
 
-            if (!isFirstInstance)
+            if (isFirstInstance)
             {
-                MessageBox.Show("Another instance of WinDynamicDesktop is already running. You " +
-                    "can access it by clicking on the icon in the system tray.", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                _namedPipe = new NamedPipeServer<string>("WinDynamicDesktop");
+                _namedPipe.ClientMessage += OnNamedPipeClientMessage;
+                _namedPipe.Start();
+            }
+            else
+            {
+                if (themePaths.Count > 0)
+                {
+                    var namedPipeClient = new NamedPipeClient<string>("WinDynamicDesktop");
+                    namedPipeClient.Start();
+                    namedPipeClient.WaitForConnection();
+                    namedPipeClient.PushMessage(string.Join("|", themePaths));
+                    Thread.Sleep(1000);
+                    namedPipeClient.Stop();
+                }
+                else
+                {
+                    MessageBox.Show("Another instance of WinDynamicDesktop is already running. " +
+                        "You can access it by clicking on the icon in the system tray.", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
 
                 Environment.Exit(0);
             }
@@ -92,6 +112,13 @@ namespace WinDynamicDesktop
             }
         }
 
+        private void OnNamedPipeClientMessage(NamedPipeConnection<string, string> conn,
+            string message)
+        {
+            notifyIcon.ContextMenuStrip.BeginInvoke(
+                new Action(() => ThemeManager.SelectTheme(message.Split('|').ToList())));
+        }
+
         private void OnNotifyIconMouseUp(object sender, MouseEventArgs e)
         {
             // Show context menu when taskbar icon is left clicked
@@ -115,6 +142,8 @@ namespace WinDynamicDesktop
             {
                 notifyIcon.Visible = false;
             }
+
+            _namedPipe?.Stop();
         }
     }
 }

@@ -15,10 +15,10 @@ namespace WinDynamicDesktop
     {
         private Queue<ThemeConfig> downloadQueue;
         private bool importMode;
-        private Queue<string> importQueue = null;
+        private Queue<string> importQueue;
         private int numJobs;
 
-        private WebClient client = new WebClient();
+        private WebClient wc = new WebClient();
 
         public ProgressDialog()
         {
@@ -27,8 +27,8 @@ namespace WinDynamicDesktop
             this.Font = SystemFonts.MessageBoxFont;
             this.FormClosing += OnFormClosing;
 
-            client.DownloadProgressChanged += OnDownloadProgressChanged;
-            client.DownloadFileCompleted += OnDownloadFileCompleted;
+            wc.DownloadProgressChanged += OnDownloadProgressChanged;
+            wc.DownloadFileCompleted += OnDownloadFileCompleted;
         }
 
         public void InitDownload(List<ThemeConfig> themeList)
@@ -72,7 +72,7 @@ namespace WinDynamicDesktop
                 else
                 {
                     List<string> imagesZipUris = theme.imagesZipUri.Split('|').ToList();
-                    client.DownloadFileAsync(new Uri(imagesZipUris.First()),
+                    wc.DownloadFileAsync(new Uri(imagesZipUris.First()),
                         theme.themeId + "_images.zip", imagesZipUris.Skip(1).ToList());
                 }
             }
@@ -128,7 +128,7 @@ namespace WinDynamicDesktop
             if (e.Error != null && imagesZipUris.Count > 0)
             {
                 ThemeConfig theme = downloadQueue.Peek();
-                client.DownloadFileAsync(new Uri(imagesZipUris.First()),
+                wc.DownloadFileAsync(new Uri(imagesZipUris.First()),
                     theme.themeId + "_images.zip", imagesZipUris.Skip(1).ToList());
             }
             else
@@ -146,7 +146,7 @@ namespace WinDynamicDesktop
 
         private void OnFormClosing(object sender, FormClosingEventArgs e)
         {
-            client?.Dispose();
+            wc?.Dispose();
         }
     }
 }

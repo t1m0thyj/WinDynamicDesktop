@@ -61,7 +61,7 @@ namespace WinDynamicDesktop
             DownloadMissingImages(FindMissingThemes());
         }
 
-        public static void SelectTheme()
+        public static void SelectTheme(List<string> themePaths = null)
         {
             if (themeDialog == null)
             {
@@ -72,6 +72,11 @@ namespace WinDynamicDesktop
             else
             {
                 themeDialog.Activate();
+            }
+
+            if (themePaths != null)
+            {
+                themeDialog.ImportThemes(themePaths);
             }
         }
 
