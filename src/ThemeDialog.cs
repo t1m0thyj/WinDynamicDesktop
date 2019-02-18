@@ -44,8 +44,8 @@ namespace WinDynamicDesktop
         {
             ProgressDialog importDialog = new ProgressDialog();
             importDialog.FormClosing += OnImportDialogClosing;
-            importDialog.InitImport(themePaths);
             importDialog.Show();
+            importDialog.InitImport(themePaths);
         }
 
         private Size GetThumbnailSize(bool scaleFont = true)
@@ -220,8 +220,23 @@ namespace WinDynamicDesktop
             previewImage = imageNumber;
         }
 
+        private void EnsureThemeNotDuplicated(string themeId)
+        {
+            foreach (ListViewItem item in listView1.Items)
+            {
+                if ((string)item.Tag == themeId)
+                {
+                    int imageIndex = item.ImageIndex;
+                    listView1.Items.Remove(item);
+                    listView1.LargeImageList.Images[imageIndex].Dispose();
+                    break;
+                }
+            }
+        }
+
         private void LoadImportedThemes(List<ThemeConfig> themes)
         {
+            themes.Sort((t1, t2) => t1.themeId.CompareTo(t2.themeId));
             List<ThemeConfig> missingThemes = ThemeManager.FindMissingThemes();
             Size thumbnailSize = GetThumbnailSize();
 
@@ -229,11 +244,14 @@ namespace WinDynamicDesktop
             {
                 if (missingThemes.IndexOf(themes[i]) == -1)
                 {
+                    EnsureThemeNotDuplicated(themes[i].themeId);
+
                     int itemIndex = ThemeManager.themeSettings.IndexOf(themes[i]) + 1;
                     listView1.LargeImageList.Images.Add(GetThumbnailImage(themes[i],
                         thumbnailSize));
                     ListViewItem newItem = listView1.Items.Insert(itemIndex,
                         GetThemeName(themes[i]), listView1.LargeImageList.Images.Count - 1);
+                    newItem.Tag = themes[i].themeId;
 
                     if (i == themes.Count - 1)
                     {
@@ -267,7 +285,7 @@ namespace WinDynamicDesktop
 
             imageList.Images.Add(ShrinkImage(windowsWallpaper, thumbnailSize.Width,
                 thumbnailSize.Height));
-            ListViewItem lastItem = listView1.Items.Add("None", 0);
+            ListViewItem newItem = listView1.Items.Add("None", 0);
 
             string currentTheme = ThemeManager.currentTheme?.themeId;
 
@@ -279,7 +297,7 @@ namespace WinDynamicDesktop
                 }
                 else
                 {
-                    lastItem.Selected = true;
+                    newItem.Selected = true;
                 }
             }
 
@@ -287,11 +305,12 @@ namespace WinDynamicDesktop
             {
                 ThemeConfig theme = ThemeManager.themeSettings[i];
                 imageList.Images.Add(GetThumbnailImage(theme, thumbnailSize));
-                lastItem = listView1.Items.Add(GetThemeName(theme), i + 1);
+                newItem = listView1.Items.Add(GetThemeName(theme), i + 1);
+                newItem.Tag = theme.themeId;
 
                 if (theme.themeId == currentTheme)
                 {
-                    lastItem.Selected = true;
+                    newItem.Selected = true;
                 }
             }
         }
@@ -417,8 +436,10 @@ namespace WinDynamicDesktop
 
             if (result == DialogResult.Yes)
             {
+                int imageIndex = listView1.Items[itemIndex].ImageIndex;
                 listView1.Items.RemoveAt(itemIndex);
                 listView1.Items[itemIndex - 1].Selected = true;
+                listView1.LargeImageList.Images[imageIndex].Dispose();
 
                 Task.Run(() => ThemeManager.RemoveTheme(theme));
             }

@@ -83,9 +83,9 @@ namespace WinDynamicDesktop
         public static ThemeConfig ImportTheme(string themePath)
         {
             string themeId = Path.GetFileNameWithoutExtension(themePath);
-            bool isInstalled = themeSettings.FindIndex(t => t.themeId == themeId) != -1;
+            int themeIndex = themeSettings.FindIndex(t => t.themeId == themeId);
 
-            if (isInstalled)
+            if (themeIndex != -1)
             {
                 DialogResult result = MessageBox.Show("The '" + themeId + "' theme is already " +
                     "installed. Do you want to overwrite it?", "Question", MessageBoxButtons.YesNo,
@@ -119,8 +119,16 @@ namespace WinDynamicDesktop
                 }
 
                 ThemeConfig theme = JsonConfig.LoadTheme(themeId);
-                themeSettings.Add(theme);
-                themeSettings.Sort((t1, t2) => t1.themeId.CompareTo(t2.themeId));
+
+                if (themeIndex == -1)
+                {
+                    themeSettings.Add(theme);
+                    themeSettings.Sort((t1, t2) => t1.themeId.CompareTo(t2.themeId));
+                }
+                else
+                {
+                    themeSettings[themeIndex] = theme;
+                }
 
                 return theme;
             }
