@@ -12,6 +12,7 @@ namespace WinDynamicDesktop
 {
     class AppContext : ApplicationContext
     {
+        private static readonly Func<string, string> _ = Localization.GetTranslation;
         private Mutex _mutex;
         private NamedPipeServer<string> _namedPipe;
 
@@ -62,9 +63,9 @@ namespace WinDynamicDesktop
                 }
                 else
                 {
-                    MessageBox.Show("Another instance of WinDynamicDesktop is already running. " +
-                        "You can access it by clicking on the icon in the system tray.", "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(_("Another instance of WinDynamicDesktop is already " +
+                        "running. You can access it by clicking on the icon in the system tray."),
+                        _("Error"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
 
                 Environment.Exit(0);
@@ -106,8 +107,8 @@ namespace WinDynamicDesktop
             }
             else if (JsonConfig.firstRun)
             {
-                ShowPopup("The app is still running in the background. You can still access it " +
-                    "at any time by clicking on the icon in the system tray.");
+                ShowPopup(_("The app is still running in the background. You can still access " +
+                    "it at any time by clicking on the icon in the system tray."));
 
                 JsonConfig.firstRun = false;  // Don't show this message again
             }

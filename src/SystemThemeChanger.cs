@@ -23,8 +23,9 @@ namespace WinDynamicDesktop
             {
                 themeKey.Close();
 
-                menuItem = new ToolStripMenuItem("&Change Windows 10 theme color", null,
-                    OnThemeItemClick);
+                menuItem = new ToolStripMenuItem(
+                    Localization.GetTranslation("&Change Windows 10 theme color"),
+                    null, OnThemeItemClick);
                 menuItem.Checked = JsonConfig.settings.changeSystemTheme;
 
                 return new List<ToolStripItem>() { menuItem };

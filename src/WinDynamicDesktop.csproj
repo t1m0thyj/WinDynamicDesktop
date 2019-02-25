@@ -99,6 +99,7 @@
       <DependentUpon>InputDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="JsonConfig.cs" />
+    <Compile Include="Localization.cs" />
     <Compile Include="LocationIQ.cs" />
     <Compile Include="LocationManager.cs" />
     <Compile Include="MainMenu.cs" />

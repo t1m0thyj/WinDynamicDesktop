@@ -8,6 +8,7 @@ namespace WinDynamicDesktop
 {
     class LocationManager
     {
+        private static readonly Func<string, string> _ = Localization.GetTranslation;
         public static bool isReady = false;
 
         private static InputDialog locationDialog;
@@ -36,8 +37,8 @@ namespace WinDynamicDesktop
 
                 if (JsonConfig.firstRun)
                 {
-                    AppContext.ShowPopup("Welcome! Please enter your location so the app can " +
-                        "determine sunrise and sunset times.");
+                    AppContext.ShowPopup(_("Welcome! Please enter your location so the app can " +
+                        "determine sunrise and sunset times."));
                 }
             }
         }

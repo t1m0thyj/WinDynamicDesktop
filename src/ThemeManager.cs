@@ -11,6 +11,7 @@ namespace WinDynamicDesktop
 {
     class ThemeManager
     {
+        private static readonly Func<string, string> _ = Localization.GetTranslation;
         public static string[] defaultThemes = new string[] { "Mojave_Desert", "Solar_Gradients" };
         public static bool isReady = false;
         public static List<ThemeConfig> themeSettings = new List<ThemeConfig>();
@@ -92,9 +93,9 @@ namespace WinDynamicDesktop
 
             if (themeIndex != -1)
             {
-                DialogResult result = MessageBox.Show("The '" + themeId + "' theme is already " +
-                    "installed. Do you want to overwrite it?", "Question", MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning);
+                DialogResult result = MessageBox.Show(string.Format(_("The '{0}' theme is " +
+                    "already installed. Do you want to overwrite it?"), themeId), _("Question"),
+                    MessageBoxButtons.YesNo,  MessageBoxIcon.Warning);
 
                 if (result != DialogResult.Yes)
                 {
@@ -139,8 +140,9 @@ namespace WinDynamicDesktop
             }
             catch (Exception e)
             {
-                MessageBox.Show("Failed to import theme from " + themePath + "\n\n" + e.Message,
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(string.Format(_("Failed to import theme from {0}\n\n{1}"),
+                    themePath, e.Message), _("Error"), MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
 
                 return null;
             }
@@ -243,9 +245,9 @@ namespace WinDynamicDesktop
         {
             Directory.Move(Path.Combine("themes", themeId), Path.Combine("themes", "." + themeId));
 
-            MessageBox.Show("The '" + themeId + "' theme could not be loaded and has been " +
+            MessageBox.Show(string.Format(_("The '{0}' theme could not be loaded and has been " +
                 "disabled. This is probably because it was created for an older version of the " +
-                "app or its config file is formatted incorrectly.", "Error",
+                "app or its config file is formatted incorrectly."), themeId), _("Error"),
                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
@@ -289,9 +291,9 @@ namespace WinDynamicDesktop
             }
             else
             {
-                DialogResult result = MessageBox.Show("Failed to download images. Click Retry " +
+                DialogResult result = MessageBox.Show(_("Failed to download images. Click Retry " +
                     "to try again, Ignore to continue with some themes disabled, or Abort to " +
-                    "exit the program.", "Error", MessageBoxButtons.AbortRetryIgnore,
+                    "exit the program."), _("Error"), MessageBoxButtons.AbortRetryIgnore,
                     MessageBoxIcon.Warning);
 
                 if (result == DialogResult.Abort)

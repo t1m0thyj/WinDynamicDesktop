@@ -9,6 +9,7 @@ namespace WinDynamicDesktop
 {
     class MainMenu
     {
+        private static readonly Func<string, string> _ = Localization.GetTranslation;
         public static ToolStripMenuItem themeItem;
         public static ToolStripMenuItem darkModeItem;
         public static ToolStripMenuItem startOnBootItem;
@@ -29,36 +30,36 @@ namespace WinDynamicDesktop
         {
             List<ToolStripItem> items = new List<ToolStripItem>();
 
-            themeItem = new ToolStripMenuItem("&Select Theme...", null, OnThemeItemClick);
+            themeItem = new ToolStripMenuItem(_("&Select Theme..."), null, OnThemeItemClick);
 
             items.AddRange(new List<ToolStripItem>()
             {
                 new ToolStripMenuItem("WinDynamicDesktop"),
                 new ToolStripSeparator(),
                 themeItem,
-                new ToolStripMenuItem("&Change Location...", null, OnLocationItemClick)
+                new ToolStripMenuItem(_("&Change Location..."), null, OnLocationItemClick)
             });
             items[0].Enabled = false;
 
-            darkModeItem = new ToolStripMenuItem("Enable &Dark Mode", null, OnDarkModeClick);
+            darkModeItem = new ToolStripMenuItem(_("Enable &Dark Mode"), null, OnDarkModeClick);
             darkModeItem.Checked = JsonConfig.settings.darkMode;
-            startOnBootItem = new ToolStripMenuItem("&Start on Boot", null, OnStartOnBootClick);
+            startOnBootItem = new ToolStripMenuItem(_("&Start on Boot"), null, OnStartOnBootClick);
 
-            ToolStripMenuItem optionsItem = new ToolStripMenuItem("More &Options");
+            ToolStripMenuItem optionsItem = new ToolStripMenuItem(_("More &Options"));
             optionsItem.DropDownItems.AddRange(GetOptionsMenuItems().ToArray());
 
             items.AddRange(new List<ToolStripItem>()
             {
-                new ToolStripMenuItem("&Refresh Wallpaper", null, OnRefreshItemClick),
+                new ToolStripMenuItem(_("&Refresh Wallpaper"), null, OnRefreshItemClick),
                 new ToolStripSeparator(),
                 darkModeItem,
                 startOnBootItem,
                 optionsItem,
                 new ToolStripSeparator(),
-                new ToolStripMenuItem("&Check for Updates", null, OnUpdateItemClick),
+                new ToolStripMenuItem(_("&Check for Updates"), null, OnUpdateItemClick),
                 new ToolStripMenuItem("&About", null, OnAboutItemClick),
                 new ToolStripSeparator(),
-                new ToolStripMenuItem("E&xit", null, OnExitItemClick)
+                new ToolStripMenuItem(_("E&xit"), null, OnExitItemClick)
             });
 
             return items;
