@@ -14,7 +14,6 @@ namespace WinDynamicDesktop
     public partial class ProgressDialog : Form
     {
         private Queue<ThemeConfig> downloadQueue;
-        private bool importMode;
         private Queue<string> importQueue;
         private int numJobs;
 
@@ -33,7 +32,6 @@ namespace WinDynamicDesktop
 
         public void InitDownload(List<ThemeConfig> themeList)
         {
-            importMode = false;
             downloadQueue = new Queue<ThemeConfig>(themeList);
             numJobs = downloadQueue.Count;
 
@@ -42,8 +40,8 @@ namespace WinDynamicDesktop
 
         public void InitImport(List<string> themePaths)
         {
+            ThemeManager.importMode = true;
             label1.Text = "Importing themes, please wait...";
-            importMode = true;
             importQueue = new Queue<string>(themePaths);
             numJobs = importQueue.Count;
 
@@ -64,7 +62,7 @@ namespace WinDynamicDesktop
 
                     downloadQueue.Dequeue();
 
-                    if (!importMode)
+                    if (!ThemeManager.importMode)
                     {
                         DownloadNext();
                     }
@@ -76,7 +74,7 @@ namespace WinDynamicDesktop
                         theme.themeId + "_images.zip", imagesZipUris.Skip(1).ToList());
                 }
             }
-            else if (!importMode)
+            else if (!ThemeManager.importMode)
             {
                 this.Close();
             }
@@ -84,6 +82,17 @@ namespace WinDynamicDesktop
 
         private void ImportNext()
         {
+            if (ThemeManager.importPaths.Count > 0)
+            {
+                foreach (string themePath in ThemeManager.importPaths)
+                {
+                    importQueue.Enqueue(themePath);
+                }
+
+                numJobs += ThemeManager.importPaths.Count;
+                ThemeManager.importPaths.Clear();
+            }
+
             if (importQueue.Count > 0)
             {
                 this.Invoke(new Action(() => UpdateTotalPercentage(0)));
@@ -106,13 +115,14 @@ namespace WinDynamicDesktop
             }
             else
             {
+                ThemeManager.importMode = false;
                 this.Invoke(new Action(() => this.Close()));
             }
         }
 
         private void UpdateTotalPercentage(int themePercentage)
         {
-            int numRemaining = importMode ? importQueue.Count : downloadQueue.Count;
+            int numRemaining = ThemeManager.importMode ? importQueue.Count : downloadQueue.Count;
             progressBar1.Value = ((numJobs - numRemaining) * 100 + themePercentage) / numJobs;
         }
 

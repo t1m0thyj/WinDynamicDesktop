@@ -239,6 +239,7 @@ namespace WinDynamicDesktop
             themes.Sort((t1, t2) => t1.themeId.CompareTo(t2.themeId));
             List<ThemeConfig> missingThemes = ThemeManager.FindMissingThemes();
             Size thumbnailSize = GetThumbnailSize();
+            ListViewItem newItem = null;
 
             for (int i = 0; i < themes.Count; i++)
             {
@@ -246,18 +247,11 @@ namespace WinDynamicDesktop
                 {
                     EnsureThemeNotDuplicated(themes[i].themeId);
 
-                    int itemIndex = ThemeManager.themeSettings.IndexOf(themes[i]) + 1;
                     listView1.LargeImageList.Images.Add(GetThumbnailImage(themes[i],
                         thumbnailSize));
-                    ListViewItem newItem = listView1.Items.Insert(itemIndex,
-                        GetThemeName(themes[i]), listView1.LargeImageList.Images.Count - 1);
+                    newItem = listView1.Items.Add(GetThemeName(themes[i]),
+                        listView1.LargeImageList.Images.Count - 1);
                     newItem.Tag = themes[i].themeId;
-
-                    if (i == themes.Count - 1)
-                    {
-                        newItem.Selected = true;
-                        listView1.EnsureVisible(itemIndex);
-                    }
                 }
                 else
                 {
@@ -267,12 +261,19 @@ namespace WinDynamicDesktop
                     Task.Run(() => ThemeManager.RemoveTheme(themes[i]));
                 }
             }
+
+            if (newItem != null)
+            {
+                listView1.Sort();
+                newItem.Selected = true;
+                newItem.EnsureVisible();
+            }
         }
 
         private void ThemeDialog_Load(object sender, EventArgs e)
         {
             listView1.ContextMenuStrip = contextMenuStrip1;
-            listView1.ListViewItemSorter = new CompareByIndex(listView1);
+            listView1.ListViewItemSorter = new CompareByItemText(listView1);
 
             darkModeCheckbox.Checked = JsonConfig.settings.darkMode;
             applyButton.Enabled = LocationManager.isReady;
@@ -313,6 +314,8 @@ namespace WinDynamicDesktop
                     newItem.Selected = true;
                 }
             }
+
+            listView1.Sort();
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
@@ -320,8 +323,14 @@ namespace WinDynamicDesktop
             if (listView1.SelectedItems.Count > 0)
             {
                 selectedIndex = listView1.SelectedIndices[0];
-                creditsLabel.Text = GetCreditsText();
+                if (selectedIndex > 0)
+                {
+                    string themeId = (string)listView1.Items[selectedIndex].Tag;
+                    selectedIndex = ThemeManager.themeSettings.FindIndex(
+                        t => t.themeId == themeId) + 1;
+                }
 
+                creditsLabel.Text = GetCreditsText();
                 maxImageNumber = GetMaxImageNumber();
                 LoadPreviewImage(1);
 
@@ -419,7 +428,7 @@ namespace WinDynamicDesktop
             int itemIndex = hitTestInfo.Item?.Index ?? -1;
 
             if (itemIndex <= 0 || ThemeManager.defaultThemes.Contains(
-                ThemeManager.themeSettings[itemIndex - 1].themeId))
+                (string)listView1.Items[itemIndex].Tag))
             {
                 e.Cancel = true;
             }
@@ -428,7 +437,8 @@ namespace WinDynamicDesktop
         private void removeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             int itemIndex = listView1.FocusedItem.Index;
-            ThemeConfig theme = ThemeManager.themeSettings[itemIndex - 1];
+            string themeId = (string)listView1.Items[itemIndex].Tag;
+            ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
 
             DialogResult result = MessageBox.Show("Are you sure you want to remove the " +
                 GetThemeName(theme) + " theme?", "Question", MessageBoxButtons.YesNo,
@@ -473,20 +483,22 @@ namespace WinDynamicDesktop
 
     // Class to force ListView control to sort correctly
     // Code from https://stackoverflow.com/a/30536933/5504760
-    public class CompareByIndex : IComparer
+    public class CompareByItemText : IComparer
     {
         private readonly ListView _listView;
 
-        public CompareByIndex(ListView listView)
+        public CompareByItemText(ListView listView)
         {
             this._listView = listView;
         }
 
         public int Compare(object x, object y)
         {
-            int i = this._listView.Items.IndexOf((ListViewItem)x);
-            int j = this._listView.Items.IndexOf((ListViewItem)y);
-            return i - j;
+            ListViewItem item1 = (ListViewItem)x;
+            ListViewItem item2 = (ListViewItem)y;
+            string a = (item1.Tag != null) ? item1.Text : "\0";
+            string b = (item2.Tag != null) ? item2.Text : "\0";
+            return a.CompareTo(b);
         }
     }
 }

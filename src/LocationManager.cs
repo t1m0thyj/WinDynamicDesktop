@@ -28,6 +28,7 @@ namespace WinDynamicDesktop
             if (JsonConfig.settings.latitude != null && JsonConfig.settings.longitude != null)
             {
                 isReady = true;
+                AppContext.RunInBackground();
             }
             else
             {

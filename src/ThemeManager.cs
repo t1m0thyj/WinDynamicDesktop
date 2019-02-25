@@ -12,9 +12,12 @@ namespace WinDynamicDesktop
     class ThemeManager
     {
         public static string[] defaultThemes = new string[] { "Mojave_Desert", "Solar_Gradients" };
-        public static List<ThemeConfig> importedThemes = new List<ThemeConfig>();
         public static bool isReady = false;
         public static List<ThemeConfig> themeSettings = new List<ThemeConfig>();
+
+        public static bool importMode = false;
+        public static List<string> importPaths;
+        public static List<ThemeConfig> importedThemes = new List<ThemeConfig>();
 
         public static ThemeConfig currentTheme;
         private static ThemeDialog themeDialog;
@@ -61,7 +64,7 @@ namespace WinDynamicDesktop
             DownloadMissingImages(FindMissingThemes());
         }
 
-        public static void SelectTheme(List<string> themePaths = null)
+        public static void SelectTheme()
         {
             if (themeDialog == null)
             {
@@ -74,9 +77,11 @@ namespace WinDynamicDesktop
                 themeDialog.Activate();
             }
 
-            if (themePaths != null)
+            if (importPaths.Count > 0)
             {
-                themeDialog.ImportThemes(themePaths);
+                List<string> tempImportPaths = new List<string>(importPaths.ToArray());
+                importPaths.Clear();
+                themeDialog.ImportThemes(tempImportPaths);
             }
         }
 

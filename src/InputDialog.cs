@@ -91,8 +91,8 @@ namespace WinDynamicDesktop
                         AppContext.wpEngine.RunScheduler();
                     }
 
-                    MessageBox.Show("Location set successfully to: " + data.display_name +
-                        "\n(Latitude = " + data.lat + ", Longitude = " + data.lon + ")", "Success",
+                    MessageBox.Show("Location set successfully to:\nName: " + data.display_name +
+                        "\nLatitude: " + data.lat + "\nLongitude: " + data.lon, "Success",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     this.Close();

@@ -20,7 +20,8 @@ namespace WinDynamicDesktop
 
         public AppContext(string[] args)
         {
-            HandleMultiInstance(args.Where(System.IO.File.Exists).ToList());
+            ThemeManager.importPaths = args.Where(System.IO.File.Exists).ToList();
+            HandleMultiInstance();
 
             JsonConfig.LoadConfig();
             InitializeTrayIcon();
@@ -37,7 +38,7 @@ namespace WinDynamicDesktop
             UpdateChecker.Initialize();
         }
 
-        private void HandleMultiInstance(List<string> themePaths)
+        private void HandleMultiInstance()
         {
             _mutex = new Mutex(true, @"Global\WinDynamicDesktop", out bool isFirstInstance);
             GC.KeepAlive(_mutex);
@@ -50,12 +51,12 @@ namespace WinDynamicDesktop
             }
             else
             {
-                if (themePaths.Count > 0)
+                if (ThemeManager.importPaths.Count > 0)
                 {
                     var namedPipeClient = new NamedPipeClient<string>("WinDynamicDesktop");
                     namedPipeClient.Start();
                     namedPipeClient.WaitForConnection();
-                    namedPipeClient.PushMessage(string.Join("|", themePaths));
+                    namedPipeClient.PushMessage(string.Join("|", ThemeManager.importPaths));
                     Thread.Sleep(1000);
                     namedPipeClient.Stop();
                 }
@@ -98,8 +99,8 @@ namespace WinDynamicDesktop
                 return;
             }
 
-            if (ThemeManager.currentTheme == null && (JsonConfig.firstRun
-                || JsonConfig.settings.themeName != null))
+            if ((ThemeManager.currentTheme == null && (JsonConfig.firstRun
+                || JsonConfig.settings.themeName != null)) || ThemeManager.importPaths.Count > 0)
             {
                 ThemeManager.SelectTheme();
             }
@@ -115,8 +116,13 @@ namespace WinDynamicDesktop
         private void OnNamedPipeClientMessage(NamedPipeConnection<string, string> conn,
             string message)
         {
-            notifyIcon.ContextMenuStrip.BeginInvoke(
-                new Action(() => ThemeManager.SelectTheme(message.Split('|').ToList())));
+            ThemeManager.importPaths.AddRange(message.Split('|'));
+
+            if (!ThemeManager.importMode)
+            {
+                notifyIcon.ContextMenuStrip.BeginInvoke(
+                    new Action(() => ThemeManager.SelectTheme()));
+            }
         }
 
         private void OnNotifyIconMouseUp(object sender, MouseEventArgs e)
