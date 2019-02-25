@@ -18,6 +18,7 @@ namespace WinDynamicDesktop
         private int previewImage;
         private int selectedIndex;
 
+        private static readonly Func<string, string> _ = Localization.GetTranslation;
         private const string themeLink =
             "https://github.com/t1m0thyj/WinDynamicDesktop/wiki/Community-created-themes";
         private readonly string windowsWallpaper = Directory.GetFiles(
@@ -26,6 +27,7 @@ namespace WinDynamicDesktop
         public ThemeDialog()
         {
             InitializeComponent();
+            Localization.TranslateForm(this);
 
             this.Font = SystemFonts.MessageBoxFont;
             this.FormClosing += OnFormClosing;
@@ -138,12 +140,12 @@ namespace WinDynamicDesktop
 
                 if (theme.imageCredits != null)
                 {
-                    return "Image Credits: " + theme.imageCredits;
+                    return string.Format(_("Image Credits: {0}"), theme.imageCredits);
                 }
             }
             else
             {
-                return "Image Credits: Microsoft";
+                return _("Image Credits: Microsoft");
             }
 
             return "";
@@ -211,7 +213,8 @@ namespace WinDynamicDesktop
                     imageFilename), width, height);
             }
 
-            imageNumberLabel.Text = "Image " + imageNumber + " of " + maxImageNumber;
+            imageNumberLabel.Text = string.Format(_("Image {0} of {1}"), imageNumber,
+                maxImageNumber);
             firstButton.Enabled = imageNumber > 1;
             previousButton.Enabled = imageNumber > 1;
             nextButton.Enabled = imageNumber < maxImageNumber;
@@ -255,8 +258,8 @@ namespace WinDynamicDesktop
                 }
                 else
                 {
-                    MessageBox.Show("Failed to download images for the " +
-                        GetThemeName(themes[i]) + " theme.", "Error", MessageBoxButtons.OK,
+                    MessageBox.Show(string.Format(_("Failed to download images for the {0} " +
+                        "theme."), GetThemeName(themes[i])), _("Error"), MessageBoxButtons.OK,
                         MessageBoxIcon.Warning);
                     Task.Run(() => ThemeManager.RemoveTheme(themes[i]));
                 }
@@ -286,7 +289,7 @@ namespace WinDynamicDesktop
 
             imageList.Images.Add(ShrinkImage(windowsWallpaper, thumbnailSize.Width,
                 thumbnailSize.Height));
-            ListViewItem newItem = listView1.Items.Add("None", 0);
+            ListViewItem newItem = listView1.Items.Add(_("None"), 0);
 
             string currentTheme = ThemeManager.currentTheme?.themeId;
 
@@ -440,9 +443,9 @@ namespace WinDynamicDesktop
             string themeId = (string)listView1.Items[itemIndex].Tag;
             ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
 
-            DialogResult result = MessageBox.Show("Are you sure you want to remove the " +
-                GetThemeName(theme) + " theme?", "Question", MessageBoxButtons.YesNo,
-                MessageBoxIcon.Warning);
+            DialogResult result = MessageBox.Show(string.Format(_("Are you sure you want to " +
+                "remove the {0} theme?"), GetThemeName(theme)), _("Question"),
+                MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
             if (result == DialogResult.Yes)
             {
@@ -467,9 +470,9 @@ namespace WinDynamicDesktop
         {
             if (JsonConfig.firstRun && ThemeManager.currentTheme == null)
             {
-                DialogResult result = MessageBox.Show("WinDynamicDesktop cannot dynamically " +
+                DialogResult result = MessageBox.Show(_("WinDynamicDesktop cannot dynamically " +
                     "update your wallpaper until you have selected a theme. Are you sure you " +
-                    "want to continue without a theme selected?", "Question",
+                    "want to continue without a theme selected?"), _("Question"),
                     MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
                 if (result != DialogResult.Yes)

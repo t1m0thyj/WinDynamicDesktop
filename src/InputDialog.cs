@@ -10,9 +10,12 @@ namespace WinDynamicDesktop
 {
     public partial class InputDialog : Form
     {
+        private static readonly Func<string, string> _ = Localization.GetTranslation;
+
         public InputDialog()
         {
             InitializeComponent();
+            Localization.TranslateForm(this);
 
             this.Font = SystemFonts.MessageBoxFont;
             this.FormClosing += OnFormClosing;
@@ -91,16 +94,16 @@ namespace WinDynamicDesktop
                         AppContext.wpEngine.RunScheduler();
                     }
 
-                    MessageBox.Show("Location set successfully to:\nName: " + data.display_name +
-                        "\nLatitude: " + data.lat + "\nLongitude: " + data.lon, "Success",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(string.Format(_("Location set successfully to:\nName: {0}" +
+                        "\nLatitude: {1}\nLongitude: {2}"), data.display_name, data.lat, data.lon),
+                        _("Success"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     this.Close();
                 }
                 else
                 {
-                    MessageBox.Show("The location you entered was invalid, or you are not " +
-                        "connected to the Internet.", "Error", MessageBoxButtons.OK,
+                    MessageBox.Show(_("The location you entered was invalid, or you are not " +
+                        "connected to the Internet."), _("Error"), MessageBoxButtons.OK,
                         MessageBoxIcon.Warning);
                 }
             }
@@ -119,8 +122,8 @@ namespace WinDynamicDesktop
                 }
                 else
                 {
-                    MessageBox.Show("Failed to get location from Windows location service.",
-                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(_("Failed to get location from Windows location service."),
+                        _("Error"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
 
@@ -136,11 +139,11 @@ namespace WinDynamicDesktop
         {
             if (JsonConfig.settings.latitude == null || JsonConfig.settings.longitude == null)
             {
-                DialogResult result = MessageBox.Show("WinDynamicDesktop cannot display " +
+                DialogResult result = MessageBox.Show(_("WinDynamicDesktop cannot display " +
                     "wallpapers until you have entered a valid location, so that it can " +
                     "calculate sunrise and sunset times for your location. Are you sure you " +
-                    "want to cancel and quit the program?", "Question", MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning);
+                    "want to cancel and quit the program?"), _("Question"),
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
                 if (result == DialogResult.Yes)
                 {

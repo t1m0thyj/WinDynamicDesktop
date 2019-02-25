@@ -13,6 +13,7 @@ namespace WinDynamicDesktop
 {
     public partial class ProgressDialog : Form
     {
+        private static readonly Func<string, string> _ = Localization.GetTranslation;
         private Queue<ThemeConfig> downloadQueue;
         private Queue<string> importQueue;
         private int numJobs;
@@ -22,6 +23,7 @@ namespace WinDynamicDesktop
         public ProgressDialog()
         {
             InitializeComponent();
+            Localization.TranslateForm(this);
 
             this.Font = SystemFonts.MessageBoxFont;
             this.FormClosing += OnFormClosing;
@@ -41,7 +43,7 @@ namespace WinDynamicDesktop
         public void InitImport(List<string> themePaths)
         {
             ThemeManager.importMode = true;
-            label1.Text = "Importing themes, please wait...";
+            label1.Text = _("Importing themes, please wait...");
             importQueue = new Queue<string>(themePaths);
             numJobs = importQueue.Count;
 
