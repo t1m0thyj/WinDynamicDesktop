@@ -1,1 +1,0 @@
-nim compile --run -o:wdd-logger.exe logger.nim

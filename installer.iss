@@ -90,7 +90,7 @@ Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: 
 Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "{#MyAppName}"; ValueData: "{app}\{#MyAppExeName}"; Flags: uninsdeletevalue; Tasks: startonboot
 Root: HKCU; Subkey: "Software\Classes\.ddw"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}.DynamicDesktopWallpaper"; Flags: uninsdeletekeyifempty uninsdeletevalue; Tasks: registerddw
 Root: HKCU; Subkey: "Software\Classes\{#MyAppName}.DynamicDesktopWallpaper"; ValueType: string; ValueName: ""; ValueData: "Dynamic Desktop Wallpaper"; Flags: uninsdeletekey; Tasks: registerddw
-Root: HKCU; Subkey: "Software\Classes\{#MyAppName}.DynamicDesktopWallpaper\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#MyAppExeName}"; Flags: uninsdeletekey; Tasks: registerddw
+Root: HKCU; Subkey: "Software\Classes\{#MyAppName}.DynamicDesktopWallpaper\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#MyAppExeName},0"; Flags: uninsdeletekey; Tasks: registerddw
 Root: HKCU; Subkey: "Software\Classes\{#MyAppName}.DynamicDesktopWallpaper\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; Flags: uninsdeletekey; Tasks: registerddw
 
 [Run]

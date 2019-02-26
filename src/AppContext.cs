@@ -25,6 +25,7 @@ namespace WinDynamicDesktop
             HandleMultiInstance();
 
             JsonConfig.LoadConfig();
+            Localization.Initialize();
             InitializeTrayIcon();
 
             ThemeManager.Initialize();

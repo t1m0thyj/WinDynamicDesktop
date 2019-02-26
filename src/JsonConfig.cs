@@ -22,6 +22,7 @@ namespace WinDynamicDesktop
         public string themeName { get; set; }
         public bool useWindowsLocation { get; set; }
         public bool changeLockScreen { get; set; }
+        public string language { get; set; }
     }
 
     public class ThemeConfig

@@ -1,1 +1,0 @@
-nim compile --app:gui -d:release --opt:size -o:wdd-logger.exe logger.nim
