@@ -94,16 +94,22 @@ namespace WinDynamicDesktop
                         AppContext.wpEngine.RunScheduler();
                     }
 
-                    MessageBox.Show(string.Format(_("Location set successfully to:\nName: {0}" +
-                        "\nLatitude: {1}\nLongitude: {2}"), data.display_name, data.lat, data.lon),
-                        _("Success"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    DialogResult result = MessageBox.Show(string.Format(_("Location set " +
+                        "successfully to:\nName: {0}\nLatitude: {1}\nLongitude: {2}\nDo you " +
+                        "want to use this location?"), data.display_name, data.lat, data.lon),
+                        _("Success"), MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 
-                    this.Close();
+                    if (result == DialogResult.Yes)
+                    {
+                        this.Close();
+                    }
                 }
                 else
                 {
                     MessageBox.Show(_("The location you entered was invalid, or you are not " +
-                        "connected to the Internet."), _("Error"), MessageBoxButtons.OK,
+                        "connected to the Internet. Check your Internet connection and try a " +
+                        "different location. You can use a complete address or just the name of " +
+                        "your city/region."), _("Error"), MessageBoxButtons.OK,
                         MessageBoxIcon.Warning);
                 }
             }

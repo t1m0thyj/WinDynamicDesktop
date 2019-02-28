@@ -108,8 +108,8 @@ namespace WinDynamicDesktop
             }
             else if (JsonConfig.firstRun)
             {
-                ShowPopup(_("The app is still running in the background. You can still access " +
-                    "it at any time by clicking on the icon in the system tray."));
+                ShowPopup(_("The app is still running in the background. You can access it at " +
+                    "any time by clicking on the icon in the system tray."));
 
                 JsonConfig.firstRun = false;  // Don't show this message again
             }
