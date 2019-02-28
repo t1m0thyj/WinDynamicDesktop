@@ -100,7 +100,7 @@ namespace WinDynamicDesktop
                 this.Invoke(new Action(() => UpdateTotalPercentage(0)));
                 string themePath = importQueue.Peek();
 
-                ThemeConfig theme = ThemeManager.ImportTheme(themePath);
+                ThemeConfig theme = ThemeManager.ImportTheme(themePath, this.Handle);
 
                 if (theme != null)
                 {
@@ -110,10 +110,11 @@ namespace WinDynamicDesktop
                         DownloadNext();
                     }
 
-                    importQueue.Dequeue();
                     ThemeManager.importedThemes.Add(theme);
-                    ImportNext();
                 }
+
+                importQueue.Dequeue();
+                ImportNext();
             }
             else
             {
@@ -125,7 +126,10 @@ namespace WinDynamicDesktop
         private void UpdateTotalPercentage(int themePercentage)
         {
             int numRemaining = ThemeManager.importMode ? importQueue.Count : downloadQueue.Count;
-            progressBar1.Value = ((numJobs - numRemaining) * 100 + themePercentage) / numJobs;
+            int percentage = ((numJobs - numRemaining) * 100 + themePercentage) / numJobs;
+
+            progressBar1.Value = percentage;
+            TaskbarProgress.SetValue(this.Handle, percentage, 100);
         }
 
         private void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)

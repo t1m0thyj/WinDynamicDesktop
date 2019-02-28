@@ -86,16 +86,18 @@ namespace WinDynamicDesktop
             }
         }
 
-        public static ThemeConfig ImportTheme(string themePath)
+        public static ThemeConfig ImportTheme(string themePath, IntPtr dialogHandle)
         {
             string themeId = Path.GetFileNameWithoutExtension(themePath);
             int themeIndex = themeSettings.FindIndex(t => t.themeId == themeId);
 
             if (themeIndex != -1)
             {
+                TaskbarProgress.SetState(dialogHandle, TaskbarProgress.TaskbarStates.Paused);
                 DialogResult result = MessageBox.Show(string.Format(_("The '{0}' theme is " +
                     "already installed. Do you want to overwrite it?"), themeId), _("Question"),
                     MessageBoxButtons.YesNo,  MessageBoxIcon.Warning);
+                TaskbarProgress.SetState(dialogHandle, TaskbarProgress.TaskbarStates.Normal);
 
                 if (result != DialogResult.Yes)
                 {
@@ -140,9 +142,11 @@ namespace WinDynamicDesktop
             }
             catch (Exception e)
             {
+                TaskbarProgress.SetState(dialogHandle, TaskbarProgress.TaskbarStates.Error);
                 MessageBox.Show(string.Format(_("Failed to import theme from {0}\n\n{1}"),
                     themePath, e.Message), _("Error"), MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
+                TaskbarProgress.SetState(dialogHandle, TaskbarProgress.TaskbarStates.Normal);
 
                 return null;
             }
