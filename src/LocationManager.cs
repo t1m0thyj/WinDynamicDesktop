@@ -51,10 +51,8 @@ namespace WinDynamicDesktop
                 locationDialog.FormClosed += OnLocationDialogClosed;
                 locationDialog.Show();
             }
-            else
-            {
-                locationDialog.Activate();
-            }
+
+            locationDialog.BringToFront();
         }
 
         private static void OnLocationDialogClosed(object sender, EventArgs e)

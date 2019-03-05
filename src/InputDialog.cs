@@ -88,19 +88,22 @@ namespace WinDynamicDesktop
                     JsonConfig.settings.location = inputBox.Text;
                     JsonConfig.settings.latitude = data.lat;
                     JsonConfig.settings.longitude = data.lon;
+                    SolarData solarData = SunriseSunsetService.GetSolarData(DateTime.Today);
 
-                    if (ThemeManager.isReady)
-                    {
-                        AppContext.wpEngine.RunScheduler();
-                    }
-
-                    DialogResult result = MessageBox.Show(string.Format(_("Location set " +
-                        "successfully to:\nName: {0}\nLatitude: {1}\nLongitude: {2}\nDo you " +
-                        "want to use this location?"), data.display_name, data.lat, data.lon),
-                        _("Success"), MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                    DialogResult result = MessageBox.Show(string.Format(_("Is this location " +
+                        "correct?\n\n{0}\nSunrise: {1}, Sunset: {2}"), data.display_name,
+                        solarData.sunriseTime.ToShortTimeString(),
+                        solarData.sunsetTime.ToShortTimeString()), _("Question"),
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                     if (result == DialogResult.Yes)
                     {
+                        if (ThemeManager.isReady)
+                        {
+                            this.Hide();
+                            AppContext.wpEngine.RunScheduler();
+                        }
+
                         this.Close();
                     }
                 }

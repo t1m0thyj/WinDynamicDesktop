@@ -73,10 +73,8 @@ namespace WinDynamicDesktop
                 themeDialog.FormClosed += OnThemeDialogClosed;
                 themeDialog.Show();
             }
-            else
-            {
-                themeDialog.Activate();
-            }
+
+            themeDialog.BringToFront();
 
             if (importPaths.Count > 0)
             {

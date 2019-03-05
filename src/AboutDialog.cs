@@ -33,6 +33,7 @@ namespace WinDynamicDesktop
             if (this.Size.Width < minWidth)
             {
                 this.Size = new Size(minWidth, this.Size.Height);
+                this.CenterToScreen();
             }
         }
 

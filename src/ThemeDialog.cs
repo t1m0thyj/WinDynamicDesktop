@@ -32,14 +32,12 @@ namespace WinDynamicDesktop
             this.Font = SystemFonts.MessageBoxFont;
             this.FormClosing += OnFormClosing;
 
-            int extraWidth = GetThumbnailSize(false).Width * 2 - 384;
-
-            if (extraWidth > 0)
-            {
-                this.listView1.Size = new Size(this.listView1.Width + extraWidth,
-                    this.listView1.Height);
-                this.Size = new Size(this.Width + extraWidth, this.Height);
-            }
+            int bestWidth = (GetThumbnailSize(false).Width +
+                SystemInformation.IconHorizontalSpacing) * 2;
+            int oldWidth = this.listView1.Size.Width;
+            this.listView1.Size = new Size(bestWidth, this.listView1.Height);
+            this.Size = new Size(this.Width + bestWidth - oldWidth, this.Height);
+            this.CenterToScreen();
         }
 
         public void ImportThemes(List<string> themePaths)
