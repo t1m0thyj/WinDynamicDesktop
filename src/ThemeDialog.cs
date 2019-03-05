@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Collections;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace WinDynamicDesktop
 {
@@ -31,13 +32,6 @@ namespace WinDynamicDesktop
 
             this.Font = SystemFonts.MessageBoxFont;
             this.FormClosing += OnFormClosing;
-
-            int bestWidth = (GetThumbnailSize(false).Width +
-                SystemInformation.IconHorizontalSpacing) * 2;
-            int oldWidth = this.listView1.Size.Width;
-            this.listView1.Size = new Size(bestWidth, this.listView1.Height);
-            this.Size = new Size(this.Width + bestWidth - oldWidth, this.Height);
-            this.CenterToScreen();
         }
 
         public void ImportThemes(List<string> themePaths)
@@ -271,10 +265,15 @@ namespace WinDynamicDesktop
             }
         }
 
+        // Code to change ListView appearance from https://stackoverflow.com/a/4463114/5504760
+        [DllImport("uxtheme.dll", ExactSpelling = true, CharSet = CharSet.Unicode)]
+        private static extern int SetWindowTheme(IntPtr hwnd, string pszSubAppName, string pszSubIdList);
+
         private void ThemeDialog_Load(object sender, EventArgs e)
         {
             listView1.ContextMenuStrip = contextMenuStrip1;
             listView1.ListViewItemSorter = new CompareByItemText(listView1);
+            SetWindowTheme(this.listView1.Handle, "Explorer", null);
 
             darkModeCheckbox.Checked = JsonConfig.settings.darkMode;
             applyButton.Enabled = LocationManager.isReady;
@@ -317,6 +316,14 @@ namespace WinDynamicDesktop
             }
 
             listView1.Sort();
+
+            int numCols = (thumbnailSize.Width < 256) ? 2 : 3;
+            int bestWidth = (listView1.GetItemRect(0).Width + 4) * numCols +
+                SystemInformation.VerticalScrollBarWidth;
+            int oldWidth = this.listView1.Size.Width;
+            this.listView1.Size = new Size(bestWidth, this.listView1.Height);
+            this.Size = new Size(this.Width + bestWidth - oldWidth, this.Height);
+            this.CenterToScreen();
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
