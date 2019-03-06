@@ -42,7 +42,7 @@ namespace WinDynamicDesktop
             importDialog.InitImport(themePaths);
         }
 
-        private Size GetThumbnailSize(bool scaleFont = true)
+        private Size GetThumbnailSize()
         {
             int scaledWidth;
 
@@ -51,18 +51,12 @@ namespace WinDynamicDesktop
                 scaledWidth = (int)(192 * g.DpiX / 96);
             }
 
-            if (scaleFont)
-            {
-                scaledWidth = (int)(scaledWidth * this.AutoScaleDimensions.Width / 7);
-            }
-
             if (scaledWidth > 256)
             {
                 scaledWidth = 256;
             }
 
-            Size scaledSize = new Size(scaledWidth, scaledWidth * 9 / 16);
-            return scaledSize;
+            return new Size(scaledWidth, scaledWidth * 9 / 16);
         }
 
         private Bitmap ShrinkImage(string filename, int width, int height)
@@ -250,7 +244,7 @@ namespace WinDynamicDesktop
                 }
                 else
                 {
-                    MessageBox.Show(string.Format(_("Failed to download images for the {0} " +
+                    MessageBox.Show(string.Format(_("Failed to download images for the '{0}' " +
                         "theme."), GetThemeName(themes[i])), _("Error"), MessageBoxButtons.OK,
                         MessageBoxIcon.Warning);
                     Task.Run(() => ThemeManager.RemoveTheme(themes[i]));
@@ -449,7 +443,7 @@ namespace WinDynamicDesktop
             ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
 
             DialogResult result = MessageBox.Show(string.Format(_("Are you sure you want to " +
-                "remove the {0} theme?"), GetThemeName(theme)), _("Question"),
+                "remove the '{0}' theme?"), GetThemeName(theme)), _("Question"),
                 MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
             if (result == DialogResult.Yes)

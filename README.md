@@ -19,7 +19,7 @@ After you have chosen a theme and entered your location, the app will minimize t
 
 ## Frequently Asked Questions
 
-### Why did I develop this?
+### Why did you develop this?
 
 When the Dynamic Desktop feature was announced for macOS Mojave which shifts through 16 images of the same desert scene taken at different times of day, I wanted to make a Windows program that would do the same thing. Windows 10 natively supports cycling through multiple wallpapers, but not based on the times of sunrise and sunset. WinDynamicDesktop adds that feature to the Windows desktop.
 
@@ -31,13 +31,17 @@ There is an option to enable this in the "More Options" section of the system tr
 
 This is a commonly requested feature to mimic the behavior of macOS and many Linux distros where the lockscreen image is the same as the desktop wallpaper. If you are using the Microsoft Store version of WinDynamicDesktop, you can enable changing the lockscreen image as an experimental feature by editing the `settings.conf` file which is in the same folder as the EXE. Change the setting `"changeLockScreen":false` to `"changeLockScreen":true` (or add it if it doesn't exist), and make sure in the Windows 10 settings app that *Personalization* -> *Lock screen* -> *Background* is set to *Picture*. In order for this to work reliably on Windows, it would be ideal if Microsoft added an option in a future version of Windows to make the lockscreen image mirror the desktop wallpaper.
 
-### How can you customize the images?
+### How can I customize the images?
 
 You are not limited to the Mojave themes that come preinstalled with the app. Custom themes created by the community can be downloaded [here](https://github.com/t1m0thyj/WinDynamicDesktop/wiki/Community-created-themes). You can also create your own theme that uses whatever wallpaper images you want, by following the instructions in [this tutorial](https://github.com/t1m0thyj/WinDynamicDesktop/wiki/Creating-custom-themes).
 
-### How can you hide the tray icon?
+### How can I hide the tray icon?
 
 If you want to run the app silently with no icon in the system tray, you can do this by editing the `settings.conf` file which is in the same folder as the EXE. Change the setting `"hideTrayIcon":false` to `"hideTrayIcon":true` (or add it if it doesn't exist), then restart the app.
+
+### How can I change the folder where config files are stored?
+
+If you want the app to store its settings and theme files in a different folder from the default, you can create a file `WinDynamicDesktop.pth` in the same folder as the EXE. Edit the file and add the config path you want to use on the first line.
 
 ## Legal and Privacy Stuff
 I do not own the wallpaper images used by WinDynamicDesktop, they belong to Apple. The icon used in this program was made by [Roundicons](https://www.flaticon.com/authors/roundicons) from [flaticon.com](https://www.flaticon.com/) and is licensed by [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/).

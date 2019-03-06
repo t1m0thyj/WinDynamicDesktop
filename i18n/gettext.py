@@ -3,7 +3,8 @@ import re
 import time
 from collections import OrderedDict
 
-exclude_patterns = [r'WinDynamicDesktop$', r'\w+://', r'label\d+$', r'\W+$']
+app_name = "WinDynamicDesktop"
+exclude_patterns = [app_name + r'$', r'\w+://', r'label\d+$', r'\W+$']
 pot_data = OrderedDict()
 
 
@@ -54,14 +55,14 @@ pot_lines = [
     "#",
     "msgid \"\"",
     "msgstr \"\"",
-    "\"Project-Id-Version: PACKAGE VERSION\\n\"",
+    "\"Project-Id-Version: {}\\n\"".format(app_name),
     "\"POT-Creation-Date: {}\\n\"".format(time.strftime("%Y-%m-%d %H:%M%z")),
     "\"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\\n\"",
     "\"Last-Translator: FULL NAME <EMAIL@ADDRESS>\\n\"",
     "\"Language-Team: LANGUAGE <LL@li.org>\\n\"",
     "\"MIME-Version: 1.0\\n\"",
-    "\"Content-Type: text/plain; charset=CHARSET\\n\"",
-    "\"Content-Transfer-Encoding: ENCODING\\n\""
+    "\"Content-Type: text/plain; charset=UTF-8\\n\"",
+    "\"Content-Transfer-Encoding: 8bit\\n\""
 ]
 
 for msgid, locs in pot_data.items():

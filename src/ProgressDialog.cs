@@ -17,6 +17,7 @@ namespace WinDynamicDesktop
         private Queue<ThemeConfig> downloadQueue;
         private Queue<string> importQueue;
         private int numJobs;
+        private IntPtr taskbarHandle;
 
         private WebClient wc = new WebClient();
 
@@ -27,6 +28,7 @@ namespace WinDynamicDesktop
 
             this.Font = SystemFonts.MessageBoxFont;
             this.FormClosing += OnFormClosing;
+            taskbarHandle = this.Handle;
 
             wc.DownloadProgressChanged += OnDownloadProgressChanged;
             wc.DownloadFileCompleted += OnDownloadFileCompleted;
@@ -95,12 +97,13 @@ namespace WinDynamicDesktop
                 ThemeManager.importPaths.Clear();
             }
 
+            this.Invoke(new Action(() => UpdateTotalPercentage(0)));
+
             if (importQueue.Count > 0)
             {
-                this.Invoke(new Action(() => UpdateTotalPercentage(0)));
                 string themePath = importQueue.Peek();
 
-                ThemeConfig theme = ThemeManager.ImportTheme(themePath, this.Handle);
+                ThemeConfig theme = ThemeManager.ImportTheme(themePath, taskbarHandle);
 
                 if (theme != null)
                 {
