@@ -47,6 +47,9 @@
     <Reference Include="DesktopBridge.Helpers, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\DesktopBridge.Helpers.1.2.1\lib\net45\DesktopBridge.Helpers.dll</HintPath>
     </Reference>
+    <Reference Include="ImageListView, Version=13.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\ImageListView.13.4.0\lib\net35\ImageListView.dll</HintPath>
+    </Reference>
     <Reference Include="NamedPipeWrapper, Version=1.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\NamedPipeWrapper.1.5.0\lib\net40\NamedPipeWrapper.dll</HintPath>
     </Reference>

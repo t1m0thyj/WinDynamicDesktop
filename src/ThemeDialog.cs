@@ -7,9 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Collections;
 using System.IO;
-using System.Runtime.InteropServices;
+using Manina.Windows.Forms;
 
 namespace WinDynamicDesktop
 {
@@ -18,6 +17,7 @@ namespace WinDynamicDesktop
         private int maxImageNumber;
         private int previewImage;
         private int selectedIndex;
+        private List<string> themeNames = new List<string>();
 
         private static readonly Func<string, string> _ = Localization.GetTranslation;
         private const string themeLink =
@@ -32,6 +32,13 @@ namespace WinDynamicDesktop
 
             this.Font = SystemFonts.MessageBoxFont;
             this.FormClosing += OnFormClosing;
+
+            int bestWidth = (GetThumbnailSize().Width + 14) * 2 +
+                SystemInformation.VerticalScrollBarWidth;
+            int oldWidth = this.imageListView1.Size.Width;
+            this.imageListView1.Size = new Size(bestWidth, this.imageListView1.Height);
+            this.Size = new Size(this.Width + bestWidth - oldWidth, this.Height);
+            this.CenterToScreen();
         }
 
         public void ImportThemes(List<string> themePaths)
@@ -49,11 +56,6 @@ namespace WinDynamicDesktop
             using (Graphics g = this.CreateGraphics())
             {
                 scaledWidth = (int)(192 * g.DpiX / 96);
-            }
-
-            if (scaledWidth > 256)
-            {
-                scaledWidth = 256;
             }
 
             return new Size(scaledWidth, scaledWidth * 9 / 16);
@@ -211,13 +213,13 @@ namespace WinDynamicDesktop
 
         private void EnsureThemeNotDuplicated(string themeId)
         {
-            foreach (ListViewItem item in listView1.Items)
+            foreach (ImageListViewItem item in imageListView1.Items)
             {
                 if ((string)item.Tag == themeId)
                 {
-                    int imageIndex = item.ImageIndex;
-                    listView1.Items.Remove(item);
-                    listView1.LargeImageList.Images[imageIndex].Dispose();
+                    int itemIndex = item.Index;
+                    imageListView1.Items.RemoveAt(itemIndex);
+                    themeNames.RemoveAt(itemIndex - 1);
                     break;
                 }
             }
@@ -228,7 +230,7 @@ namespace WinDynamicDesktop
             themes.Sort((t1, t2) => t1.themeId.CompareTo(t2.themeId));
             List<ThemeConfig> missingThemes = ThemeManager.FindMissingThemes();
             Size thumbnailSize = GetThumbnailSize();
-            ListViewItem newItem = null;
+            ImageListViewItem newItem = null;
 
             for (int i = 0; i < themes.Count; i++)
             {
@@ -236,10 +238,14 @@ namespace WinDynamicDesktop
                 {
                     EnsureThemeNotDuplicated(themes[i].themeId);
 
-                    listView1.LargeImageList.Images.Add(GetThumbnailImage(themes[i],
-                        thumbnailSize));
-                    newItem = listView1.Items.Add(GetThemeName(themes[i]),
-                        listView1.LargeImageList.Images.Count - 1);
+                    string themeName = GetThemeName(themes[i]);
+                    themeNames.Add(themeName);
+                    themeNames.Sort();
+                    int itemIndex = themeNames.IndexOf(themeName) + 1;
+
+                    imageListView1.Items.Insert(itemIndex, GetThemeName(themes[i]),
+                        GetThumbnailImage(themes[i], thumbnailSize));
+                    newItem = imageListView1.Items[itemIndex];
                     newItem.Tag = themes[i].themeId;
                 }
                 else
@@ -253,36 +259,24 @@ namespace WinDynamicDesktop
 
             if (newItem != null)
             {
-                listView1.Sort();
                 newItem.Selected = true;
-                newItem.EnsureVisible();
+                imageListView1.EnsureVisible(newItem.Index);
             }
         }
 
-        // Code to change ListView appearance from https://stackoverflow.com/a/4463114/5504760
-        [DllImport("uxtheme.dll", ExactSpelling = true, CharSet = CharSet.Unicode)]
-        private static extern int SetWindowTheme(IntPtr hwnd, string pszSubAppName, string pszSubIdList);
-
         private void ThemeDialog_Load(object sender, EventArgs e)
         {
-            listView1.ContextMenuStrip = contextMenuStrip1;
-            listView1.ListViewItemSorter = new CompareByItemText(listView1);
-            SetWindowTheme(this.listView1.Handle, "Explorer", null);
-
+            imageListView1.ContextMenuStrip = contextMenuStrip1;
             darkModeCheckbox.Checked = JsonConfig.settings.darkMode;
             applyButton.Enabled = LocationManager.isReady;
 
-            ImageList imageList = new ImageList();
-            imageList.ColorDepth = ColorDepth.Depth32Bit;
             Size thumbnailSize = GetThumbnailSize();
-            imageList.ImageSize = thumbnailSize;
-            listView1.LargeImageList = imageList;
-
-            imageList.Images.Add(ShrinkImage(windowsWallpaper, thumbnailSize.Width,
+            imageListView1.ThumbnailSize = thumbnailSize;
+            imageListView1.Items.Add(_("None"), ShrinkImage(windowsWallpaper, thumbnailSize.Width,
                 thumbnailSize.Height));
-            ListViewItem newItem = listView1.Items.Add(_("None"), 0);
 
             string currentTheme = ThemeManager.currentTheme?.themeId;
+            ImageListViewItem focusItem = null;
 
             if (currentTheme == null)
             {
@@ -292,42 +286,43 @@ namespace WinDynamicDesktop
                 }
                 else
                 {
-                    newItem.Selected = true;
+                    focusItem = imageListView1.Items[0];
                 }
             }
 
             for (int i = 0; i < ThemeManager.themeSettings.Count; i++)
             {
                 ThemeConfig theme = ThemeManager.themeSettings[i];
-                imageList.Images.Add(GetThumbnailImage(theme, thumbnailSize));
-                newItem = listView1.Items.Add(GetThemeName(theme), i + 1);
-                newItem.Tag = theme.themeId;
+                string themeName = GetThemeName(theme);
+                themeNames.Add(themeName);
+                themeNames.Sort();
+
+                int itemIndex = themeNames.IndexOf(themeName) + 1;
+                imageListView1.Items.Insert(itemIndex, themeName,
+                    GetThumbnailImage(theme, thumbnailSize));
+                imageListView1.Items[itemIndex].Tag = theme.themeId;
 
                 if (theme.themeId == currentTheme)
                 {
-                    newItem.Selected = true;
+                    focusItem = imageListView1.Items[itemIndex];
                 }
             }
 
-            listView1.Sort();
-
-            int numCols = (thumbnailSize.Width < 256) ? 2 : 3;
-            int bestWidth = (listView1.GetItemRect(0).Width + 4) * numCols +
-                SystemInformation.VerticalScrollBarWidth;
-            int oldWidth = this.listView1.Size.Width;
-            this.listView1.Size = new Size(bestWidth, this.listView1.Height);
-            this.Size = new Size(this.Width + bestWidth - oldWidth, this.Height);
-            this.CenterToScreen();
+            if (focusItem != null)
+            {
+                focusItem.Selected = true;
+                imageListView1.EnsureVisible(focusItem.Index);
+            }
         }
 
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        private void imageListView1_SelectionChanged(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count > 0)
+            if (imageListView1.SelectedItems.Count > 0)
             {
-                selectedIndex = listView1.SelectedIndices[0];
+                selectedIndex = imageListView1.SelectedItems[0].Index;
                 if (selectedIndex > 0)
                 {
-                    string themeId = (string)listView1.Items[selectedIndex].Tag;
+                    string themeId = (string)imageListView1.Items[selectedIndex].Tag;
                     selectedIndex = ThemeManager.themeSettings.FindIndex(
                         t => t.themeId == themeId) + 1;
                 }
@@ -426,11 +421,12 @@ namespace WinDynamicDesktop
 
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
         {
-            var hitTestInfo = listView1.HitTest(listView1.PointToClient(Cursor.Position));
-            int itemIndex = hitTestInfo.Item?.Index ?? -1;
+            imageListView1.HitTest(imageListView1.PointToClient(Cursor.Position),
+                out var hitTestInfo);
+            int itemIndex = hitTestInfo.ItemIndex;
 
             if (itemIndex <= 0 || ThemeManager.defaultThemes.Contains(
-                (string)listView1.Items[itemIndex].Tag))
+                (string)imageListView1.Items[itemIndex].Tag))
             {
                 e.Cancel = true;
             }
@@ -438,8 +434,8 @@ namespace WinDynamicDesktop
 
         private void removeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            int itemIndex = listView1.FocusedItem.Index;
-            string themeId = (string)listView1.Items[itemIndex].Tag;
+            int itemIndex = imageListView1.SelectedItems[0].Index;
+            string themeId = (string)imageListView1.Items[itemIndex].Tag;
             ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
 
             DialogResult result = MessageBox.Show(string.Format(_("Are you sure you want to " +
@@ -448,10 +444,9 @@ namespace WinDynamicDesktop
 
             if (result == DialogResult.Yes)
             {
-                int imageIndex = listView1.Items[itemIndex].ImageIndex;
-                listView1.Items.RemoveAt(itemIndex);
-                listView1.Items[itemIndex - 1].Selected = true;
-                listView1.LargeImageList.Images[imageIndex].Dispose();
+                imageListView1.Items.RemoveAt(itemIndex);
+                imageListView1.Items[itemIndex - 1].Selected = true;
+                themeNames.RemoveAt(itemIndex - 1);
 
                 Task.Run(() => ThemeManager.RemoveTheme(theme));
             }
@@ -480,27 +475,6 @@ namespace WinDynamicDesktop
                     this.Show();
                 }
             }
-        }
-    }
-
-    // Class to force ListView control to sort correctly
-    // Code from https://stackoverflow.com/a/30536933/5504760
-    public class CompareByItemText : IComparer
-    {
-        private readonly ListView _listView;
-
-        public CompareByItemText(ListView listView)
-        {
-            this._listView = listView;
-        }
-
-        public int Compare(object x, object y)
-        {
-            ListViewItem item1 = (ListViewItem)x;
-            ListViewItem item2 = (ListViewItem)y;
-            string a = (item1.Tag != null) ? item1.Text : "\0";
-            string b = (item2.Tag != null) ? item2.Text : "\0";
-            return a.CompareTo(b);
         }
     }
 }
