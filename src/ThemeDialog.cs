@@ -86,10 +86,28 @@ namespace WinDynamicDesktop
                 return Image.FromFile(thumbnailPath);
             }
 
-            int imageId1 = theme.dayImageList[theme.dayImageList.Length / 2];
-            string imageFilename1 = theme.imageFilename.Replace("*", imageId1.ToString());
+            int imageId1;
+            int imageId2;
 
-            int imageId2 = theme.nightImageList[theme.nightImageList.Length / 2];
+            if (theme.dayHighlight.HasValue)
+            {
+                imageId1 = theme.dayHighlight.Value;
+            }
+            else
+            {
+                imageId1 = theme.dayImageList[theme.dayImageList.Length / 2];
+            }
+
+            if (theme.nightHighlight.HasValue)
+            {
+                imageId2 = theme.nightHighlight.Value;
+            }
+            else
+            {
+                imageId2 = theme.nightImageList[theme.nightImageList.Length / 2];
+            }
+
+            string imageFilename1 = theme.imageFilename.Replace("*", imageId1.ToString());
             string imageFilename2 = theme.imageFilename.Replace("*", imageId2.ToString());
 
             using (var bmp1 = ShrinkImage(Path.Combine("themes", theme.themeId, imageFilename1),
@@ -112,12 +130,7 @@ namespace WinDynamicDesktop
 
         private string GetThemeName(ThemeConfig theme)
         {
-            if (theme.displayName != null)
-            {
-                return theme.displayName;
-            }
-
-            return theme.themeId.Replace('_', ' ');
+            return theme.displayName ?? theme.themeId.Replace('_', ' ');
         }
 
         private string GetCreditsText()
@@ -180,21 +193,9 @@ namespace WinDynamicDesktop
             else
             {
                 ThemeConfig theme = ThemeManager.themeSettings[selectedIndex - 1];
-                int imageId;
-
-                if (!darkModeCheckbox.Checked)
-                {
-                    List<int> imageList = new List<int>();
-                    imageList.AddRange(theme.sunriseImageList);
-                    imageList.AddRange(theme.dayImageList);
-                    imageList.AddRange(theme.sunsetImageList);
-                    imageList.AddRange(theme.nightImageList);
-                    imageId = imageList[imageNumber - 1];
-                }
-                else
-                {
-                    imageId = theme.nightImageList[imageNumber - 1];
-                }
+                SolarData solarData = SunriseSunsetService.GetSolarData(DateTime.Today);
+                int imageId = AppContext.wpEngine.GetImageData(solarData, theme,
+                    darkModeCheckbox.Checked).Item1;
 
                 string imageFilename = theme.imageFilename.Replace("*", imageId.ToString());
                 pictureBox1.Image = ShrinkImage(Path.Combine("themes", theme.themeId,

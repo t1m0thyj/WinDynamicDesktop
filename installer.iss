@@ -97,5 +97,5 @@ Root: HKCU; Subkey: "Software\Classes\{#MyAppName}.DynamicDesktopWallpaper\shell
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
 [UninstallRun]
-Filename: "{sys}\taskkill.exe"; Parameters: "/f /im {#MyAppExeName}"; Flags: runhidden skipifdoesntexist
+Filename: "{sys}\taskkill.exe"; Parameters: "/im {#MyAppExeName} /t /f"; Flags: runhidden skipifdoesntexist
 
