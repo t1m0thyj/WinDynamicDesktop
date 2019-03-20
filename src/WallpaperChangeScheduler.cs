@@ -174,9 +174,8 @@ namespace WinDynamicDesktop
 
             TimeSpan segmentLength = segmentEnd - segmentStart;
             TimeSpan timerLength = new TimeSpan(segmentLength.Ticks / imageList.Length);
-            TimeSpan elapsedTime = DateTime.Now - segmentStart;
 
-            int imageNumber = (int)(elapsedTime.Ticks / timerLength.Ticks);
+            int imageNumber = (int)((DateTime.Now - segmentStart).Ticks / timerLength.Ticks);
             long nextUpdateTicks = segmentStart.Ticks + timerLength.Ticks * (imageNumber + 1);
 
             return new Tuple<int, long>(imageList[imageNumber], nextUpdateTicks);

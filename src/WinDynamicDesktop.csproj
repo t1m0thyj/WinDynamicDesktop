@@ -126,6 +126,7 @@
     <Compile Include="ThemeDialog.Designer.cs">
       <DependentUpon>ThemeDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="ThemeListViewRenderer.cs" />
     <Compile Include="ThemeManager.cs" />
     <Compile Include="UpdateChecker.cs" />
     <Compile Include="UwpDesktop.cs" />

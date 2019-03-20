@@ -57,7 +57,7 @@ namespace WinDynamicDesktop
                 optionsItem,
                 new ToolStripSeparator(),
                 new ToolStripMenuItem(_("&Check for Updates"), null, OnUpdateItemClick),
-                new ToolStripMenuItem("&About", null, OnAboutItemClick),
+                new ToolStripMenuItem(_("&About"), null, OnAboutItemClick),
                 new ToolStripSeparator(),
                 new ToolStripMenuItem(_("E&xit"), null, OnExitItemClick)
             });

@@ -21,11 +21,11 @@ namespace WinDynamicDesktop
 
         public AppContext(string[] args)
         {
-            ThemeManager.importPaths = args.Where(System.IO.File.Exists).ToList();
-            HandleMultiInstance();
-
             JsonConfig.LoadConfig();
             Localization.Initialize();
+
+            ThemeManager.importPaths = args.Where(System.IO.File.Exists).ToList();
+            HandleMultiInstance();
             InitializeTrayIcon();
 
             ThemeManager.Initialize();

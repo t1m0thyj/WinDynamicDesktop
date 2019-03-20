@@ -33,7 +33,7 @@ namespace WinDynamicDesktop
             this.Font = SystemFonts.MessageBoxFont;
             this.FormClosing += OnFormClosing;
 
-            int bestWidth = (GetThumbnailSize().Width + 14) * 2 +
+            int bestWidth = (GetThumbnailSize().Width + 21) * 2 +
                 SystemInformation.VerticalScrollBarWidth;
             int oldWidth = this.imageListView1.Size.Width;
             this.imageListView1.Size = new Size(bestWidth, this.imageListView1.Height);
@@ -193,9 +193,21 @@ namespace WinDynamicDesktop
             else
             {
                 ThemeConfig theme = ThemeManager.themeSettings[selectedIndex - 1];
-                SolarData solarData = SunriseSunsetService.GetSolarData(DateTime.Today);
-                int imageId = AppContext.wpEngine.GetImageData(solarData, theme,
-                    darkModeCheckbox.Checked).Item1;
+                int imageId;
+
+                if (!darkModeCheckbox.Checked)
+                {
+                    List<int> imageList = new List<int>();
+                    imageList.AddRange(theme.sunriseImageList);
+                    imageList.AddRange(theme.dayImageList);
+                    imageList.AddRange(theme.sunsetImageList);
+                    imageList.AddRange(theme.nightImageList);
+                    imageId = imageList[imageNumber - 1];
+                }
+                else
+                {
+                    imageId = theme.nightImageList[imageNumber - 1];
+                }
 
                 string imageFilename = theme.imageFilename.Replace("*", imageId.ToString());
                 pictureBox1.Image = ShrinkImage(Path.Combine("themes", theme.themeId,
@@ -268,6 +280,8 @@ namespace WinDynamicDesktop
         private void ThemeDialog_Load(object sender, EventArgs e)
         {
             imageListView1.ContextMenuStrip = contextMenuStrip1;
+            imageListView1.SetRenderer(new ThemeListViewRenderer());
+
             darkModeCheckbox.Checked = JsonConfig.settings.darkMode;
             applyButton.Enabled = LocationManager.isReady;
 
@@ -321,16 +335,23 @@ namespace WinDynamicDesktop
             if (imageListView1.SelectedItems.Count > 0)
             {
                 selectedIndex = imageListView1.SelectedItems[0].Index;
+                int imageNumber = 1;
+
                 if (selectedIndex > 0)
                 {
                     string themeId = (string)imageListView1.Items[selectedIndex].Tag;
                     selectedIndex = ThemeManager.themeSettings.FindIndex(
                         t => t.themeId == themeId) + 1;
+
+                    SolarData solarData = SunriseSunsetService.GetSolarData(DateTime.Today);
+                    imageNumber = AppContext.wpEngine.GetImageData(solarData,
+                        ThemeManager.themeSettings[selectedIndex - 1],
+                        darkModeCheckbox.Checked).Item1;
                 }
 
                 creditsLabel.Text = GetCreditsText();
                 maxImageNumber = GetMaxImageNumber();
-                LoadPreviewImage(1);
+                LoadPreviewImage(imageNumber);
 
                 applyButton.Enabled = true;
             }
