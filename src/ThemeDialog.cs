@@ -33,7 +33,7 @@ namespace WinDynamicDesktop
             this.Font = SystemFonts.MessageBoxFont;
             this.FormClosing += OnFormClosing;
 
-            int bestWidth = (GetThumbnailSize().Width + 21) * 2 +
+            int bestWidth = (GetThumbnailSize().Width + 30) * 2 +
                 SystemInformation.VerticalScrollBarWidth;
             int oldWidth = this.imageListView1.Size.Width;
             this.imageListView1.Size = new Size(bestWidth, this.imageListView1.Height);
