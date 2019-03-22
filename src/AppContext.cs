@@ -94,15 +94,15 @@ namespace WinDynamicDesktop
             notifyIcon.ShowBalloonTip(10000);
         }
 
-        public static void RunInBackground()
+        public static void RunInBackground(bool themeSelected = false)
         {
             if (!LocationManager.isReady || !ThemeManager.isReady)
             {
                 return;
             }
 
-            if ((ThemeManager.currentTheme == null && (JsonConfig.firstRun
-                || JsonConfig.settings.themeName != null)) || ThemeManager.importPaths.Count > 0)
+            if (!themeSelected && ((ThemeManager.currentTheme == null && (JsonConfig.firstRun
+                || JsonConfig.settings.themeName != null)) || ThemeManager.importPaths.Count > 0))
             {
                 ThemeManager.SelectTheme();
             }

@@ -62,14 +62,14 @@
             this.previewBox.Controls.Add(this.lastButton);
             this.previewBox.Location = new System.Drawing.Point(441, 10);
             this.previewBox.Name = "previewBox";
-            this.previewBox.Size = new System.Drawing.Size(346, 238);
+            this.previewBox.Size = new System.Drawing.Size(346, 248);
             this.previewBox.TabIndex = 1;
             this.previewBox.TabStop = false;
             this.previewBox.Text = "Preview";
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(9, 16);
+            this.pictureBox1.Location = new System.Drawing.Point(9, 18);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(329, 187);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -78,7 +78,7 @@
             // 
             // firstButton
             // 
-            this.firstButton.Location = new System.Drawing.Point(13, 208);
+            this.firstButton.Location = new System.Drawing.Point(13, 213);
             this.firstButton.Name = "firstButton";
             this.firstButton.Size = new System.Drawing.Size(43, 23);
             this.firstButton.TabIndex = 0;
@@ -88,7 +88,7 @@
             // 
             // previousButton
             // 
-            this.previousButton.Location = new System.Drawing.Point(69, 208);
+            this.previousButton.Location = new System.Drawing.Point(69, 213);
             this.previousButton.Name = "previousButton";
             this.previousButton.Size = new System.Drawing.Size(43, 23);
             this.previousButton.TabIndex = 1;
@@ -98,7 +98,7 @@
             // 
             // imageNumberLabel
             // 
-            this.imageNumberLabel.Location = new System.Drawing.Point(124, 212);
+            this.imageNumberLabel.Location = new System.Drawing.Point(124, 217);
             this.imageNumberLabel.Name = "imageNumberLabel";
             this.imageNumberLabel.Size = new System.Drawing.Size(98, 13);
             this.imageNumberLabel.TabIndex = 10;
@@ -107,7 +107,7 @@
             // 
             // nextButton
             // 
-            this.nextButton.Location = new System.Drawing.Point(235, 208);
+            this.nextButton.Location = new System.Drawing.Point(235, 213);
             this.nextButton.Name = "nextButton";
             this.nextButton.Size = new System.Drawing.Size(43, 23);
             this.nextButton.TabIndex = 2;
@@ -117,7 +117,7 @@
             // 
             // lastButton
             // 
-            this.lastButton.Location = new System.Drawing.Point(291, 208);
+            this.lastButton.Location = new System.Drawing.Point(291, 213);
             this.lastButton.Name = "lastButton";
             this.lastButton.Size = new System.Drawing.Size(43, 23);
             this.lastButton.TabIndex = 3;
@@ -129,18 +129,18 @@
             // 
             this.darkModeCheckbox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.darkModeCheckbox.AutoSize = true;
-            this.darkModeCheckbox.Location = new System.Drawing.Point(317, 286);
+            this.darkModeCheckbox.Location = new System.Drawing.Point(353, 300);
             this.darkModeCheckbox.Name = "darkModeCheckbox";
-            this.darkModeCheckbox.Size = new System.Drawing.Size(115, 17);
+            this.darkModeCheckbox.Size = new System.Drawing.Size(79, 17);
             this.darkModeCheckbox.TabIndex = 4;
-            this.darkModeCheckbox.Text = "Enable Dark Mode";
+            this.darkModeCheckbox.Text = "Dark Mode";
             this.darkModeCheckbox.UseVisualStyleBackColor = true;
             this.darkModeCheckbox.CheckedChanged += new System.EventHandler(this.darkModeCheckbox_CheckedChanged);
             // 
             // applyButton
             // 
             this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.applyButton.Location = new System.Drawing.Point(523, 282);
+            this.applyButton.Location = new System.Drawing.Point(523, 296);
             this.applyButton.Name = "applyButton";
             this.applyButton.Size = new System.Drawing.Size(75, 23);
             this.applyButton.TabIndex = 5;
@@ -152,7 +152,7 @@
             // 
             this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.closeButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.closeButton.Location = new System.Drawing.Point(628, 282);
+            this.closeButton.Location = new System.Drawing.Point(628, 296);
             this.closeButton.Name = "closeButton";
             this.closeButton.Size = new System.Drawing.Size(75, 23);
             this.closeButton.TabIndex = 6;
@@ -163,7 +163,7 @@
             // themeLinkLabel
             // 
             this.themeLinkLabel.AutoSize = true;
-            this.themeLinkLabel.Location = new System.Drawing.Point(136, 286);
+            this.themeLinkLabel.Location = new System.Drawing.Point(136, 300);
             this.themeLinkLabel.Name = "themeLinkLabel";
             this.themeLinkLabel.Size = new System.Drawing.Size(118, 13);
             this.themeLinkLabel.TabIndex = 3;
@@ -173,7 +173,7 @@
             // 
             // importButton
             // 
-            this.importButton.Location = new System.Drawing.Point(15, 282);
+            this.importButton.Location = new System.Drawing.Point(15, 296);
             this.importButton.Name = "importButton";
             this.importButton.Size = new System.Drawing.Size(107, 23);
             this.importButton.TabIndex = 2;
@@ -208,7 +208,7 @@
             // 
             this.creditsLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.creditsLabel.Enabled = false;
-            this.creditsLabel.Location = new System.Drawing.Point(441, 257);
+            this.creditsLabel.Location = new System.Drawing.Point(441, 269);
             this.creditsLabel.Name = "creditsLabel";
             this.creditsLabel.Size = new System.Drawing.Size(346, 13);
             this.creditsLabel.TabIndex = 14;
@@ -222,7 +222,7 @@
             this.imageListView1.Name = "imageListView1";
             this.imageListView1.PersistentCacheDirectory = "";
             this.imageListView1.PersistentCacheSize = ((long)(100));
-            this.imageListView1.Size = new System.Drawing.Size(422, 261);
+            this.imageListView1.Size = new System.Drawing.Size(422, 275);
             this.imageListView1.TabIndex = 15;
             this.imageListView1.UseWIC = true;
             this.imageListView1.SelectionChanged += new System.EventHandler(this.imageListView1_SelectionChanged);
@@ -233,7 +233,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.closeButton;
-            this.ClientSize = new System.Drawing.Size(796, 317);
+            this.ClientSize = new System.Drawing.Size(796, 332);
             this.Controls.Add(this.imageListView1);
             this.Controls.Add(this.creditsLabel);
             this.Controls.Add(this.importButton);

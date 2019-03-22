@@ -77,11 +77,11 @@ namespace WinDynamicDesktop
             }
         }
 
-        private Image GetThumbnailImage(ThemeConfig theme, Size size)
+        private Image GetThumbnailImage(ThemeConfig theme, Size size, bool useCache = true)
         {
             string thumbnailPath = Path.Combine("themes", theme.themeId, "thumbnail.png");
 
-            if (File.Exists(thumbnailPath))
+            if (useCache && File.Exists(thumbnailPath))
             {
                 return Image.FromFile(thumbnailPath);
             }
@@ -257,7 +257,7 @@ namespace WinDynamicDesktop
                     int itemIndex = themeNames.IndexOf(themeName) + 1;
 
                     imageListView1.Items.Insert(itemIndex, GetThemeName(themes[i]),
-                        GetThumbnailImage(themes[i], thumbnailSize));
+                        GetThumbnailImage(themes[i], thumbnailSize, false));
                     newItem = imageListView1.Items[itemIndex];
                     newItem.Tag = themes[i].themeId;
                 }

@@ -328,7 +328,7 @@ namespace WinDynamicDesktop
             themeDialog = null;
             isReady = true;
 
-            AppContext.RunInBackground();
+            AppContext.RunInBackground(true);
         }
     }
 }
