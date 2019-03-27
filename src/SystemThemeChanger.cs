@@ -69,7 +69,6 @@ namespace WinDynamicDesktop
             menuItem.Checked = isEnabled;
 
             TryUpdateSystemTheme();
-            JsonConfig.SaveConfig();
         }
     }
 }

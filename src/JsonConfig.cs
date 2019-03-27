@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel;
 using System.IO;
-using System.Threading;
+using System.Timers;
 using Newtonsoft.Json;
 
 namespace WinDynamicDesktop
 {
-    public class AppConfig
+    public class AppConfig : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public string location { get; set; }
         public string latitude { get; set; }
         public string longitude { get; set; }
@@ -42,41 +45,35 @@ namespace WinDynamicDesktop
 
     class JsonConfig
     {
-        private static string lastJson;
-        private static readonly SemaphoreSlim writeLock = new SemaphoreSlim(1, 1);
+        private static Timer autoSaveTimer;
+        private static bool unsavedChanges;
 
         public static AppConfig settings = new AppConfig();
         public static bool firstRun = !File.Exists("settings.conf");
 
         public static void LoadConfig()
         {
+            if (autoSaveTimer != null)
+            {
+                autoSaveTimer.Stop();
+            }
+
             if (!firstRun)
             {
-                lastJson = File.ReadAllText("settings.conf");
-                settings = JsonConvert.DeserializeObject<AppConfig>(lastJson);
+                string jsonText = File.ReadAllText("settings.conf");
+                settings = JsonConvert.DeserializeObject<AppConfig>(jsonText);
             }
+
+            unsavedChanges = false;
+            autoSaveTimer = new Timer();
+            autoSaveTimer.AutoReset = false;
+            autoSaveTimer.Interval = 1000;
+
+            settings.PropertyChanged += OnSettingsPropertyChanged;
+            autoSaveTimer.Elapsed += OnAutoSaveTimerElapsed;
+            autoSaveTimer.Start();
         }
 
-        public static async void SaveConfig()
-        {
-            string newJson = JsonConvert.SerializeObject(settings);
-
-            if (newJson != lastJson)
-            {
-                await writeLock.WaitAsync();
-
-                try
-                {
-                    await Task.Run(() => File.WriteAllText("settings.conf", newJson));
-                    lastJson = newJson;
-                }
-                finally
-                {
-                    writeLock.Release();
-                }
-            }
-        }
-        
         public static ThemeConfig LoadTheme(string name)
         {
             string themeJson;
@@ -95,6 +92,30 @@ namespace WinDynamicDesktop
             theme.themeId = name;
 
             return theme;
+        }
+
+        public static void OnSettingsPropertyChanged(object sender, EventArgs e)
+        {
+            unsavedChanges = true;
+        }
+
+        public static async void OnAutoSaveTimerElapsed(object sender, EventArgs e)
+        {
+            if (unsavedChanges)
+            {
+                unsavedChanges = false;
+
+                await Task.Run(() =>
+                {
+                    string jsonText = JsonConvert.SerializeObject(settings);
+                    File.WriteAllText("settings.conf", jsonText);
+                    autoSaveTimer.Start();
+                });
+            }
+            else
+            {
+                autoSaveTimer.Start();
+            }
         }
     }
 }

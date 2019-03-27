@@ -83,7 +83,12 @@ namespace WinDynamicDesktop
 
             if (useCache && File.Exists(thumbnailPath))
             {
-                return Image.FromFile(thumbnailPath);
+                Image cachedImage = Image.FromFile(thumbnailPath);
+
+                if (cachedImage.Size == size)
+                {
+                    return cachedImage;
+                }
             }
 
             int imageId1;

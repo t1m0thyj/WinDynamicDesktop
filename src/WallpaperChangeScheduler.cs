@@ -78,7 +78,6 @@ namespace WinDynamicDesktop
             }
 
             StartTimer(nextUpdateTime.Value);
-            JsonConfig.SaveConfig(); 
         }
 
         private DaySegment GetCurrentDaySegment(SolarData data)

@@ -135,7 +135,6 @@ namespace WinDynamicDesktop
             }
 
             JsonConfig.settings.lastUpdateCheck = DateTime.Now.ToString();
-            JsonConfig.SaveConfig();
         }
 
         public static void TryCheckAuto(bool forceIfEnabled = false)
@@ -166,7 +165,6 @@ namespace WinDynamicDesktop
             menuItem.Checked = isEnabled;
 
             TryCheckAuto(true);
-            JsonConfig.SaveConfig();
         }
 
         private static void OnBalloonTipClicked(object sender, EventArgs e)
