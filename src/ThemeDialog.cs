@@ -89,6 +89,11 @@ namespace WinDynamicDesktop
                 {
                     return cachedImage;
                 }
+                else
+                {
+                    cachedImage.Dispose();
+                    File.Delete(thumbnailPath);
+                }
             }
 
             int imageId1;

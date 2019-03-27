@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 
@@ -46,13 +47,16 @@ namespace WinDynamicDesktop
 
         static void LogError(string cwd, Exception exc)
         {
-            string errorMessage = exc.ToString() + "\n";
+            string errorMessage = exc.ToString();
             string logFilename = Path.Combine(cwd,
                 Path.GetFileName(Environment.GetCommandLineArgs()[0]) + ".log");
 
             try
             {
-                File.AppendAllText(logFilename, errorMessage);
+                string timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff",
+                    CultureInfo.InvariantCulture);
+                File.AppendAllText(logFilename,
+                    string.Format("[{0}] {1}\n\n", timestamp, errorMessage));
 
                 MessageBox.Show("See the logfile '" + logFilename + "' for details",
                     "Errors occurred", MessageBoxButtons.OK, MessageBoxIcon.Error);

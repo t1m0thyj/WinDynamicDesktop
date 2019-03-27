@@ -48,7 +48,7 @@ namespace WinDynamicDesktop
             data.solarTimes[1] = sunPhases[SunPhaseName.GoldenHourEnd.Value].ToLocalTime();
             data.solarTimes[2] = sunPhases[SunPhaseName.GoldenHour.Value].ToLocalTime();
             data.solarTimes[3] = sunPhases[SunPhaseName.NauticalDusk.Value].ToLocalTime();
-            
+
             return data;
         }
     }

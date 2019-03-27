@@ -97,25 +97,27 @@ namespace WinDynamicDesktop
         public static void OnSettingsPropertyChanged(object sender, EventArgs e)
         {
             unsavedChanges = true;
+            autoSaveTimer.Start();
         }
 
         public static async void OnAutoSaveTimerElapsed(object sender, EventArgs e)
         {
-            if (unsavedChanges)
+            if (!unsavedChanges)
             {
-                unsavedChanges = false;
+                return;
+            }
 
-                await Task.Run(() =>
-                {
-                    string jsonText = JsonConvert.SerializeObject(settings);
-                    File.WriteAllText("settings.conf", jsonText);
-                    autoSaveTimer.Start();
-                });
-            }
-            else
+            unsavedChanges = false;
+            autoSaveTimer.Elapsed -= OnAutoSaveTimerElapsed;
+
+            await Task.Run(() =>
             {
-                autoSaveTimer.Start();
-            }
+                string jsonText = JsonConvert.SerializeObject(settings);
+                File.WriteAllText("settings.conf", jsonText);
+            });
+
+            autoSaveTimer.Elapsed += OnAutoSaveTimerElapsed;
+            autoSaveTimer.Start();
         }
     }
 }
