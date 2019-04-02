@@ -98,9 +98,9 @@
             // 
             // imageNumberLabel
             // 
-            this.imageNumberLabel.Location = new System.Drawing.Point(124, 217);
+            this.imageNumberLabel.Location = new System.Drawing.Point(111, 217);
             this.imageNumberLabel.Name = "imageNumberLabel";
-            this.imageNumberLabel.Size = new System.Drawing.Size(98, 13);
+            this.imageNumberLabel.Size = new System.Drawing.Size(125, 13);
             this.imageNumberLabel.TabIndex = 10;
             this.imageNumberLabel.Text = "label1";
             this.imageNumberLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
