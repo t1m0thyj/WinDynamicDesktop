@@ -13,8 +13,6 @@ namespace WinDynamicDesktop
     class LocationManager
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
-        public static bool isReady = false;
-
         private static InputDialog locationDialog;
 
         public static void Initialize()
@@ -28,22 +26,6 @@ namespace WinDynamicDesktop
                 JsonConfig.settings.useWindowsLocation = false;
                 JsonConfig.settings.latitude = null;
                 JsonConfig.settings.longitude = null;
-            }
-
-            if (JsonConfig.settings.latitude != null && JsonConfig.settings.longitude != null)
-            {
-                isReady = true;
-                AppContext.RunInBackground();
-            }
-            else
-            {
-                ChangeLocation();
-
-                if (JsonConfig.firstRun)
-                {
-                    AppContext.ShowPopup(_("Welcome! Please enter your location so the app can " +
-                        "determine sunrise and sunset times."));
-                }
             }
         }
 
@@ -62,9 +44,7 @@ namespace WinDynamicDesktop
         private static void OnLocationDialogClosed(object sender, EventArgs e)
         {
             locationDialog = null;
-            isReady = true;
-
-            AppContext.RunInBackground();
+            LaunchSequence.NextStep();
         }
     }
 }

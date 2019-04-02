@@ -17,7 +17,7 @@ namespace WinDynamicDesktop
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
         public static string[] defaultThemes = new string[] { "Mojave_Desert", "Solar_Gradients" };
-        public static bool isReady = false;
+        public static bool filesVerified = false;
         public static List<ThemeConfig> themeSettings = new List<ThemeConfig>();
 
         public static bool importMode = false;
@@ -257,23 +257,12 @@ namespace WinDynamicDesktop
                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
-        private static void ReadyUp()
-        {
-            isReady = true;
-
-            if (LocationManager.isReady)
-            {
-                AppContext.wpEngine.RunScheduler();
-            }
-
-            AppContext.RunInBackground();
-        }
-
         private static void DownloadMissingImages(List<ThemeConfig> missingThemes)
         {
             if (missingThemes.Count == 0)
             {
-                ReadyUp();
+                filesVerified = true;
+                LaunchSequence.NextStep();
                 return;
             }
 
@@ -293,7 +282,8 @@ namespace WinDynamicDesktop
 
             if (missingThemes.Count == 0)
             {
-                ReadyUp();
+                filesVerified = true;
+                LaunchSequence.NextStep();
             }
             else
             {
@@ -322,7 +312,8 @@ namespace WinDynamicDesktop
                         currentTheme = null;
                     }
 
-                    ReadyUp();
+                    filesVerified = true;
+                    LaunchSequence.NextStep();
                 }
             }
         }
@@ -330,9 +321,7 @@ namespace WinDynamicDesktop
         private static void OnThemeDialogClosed(object sender, EventArgs e)
         {
             themeDialog = null;
-            isReady = true;
-
-            AppContext.RunInBackground(true);
+            LaunchSequence.NextStep(true);
         }
     }
 }

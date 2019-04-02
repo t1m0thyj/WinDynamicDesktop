@@ -297,7 +297,7 @@ namespace WinDynamicDesktop
             imageListView1.SetRenderer(new ThemeListViewRenderer());
 
             darkModeCheckbox.Checked = JsonConfig.settings.darkMode;
-            applyButton.Enabled = LocationManager.isReady;
+            applyButton.Enabled = LaunchSequence.IsLocationReady();
 
             Size thumbnailSize = GetThumbnailSize();
             imageListView1.ThumbnailSize = thumbnailSize;
@@ -442,7 +442,7 @@ namespace WinDynamicDesktop
             {
                 WallpaperApi.SetWallpaper(windowsWallpaper);
             }
-            else if (LocationManager.isReady)
+            else if (LaunchSequence.IsLocationReady())
             {
                 AppContext.wpEngine.RunScheduler();
             }

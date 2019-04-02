@@ -25,10 +25,8 @@ namespace WinDynamicDesktop
 
         private void LanguageDialog_Load(object sender, EventArgs e)
         {
-            comboBox1.Items.AddRange(Localization.languageDisplayNames);
-
-            int langIndex = Array.IndexOf(Localization.languageNames,
-                JsonConfig.settings.language);
+            comboBox1.Items.AddRange(Localization.languageNames);
+            int langIndex = Array.IndexOf(Localization.localeNames, Localization.currentLocale);
 
             if (langIndex != -1)
             {

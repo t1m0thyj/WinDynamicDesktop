@@ -16,7 +16,16 @@ namespace WinDynamicDesktop
 {
     class Localization
     {
-        public static string[] languageNames = new string[]
+        public static string[] languageNames = new string[] {
+            "Deutsch",  // German
+            "English",
+            "Français",  // French
+            "Eλληνικά",  // Greek
+            "Pусский",  // Russian
+            "中文 (简体)"  // Simplified Chinese
+        };
+
+        public static string[] localeNames = new string[]
         {
             "de_DE",
             "en_US",
@@ -26,32 +35,43 @@ namespace WinDynamicDesktop
             "zh_CN"
         };
 
-        public static string[] languageDisplayNames = new string[] {
-            "Deutsch",  // German
-            "English",
-            "Français",  // French
-            "Eλληνικά",  // Greek
-            "Pусский",  // Russian
-            "中文 (简体)"  // Simplified Chinese
-        };
-
+        public static string currentLocale;
         private static ICatalog catalog = null;
 
         public static void Initialize()
         {
-            LoadLocale(JsonConfig.settings.language ?? "en_US");
+            currentLocale = JsonConfig.settings.language;
+
+            if (currentLocale == null)
+            {
+                string systemLocale = CultureInfo.CurrentUICulture.Name.Replace('-', '_');
+                currentLocale = localeNames.Contains(systemLocale) ? systemLocale : "en_US";
+            }
+
+            LoadLocale();
+            //GetUserLanguage();
         }
 
-        private static void LoadLocale(string name)
+        private static void LoadLocale()
         {
-            string moFile = name + ".mo";
+            string moFile = currentLocale + ".mo";
 
             if (File.Exists(moFile))
             {
                 using (Stream stream = File.OpenRead(moFile))
                 {
-                    catalog = new Catalog(stream, new CultureInfo(name.Replace('_', '-')));
+                    catalog = new Catalog(stream,
+                        new CultureInfo(currentLocale.Replace('_', '-')));
                 }
+            }
+        }
+
+        private static void GetUserLanguage()
+        {
+            if (JsonConfig.firstRun)
+            {
+                LanguageDialog langDialog = new LanguageDialog();
+                langDialog.Show();
             }
         }
 

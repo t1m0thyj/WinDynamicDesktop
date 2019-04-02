@@ -121,6 +121,21 @@
   <data name="AppIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\WinDynamicDesktop.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="locale_de_DE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\locale\de_DE.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="locale_el_GR" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\locale\el_GR.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="locale_fr_FR" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\locale\fr_FR.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="locale_ru_RU" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\locale\ru_RU.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="locale_zh_CN" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\locale\zh_CN.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="Mojave_Desert_json" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\themes\Mojave_Desert.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>

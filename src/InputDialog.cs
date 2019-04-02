@@ -102,7 +102,7 @@ namespace WinDynamicDesktop
 
                     if (result == DialogResult.Yes)
                     {
-                        if (ThemeManager.isReady)
+                        if (LaunchSequence.IsThemeReady())
                         {
                             this.Hide();
                             AppContext.wpEngine.RunScheduler();
@@ -126,7 +126,7 @@ namespace WinDynamicDesktop
 
                 if (locationUpdated)
                 {
-                    if (ThemeManager.isReady)
+                    if (LaunchSequence.IsThemeReady())
                     {
                         AppContext.wpEngine.RunScheduler();
                     }

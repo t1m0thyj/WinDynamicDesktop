@@ -21,7 +21,7 @@ namespace WinDynamicDesktop
         private NamedPipeServer<string> _namedPipe;
 
         public static NotifyIcon notifyIcon;
-        public static WallpaperChangeScheduler wpEngine;
+        public static WallpaperChangeScheduler wpEngine = new WallpaperChangeScheduler();
 
         public AppContext(string[] args)
         {
@@ -30,17 +30,11 @@ namespace WinDynamicDesktop
 
             ThemeManager.importPaths = args.Where(System.IO.File.Exists).ToList();
             HandleMultiInstance();
+
             InitializeTrayIcon();
-
-            ThemeManager.Initialize();
             LocationManager.Initialize();
-            wpEngine = new WallpaperChangeScheduler();
-
-            if (LocationManager.isReady && ThemeManager.isReady)
-            {
-                wpEngine.RunScheduler();
-            }
-
+            ThemeManager.Initialize();
+            LaunchSequence.Launch();
             UpdateChecker.Initialize();
         }
 
@@ -96,27 +90,6 @@ namespace WinDynamicDesktop
             notifyIcon.BalloonTipTitle = title ?? "WinDynamicDesktop";
             notifyIcon.BalloonTipText = message;
             notifyIcon.ShowBalloonTip(10000);
-        }
-
-        public static void RunInBackground(bool themeSelected = false)
-        {
-            if (!LocationManager.isReady || !ThemeManager.isReady)
-            {
-                return;
-            }
-
-            if (!themeSelected && ((ThemeManager.currentTheme == null && (JsonConfig.firstRun
-                || JsonConfig.settings.themeName != null)) || ThemeManager.importPaths.Count > 0))
-            {
-                ThemeManager.SelectTheme();
-            }
-            else if (JsonConfig.firstRun)
-            {
-                ShowPopup(_("The app is still running in the background. You can access it at " +
-                    "any time by clicking on the icon in the system tray."));
-
-                JsonConfig.firstRun = false;  // Don't show this message again
-            }
         }
 
         private void OnNamedPipeClientMessage(NamedPipeConnection<string, string> conn,

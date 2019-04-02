@@ -115,6 +115,7 @@
     <Compile Include="LanguageDialog.Designer.cs">
       <DependentUpon>LanguageDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="LaunchSequence.cs" />
     <Compile Include="Localization.cs" />
     <Compile Include="LocationIQ.cs" />
     <Compile Include="LocationManager.cs" />
@@ -170,6 +171,11 @@
       <DependentUpon>ThemeDialog.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.manifest" />
+    <None Include="locale\de_DE.mo" />
+    <None Include="locale\el_GR.mo" />
+    <None Include="locale\fr_FR.mo" />
+    <None Include="locale\ru_RU.mo" />
+    <None Include="locale\zh_CN.mo" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
