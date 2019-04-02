@@ -16,6 +16,25 @@ namespace WinDynamicDesktop
 {
     class Localization
     {
+        public static string[] languageNames = new string[]
+        {
+            "de_DE",
+            "en_US",
+            "fr_FR",
+            "el_GR",
+            "ru_RU",
+            "zh_CN"
+        };
+
+        public static string[] languageDisplayNames = new string[] {
+            "Deutsch",  // German
+            "English",
+            "Français",  // French
+            "Eλληνικά",  // Greek
+            "Pусский",  // Russian
+            "中文 (简体)"  // Simplified Chinese
+        };
+
         private static ICatalog catalog = null;
 
         public static void Initialize()
