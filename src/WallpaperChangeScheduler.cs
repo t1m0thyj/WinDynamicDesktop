@@ -1,4 +1,8 @@
-﻿using System;
+﻿// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -39,25 +43,6 @@ namespace WinDynamicDesktop
             schedulerTimer.Stop();
 
             SolarData data = SunriseSunsetService.GetSolarData(DateTime.Today);
-            DaySegment currentSegment;
-
-            if (data.solarTimes[0] <= DateTime.Now && DateTime.Now < data.solarTimes[1])
-            {
-                currentSegment = DaySegment.Sunrise;
-            }
-            else if (data.solarTimes[1] <= DateTime.Now && DateTime.Now < data.solarTimes[2])
-            {
-                currentSegment = DaySegment.Day;
-            }
-            else if (data.solarTimes[2] <= DateTime.Now && DateTime.Now < data.solarTimes[3])
-            {
-                currentSegment = DaySegment.Sunset;
-            }
-            else
-            {
-                currentSegment = DaySegment.Night;
-            }
-
             isSunUp = (data.sunriseTime <= DateTime.Now && DateTime.Now < data.sunsetTime);
             DateTime? nextImageUpdateTime = null;
 
@@ -68,7 +53,10 @@ namespace WinDynamicDesktop
                     lastImagePath = null;
                 }
 
-                nextImageUpdateTime = UpdateImage(data, currentSegment);
+                Tuple<int, long> imageData = GetImageData(data, ThemeManager.currentTheme,
+                    JsonConfig.settings.darkMode);
+                SetWallpaper(imageData.Item1);
+                nextImageUpdateTime = new DateTime(imageData.Item2);
             }
 
             SystemThemeChanger.TryUpdateSystemTheme();
@@ -94,65 +82,55 @@ namespace WinDynamicDesktop
             }
 
             StartTimer(nextUpdateTime.Value);
-            JsonConfig.SaveConfig(); 
         }
 
-        private int GetImageNumber(DateTime startTime, TimeSpan timerLength)
+        private DaySegment GetCurrentDaySegment(SolarData data)
         {
-            TimeSpan elapsedTime = DateTime.Now - startTime;
-
-            return (int)(elapsedTime.Ticks / timerLength.Ticks);
+            if (data.solarTimes[0] <= DateTime.Now && DateTime.Now < data.solarTimes[1])
+            {
+                return DaySegment.Sunrise;
+            }
+            else if (data.solarTimes[1] <= DateTime.Now && DateTime.Now < data.solarTimes[2])
+            {
+                return DaySegment.Day;
+            }
+            else if (data.solarTimes[2] <= DateTime.Now && DateTime.Now < data.solarTimes[3])
+            {
+                return DaySegment.Sunset;
+            }
+            else
+            {
+                return DaySegment.Night;
+            }
         }
 
-        private void SetWallpaper(int imageId)
-        {
-            string imageFilename = ThemeManager.currentTheme.imageFilename.Replace("*",
-                imageId.ToString());
-            string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "themes",
-                ThemeManager.currentTheme.themeId, imageFilename);
-
-            if (imagePath == lastImagePath)
-            {
-                return;
-            }
-
-            WallpaperApi.SetWallpaper(imagePath);
-
-            if (UwpDesktop.IsRunningAsUwp() && JsonConfig.settings.changeLockScreen)
-            {
-                UwpHelper.SetLockScreenImage(imageFilename);
-            }
-
-            lastImagePath = imagePath;
-        }
-
-        private DateTime UpdateImage(SolarData data, DaySegment segment)
+        public Tuple<int, long> GetImageData(SolarData data, ThemeConfig theme, bool darkMode)
         {
             int[] imageList;
             DateTime segmentStart;
             DateTime segmentEnd;
 
-            if (!JsonConfig.settings.darkMode)
+            if (!darkMode)
             {
-                switch (segment)
+                switch (GetCurrentDaySegment(data))
                 {
                     case DaySegment.Sunrise:
-                        imageList = ThemeManager.currentTheme.sunriseImageList;
+                        imageList = theme.sunriseImageList;
                         segmentStart = data.solarTimes[0];
                         segmentEnd = data.solarTimes[1];
                         break;
                     case DaySegment.Day:
-                        imageList = ThemeManager.currentTheme.dayImageList;
+                        imageList = theme.dayImageList;
                         segmentStart = data.solarTimes[1];
                         segmentEnd = data.solarTimes[2];
                         break;
                     case DaySegment.Sunset:
-                        imageList = ThemeManager.currentTheme.sunsetImageList;
+                        imageList = theme.sunsetImageList;
                         segmentStart = data.solarTimes[2];
                         segmentEnd = data.solarTimes[3];
                         break;
                     default:
-                        imageList = ThemeManager.currentTheme.nightImageList;
+                        imageList = theme.nightImageList;
 
                         if (DateTime.Now < data.solarTimes[0])
                         {
@@ -174,7 +152,7 @@ namespace WinDynamicDesktop
             }
             else
             {
-                imageList = ThemeManager.currentTheme.nightImageList;
+                imageList = theme.nightImageList;
 
                 if (isSunUp)
                 {
@@ -200,12 +178,32 @@ namespace WinDynamicDesktop
             TimeSpan segmentLength = segmentEnd - segmentStart;
             TimeSpan timerLength = new TimeSpan(segmentLength.Ticks / imageList.Length);
 
-            int imageNumber = GetImageNumber(segmentStart, timerLength);
+            int imageNumber = (int)((DateTime.Now - segmentStart).Ticks / timerLength.Ticks);
             long nextUpdateTicks = segmentStart.Ticks + timerLength.Ticks * (imageNumber + 1);
 
-            SetWallpaper(imageList[imageNumber]);
+            return new Tuple<int, long>(imageList[imageNumber], nextUpdateTicks);
+        }
 
-            return new DateTime(nextUpdateTicks);
+        private void SetWallpaper(int imageId)
+        {
+            string imageFilename = ThemeManager.currentTheme.imageFilename.Replace("*",
+                imageId.ToString());
+            string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "themes",
+                ThemeManager.currentTheme.themeId, imageFilename);
+
+            if (imagePath == lastImagePath)
+            {
+                return;
+            }
+
+            WallpaperApi.SetWallpaper(imagePath);
+
+            if (UwpDesktop.IsRunningAsUwp() && JsonConfig.settings.changeLockScreen)
+            {
+                UwpHelper.SetLockScreenImage(imageFilename);
+            }
+
+            lastImagePath = imagePath;
         }
 
         private void StartTimer(DateTime futureTime)

@@ -1,4 +1,8 @@
-﻿using System;
+﻿// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -31,6 +35,7 @@ namespace WinDynamicDesktop
 
     class UpdateChecker
     {
+        private static readonly Func<string, string> _ = Localization.GetTranslation;
         private static ToolStripMenuItem menuItem;
 
         public static void Initialize()
@@ -49,7 +54,7 @@ namespace WinDynamicDesktop
         {
             if (!UwpDesktop.IsRunningAsUwp())
             {
-                menuItem = new ToolStripMenuItem("Check for &updates automatically once a week",
+                menuItem = new ToolStripMenuItem(_("Check for &updates automatically once a week"),
                     null, OnAutoUpdateItemClick);
                 menuItem.Checked = !JsonConfig.settings.disableAutoUpdate;
 
@@ -95,15 +100,15 @@ namespace WinDynamicDesktop
 
             if (latestVersion == null)
             {
-                MessageBox.Show("WinDynamicDesktop could not connect to the Internet to check " +
-                    "for updates.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(_("WinDynamicDesktop could not connect to the Internet to check " +
+                    "for updates."), _("Error"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             else if (IsUpdateAvailable(currentVersion, latestVersion))
             {
-                DialogResult result = MessageBox.Show("There is a newer version of " +
-                    "WinDynamicDesktop available. Do you want to download the update now?\n\n" +
-                    "Current Version: " + currentVersion + "\nLatest Version: " + latestVersion,
-                    "Update Available", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                DialogResult result = MessageBox.Show(string.Format(_("There is a newer version " +
+                    "of WinDynamicDesktop available. Do you want to download the update now?\n\n" +
+                    "Current Version: {0}\nLatest Version: {1}"), currentVersion, latestVersion),
+                    _("Update Available"), MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 
                 if (result == DialogResult.Yes)
                 {
@@ -112,8 +117,9 @@ namespace WinDynamicDesktop
             }
             else
             {
-                MessageBox.Show("You already have the latest version of WinDynamicDesktop " +
-                    "installed.", "Up To Date", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(_("You already have the latest version of WinDynamicDesktop " +
+                    "installed."), _("Up To Date"), MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
             }
         }
 
@@ -128,18 +134,14 @@ namespace WinDynamicDesktop
             }
             else if (IsUpdateAvailable(currentVersion, latestVersion))
             {
-                NotifyIcon _notifyIcon = AppContext.notifyIcon;
-                _notifyIcon.BalloonTipTitle = "Update Available";
-                _notifyIcon.BalloonTipText = "WinDynamicDesktop " + latestVersion +
-                    " is available. Click here to download it.";
-                _notifyIcon.ShowBalloonTip(10000);
+                AppContext.ShowPopup(string.Format(_("WinDynamicDesktop {0} is available. Click " +
+                    "here to download it."), latestVersion), _("Update Available"));
             }
 
             JsonConfig.settings.lastUpdateCheck = DateTime.Now.ToString();
-            JsonConfig.SaveConfig();
         }
 
-        public static async void TryCheckAuto(bool forceIfEnabled = false)
+        public static void TryCheckAuto(bool forceIfEnabled = false)
         {
             if (UwpDesktop.IsRunningAsUwp() || JsonConfig.settings.disableAutoUpdate)
             {
@@ -157,7 +159,7 @@ namespace WinDynamicDesktop
                 }
             }
 
-            await Task.Run(() => CheckAuto());
+            Task.Run(() => CheckAuto());
         }
 
         private static void OnAutoUpdateItemClick(object sender, EventArgs e)
@@ -167,12 +169,11 @@ namespace WinDynamicDesktop
             menuItem.Checked = isEnabled;
 
             TryCheckAuto(true);
-            JsonConfig.SaveConfig();
         }
 
         private static void OnBalloonTipClicked(object sender, EventArgs e)
         {
-            if (AppContext.notifyIcon.BalloonTipTitle == "Update Available")
+            if (AppContext.notifyIcon.BalloonTipTitle == _("Update Available"))
             {
                 UwpDesktop.GetHelper().OpenUpdateLink();
             }

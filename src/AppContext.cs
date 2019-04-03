@@ -1,4 +1,8 @@
-﻿using System;
+﻿// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,51 +10,68 @@ using System.Threading.Tasks;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
+using NamedPipeWrapper;
 
 namespace WinDynamicDesktop
 {
     class AppContext : ApplicationContext
     {
+        private static readonly Func<string, string> _ = Localization.GetTranslation;
         private Mutex _mutex;
+        private NamedPipeServer<string> _namedPipe;
 
         public static NotifyIcon notifyIcon;
-        public static WallpaperChangeScheduler wcsService;
+        public static WallpaperChangeScheduler wpEngine = new WallpaperChangeScheduler();
 
-        public AppContext()
+        public AppContext(string[] args)
         {
-            EnforceSingleInstance();
-
             JsonConfig.LoadConfig();
-            InitializeGui();
+            Localization.Initialize();
 
-            ThemeManager.Initialize();
+            ThemeManager.importPaths = args.Where(System.IO.File.Exists).ToList();
+            HandleMultiInstance();
+
+            InitializeTrayIcon();
             LocationManager.Initialize();
-            wcsService = new WallpaperChangeScheduler();
-
-            if (LocationManager.isReady && ThemeManager.isReady)
-            {
-                wcsService.RunScheduler();
-            }
-
+            ThemeManager.Initialize();
+            LaunchSequence.Launch();
             UpdateChecker.Initialize();
         }
 
-        private void EnforceSingleInstance()
+        private void HandleMultiInstance()
         {
             _mutex = new Mutex(true, @"Global\WinDynamicDesktop", out bool isFirstInstance);
             GC.KeepAlive(_mutex);
 
-            if (!isFirstInstance)
+            if (isFirstInstance)
             {
-                MessageBox.Show("Another instance of WinDynamicDesktop is already running. You " +
-                    "can access it by clicking on the icon in the system tray.", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                _namedPipe = new NamedPipeServer<string>("WinDynamicDesktop");
+                _namedPipe.ClientMessage += OnNamedPipeClientMessage;
+                _namedPipe.Start();
+            }
+            else
+            {
+                if (ThemeManager.importPaths.Count > 0)
+                {
+                    var namedPipeClient = new NamedPipeClient<string>("WinDynamicDesktop");
+                    namedPipeClient.Start();
+                    namedPipeClient.WaitForConnection();
+                    namedPipeClient.PushMessage(string.Join("|", ThemeManager.importPaths));
+                    Thread.Sleep(1000);
+                    namedPipeClient.Stop();
+                }
+                else
+                {
+                    MessageBox.Show(_("Another instance of WinDynamicDesktop is already " +
+                        "running. You can access it by clicking on the icon in the system tray."),
+                        _("Error"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
 
                 Environment.Exit(0);
             }
         }
 
-        private void InitializeGui()
+        private void InitializeTrayIcon()
         {
             Application.ApplicationExit += OnApplicationExit;
 
@@ -64,16 +85,22 @@ namespace WinDynamicDesktop
             notifyIcon.MouseUp += OnNotifyIconMouseUp;
         }
 
-        public static void RunInBackground()
+        public static void ShowPopup(string message, string title = null)
         {
-            if (JsonConfig.firstRun && LocationManager.isReady && ThemeManager.isReady)
-            {
-                notifyIcon.BalloonTipTitle = "WinDynamicDesktop";
-                notifyIcon.BalloonTipText = "The app is still running in the background. " +
-                    "You can access it at any time by clicking on the icon in the system tray.";
-                notifyIcon.ShowBalloonTip(10000);
+            notifyIcon.BalloonTipTitle = title ?? "WinDynamicDesktop";
+            notifyIcon.BalloonTipText = message;
+            notifyIcon.ShowBalloonTip(10000);
+        }
 
-                JsonConfig.firstRun = false;    // Don't show this message again
+        private void OnNamedPipeClientMessage(NamedPipeConnection<string, string> conn,
+            string message)
+        {
+            ThemeManager.importPaths.AddRange(message.Split('|'));
+
+            if (!ThemeManager.importMode)
+            {
+                notifyIcon.ContextMenuStrip.BeginInvoke(
+                    new Action(() => ThemeManager.SelectTheme()));
             }
         }
 
@@ -100,6 +127,8 @@ namespace WinDynamicDesktop
             {
                 notifyIcon.Visible = false;
             }
+
+            _namedPipe?.Stop();
         }
     }
 }

@@ -26,6 +26,7 @@ OutputDir=output
 OutputBaseFilename={#MyAppName}_{#MyAppVersion}_Setup
 Compression=lzma
 SolidCompression=yes
+ChangesAssociations=yes
 CloseApplications=force
 PrivilegesRequired=lowest
 
@@ -56,6 +57,7 @@ begin
   DelTree(ExpandConstant('{app}\themes'), true, true, true);
   DeleteFile(ExpandConstant('{app}\settings.conf'));
   DeleteFile(ExpandConstant('{app}\{#MyAppExeName}.log'));
+  DeleteFile(ExpandConstant('{app}\{#MyAppName}.pth'));
   RemoveDir(ExpandConstant('{app}'));
 end;
 
@@ -74,6 +76,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 Name: "startonboot"; Description: "&Start {#MyAppName} with Windows"; GroupDescription: "Other tasks:"
+Name: "registerddw"; Description: "&Associate .ddw extension with {#MyAppName}"; GroupDescription: "Other tasks:"
 
 [Files]
 Source: "src\bin\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
@@ -85,7 +88,14 @@ Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: 
 
 [Registry]
 Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "{#MyAppName}"; ValueData: "{app}\{#MyAppExeName}"; Flags: uninsdeletevalue; Tasks: startonboot
+Root: HKCU; Subkey: "Software\Classes\.ddw"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}.DynamicDesktopWallpaper"; Flags: uninsdeletekeyifempty uninsdeletevalue; Tasks: registerddw
+Root: HKCU; Subkey: "Software\Classes\{#MyAppName}.DynamicDesktopWallpaper"; ValueType: string; ValueName: ""; ValueData: "Dynamic Desktop Wallpaper"; Flags: uninsdeletekey; Tasks: registerddw
+Root: HKCU; Subkey: "Software\Classes\{#MyAppName}.DynamicDesktopWallpaper\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#MyAppExeName},0"; Flags: uninsdeletekey; Tasks: registerddw
+Root: HKCU; Subkey: "Software\Classes\{#MyAppName}.DynamicDesktopWallpaper\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; Flags: uninsdeletekey; Tasks: registerddw
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+
+[UninstallRun]
+Filename: "{sys}\taskkill.exe"; Parameters: "/im {#MyAppExeName} /t /f"; Flags: runhidden skipifdoesntexist
 

@@ -1,4 +1,8 @@
-﻿using System;
+﻿// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,8 +27,9 @@ namespace WinDynamicDesktop
             {
                 themeKey.Close();
 
-                menuItem = new ToolStripMenuItem("&Change Windows 10 theme color", null,
-                    OnThemeItemClick);
+                menuItem = new ToolStripMenuItem(
+                    Localization.GetTranslation("&Change Windows 10 theme color"),
+                    null, OnThemeItemClick);
                 menuItem.Checked = JsonConfig.settings.changeSystemTheme;
 
                 return new List<ToolStripItem>() { menuItem };
@@ -68,7 +73,6 @@ namespace WinDynamicDesktop
             menuItem.Checked = isEnabled;
 
             TryUpdateSystemTheme();
-            JsonConfig.SaveConfig();
         }
     }
 }

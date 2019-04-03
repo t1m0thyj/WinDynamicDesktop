@@ -13,6 +13,7 @@ namespace WinDynamicDesktop
 {
     public partial class AboutDialog : Form
     {
+        private static readonly Func<string, string> _ = Localization.GetTranslation;
         private static string websiteLink = "https://github.com/t1m0thyj/WinDynamicDesktop";
         private static string donateLink =
             "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=H8ZZXM9ABRJFU";
@@ -20,6 +21,20 @@ namespace WinDynamicDesktop
         public AboutDialog()
         {
             InitializeComponent();
+            Localization.TranslateForm(this);
+
+            this.Font = SystemFonts.MessageBoxFont;
+            this.nameLabel.Font = new Font(this.Font.Name, this.Font.Size * 1.2F, FontStyle.Bold);
+
+            int minWidth = TextRenderer.MeasureText(this.descriptionLabel.Text, this.Font).Width;
+            minWidth = minWidth + (this.descriptionLabel.Width - minWidth) / 2 +
+                this.descriptionLabel.Location.X * 2;
+
+            if (this.Size.Width < minWidth)
+            {
+                this.Size = new Size(minWidth, this.Size.Height);
+                this.CenterToScreen();
+            }
         }
 
         private void AboutDialog_Load(object sender, EventArgs e)
@@ -40,12 +55,12 @@ namespace WinDynamicDesktop
         private string GetCreditsText()
         {
             List<string> lines = new List<string>() {
-                "Thanks to:",
+                _("Thanks to:"),
                 "",
-                "Apple for the Mojave wallpapers",
-                "Contributors on GitHub",
-                "LocationIQ for their free geocoding API",
-                "Roundicons from flaticon.com for the icon (licensed by CC 3.0 BY)"
+                _("Apple for the Mojave wallpapers"),
+                _("Contributors on GitHub"),
+                _("LocationIQ for their free geocoding API"),
+                _("Roundicons from flaticon.com for the icon (licensed by CC 3.0 BY)")
             };
 
             return string.Join(Environment.NewLine + "    ", lines);

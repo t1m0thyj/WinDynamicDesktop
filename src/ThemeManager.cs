@@ -1,4 +1,8 @@
-﻿using System;
+﻿// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,11 +15,16 @@ namespace WinDynamicDesktop
 {
     class ThemeManager
     {
-        public static bool isReady = false;
+        private static readonly Func<string, string> _ = Localization.GetTranslation;
         public static string[] defaultThemes = new string[] { "Mojave_Desert", "Solar_Gradients" };
+        public static bool filesVerified = false;
         public static List<ThemeConfig> themeSettings = new List<ThemeConfig>();
-        public static ThemeConfig currentTheme;
 
+        public static bool importMode = false;
+        public static List<string> importPaths;
+        public static List<ThemeConfig> importedThemes = new List<ThemeConfig>();
+
+        public static ThemeConfig currentTheme;
         private static ThemeDialog themeDialog;
 
         public static void Initialize()
@@ -40,21 +49,21 @@ namespace WinDynamicDesktop
 
             foreach (string themeId in themeIds)
             {
-                //try
-                //{
-                ThemeConfig theme = JsonConfig.LoadTheme(themeId);
-
-                themeSettings.Add(theme);
-
-                if (theme.themeId == JsonConfig.settings.themeName)
+                try
                 {
-                    currentTheme = theme;
+                    ThemeConfig theme = JsonConfig.LoadTheme(themeId);
+
+                    themeSettings.Add(theme);
+
+                    if (theme.themeId == JsonConfig.settings.themeName)
+                    {
+                        currentTheme = theme;
+                    }
                 }
-                //}
-                //catch
-                //{
-                //    DisableTheme(themeId);
-                //}
+                catch
+                {
+                    DisableTheme(themeId);
+                }
             }
 
             DownloadMissingImages(FindMissingThemes());
@@ -68,23 +77,29 @@ namespace WinDynamicDesktop
                 themeDialog.FormClosed += OnThemeDialogClosed;
                 themeDialog.Show();
             }
-            else
+
+            themeDialog.BringToFront();
+
+            if (importPaths.Count > 0)
             {
-                themeDialog.Activate();
+                List<string> tempImportPaths = new List<string>(importPaths.ToArray());
+                importPaths.Clear();
+                themeDialog.ImportThemes(tempImportPaths);
             }
         }
 
-        public static ThemeConfig ImportTheme(string themePath)
+        public static ThemeConfig ImportTheme(string themePath, IntPtr dialogHandle)
         {
             string themeId = Path.GetFileNameWithoutExtension(themePath);
-            bool isInstalled = themeSettings.FindIndex(
-                theme => theme.themeId == themeId) != -1;
+            int themeIndex = themeSettings.FindIndex(t => t.themeId == themeId);
 
-            if (isInstalled)
+            if (themeIndex != -1)
             {
-                DialogResult result = MessageBox.Show("The '" + themeId + "' theme is already " +
-                    "installed. Do you want to overwrite it?", "Question", MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning);
+                TaskbarProgress.SetState(dialogHandle, TaskbarProgress.TaskbarStates.Paused);
+                DialogResult result = MessageBox.Show(string.Format(_("The '{0}' theme is " +
+                    "already installed. Do you want to overwrite it?"), themeId), _("Question"),
+                    MessageBoxButtons.YesNo,  MessageBoxIcon.Warning);
+                TaskbarProgress.SetState(dialogHandle, TaskbarProgress.TaskbarStates.Normal);
 
                 if (result != DialogResult.Yes)
                 {
@@ -113,12 +128,28 @@ namespace WinDynamicDesktop
                     File.Copy(themePath, Path.Combine("themes", themeId, "theme.json"), true);
                 }
 
-                return JsonConfig.LoadTheme(themeId);
+                ThemeConfig theme = JsonConfig.LoadTheme(themeId);
+
+                if (themeIndex == -1)
+                {
+                    themeSettings.Add(theme);
+                    themeSettings.Sort((t1, t2) => t1.themeId.CompareTo(t2.themeId));
+                }
+                else
+                {
+                    themeSettings[themeIndex] = theme;
+                }
+
+                return theme;
             }
             catch (Exception e)
             {
-                MessageBox.Show("Failed to import theme:\n" + e.Message, "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                TaskbarProgress.SetState(dialogHandle, TaskbarProgress.TaskbarStates.Error);
+                MessageBox.Show(string.Format(_("Failed to import theme from {0}\n\n{1}"),
+                    themePath, e.Message), _("Error"), MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                TaskbarProgress.SetState(dialogHandle, TaskbarProgress.TaskbarStates.Normal);
+
                 return null;
             }
         }
@@ -164,7 +195,7 @@ namespace WinDynamicDesktop
                 }
                 catch { }
 
-                updatePercentage.Invoke((int)((i + 1) / (float)imagePaths.Length * 100));
+                updatePercentage.Invoke((int)((i + 1) / (double)imagePaths.Length * 100));
             }
         }
 
@@ -220,37 +251,18 @@ namespace WinDynamicDesktop
         {
             Directory.Move(Path.Combine("themes", themeId), Path.Combine("themes", "." + themeId));
 
-            MessageBox.Show("The '" + themeId + "' theme could not be loaded and has been " +
+            MessageBox.Show(string.Format(_("The '{0}' theme could not be loaded and has been " +
                 "disabled. This is probably because it was created for an older version of the " +
-                "app or its config file is formatted incorrectly.", "Error",
+                "app or its config file is formatted incorrectly."), themeId), _("Error"),
                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        }
-
-        private static void ReadyUp()
-        {
-            if (currentTheme == null && (JsonConfig.firstRun
-                || JsonConfig.settings.themeName != null))
-            {
-                SelectTheme();
-            }
-            else
-            {
-                isReady = true;
-
-                if (LocationManager.isReady)
-                {
-                    AppContext.wcsService.RunScheduler();
-                }
-
-                AppContext.RunInBackground();
-            }
         }
 
         private static void DownloadMissingImages(List<ThemeConfig> missingThemes)
         {
             if (missingThemes.Count == 0)
             {
-                ReadyUp();
+                filesVerified = true;
+                LaunchSequence.NextStep();
                 return;
             }
 
@@ -259,9 +271,8 @@ namespace WinDynamicDesktop
             downloadDialog.Show();
 
             MainMenu.themeItem.Enabled = false;
-            downloadDialog.LoadQueue(missingThemes.FindAll(
+            downloadDialog.InitDownload(missingThemes.FindAll(
                 theme => theme.imagesZipUri != null));
-            downloadDialog.DownloadNext();
         }
 
         private static void OnDownloadDialogClosed(object sender, EventArgs e)
@@ -271,13 +282,14 @@ namespace WinDynamicDesktop
 
             if (missingThemes.Count == 0)
             {
-                ReadyUp();
+                filesVerified = true;
+                LaunchSequence.NextStep();
             }
             else
             {
-                DialogResult result = MessageBox.Show("Failed to download images. Click Retry " +
+                DialogResult result = MessageBox.Show(_("Failed to download images. Click Retry " +
                     "to try again, Ignore to continue with some themes disabled, or Abort to " +
-                    "exit the program.", "Error", MessageBoxButtons.AbortRetryIgnore,
+                    "exit the program."), _("Error"), MessageBoxButtons.AbortRetryIgnore,
                     MessageBoxIcon.Warning);
 
                 if (result == DialogResult.Abort)
@@ -300,7 +312,8 @@ namespace WinDynamicDesktop
                         currentTheme = null;
                     }
 
-                    ReadyUp();
+                    filesVerified = true;
+                    LaunchSequence.NextStep();
                 }
             }
         }
@@ -308,9 +321,7 @@ namespace WinDynamicDesktop
         private static void OnThemeDialogClosed(object sender, EventArgs e)
         {
             themeDialog = null;
-            isReady = true;
-
-            AppContext.RunInBackground();
+            LaunchSequence.NextStep(true);
         }
     }
 }

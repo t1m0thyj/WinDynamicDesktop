@@ -1,4 +1,8 @@
-﻿using System;
+﻿// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +14,8 @@ namespace WinDynamicDesktop
 {
     class UwpLocation
     {
+        private static readonly Func<string, string> _ = Localization.GetTranslation;
+
         private static async Task<bool> UnsafeRequestAccess()
         {
             var accessStatus = await Windows.Devices.Geolocation.Geolocator.RequestAccessAsync();
@@ -39,10 +45,10 @@ namespace WinDynamicDesktop
 
             if (!hasAccess)
             {
-                DialogResult result = MessageBox.Show("WinDynamicDesktop needs location access " +
-                    "for this feature. Click OK to open the Windows 10 location settings and " +
-                    "grant location access to the app, then select the checkbox again.",
-                    "Location Access", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+                DialogResult result = MessageBox.Show(_("WinDynamicDesktop needs location " +
+                    "access for this feature. Click OK to open the Windows 10 location settings " +
+                    "and grant location access to the app, then select the checkbox again."),
+                    _("Location Access"), MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
 
                 if (result == DialogResult.OK)
                 {

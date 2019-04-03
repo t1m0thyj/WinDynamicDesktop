@@ -1,4 +1,8 @@
-﻿using System;
+﻿// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -173,9 +177,8 @@ namespace WinDynamicDesktop
         [PreserveSig]
         int ApplyChanges(AD_Apply dwFlags);
         [PreserveSig]
-        int GetWallpaper([MarshalAs(UnmanagedType.LPWStr)]  System.Text.StringBuilder pwszWallpaper,
-            int cchWallpaper,
-            int dwReserved);
+        int GetWallpaper([MarshalAs(UnmanagedType.LPWStr)] System.Text.StringBuilder pwszWallpaper,
+            int cchWallpaper, int dwReserved);
         [PreserveSig]
         int SetWallpaper([MarshalAs(UnmanagedType.LPWStr)] string pwszWallpaper, int dwReserved);
         [PreserveSig]
@@ -183,7 +186,8 @@ namespace WinDynamicDesktop
         [PreserveSig]
         int SetWallpaperOptions(ref WALLPAPEROPT pwpo, int dwReserved);
         [PreserveSig]
-        int GetPattern([MarshalAs(UnmanagedType.LPWStr)] System.Text.StringBuilder pwszPattern, int cchPattern, int dwReserved);
+        int GetPattern([MarshalAs(UnmanagedType.LPWStr)] System.Text.StringBuilder pwszPattern,
+            int cchPattern, int dwReserved);
         [PreserveSig]
         int SetPattern([MarshalAs(UnmanagedType.LPWStr)] string pwszPattern, int dwReserved);
         [PreserveSig]
@@ -205,11 +209,14 @@ namespace WinDynamicDesktop
         [PreserveSig]
         int GetDesktopItemByID(IntPtr dwID, ref COMPONENT pcomp, int dwReserved);
         [PreserveSig]
-        int GenerateDesktopItemHtml([MarshalAs(UnmanagedType.LPWStr)] string pwszFileName, ref COMPONENT pcomp, int dwReserved);
+        int GenerateDesktopItemHtml([MarshalAs(UnmanagedType.LPWStr)] string pwszFileName,
+            ref COMPONENT pcomp, int dwReserved);
         [PreserveSig]
-        int AddUrl(IntPtr hwnd, [MarshalAs(UnmanagedType.LPWStr)] string pszSource, ref COMPONENT pcomp, AddURL dwFlags);
+        int AddUrl(IntPtr hwnd, [MarshalAs(UnmanagedType.LPWStr)] string pszSource,
+            ref COMPONENT pcomp, AddURL dwFlags);
         [PreserveSig]
-        int GetDesktopItemBySource([MarshalAs(UnmanagedType.LPWStr)] string pwszSource, ref COMPONENT pcomp, int dwReserved);
+        int GetDesktopItemBySource([MarshalAs(UnmanagedType.LPWStr)] string pwszSource,
+            ref COMPONENT pcomp, int dwReserved);
     }
 
     public class ActiveDesktopWrapper
