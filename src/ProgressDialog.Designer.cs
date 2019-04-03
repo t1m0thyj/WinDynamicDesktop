@@ -30,6 +30,8 @@
         {
             this.label1 = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.fileSizeProgressLabel = new System.Windows.Forms.Label();
+            this.fileTransferSpeedLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -43,18 +45,45 @@
             // 
             // progressBar1
             // 
+            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBar1.Location = new System.Drawing.Point(14, 42);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(257, 13);
             this.progressBar1.TabIndex = 0;
+            // 
+            // fileSizeProgressLabel
+            // 
+            this.fileSizeProgressLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.fileSizeProgressLabel.AutoSize = true;
+            this.fileSizeProgressLabel.Location = new System.Drawing.Point(12, 67);
+            this.fileSizeProgressLabel.Name = "fileSizeProgressLabel";
+            this.fileSizeProgressLabel.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.fileSizeProgressLabel.Size = new System.Drawing.Size(72, 13);
+            this.fileSizeProgressLabel.TabIndex = 3;
+            this.fileSizeProgressLabel.Text = "0 MB of 0 MB";
+            // 
+            // fileTransferSpeedLabel
+            // 
+            this.fileTransferSpeedLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.fileTransferSpeedLabel.Location = new System.Drawing.Point(166, 67);
+            this.fileTransferSpeedLabel.Name = "fileTransferSpeedLabel";
+            this.fileTransferSpeedLabel.Size = new System.Drawing.Size(106, 14);
+            this.fileTransferSpeedLabel.TabIndex = 4;
+            this.fileTransferSpeedLabel.Text = "0 MB/s";
+            this.fileTransferSpeedLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // ProgressDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(285, 68);
+            this.ClientSize = new System.Drawing.Size(285, 93);
             this.ControlBox = false;
+            this.Controls.Add(this.fileTransferSpeedLabel);
+            this.Controls.Add(this.fileSizeProgressLabel);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.progressBar1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -71,5 +100,7 @@
 
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Label fileSizeProgressLabel;
+        private System.Windows.Forms.Label fileTransferSpeedLabel;
     }
 }
