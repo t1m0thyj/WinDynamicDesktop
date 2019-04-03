@@ -1,8 +1,13 @@
-﻿using System;
+﻿// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 
@@ -14,7 +19,7 @@ namespace WinDynamicDesktop
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
             string localFolder = UwpDesktop.GetHelper().GetLocalFolder();
             Application.ThreadException +=
@@ -29,35 +34,9 @@ namespace WinDynamicDesktop
             }
             Directory.SetCurrentDirectory(cwd);
 
-            SetDpiAwareness();
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new AppContext());
-        }
-
-        // Docs for PROCESS_DPI_AWARENESS and SetProcessDpiAwareness here:
-        // https://docs.microsoft.com/en-us/windows/desktop/api/shellscalingapi/
-        private enum ProcessDpiAwareness
-        {
-            DpiUnaware = 0,
-            SystemDpiAware = 1,
-            PerMonitorDpiAware = 2
-        }
-
-        [System.Runtime.InteropServices.DllImport("shcore.dll")]
-        private static extern int SetProcessDpiAwareness(ProcessDpiAwareness value);
-
-        static void SetDpiAwareness()
-        {
-            try
-            {
-                if (Environment.OSVersion.Version.Major >= 6)
-                {
-                    SetProcessDpiAwareness(ProcessDpiAwareness.PerMonitorDpiAware);
-                }
-            }
-            catch { }
+            Application.Run(new AppContext(args));
         }
 
         static void OnThreadException(object sender, ThreadExceptionEventArgs e, string cwd)
@@ -72,13 +51,16 @@ namespace WinDynamicDesktop
 
         static void LogError(string cwd, Exception exc)
         {
-            string errorMessage = exc.ToString() + "\n";
+            string errorMessage = exc.ToString();
             string logFilename = Path.Combine(cwd,
                 Path.GetFileName(Environment.GetCommandLineArgs()[0]) + ".log");
 
             try
             {
-                File.AppendAllText(logFilename, errorMessage);
+                string timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff",
+                    CultureInfo.InvariantCulture);
+                File.AppendAllText(logFilename,
+                    string.Format("[{0}] {1}\n\n", timestamp, errorMessage));
 
                 MessageBox.Show("See the logfile '" + logFilename + "' for details",
                     "Errors occurred", MessageBoxButtons.OK, MessageBoxIcon.Error);

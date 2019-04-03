@@ -1,4 +1,8 @@
-﻿using System;
+﻿// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +12,7 @@ namespace WinDynamicDesktop
 {
     class LocationManager
     {
-        public static bool isReady = false;
-
+        private static readonly Func<string, string> _ = Localization.GetTranslation;
         private static InputDialog locationDialog;
 
         public static void Initialize()
@@ -24,15 +27,6 @@ namespace WinDynamicDesktop
                 JsonConfig.settings.latitude = null;
                 JsonConfig.settings.longitude = null;
             }
-
-            if (JsonConfig.settings.latitude != null && JsonConfig.settings.longitude != null)
-            {
-                isReady = true;
-            }
-            else
-            {
-                ChangeLocation();
-            }
         }
 
         public static void ChangeLocation()
@@ -43,18 +37,14 @@ namespace WinDynamicDesktop
                 locationDialog.FormClosed += OnLocationDialogClosed;
                 locationDialog.Show();
             }
-            else
-            {
-                locationDialog.Activate();
-            }
+
+            locationDialog.BringToFront();
         }
 
         private static void OnLocationDialogClosed(object sender, EventArgs e)
         {
             locationDialog = null;
-            isReady = true;
-
-            AppContext.RunInBackground();
+            LaunchSequence.NextStep();
         }
     }
 }

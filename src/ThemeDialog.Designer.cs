@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.listView1 = new System.Windows.Forms.ListView();
             this.previewBox = new System.Windows.Forms.GroupBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.firstButton = new System.Windows.Forms.Button();
@@ -46,50 +45,42 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.creditsLabel = new System.Windows.Forms.Label();
+            this.imageListView1 = new Manina.Windows.Forms.ImageListView();
             this.previewBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // listView1
-            // 
-            this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(12, 12);
-            this.listView1.MultiSelect = false;
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(491, 300);
-            this.listView1.TabIndex = 0;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
-            // 
             // previewBox
             // 
+            this.previewBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.previewBox.Controls.Add(this.pictureBox1);
             this.previewBox.Controls.Add(this.firstButton);
             this.previewBox.Controls.Add(this.previousButton);
             this.previewBox.Controls.Add(this.imageNumberLabel);
             this.previewBox.Controls.Add(this.nextButton);
             this.previewBox.Controls.Add(this.lastButton);
-            this.previewBox.Location = new System.Drawing.Point(514, 11);
+            this.previewBox.Location = new System.Drawing.Point(441, 10);
             this.previewBox.Name = "previewBox";
-            this.previewBox.Size = new System.Drawing.Size(404, 275);
+            this.previewBox.Size = new System.Drawing.Size(346, 248);
             this.previewBox.TabIndex = 1;
             this.previewBox.TabStop = false;
             this.previewBox.Text = "Preview";
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(10, 19);
+            this.pictureBox1.Location = new System.Drawing.Point(9, 18);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(384, 216);
+            this.pictureBox1.Size = new System.Drawing.Size(329, 187);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pictureBox1.TabIndex = 7;
             this.pictureBox1.TabStop = false;
             // 
             // firstButton
             // 
-            this.firstButton.Location = new System.Drawing.Point(15, 240);
+            this.firstButton.Location = new System.Drawing.Point(13, 213);
             this.firstButton.Name = "firstButton";
-            this.firstButton.Size = new System.Drawing.Size(50, 26);
+            this.firstButton.Size = new System.Drawing.Size(43, 23);
             this.firstButton.TabIndex = 0;
             this.firstButton.Text = "<<";
             this.firstButton.UseVisualStyleBackColor = true;
@@ -97,9 +88,9 @@
             // 
             // previousButton
             // 
-            this.previousButton.Location = new System.Drawing.Point(80, 240);
+            this.previousButton.Location = new System.Drawing.Point(69, 213);
             this.previousButton.Name = "previousButton";
-            this.previousButton.Size = new System.Drawing.Size(50, 26);
+            this.previousButton.Size = new System.Drawing.Size(43, 23);
             this.previousButton.TabIndex = 1;
             this.previousButton.Text = "<";
             this.previousButton.UseVisualStyleBackColor = true;
@@ -107,18 +98,18 @@
             // 
             // imageNumberLabel
             // 
-            this.imageNumberLabel.Location = new System.Drawing.Point(145, 245);
+            this.imageNumberLabel.Location = new System.Drawing.Point(111, 217);
             this.imageNumberLabel.Name = "imageNumberLabel";
-            this.imageNumberLabel.Size = new System.Drawing.Size(114, 15);
+            this.imageNumberLabel.Size = new System.Drawing.Size(125, 13);
             this.imageNumberLabel.TabIndex = 10;
             this.imageNumberLabel.Text = "label1";
             this.imageNumberLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // nextButton
             // 
-            this.nextButton.Location = new System.Drawing.Point(274, 240);
+            this.nextButton.Location = new System.Drawing.Point(235, 213);
             this.nextButton.Name = "nextButton";
-            this.nextButton.Size = new System.Drawing.Size(50, 26);
+            this.nextButton.Size = new System.Drawing.Size(43, 23);
             this.nextButton.TabIndex = 2;
             this.nextButton.Text = ">";
             this.nextButton.UseVisualStyleBackColor = true;
@@ -126,9 +117,9 @@
             // 
             // lastButton
             // 
-            this.lastButton.Location = new System.Drawing.Point(339, 240);
+            this.lastButton.Location = new System.Drawing.Point(291, 213);
             this.lastButton.Name = "lastButton";
-            this.lastButton.Size = new System.Drawing.Size(50, 26);
+            this.lastButton.Size = new System.Drawing.Size(43, 23);
             this.lastButton.TabIndex = 3;
             this.lastButton.Text = ">>";
             this.lastButton.UseVisualStyleBackColor = true;
@@ -136,20 +127,22 @@
             // 
             // darkModeCheckbox
             // 
+            this.darkModeCheckbox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.darkModeCheckbox.AutoSize = true;
-            this.darkModeCheckbox.Location = new System.Drawing.Point(381, 330);
+            this.darkModeCheckbox.Location = new System.Drawing.Point(353, 300);
             this.darkModeCheckbox.Name = "darkModeCheckbox";
-            this.darkModeCheckbox.Size = new System.Drawing.Size(122, 19);
+            this.darkModeCheckbox.Size = new System.Drawing.Size(79, 17);
             this.darkModeCheckbox.TabIndex = 4;
-            this.darkModeCheckbox.Text = "Enable Dark Mode";
+            this.darkModeCheckbox.Text = "Dark Mode";
             this.darkModeCheckbox.UseVisualStyleBackColor = true;
             this.darkModeCheckbox.CheckedChanged += new System.EventHandler(this.darkModeCheckbox_CheckedChanged);
             // 
             // applyButton
             // 
-            this.applyButton.Location = new System.Drawing.Point(610, 325);
+            this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.applyButton.Location = new System.Drawing.Point(523, 296);
             this.applyButton.Name = "applyButton";
-            this.applyButton.Size = new System.Drawing.Size(88, 26);
+            this.applyButton.Size = new System.Drawing.Size(75, 23);
             this.applyButton.TabIndex = 5;
             this.applyButton.Text = "Apply";
             this.applyButton.UseVisualStyleBackColor = true;
@@ -157,10 +150,11 @@
             // 
             // closeButton
             // 
+            this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.closeButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.closeButton.Location = new System.Drawing.Point(733, 325);
+            this.closeButton.Location = new System.Drawing.Point(628, 296);
             this.closeButton.Name = "closeButton";
-            this.closeButton.Size = new System.Drawing.Size(88, 26);
+            this.closeButton.Size = new System.Drawing.Size(75, 23);
             this.closeButton.TabIndex = 6;
             this.closeButton.Text = "Close";
             this.closeButton.UseVisualStyleBackColor = true;
@@ -169,9 +163,9 @@
             // themeLinkLabel
             // 
             this.themeLinkLabel.AutoSize = true;
-            this.themeLinkLabel.Location = new System.Drawing.Point(159, 330);
+            this.themeLinkLabel.Location = new System.Drawing.Point(136, 300);
             this.themeLinkLabel.Name = "themeLinkLabel";
-            this.themeLinkLabel.Size = new System.Drawing.Size(134, 15);
+            this.themeLinkLabel.Size = new System.Drawing.Size(118, 13);
             this.themeLinkLabel.TabIndex = 3;
             this.themeLinkLabel.TabStop = true;
             this.themeLinkLabel.Text = "Get more themes online";
@@ -179,9 +173,9 @@
             // 
             // importButton
             // 
-            this.importButton.Location = new System.Drawing.Point(17, 325);
+            this.importButton.Location = new System.Drawing.Point(15, 296);
             this.importButton.Name = "importButton";
-            this.importButton.Size = new System.Drawing.Size(125, 26);
+            this.importButton.Size = new System.Drawing.Size(107, 23);
             this.importButton.TabIndex = 2;
             this.importButton.Text = "Import from file...";
             this.importButton.UseVisualStyleBackColor = true;
@@ -189,8 +183,9 @@
             // 
             // openFileDialog1
             // 
-            this.openFileDialog1.Filter = "Theme files|*.json;*.ddw;*.zip|All files|*.*";
+            this.openFileDialog1.Filter = "Theme files|*.ddw;*.zip;*.json|All files|*.*";
             this.openFileDialog1.InitialDirectory = "shell:Downloads";
+            this.openFileDialog1.Multiselect = true;
             this.openFileDialog1.Title = "Import Theme";
             // 
             // contextMenuStrip1
@@ -211,25 +206,38 @@
             // 
             // creditsLabel
             // 
+            this.creditsLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.creditsLabel.Enabled = false;
-            this.creditsLabel.Location = new System.Drawing.Point(514, 296);
+            this.creditsLabel.Location = new System.Drawing.Point(441, 269);
             this.creditsLabel.Name = "creditsLabel";
-            this.creditsLabel.Size = new System.Drawing.Size(404, 15);
+            this.creditsLabel.Size = new System.Drawing.Size(346, 13);
             this.creditsLabel.TabIndex = 14;
             this.creditsLabel.Text = "label2";
             this.creditsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // imageListView1
+            // 
+            this.imageListView1.Location = new System.Drawing.Point(10, 10);
+            this.imageListView1.MultiSelect = false;
+            this.imageListView1.Name = "imageListView1";
+            this.imageListView1.PersistentCacheDirectory = "";
+            this.imageListView1.PersistentCacheSize = ((long)(100));
+            this.imageListView1.Size = new System.Drawing.Size(422, 275);
+            this.imageListView1.TabIndex = 15;
+            this.imageListView1.UseWIC = true;
+            this.imageListView1.SelectionChanged += new System.EventHandler(this.imageListView1_SelectionChanged);
+            // 
             // ThemeDialog
             // 
             this.AcceptButton = this.applyButton;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.closeButton;
-            this.ClientSize = new System.Drawing.Size(929, 366);
+            this.ClientSize = new System.Drawing.Size(796, 332);
+            this.Controls.Add(this.imageListView1);
             this.Controls.Add(this.creditsLabel);
             this.Controls.Add(this.importButton);
             this.Controls.Add(this.themeLinkLabel);
-            this.Controls.Add(this.listView1);
             this.Controls.Add(this.previewBox);
             this.Controls.Add(this.darkModeCheckbox);
             this.Controls.Add(this.applyButton);
@@ -250,8 +258,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.GroupBox previewBox;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Button firstButton;
@@ -268,5 +274,6 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
         private System.Windows.Forms.Label creditsLabel;
+        private Manina.Windows.Forms.ImageListView imageListView1;
     }
 }

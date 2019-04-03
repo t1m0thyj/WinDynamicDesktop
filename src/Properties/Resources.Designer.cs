@@ -73,6 +73,56 @@ namespace WinDynamicDesktop.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] locale_de_DE {
+            get {
+                object obj = ResourceManager.GetObject("locale_de_DE", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] locale_el_GR {
+            get {
+                object obj = ResourceManager.GetObject("locale_el_GR", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] locale_fr_FR {
+            get {
+                object obj = ResourceManager.GetObject("locale_fr_FR", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] locale_ru_RU {
+            get {
+                object obj = ResourceManager.GetObject("locale_ru_RU", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] locale_zh_CN {
+            get {
+                object obj = ResourceManager.GetObject("locale_zh_CN", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] Mojave_Desert_json {
             get {
                 object obj = ResourceManager.GetObject("Mojave_Desert_json", resourceCulture);

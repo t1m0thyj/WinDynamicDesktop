@@ -1,6 +1,7 @@
 .vs/
 AppPackages/
 BundleArtifacts/
+__pycache__
 bin/
 images/
 obj/
@@ -12,6 +13,5 @@ packages/
 Package.StoreAssociation.xml
 _pkginfo.txt
 images.zip
+messages.pot
 settings.conf
-wdd-logger.exe
-wdd-report.log

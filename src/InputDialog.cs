@@ -1,4 +1,8 @@
-﻿using System;
+﻿// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,9 +14,12 @@ namespace WinDynamicDesktop
 {
     public partial class InputDialog : Form
     {
+        private static readonly Func<string, string> _ = Localization.GetTranslation;
+
         public InputDialog()
         {
             InitializeComponent();
+            Localization.TranslateForm(this);
 
             this.Font = SystemFonts.MessageBoxFont;
             this.FormClosing += OnFormClosing;
@@ -85,22 +92,31 @@ namespace WinDynamicDesktop
                     JsonConfig.settings.location = inputBox.Text;
                     JsonConfig.settings.latitude = data.lat;
                     JsonConfig.settings.longitude = data.lon;
+                    SolarData solarData = SunriseSunsetService.GetSolarData(DateTime.Today);
 
-                    if (ThemeManager.isReady)
+                    DialogResult result = MessageBox.Show(string.Format(_("Is this location " +
+                        "correct?\n\n{0}\nSunrise: {1}, Sunset: {2}"), data.display_name,
+                        solarData.sunriseTime.ToShortTimeString(),
+                        solarData.sunsetTime.ToShortTimeString()), _("Question"),
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                    if (result == DialogResult.Yes)
                     {
-                        AppContext.wcsService.RunScheduler();
+                        if (LaunchSequence.IsThemeReady())
+                        {
+                            this.Hide();
+                            AppContext.wpEngine.RunScheduler();
+                        }
+
+                        this.Close();
                     }
-
-                    MessageBox.Show("Location set successfully to: " + data.display_name +
-                        "\n(Latitude = " + data.lat + ", Longitude = " + data.lon + ")", "Success",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                    this.Close();
                 }
                 else
                 {
-                    MessageBox.Show("The location you entered was invalid, or you are not " +
-                        "connected to the Internet.", "Error", MessageBoxButtons.OK,
+                    MessageBox.Show(_("The location you entered was invalid, or you are not " +
+                        "connected to the Internet. Check your Internet connection and try a " +
+                        "different location. You can use a complete address or just the name of " +
+                        "your city/region."), _("Error"), MessageBoxButtons.OK,
                         MessageBoxIcon.Warning);
                 }
             }
@@ -110,17 +126,17 @@ namespace WinDynamicDesktop
 
                 if (locationUpdated)
                 {
-                    if (ThemeManager.isReady)
+                    if (LaunchSequence.IsThemeReady())
                     {
-                        AppContext.wcsService.RunScheduler();
+                        AppContext.wpEngine.RunScheduler();
                     }
 
                     this.Close();
                 }
                 else
                 {
-                    MessageBox.Show("Failed to get location from Windows location service.",
-                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(_("Failed to get location from Windows location service."),
+                        _("Error"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
 
@@ -136,11 +152,11 @@ namespace WinDynamicDesktop
         {
             if (JsonConfig.settings.latitude == null || JsonConfig.settings.longitude == null)
             {
-                DialogResult result = MessageBox.Show("WinDynamicDesktop cannot display " +
+                DialogResult result = MessageBox.Show(_("WinDynamicDesktop cannot display " +
                     "wallpapers until you have entered a valid location, so that it can " +
                     "calculate sunrise and sunset times for your location. Are you sure you " +
-                    "want to cancel and quit the program?", "Question", MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning);
+                    "want to cancel and quit the program?"), _("Question"),
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
                 if (result == DialogResult.Yes)
                 {
