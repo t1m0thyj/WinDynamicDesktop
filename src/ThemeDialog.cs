@@ -166,6 +166,25 @@ namespace WinDynamicDesktop
             return "";
         }
 
+        private List<int> GetImageList(ThemeConfig theme)
+        {
+            List<int> imageList = new List<int>();
+
+            if (!darkModeCheckbox.Checked)
+            {
+                imageList.AddRange(theme.sunriseImageList);
+                imageList.AddRange(theme.dayImageList);
+                imageList.AddRange(theme.sunsetImageList);
+                imageList.AddRange(theme.nightImageList);
+            }
+            else
+            {
+                imageList.AddRange(theme.nightImageList);
+            }
+
+            return imageList;
+        }
+
         private int GetMaxImageNumber()
         {
             int max = 1;
@@ -173,13 +192,7 @@ namespace WinDynamicDesktop
             if (selectedIndex > 0)
             {
                 ThemeConfig theme = ThemeManager.themeSettings[selectedIndex - 1];
-                max = theme.nightImageList.Length;
-
-                if (!darkModeCheckbox.Checked)
-                {
-                    max += theme.sunriseImageList.Length + theme.dayImageList.Length +
-                        theme.sunsetImageList.Length;
-                }
+                max = GetImageList(theme).Count;
             }
 
             return max;
@@ -207,22 +220,7 @@ namespace WinDynamicDesktop
             else
             {
                 ThemeConfig theme = ThemeManager.themeSettings[selectedIndex - 1];
-                int imageId;
-
-                if (!darkModeCheckbox.Checked)
-                {
-                    List<int> imageList = new List<int>();
-                    imageList.AddRange(theme.sunriseImageList);
-                    imageList.AddRange(theme.dayImageList);
-                    imageList.AddRange(theme.sunsetImageList);
-                    imageList.AddRange(theme.nightImageList);
-                    imageId = imageList[imageNumber - 1];
-                }
-                else
-                {
-                    imageId = theme.nightImageList[imageNumber - 1];
-                }
-
+                int imageId = GetImageList(theme)[imageNumber - 1];
                 string imageFilename = theme.imageFilename.Replace("*", imageId.ToString());
                 pictureBox1.Image = ShrinkImage(Path.Combine("themes", theme.themeId,
                     imageFilename), width, height);
@@ -297,7 +295,6 @@ namespace WinDynamicDesktop
             imageListView1.SetRenderer(new ThemeListViewRenderer());
 
             darkModeCheckbox.Checked = JsonConfig.settings.darkMode;
-            applyButton.Enabled = LaunchSequence.IsLocationReady();
 
             Size thumbnailSize = GetThumbnailSize();
             imageListView1.ThumbnailSize = thumbnailSize;
@@ -358,9 +355,10 @@ namespace WinDynamicDesktop
                         t => t.themeId == themeId) + 1;
 
                     SolarData solarData = SunriseSunsetService.GetSolarData(DateTime.Today);
-                    imageNumber = AppContext.wpEngine.GetImageData(solarData,
-                        ThemeManager.themeSettings[selectedIndex - 1],
-                        darkModeCheckbox.Checked).Item1;
+                    ThemeConfig theme = ThemeManager.themeSettings[selectedIndex - 1];
+                    imageNumber = GetImageList(theme).IndexOf(
+                        AppContext.wpEngine.GetImageData(solarData, theme,
+                        darkModeCheckbox.Checked).Item1) + 1;
                 }
 
                 creditsLabel.Text = GetCreditsText();
@@ -442,7 +440,7 @@ namespace WinDynamicDesktop
             {
                 WallpaperApi.SetWallpaper(windowsWallpaper);
             }
-            else if (LaunchSequence.IsLocationReady())
+            else
             {
                 AppContext.wpEngine.RunScheduler();
             }

@@ -40,6 +40,11 @@ namespace WinDynamicDesktop
 
         public void RunScheduler(bool forceImageUpdate = false)
         {
+            if (!LaunchSequence.IsLocationReady() || !ThemeManager.filesVerified)
+            {
+                return;
+            }
+
             schedulerTimer.Stop();
 
             SolarData data = SunriseSunsetService.GetSolarData(DateTime.Today);
