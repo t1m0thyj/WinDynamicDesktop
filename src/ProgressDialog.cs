@@ -27,6 +27,8 @@ namespace WinDynamicDesktop
         private WebClient wc = new WebClient();
         private Stopwatch stopwatch = new Stopwatch();
 
+        public bool isUriEmpty = false;
+
         public ProgressDialog()
         {
             InitializeComponent();
@@ -84,8 +86,16 @@ namespace WinDynamicDesktop
                 else
                 {
                     List<string> imagesZipUris = theme.imagesZipUri.Split('|').ToList();
-                    wc.DownloadFileAsync(new Uri(imagesZipUris.First()),
+
+                    try
+                    {
+                        wc.DownloadFileAsync(new Uri(imagesZipUris.First()),
                         theme.themeId + "_images.zip", imagesZipUris.Skip(1).ToList());
+                    }
+                    catch (Exception e) {
+                        isUriEmpty = true;
+                    }
+
                 }
             }
             else if (!ThemeManager.importMode)
@@ -142,8 +152,15 @@ namespace WinDynamicDesktop
             int percentage = ((numJobs - numRemaining) * 100 + themePercentage) / numJobs;
 
             stopwatch.Start();
-            progressBar1.Value = percentage;
-            TaskbarProgress.SetValue(this.Handle, percentage, 100);
+            this.progressBar1.BeginInvoke((MethodInvoker)delegate ()
+            {
+                progressBar1.Value = percentage;
+                progressBar1.Refresh();
+                TaskbarProgress.SetValue(this.Handle, percentage, 100);
+            }); ;
+            //progressBar1.Value = percentage;
+
+
         }
 
         private void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
@@ -161,7 +178,7 @@ namespace WinDynamicDesktop
         public void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
             stopwatch.Stop();
-
+            
             List<string> imagesZipUris = (List<string>)e.UserState;
 
             if (e.Error != null && imagesZipUris.Count > 0)
