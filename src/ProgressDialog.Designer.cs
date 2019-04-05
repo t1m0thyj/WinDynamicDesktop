@@ -37,50 +37,51 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(11, 14);
+            this.label1.Location = new System.Drawing.Point(15, 17);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(173, 13);
+            this.label1.Size = new System.Drawing.Size(228, 17);
             this.label1.TabIndex = 2;
             this.label1.Text = "Downloading images, please wait...";
             // 
             // progressBar1
             // 
-            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar1.Location = new System.Drawing.Point(14, 42);
+            this.progressBar1.Location = new System.Drawing.Point(19, 52);
+            this.progressBar1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(257, 13);
+            this.progressBar1.Size = new System.Drawing.Size(333, 16);
             this.progressBar1.TabIndex = 0;
             // 
             // fileSizeProgressLabel
             // 
-            this.fileSizeProgressLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.fileSizeProgressLabel.AutoSize = true;
-            this.fileSizeProgressLabel.Location = new System.Drawing.Point(12, 67);
+            this.fileSizeProgressLabel.Location = new System.Drawing.Point(16, 82);
+            this.fileSizeProgressLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.fileSizeProgressLabel.Name = "fileSizeProgressLabel";
             this.fileSizeProgressLabel.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.fileSizeProgressLabel.Size = new System.Drawing.Size(72, 13);
+            this.fileSizeProgressLabel.Size = new System.Drawing.Size(92, 17);
             this.fileSizeProgressLabel.TabIndex = 3;
             this.fileSizeProgressLabel.Text = "0 MB of 0 MB";
             // 
             // fileTransferSpeedLabel
             // 
-            this.fileTransferSpeedLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.fileTransferSpeedLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.fileTransferSpeedLabel.Location = new System.Drawing.Point(166, 67);
+            this.fileTransferSpeedLabel.AutoSize = true;
+            this.fileTransferSpeedLabel.Location = new System.Drawing.Point(300, 82);
+            this.fileTransferSpeedLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.fileTransferSpeedLabel.Name = "fileTransferSpeedLabel";
-            this.fileTransferSpeedLabel.Size = new System.Drawing.Size(106, 14);
+            this.fileTransferSpeedLabel.Size = new System.Drawing.Size(51, 17);
             this.fileTransferSpeedLabel.TabIndex = 4;
             this.fileTransferSpeedLabel.Text = "0 MB/s";
             this.fileTransferSpeedLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // ProgressDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(285, 93);
+            this.ClientSize = new System.Drawing.Size(379, 120);
             this.ControlBox = false;
             this.Controls.Add(this.fileTransferSpeedLabel);
             this.Controls.Add(this.fileSizeProgressLabel);
@@ -88,6 +89,7 @@
             this.Controls.Add(this.progressBar1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = global::WinDynamicDesktop.Properties.Resources.AppIcon;
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "ProgressDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "WinDynamicDesktop";
