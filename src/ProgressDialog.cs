@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
 using System.Net;
+using System.Diagnostics;
 
 namespace WinDynamicDesktop
 {
@@ -24,6 +25,9 @@ namespace WinDynamicDesktop
         private IntPtr taskbarHandle;
 
         private WebClient wc = new WebClient();
+        private Stopwatch stopwatch = new Stopwatch();
+
+        public bool isUriEmpty = false;
 
         public ProgressDialog()
         {
@@ -54,6 +58,10 @@ namespace WinDynamicDesktop
             numJobs = importQueue.Count;
 
             Task.Run(() => ImportNext());
+
+            // Hide download progress labels when importing directly from file system
+            fileSizeProgressLabel.Visible = false;
+            fileTransferSpeedLabel.Visible = false;
         }
 
         private void DownloadNext()
@@ -78,8 +86,16 @@ namespace WinDynamicDesktop
                 else
                 {
                     List<string> imagesZipUris = theme.imagesZipUri.Split('|').ToList();
-                    wc.DownloadFileAsync(new Uri(imagesZipUris.First()),
+
+                    try
+                    {
+                        wc.DownloadFileAsync(new Uri(imagesZipUris.First()),
                         theme.themeId + "_images.zip", imagesZipUris.Skip(1).ToList());
+                    }
+                    catch (Exception e) {
+                        isUriEmpty = true;
+                    }
+
                 }
             }
             else if (!ThemeManager.importMode)
@@ -135,17 +151,34 @@ namespace WinDynamicDesktop
             int numRemaining = ThemeManager.importMode ? importQueue.Count : downloadQueue.Count;
             int percentage = ((numJobs - numRemaining) * 100 + themePercentage) / numJobs;
 
-            progressBar1.Value = percentage;
-            TaskbarProgress.SetValue(this.Handle, percentage, 100);
+            stopwatch.Start();
+            this.progressBar1.BeginInvoke((MethodInvoker)delegate ()
+            {
+                progressBar1.Value = percentage;
+                progressBar1.Refresh();
+                TaskbarProgress.SetValue(this.Handle, percentage, 100);
+            }); ;
+            //progressBar1.Value = percentage;
+
+
         }
 
         private void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
             UpdateTotalPercentage(e.ProgressPercentage);
+            
+            fileTransferSpeedLabel.Text = string.Format("{0} MB/s", 
+                (e.BytesReceived / 1024f / 1024f / stopwatch.Elapsed.TotalSeconds).ToString("0.#"));
+
+            fileSizeProgressLabel.Text = string.Format("{0} MB of {1} MB",
+                (e.BytesReceived / 1024d / 1024d).ToString("0.#"),
+                (e.TotalBytesToReceive / 1024d / 1024d).ToString("0.#"));
         }
 
         public void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
+            stopwatch.Stop();
+            
             List<string> imagesZipUris = (List<string>)e.UserState;
 
             if (e.Error != null && imagesZipUris.Count > 0)

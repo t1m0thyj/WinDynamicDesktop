@@ -24,6 +24,7 @@ namespace WinDynamicDesktop
         public static List<string> importPaths;
         public static List<ThemeConfig> importedThemes = new List<ThemeConfig>();
 
+        private static ProgressDialog downloadDialog = new ProgressDialog();
         public static ThemeConfig currentTheme;
         private static ThemeDialog themeDialog;
 
@@ -182,20 +183,28 @@ namespace WinDynamicDesktop
         public static void CopyLocalTheme(ThemeConfig theme, string localPath,
             Action<int> updatePercentage)
         {
-            string[] imagePaths = Directory.GetFiles(localPath, theme.imageFilename);
 
-            for (int i = 0; i < imagePaths.Length; i++)
+            try
             {
-                string imagePath = imagePaths[i];
+                string[] imagePaths = Directory.GetFiles(localPath, theme.imageFilename);
 
-                try
+                for (int i = 0; i < imagePaths.Length; i++)
                 {
-                    File.Copy(imagePath, Path.Combine("themes", theme.themeId,
-                        Path.GetFileName(imagePath)), true);
-                }
-                catch { }
+                    string imagePath = imagePaths[i];
 
-                updatePercentage.Invoke((int)((i + 1) / (double)imagePaths.Length * 100));
+                    try
+                    {
+                        File.Copy(imagePath, Path.Combine("themes", theme.themeId,
+                            Path.GetFileName(imagePath)), true);
+                    }
+                    catch { }
+
+                    updatePercentage.Invoke((int)((i + 1) / (double)imagePaths.Length * 100));
+                }
+            }catch(DirectoryNotFoundException d)
+            {
+
+                MessageBox.Show("This directory on '" + localPath.ToString() + "' does not exist.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
@@ -266,15 +275,21 @@ namespace WinDynamicDesktop
                 return;
             }
 
-            ProgressDialog downloadDialog = new ProgressDialog();
             downloadDialog.FormClosed += OnDownloadDialogClosed;
             downloadDialog.Show();
 
             MainMenu.themeItem.Enabled = false;
             downloadDialog.InitDownload(missingThemes.FindAll(
                 theme => theme.imagesZipUri != null));
-        }
+           
+            if (downloadDialog.isUriEmpty == true)
+            {
+                // Attempt to close dialog to give dialog result options if uri is empty
+                downloadDialog.Close();
+            }
 
+        }
+      
         private static void OnDownloadDialogClosed(object sender, EventArgs e)
         {
             MainMenu.themeItem.Enabled = true;
