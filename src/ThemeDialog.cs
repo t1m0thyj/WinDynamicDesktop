@@ -26,8 +26,7 @@ namespace WinDynamicDesktop
         private static readonly Func<string, string> _ = Localization.GetTranslation;
         private const string themeLink =
             "https://github.com/t1m0thyj/WinDynamicDesktop/wiki/Community-created-themes";
-        private readonly string windowsWallpaper = Directory.GetFiles(
-            @"C:\Windows\Web\Wallpaper\Windows")[0];
+        private readonly string windowsWallpaper = Directory.GetFiles(String.Format(@"{0}\Web\Wallpaper\Windows", Environment.GetEnvironmentVariable("systemroot")))[0];
 
         public ThemeDialog()
         {
