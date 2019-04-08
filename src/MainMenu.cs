@@ -73,6 +73,8 @@ namespace WinDynamicDesktop
         {
             List<ToolStripItem> items = new List<ToolStripItem>();
 
+            items.Add(new ToolStripMenuItem(_("Select &Language..."), null, OnLanguageItemClick));
+            items.Add(new ToolStripSeparator());
             items.AddRange(SystemThemeChanger.GetMenuItems());
             items.AddRange(UpdateChecker.GetMenuItems());
 
@@ -126,6 +128,11 @@ namespace WinDynamicDesktop
         private static void OnExitItemClick(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private static void OnLanguageItemClick(object sender, EventArgs e)
+        {
+            Localization.SelectLanguage();
         }
     }
 }

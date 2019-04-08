@@ -18,7 +18,7 @@ def add_to_pot_data(msgid, filename, lineno):
 
 
 for filename in glob.glob("../src/*.cs"):
-    with open(filename, 'r') as cs_file:
+    with open(filename, 'r', encoding="utf8") as cs_file:
         if not filename.endswith(".Designer.cs"):
             msg_history = []
 
@@ -33,11 +33,11 @@ for filename in glob.glob("../src/*.cs"):
                             add_to_pot_data(msg_history[0], filename[3:], msg_history[1])
                             msg_history = []
 
-                for match in re.finditer(r'_\("(.+?)"\)', line):
+                for match in re.finditer(r'(?:_|Localization\.GetTranslation)\("(.+?)"\)', line):
                     add_to_pot_data(match.group(1), filename[3:], i + 1)
 
                 if not msg_history:
-                    match = re.search(r'_\("(.+)"[^)]', line)
+                    match = re.search(r'(?:_|Localization\.GetTranslation)\("(.+)"[^)]', line)
 
                     if match:
                         msg_history = [match.group(1), i + 1]
@@ -83,7 +83,7 @@ for msgid, locs in pot_data.items():
     
     pot_lines.append("msgstr \"\"")
 
-with open("messages.pot", 'w') as pot_file:
+with open("messages.pot", 'w', encoding="utf8") as pot_file:
     for line in pot_lines:
         print(line)
         print(line, file=pot_file)

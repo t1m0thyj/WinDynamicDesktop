@@ -157,10 +157,7 @@ namespace WinDynamicDesktop
                 progressBar1.Value = percentage;
                 progressBar1.Refresh();
                 TaskbarProgress.SetValue(this.Handle, percentage, 100);
-            }); ;
-            //progressBar1.Value = percentage;
-
-
+            });
         }
 
         private void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)

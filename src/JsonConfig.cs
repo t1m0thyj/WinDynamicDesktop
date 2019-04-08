@@ -50,6 +50,7 @@ namespace WinDynamicDesktop
     class JsonConfig
     {
         private static Timer autoSaveTimer;
+        private static bool restartPending = false;
         private static bool unsavedChanges;
 
         public static AppConfig settings = new AppConfig();
@@ -97,15 +98,21 @@ namespace WinDynamicDesktop
             return theme;
         }
 
-        public static void OnSettingsPropertyChanged(object sender, EventArgs e)
+        public static void EnablePendingRestart()
+        {
+            restartPending = true;
+            autoSaveTimer.Start();
+        }
+
+        private static void OnSettingsPropertyChanged(object sender, EventArgs e)
         {
             unsavedChanges = true;
             autoSaveTimer.Start();
         }
 
-        public static async void OnAutoSaveTimerElapsed(object sender, EventArgs e)
+        private static async void OnAutoSaveTimerElapsed(object sender, EventArgs e)
         {
-            if (!unsavedChanges)
+            if (!unsavedChanges && !restartPending)
             {
                 return;
             }
@@ -118,6 +125,12 @@ namespace WinDynamicDesktop
                 string jsonText = JsonConvert.SerializeObject(settings);
                 File.WriteAllText("settings.conf", jsonText);
             });
+
+            if (restartPending)
+            {
+                restartPending = false;
+                System.Windows.Forms.Application.Restart();
+            }
 
             autoSaveTimer.Elapsed += OnAutoSaveTimerElapsed;
             autoSaveTimer.Start();

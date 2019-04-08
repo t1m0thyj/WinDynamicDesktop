@@ -24,7 +24,7 @@ namespace WinDynamicDesktop
         public static List<string> importPaths;
         public static List<ThemeConfig> importedThemes = new List<ThemeConfig>();
 
-        private static ProgressDialog downloadDialog = new ProgressDialog();
+        private static ProgressDialog downloadDialog;
         public static ThemeConfig currentTheme;
         private static ThemeDialog themeDialog;
 
@@ -275,6 +275,7 @@ namespace WinDynamicDesktop
                 return;
             }
 
+            downloadDialog = new ProgressDialog();
             downloadDialog.FormClosed += OnDownloadDialogClosed;
             downloadDialog.Show();
 

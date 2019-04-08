@@ -18,7 +18,7 @@ namespace WinDynamicDesktop
     {
         public static string[] languageNames = new string[] {
             "Deutsch",  // German
-            "English",
+            "English",  // English (US)
             "Français",  // French
             "Eλληνικά",  // Greek
             "Pусский",  // Russian
@@ -49,10 +49,14 @@ namespace WinDynamicDesktop
             }
 
             LoadLocale();
-            //GetUserLanguage();
+
+            if (JsonConfig.firstRun)
+            {
+                SelectLanguage();
+            }
         }
 
-        private static void LoadLocale()
+        public static void LoadLocale()
         {
             string moFile = currentLocale + ".mo";
 
@@ -64,15 +68,28 @@ namespace WinDynamicDesktop
                         new CultureInfo(currentLocale.Replace('_', '-')));
                 }
             }
+            else
+            {
+                byte[] embeddedMo = (byte[])Properties.Resources.ResourceManager.GetObject(
+                    "locale_" + currentLocale);
+
+                if (embeddedMo == null)
+                {
+                    return;
+                }
+
+                using (Stream stream = new MemoryStream(embeddedMo))
+                {
+                    catalog = new Catalog(stream,
+                        new CultureInfo(currentLocale.Replace('_', '-')));
+                }
+            }
         }
 
-        private static void GetUserLanguage()
+        public static void SelectLanguage()
         {
-            if (JsonConfig.firstRun)
-            {
-                LanguageDialog langDialog = new LanguageDialog();
-                langDialog.Show();
-            }
+            LanguageDialog langDialog = new LanguageDialog();
+            langDialog.ShowDialog();
         }
 
         public static string GetTranslation(string msg)
