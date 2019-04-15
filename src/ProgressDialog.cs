@@ -22,12 +22,9 @@ namespace WinDynamicDesktop
         private Queue<ThemeConfig> downloadQueue;
         private Queue<string> importQueue;
         private int numJobs;
-        private IntPtr taskbarHandle;
 
-        private WebClient wc = new WebClient();
         private Stopwatch stopwatch = new Stopwatch();
-
-        public bool isUriEmpty = false;
+        private WebClient wc = new WebClient();
 
         public ProgressDialog()
         {
@@ -36,7 +33,7 @@ namespace WinDynamicDesktop
 
             this.Font = SystemFonts.MessageBoxFont;
             this.FormClosing += OnFormClosing;
-            taskbarHandle = this.Handle;
+            ThemeLoader.taskbarHandle = this.Handle;
 
             wc.DownloadProgressChanged += OnDownloadProgressChanged;
             wc.DownloadFileCompleted += OnDownloadFileCompleted;
@@ -69,39 +66,42 @@ namespace WinDynamicDesktop
             if (downloadQueue.Count > 0)
             {
                 ThemeConfig theme = downloadQueue.Peek();
+                this.Invoke(new Action(() => UpdateDownloadStatus(theme)));
 
                 if (theme.imagesZipUri.StartsWith("file://"))
                 {
                     string themePath = (new Uri(theme.imagesZipUri)).LocalPath;
-                    ThemeManager.CopyLocalTheme(theme, themePath,
-                        this.UpdateTotalPercentage);
 
-                    downloadQueue.Dequeue();
+                    Task.Run(() => {
+                        bool success = ThemeLoader.CopyLocalTheme(theme, themePath,
+                            this.UpdateTotalPercentage);
 
-                    if (!ThemeManager.importMode)
-                    {
-                        DownloadNext();
-                    }
+                        if (!success)
+                        {
+                            this.Invoke(new Action(() => ThemeLoader.HandleError(theme.themeId)));
+                        }
+
+                        downloadQueue.Dequeue();
+                        this.Invoke(new Action(() => DownloadNext()));
+                    });
                 }
-                else
+                else if (!string.IsNullOrEmpty(theme.imagesZipUri))
                 {
                     List<string> imagesZipUris = theme.imagesZipUri.Split('|').ToList();
-
-                    try
-                    {
-                        wc.DownloadFileAsync(new Uri(imagesZipUris.First()),
+                    wc.DownloadFileAsync(new Uri(imagesZipUris.First()),
                         theme.themeId + "_images.zip", imagesZipUris.Skip(1).ToList());
-                    }
-                    catch (Exception e) {
-                        isUriEmpty = true;
-                    }
-
                 }
             }
             else if (!ThemeManager.importMode)
             {
                 this.Close();
             }
+        }
+
+        private void UpdateDownloadStatus(ThemeConfig theme)
+        {
+            label1.Text = string.Format(_("Downloading images for '{0}'..."),
+                ThemeManager.GetThemeName(theme));
         }
 
         private void ImportNext()
@@ -122,15 +122,17 @@ namespace WinDynamicDesktop
             if (importQueue.Count > 0)
             {
                 string themePath = importQueue.Peek();
-
-                ThemeConfig theme = ThemeManager.ImportTheme(themePath, taskbarHandle);
+                this.Invoke(new Action(() => UpdateImportStatus(themePath)));
+                ThemeConfig theme = ThemeManager.ImportTheme(themePath);
+                this.Invoke(new Action(() => ThemeLoader.HandleError(theme.themeId)));
 
                 if (theme != null)
                 {
                     if (Path.GetExtension(themePath) == ".json")
                     {
-                        downloadQueue = new Queue<ThemeConfig>(new List<ThemeConfig>() { theme });
-                        DownloadNext();
+                        downloadQueue = new Queue<ThemeConfig>(
+                            new List<ThemeConfig>() { theme });
+                        DownloadNext();  // TODO Test if this works
                     }
 
                     ThemeManager.importedThemes.Add(theme);
@@ -146,59 +148,89 @@ namespace WinDynamicDesktop
             }
         }
 
+        private void UpdateImportStatus(string themePath)
+        {
+            label1.Text = string.Format(_("Importing theme from {0}..."),
+                Path.GetFileName(themePath));
+        }
+
         private void UpdateTotalPercentage(int themePercentage)
         {
             int numRemaining = ThemeManager.importMode ? importQueue.Count : downloadQueue.Count;
             int percentage = ((numJobs - numRemaining) * 100 + themePercentage) / numJobs;
 
             stopwatch.Start();
-            this.progressBar1.BeginInvoke((MethodInvoker)delegate ()
+            progressBar1.Invoke(new Action(() =>
             {
                 progressBar1.Value = percentage;
                 progressBar1.Refresh();
                 TaskbarProgress.SetValue(this.Handle, percentage, 100);
-            });
+            }));
         }
 
         private void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
             UpdateTotalPercentage(e.ProgressPercentage);
             
-            fileTransferSpeedLabel.Text = string.Format("{0} MB/s", 
+            fileTransferSpeedLabel.Text = string.Format(_("{0} MB/s"), 
                 (e.BytesReceived / 1024f / 1024f / stopwatch.Elapsed.TotalSeconds).ToString("0.#"));
 
-            fileSizeProgressLabel.Text = string.Format("{0} MB of {1} MB",
+            fileSizeProgressLabel.Text = string.Format(_("{0} MB of {1} MB"),
                 (e.BytesReceived / 1024d / 1024d).ToString("0.#"),
                 (e.TotalBytesToReceive / 1024d / 1024d).ToString("0.#"));
         }
 
-        public void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+        public async void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
             stopwatch.Stop();
-            
-            List<string> imagesZipUris = (List<string>)e.UserState;
 
-            if (e.Error != null && imagesZipUris.Count > 0)
-            {
-                ThemeConfig theme = downloadQueue.Peek();
-                wc.DownloadFileAsync(new Uri(imagesZipUris.First()),
-                    theme.themeId + "_images.zip", imagesZipUris.Skip(1).ToList());
-            }
-            else
+            if (e.Error == null)
             {
                 ThemeConfig theme = downloadQueue.Dequeue();
 
-                if (e.Error == null)
+                await Task.Run(() => ThemeLoader.ExtractTheme(theme.themeId + "_images.zip",
+                    theme.themeId, true));
+
+                ThemeLoader.HandleError(theme.themeId);
+                DownloadNext();
+            }
+            else
+            {
+                List<string> imagesZipUris = (List<string>)e.UserState;
+                ThemeConfig theme = downloadQueue.Peek();
+
+                if (imagesZipUris.Count == 0)
                 {
-                    ThemeManager.ExtractTheme(theme.themeId + "_images.zip", theme.themeId, true);
+                    bool shouldRetry = ThemeLoader.PromptDialog(string.Format(_("Failed to " +
+                        "download images for the '{0}' theme. Do you want to try again?"),
+                        theme.themeId));
+
+                    if (shouldRetry)
+                    {
+                        imagesZipUris = theme.imagesZipUri.Split('|').ToList();
+                    }
+                    else
+                    {
+                        ThemeManager.DisableTheme(theme.themeId);  // TODO Handle error here for failed download
+                    }
                 }
 
-                DownloadNext();
+                if (imagesZipUris.Count > 0)
+                {
+                    wc.DownloadFileAsync(new Uri(imagesZipUris.First()),
+                        theme.themeId + "_images.zip", imagesZipUris.Skip(1).ToList());
+                }
+                else
+                {
+                    downloadQueue.Dequeue();
+                    DownloadNext();
+                }
             }
         }
 
         private void OnFormClosing(object sender, FormClosingEventArgs e)
         {
+            ThemeLoader.taskbarHandle = IntPtr.Zero;
             wc?.Dispose();
         }
     }

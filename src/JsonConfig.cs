@@ -80,21 +80,29 @@ namespace WinDynamicDesktop
 
         public static ThemeConfig LoadTheme(string name)
         {
-            string themeJson;
+            string jsonText;
+            ThemeConfig theme;
 
             if (ThemeManager.defaultThemes.Contains(name))
             {
-                themeJson = Encoding.UTF8.GetString((byte[])Properties.Resources.ResourceManager.
-                    GetObject(name + "_json"));
+                jsonText = Encoding.UTF8.GetString(
+                    (byte[])Properties.Resources.ResourceManager.GetObject(name + "_json"));
             }
             else
             {
-                themeJson = File.ReadAllText(Path.Combine("themes", name, "theme.json"));
+                jsonText = File.ReadAllText(Path.Combine("themes", name, "theme.json"));
             }
 
-            ThemeConfig theme = JsonConvert.DeserializeObject<ThemeConfig>(themeJson);
-            theme.themeId = name;
+            try
+            {
+                theme = JsonConvert.DeserializeObject<ThemeConfig>(jsonText);
+            }
+            catch (JsonException)
+            {
+                return null;
+            }
 
+            theme.themeId = name;
             return theme;
         }
 

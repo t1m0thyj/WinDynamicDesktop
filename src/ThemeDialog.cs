@@ -142,11 +142,6 @@ namespace WinDynamicDesktop
             }
         }
 
-        private string GetThemeName(ThemeConfig theme)
-        {
-            return theme.displayName ?? theme.themeId.Replace('_', ' ');
-        }
-
         private string GetCreditsText()
         {
             if (selectedIndex > 0)
@@ -249,33 +244,22 @@ namespace WinDynamicDesktop
         private void LoadImportedThemes(List<ThemeConfig> themes)
         {
             themes.Sort((t1, t2) => t1.themeId.CompareTo(t2.themeId));
-            List<ThemeConfig> missingThemes = ThemeManager.FindMissingThemes();
             Size thumbnailSize = GetThumbnailSize();
             ImageListViewItem newItem = null;
 
             for (int i = 0; i < themes.Count; i++)
             {
-                if (missingThemes.IndexOf(themes[i]) == -1)
-                {
-                    EnsureThemeNotDuplicated(themes[i].themeId);
+                EnsureThemeNotDuplicated(themes[i].themeId);
 
-                    string themeName = GetThemeName(themes[i]);
-                    themeNames.Add(themeName);
-                    themeNames.Sort();
-                    int itemIndex = themeNames.IndexOf(themeName) + 1;
+                string themeName = ThemeManager.GetThemeName(themes[i]);
+                themeNames.Add(themeName);
+                themeNames.Sort();
+                int itemIndex = themeNames.IndexOf(themeName) + 1;
 
-                    imageListView1.Items.Insert(itemIndex, GetThemeName(themes[i]),
-                        GetThumbnailImage(themes[i], thumbnailSize, false));
-                    newItem = imageListView1.Items[itemIndex];
-                    newItem.Tag = themes[i].themeId;
-                }
-                else
-                {
-                    MessageBox.Show(string.Format(_("Failed to download images for the '{0}' " +
-                        "theme."), GetThemeName(themes[i])), _("Error"), MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
-                    Task.Run(() => ThemeManager.RemoveTheme(themes[i]));
-                }
+                imageListView1.Items.Insert(itemIndex, ThemeManager.GetThemeName(themes[i]),
+                    GetThumbnailImage(themes[i], thumbnailSize, false));
+                newItem = imageListView1.Items[itemIndex];
+                newItem.Tag = themes[i].themeId;
             }
 
             if (newItem != null)
@@ -315,7 +299,7 @@ namespace WinDynamicDesktop
             for (int i = 0; i < ThemeManager.themeSettings.Count; i++)
             {
                 ThemeConfig theme = ThemeManager.themeSettings[i];
-                string themeName = GetThemeName(theme);
+                string themeName = ThemeManager.GetThemeName(theme);
                 themeNames.Add(themeName);
                 themeNames.Sort();
 
@@ -469,7 +453,7 @@ namespace WinDynamicDesktop
             ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
 
             DialogResult result = MessageBox.Show(string.Format(_("Are you sure you want to " +
-                "remove the '{0}' theme?"), GetThemeName(theme)), _("Question"),
+                "remove the '{0}' theme?"), ThemeManager.GetThemeName(theme)), _("Question"),
                 MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
             if (result == DialogResult.Yes)

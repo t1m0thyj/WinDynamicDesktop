@@ -8,7 +8,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using System.IO.Compression;
 using System.Windows.Forms;
 
 namespace WinDynamicDesktop
@@ -31,8 +30,6 @@ namespace WinDynamicDesktop
         public static void Initialize()
         {
             Directory.CreateDirectory("themes");
-            Compatibility.CompatibilizeThemes();
-
             List<string> themeIds = defaultThemes.ToList();
 
             foreach (string filePath in Directory.EnumerateFiles("themes", "*.json",
@@ -47,27 +44,8 @@ namespace WinDynamicDesktop
             }
 
             themeIds.Sort();
-
-            foreach (string themeId in themeIds)
-            {
-                try
-                {
-                    ThemeConfig theme = JsonConfig.LoadTheme(themeId);
-
-                    themeSettings.Add(theme);
-
-                    if (theme.themeId == JsonConfig.settings.themeName)
-                    {
-                        currentTheme = theme;
-                    }
-                }
-                catch
-                {
-                    DisableTheme(themeId);
-                }
-            }
-
-            DownloadMissingImages(FindMissingThemes());
+            LoadInstalledThemes(themeIds);
+            DownloadMissingImages();
         }
 
         public static void SelectTheme()
@@ -83,158 +61,82 @@ namespace WinDynamicDesktop
 
             if (importPaths.Count > 0)
             {
+                // Convert to array and back to list for deep copy
                 List<string> tempImportPaths = new List<string>(importPaths.ToArray());
                 importPaths.Clear();
                 themeDialog.ImportThemes(tempImportPaths);
             }
         }
 
-        public static ThemeConfig ImportTheme(string themePath, IntPtr dialogHandle)
+        public static string GetThemeName(ThemeConfig theme)
         {
-            string themeId = Path.GetFileNameWithoutExtension(themePath);
+            return theme.displayName ?? theme.themeId.Replace('_', ' ');
+        }
+
+        public static void DisableTheme(string themeId)
+        {
+            themeSettings.RemoveAll(t => t.themeId == themeId);
+
+            if (currentTheme.themeId == themeId)
+            {
+                currentTheme = null;
+            }
+
+            bool shouldDisable = ThemeLoader.PromptDialog(_("The '{0}' theme could not be " +
+                "loaded. Do you want to disable it to prevent this error from happening again?"));
+
+            if (shouldDisable)
+            {
+                Directory.Move(Path.Combine("themes", themeId),
+                    Path.Combine("themes", "." + themeId));
+            }
+        }
+
+        public static ThemeConfig ImportTheme(string importPath)
+        {
+            string themeId = Path.GetFileNameWithoutExtension(importPath);
             int themeIndex = themeSettings.FindIndex(t => t.themeId == themeId);
 
             if (themeIndex != -1)
             {
-                TaskbarProgress.SetState(dialogHandle, TaskbarProgress.TaskbarStates.Paused);
-                DialogResult result = MessageBox.Show(string.Format(_("The '{0}' theme is " +
-                    "already installed. Do you want to overwrite it?"), themeId), _("Question"),
-                    MessageBoxButtons.YesNo,  MessageBoxIcon.Warning);
-                TaskbarProgress.SetState(dialogHandle, TaskbarProgress.TaskbarStates.Normal);
+                bool shouldOverwrite = ThemeLoader.PromptDialog(string.Format(_("The '{0}' " +
+                    "theme is already installed. Do you want to overwrite it?"), themeId));
 
-                if (result != DialogResult.Yes)
+                if (!shouldOverwrite)
                 {
                     return null;
                 }
             }
 
-            try
+            Directory.CreateDirectory(Path.Combine("themes", themeId));
+
+            if (Path.GetExtension(importPath) != ".json")
             {
-                Directory.CreateDirectory(Path.Combine("themes", themeId));
-
-                if (Path.GetExtension(themePath) != ".json")
-                {
-                    using (ZipArchive archive = ZipFile.OpenRead(themePath))
-                    {
-                        ZipArchiveEntry themeJson = archive.Entries.Single(
-                            entry => Path.GetExtension(entry.Name) == ".json");
-                        themeJson.ExtractToFile(Path.Combine("themes", themeId, "theme.json"),
-                            true);
-                    }
-
-                    ExtractTheme(themePath, themeId);
-                }
-                else
-                {
-                    File.Copy(themePath, Path.Combine("themes", themeId, "theme.json"), true);
-                }
-
-                ThemeConfig theme = JsonConfig.LoadTheme(themeId);
-
-                if (themeIndex == -1)
-                {
-                    themeSettings.Add(theme);
-                    themeSettings.Sort((t1, t2) => t1.themeId.CompareTo(t2.themeId));
-                }
-                else
-                {
-                    themeSettings[themeIndex] = theme;
-                }
-
-                return theme;
+                ThemeLoader.ExtractTheme(importPath, themeId);
             }
-            catch (Exception e)
+            else
             {
-                TaskbarProgress.SetState(dialogHandle, TaskbarProgress.TaskbarStates.Error);
-                MessageBox.Show(string.Format(_("Failed to import theme from {0}\n\n{1}"),
-                    themePath, e.Message), _("Error"), MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
-                TaskbarProgress.SetState(dialogHandle, TaskbarProgress.TaskbarStates.Normal);
+                File.Copy(importPath, Path.Combine("themes", themeId, "theme.json"), true);
+            }
 
+            ThemeConfig theme = ThemeLoader.TryLoad(themeId);
+
+            if (theme == null)
+            {
                 return null;
             }
-        }
 
-        public static void ExtractTheme(string imagesZip, string themeId, bool deleteZip = false)
-        {
-            try
+            if (themeIndex == -1)
             {
-                string themePath = Path.Combine("themes", themeId);
-                Directory.CreateDirectory(themePath);
-
-                using (ZipArchive archive = ZipFile.OpenRead(imagesZip))
-                {
-                    foreach (ZipArchiveEntry imageEntry in archive.Entries.Where(
-                        entry => Path.GetDirectoryName(entry.FullName) == ""
-                        && Path.GetExtension(entry.Name) != ".json"))
-                    {
-                        imageEntry.ExtractToFile(Path.Combine(themePath, imageEntry.Name), true);
-                    }
-                }
-
-                if (deleteZip)
-                {
-                    File.Delete(imagesZip);
-                }
+                themeSettings.Add(theme);
+                themeSettings.Sort((t1, t2) => t1.themeId.CompareTo(t2.themeId));
             }
-            catch { }
-        }
-
-        public static void CopyLocalTheme(ThemeConfig theme, string localPath,
-            Action<int> updatePercentage)
-        {
-
-            try
+            else
             {
-                string[] imagePaths = Directory.GetFiles(localPath, theme.imageFilename);
-
-                for (int i = 0; i < imagePaths.Length; i++)
-                {
-                    string imagePath = imagePaths[i];
-
-                    try
-                    {
-                        File.Copy(imagePath, Path.Combine("themes", theme.themeId,
-                            Path.GetFileName(imagePath)), true);
-                    }
-                    catch { }
-
-                    updatePercentage.Invoke((int)((i + 1) / (double)imagePaths.Length * 100));
-                }
-            }catch(DirectoryNotFoundException d)
-            {
-
-                MessageBox.Show("This directory on '" + localPath.ToString() + "' does not exist.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-        }
-
-        public static List<ThemeConfig> FindMissingThemes()
-        {
-            List<ThemeConfig> missingThemes = new List<ThemeConfig>();
-
-            foreach (ThemeConfig theme in themeSettings)
-            {
-                int imageFileCount = 0;
-                string themePath = Path.Combine("themes", theme.themeId);
-
-                if (Directory.Exists(themePath))
-                {
-                    imageFileCount = Directory.GetFiles(themePath, theme.imageFilename).Length;
-                }
-
-                List<int> imageList = new List<int>();
-                imageList.AddRange(theme.sunriseImageList);
-                imageList.AddRange(theme.dayImageList);
-                imageList.AddRange(theme.sunsetImageList);
-                imageList.AddRange(theme.nightImageList);
-
-                if (imageFileCount < imageList.Distinct().Count())
-                {
-                    missingThemes.Add(theme);
-                }
+                themeSettings[themeIndex] = theme;
             }
 
-            return missingThemes;
+            return theme;
         }
 
         public static void RemoveTheme(ThemeConfig theme)
@@ -256,18 +158,40 @@ namespace WinDynamicDesktop
             catch { }
         }
 
-        private static void DisableTheme(string themeId)
+        private static void LoadInstalledThemes(List<string> themeIds)
         {
-            Directory.Move(Path.Combine("themes", themeId), Path.Combine("themes", "." + themeId));
+            foreach (string themeId in themeIds)
+            {
+                ThemeConfig theme = ThemeLoader.TryLoad(themeId);
+                ThemeLoader.HandleError(themeId);
 
-            MessageBox.Show(string.Format(_("The '{0}' theme could not be loaded and has been " +
-                "disabled. This is probably because it was created for an older version of the " +
-                "app or its config file is formatted incorrectly."), themeId), _("Error"),
-                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                if (theme != null)
+                {
+                    themeSettings.Add(theme);
+
+                    if (theme.themeId == JsonConfig.settings.themeName)
+                    {
+                        currentTheme = theme;
+                    }
+                }
+            }
         }
 
-        private static void DownloadMissingImages(List<ThemeConfig> missingThemes)
+        private static void DownloadMissingImages()
         {
+            List<ThemeConfig> missingThemes = new List<ThemeConfig>();
+
+            foreach (ThemeConfig theme in themeSettings)
+            {
+                string themePath = Path.Combine("themes", theme.themeId);
+
+                if (!Directory.Exists(themePath) ||
+                    (Directory.GetFiles(themePath, theme.imageFilename).Length == 0))
+                {
+                    missingThemes.Add(theme);
+                }
+            }
+
             if (missingThemes.Count == 0)
             {
                 filesVerified = true;
@@ -281,57 +205,14 @@ namespace WinDynamicDesktop
 
             MainMenu.themeItem.Enabled = false;
             downloadDialog.InitDownload(missingThemes.FindAll(
-                theme => theme.imagesZipUri != null));
-           
-            if (downloadDialog.isUriEmpty == true)
-            {
-                // Attempt to close dialog to give dialog result options if uri is empty
-                downloadDialog.Close();
-            }
-
+                theme => !string.IsNullOrEmpty(theme.imagesZipUri)));  // TODO Handle error if null or empty and missing images
         }
-      
+
         private static void OnDownloadDialogClosed(object sender, EventArgs e)
         {
             MainMenu.themeItem.Enabled = true;
-            List<ThemeConfig> missingThemes = FindMissingThemes();
-
-            if (missingThemes.Count == 0)
-            {
-                filesVerified = true;
-                LaunchSequence.NextStep();
-            }
-            else
-            {
-                DialogResult result = MessageBox.Show(_("Failed to download images. Click Retry " +
-                    "to try again, Ignore to continue with some themes disabled, or Abort to " +
-                    "exit the program."), _("Error"), MessageBoxButtons.AbortRetryIgnore,
-                    MessageBoxIcon.Warning);
-
-                if (result == DialogResult.Abort)
-                {
-                    Environment.Exit(0);
-                }
-                else if (result == DialogResult.Retry)
-                {
-                    DownloadMissingImages(missingThemes);
-                }
-                else
-                {
-                    foreach (ThemeConfig theme in missingThemes)
-                    {
-                        themeSettings.Remove(theme);
-                    }
-
-                    if (missingThemes.Contains(currentTheme))
-                    {
-                        currentTheme = null;
-                    }
-
-                    filesVerified = true;
-                    LaunchSequence.NextStep();
-                }
-            }
+            filesVerified = true;
+            LaunchSequence.NextStep();
         }
 
         private static void OnThemeDialogClosed(object sender, EventArgs e)
