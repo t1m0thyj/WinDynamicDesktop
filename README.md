@@ -35,6 +35,10 @@ This is a commonly requested feature to mimic the behavior of macOS and many Lin
 
 You are not limited to the Mojave themes that come preinstalled with the app. Custom themes created by the community can be downloaded [here](https://github.com/t1m0thyj/WinDynamicDesktop/wiki/Community-created-themes). You can also create your own theme that uses whatever wallpaper images you want, by following the instructions in [this tutorial](https://github.com/t1m0thyj/WinDynamicDesktop/wiki/Creating-custom-themes).
 
+### Can I translate the app into my language?
+
+Yes, translations are welcome. For instructions on how to create them and where to submit them, see [here](https://github.com/t1m0thyj/WDD-locale).
+
 ### How can I hide the tray icon?
 
 If you want to run the app silently with no icon in the system tray, you can do this by editing the `settings.conf` file which is in the same folder as the EXE. Change the setting `"hideTrayIcon":false` to `"hideTrayIcon":true` (or add it if it doesn't exist), then restart the app.

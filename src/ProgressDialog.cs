@@ -124,7 +124,8 @@ namespace WinDynamicDesktop
                 string themePath = importQueue.Peek();
                 this.Invoke(new Action(() => UpdateImportStatus(themePath)));
                 ThemeConfig theme = ThemeManager.ImportTheme(themePath);
-                this.Invoke(new Action(() => ThemeLoader.HandleError(theme.themeId)));
+                this.Invoke(new Action(() => ThemeLoader.HandleError(
+                    Path.GetFileNameWithoutExtension(themePath))));
 
                 if (theme != null)
                 {
@@ -132,7 +133,7 @@ namespace WinDynamicDesktop
                     {
                         downloadQueue = new Queue<ThemeConfig>(
                             new List<ThemeConfig>() { theme });
-                        DownloadNext();  // TODO Test if this works
+                        DownloadNext();  // TODO Test this
                     }
 
                     ThemeManager.importedThemes.Add(theme);
@@ -172,7 +173,7 @@ namespace WinDynamicDesktop
         {
             UpdateTotalPercentage(e.ProgressPercentage);
             
-            fileTransferSpeedLabel.Text = string.Format(_("{0} MB/s"), 
+            fileTransferSpeedLabel.Text = string.Format(_("{0} MB/s"),
                 (e.BytesReceived / 1024f / 1024f / stopwatch.Elapsed.TotalSeconds).ToString("0.#"));
 
             fileSizeProgressLabel.Text = string.Format(_("{0} MB of {1} MB"),
@@ -211,7 +212,8 @@ namespace WinDynamicDesktop
                     }
                     else
                     {
-                        ThemeManager.DisableTheme(theme.themeId);  // TODO Handle error here for failed download
+                        ThemeLoader.HandleError(theme.themeId, string.Format(
+                            _("Failed to download images for the '{0}' theme"), theme.themeId));
                     }
                 }
 

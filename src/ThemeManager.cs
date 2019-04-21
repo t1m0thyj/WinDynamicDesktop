@@ -73,19 +73,16 @@ namespace WinDynamicDesktop
             return theme.displayName ?? theme.themeId.Replace('_', ' ');
         }
 
-        public static void DisableTheme(string themeId)
+        public static void DisableTheme(string themeId, bool permanent)
         {
             themeSettings.RemoveAll(t => t.themeId == themeId);
 
-            if (currentTheme.themeId == themeId)
+            if (currentTheme != null && (currentTheme.themeId == themeId))
             {
                 currentTheme = null;
             }
 
-            bool shouldDisable = ThemeLoader.PromptDialog(_("The '{0}' theme could not be " +
-                "loaded. Do you want to disable it to prevent this error from happening again?"));
-
-            if (shouldDisable)
+            if (permanent)
             {
                 Directory.Move(Path.Combine("themes", themeId),
                     Path.Combine("themes", "." + themeId));
@@ -109,17 +106,22 @@ namespace WinDynamicDesktop
             }
 
             Directory.CreateDirectory(Path.Combine("themes", themeId));
+            bool shouldContinue = true;
+            ThemeConfig theme = null;
 
             if (Path.GetExtension(importPath) != ".json")
             {
-                ThemeLoader.ExtractTheme(importPath, themeId);
+                shouldContinue = ThemeLoader.ExtractTheme(importPath, themeId);
             }
             else
             {
                 File.Copy(importPath, Path.Combine("themes", themeId, "theme.json"), true);
             }
 
-            ThemeConfig theme = ThemeLoader.TryLoad(themeId);
+            if (shouldContinue)
+            {
+                theme = ThemeLoader.TryLoad(themeId);
+            }
 
             if (theme == null)
             {
@@ -198,14 +200,21 @@ namespace WinDynamicDesktop
                 LaunchSequence.NextStep();
                 return;
             }
+            
+            foreach (ThemeConfig theme in
+                missingThemes.Where(theme => string.IsNullOrEmpty(theme.imagesZipUri)))
+            {
+                missingThemes.Remove(theme);
+                ThemeLoader.HandleError(theme.themeId,
+                    string.Format(_("Failed to find images for the '{0}' theme"), theme.themeId));
+            }
 
             downloadDialog = new ProgressDialog();
             downloadDialog.FormClosed += OnDownloadDialogClosed;
             downloadDialog.Show();
 
             MainMenu.themeItem.Enabled = false;
-            downloadDialog.InitDownload(missingThemes.FindAll(
-                theme => !string.IsNullOrEmpty(theme.imagesZipUri)));  // TODO Handle error if null or empty and missing images
+            downloadDialog.InitDownload(missingThemes);
         }
 
         private static void OnDownloadDialogClosed(object sender, EventArgs e)

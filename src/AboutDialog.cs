@@ -26,14 +26,34 @@ namespace WinDynamicDesktop
             this.Font = SystemFonts.MessageBoxFont;
             this.nameLabel.Font = new Font(this.Font.Name, this.Font.Size * 1.2F, FontStyle.Bold);
 
-            int minWidth = TextRenderer.MeasureText(this.descriptionLabel.Text, this.Font).Width;
-            minWidth = minWidth + (this.descriptionLabel.Width - minWidth) / 2 +
-                this.descriptionLabel.Location.X * 2;
+            int minWidth = TextRenderer.MeasureText(descriptionLabel.Text, this.Font).Width;
+
+            if (this.descriptionLabel.Width < minWidth)
+            {
+                minWidth += descriptionLabel.Location.X * 2;
+                nameLabel.Width = minWidth;
+                copyrightLabel.Width = minWidth;
+                descriptionLabel.Width = minWidth;
+                websiteLabel.Width = minWidth;
+            }
+
+            minWidth = minWidth + (descriptionLabel.Width - minWidth) / 2 +
+                descriptionLabel.Location.X * 2;
 
             if (this.Size.Width < minWidth)
             {
                 this.Size = new Size(minWidth, this.Size.Height);
                 this.CenterToScreen();
+            }
+
+            minWidth = TextRenderer.MeasureText(creditsButton.Text, this.Font).Width + 10;
+            
+            if (this.creditsButton.Width < minWidth)
+            {
+                int oldWidth = creditsButton.Width;
+                creditsButton.Width = minWidth;
+                donateButton.Location = new Point(donateButton.Location.X + minWidth - oldWidth,
+                    donateButton.Location.Y);
             }
         }
 

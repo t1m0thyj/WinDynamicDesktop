@@ -47,7 +47,7 @@ namespace WinDynamicDesktop
 
         public void ImportThemes(List<string> themePaths)
         {
-            ProgressDialog importDialog = new ProgressDialog();
+            ProgressDialog importDialog = new ProgressDialog() { Owner = this };
             importDialog.FormClosing += OnImportDialogClosing;
             importDialog.Show();
             importDialog.InitImport(themePaths);
@@ -164,14 +164,9 @@ namespace WinDynamicDesktop
         private List<int> GetImageList(ThemeConfig theme)
         {
             List<int> imageList = new List<int>();
-
-            if (!darkModeCheckbox.Checked)
-            {
-                imageList.AddRange(theme.sunriseImageList);
-                imageList.AddRange(theme.dayImageList);
-                imageList.AddRange(theme.sunsetImageList);
-            }
-
+            imageList.AddRange(theme.sunriseImageList);
+            imageList.AddRange(theme.dayImageList);
+            imageList.AddRange(theme.sunsetImageList);
             imageList.AddRange(theme.nightImageList);
             return imageList;
         }
@@ -274,8 +269,6 @@ namespace WinDynamicDesktop
             imageListView1.ContextMenuStrip = contextMenuStrip1;
             imageListView1.SetRenderer(new ThemeListViewRenderer());
 
-            darkModeCheckbox.Checked = JsonConfig.settings.darkMode;
-
             Size thumbnailSize = GetThumbnailSize();
             imageListView1.ThumbnailSize = thumbnailSize;
             imageListView1.Items.Add(_("None"), ShrinkImage(windowsWallpaper, thumbnailSize.Width,
@@ -337,8 +330,7 @@ namespace WinDynamicDesktop
                     SolarData solarData = SunriseSunsetService.GetSolarData(DateTime.Today);
                     ThemeConfig theme = ThemeManager.themeSettings[selectedIndex - 1];
                     imageNumber = GetImageList(theme).IndexOf(
-                        AppContext.wpEngine.GetImageData(solarData, theme,
-                        darkModeCheckbox.Checked).Item1) + 1;
+                        AppContext.wpEngine.GetImageData(solarData, theme).Item1) + 1;
                 }
 
                 creditsLabel.Text = GetCreditsText();
@@ -413,8 +405,6 @@ namespace WinDynamicDesktop
             }
 
             JsonConfig.settings.themeName = ThemeManager.currentTheme?.themeId;
-            JsonConfig.settings.darkMode = darkModeCheckbox.Checked;
-            MainMenu.darkModeItem.Checked = JsonConfig.settings.darkMode;
 
             if (selectedIndex == 0)
             {
