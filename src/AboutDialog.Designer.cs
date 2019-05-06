@@ -112,6 +112,7 @@
             // 
             // donateButton
             // 
+            this.donateButton.AutoSize = true;
             this.donateButton.Location = new System.Drawing.Point(80, 97);
             this.donateButton.Name = "donateButton";
             this.donateButton.Size = new System.Drawing.Size(64, 23);

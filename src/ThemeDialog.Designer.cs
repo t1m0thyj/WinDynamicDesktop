@@ -36,7 +36,6 @@
             this.imageNumberLabel = new System.Windows.Forms.Label();
             this.nextButton = new System.Windows.Forms.Button();
             this.lastButton = new System.Windows.Forms.Button();
-            this.darkModeCheckbox = new System.Windows.Forms.CheckBox();
             this.applyButton = new System.Windows.Forms.Button();
             this.closeButton = new System.Windows.Forms.Button();
             this.themeLinkLabel = new System.Windows.Forms.LinkLabel();
@@ -98,9 +97,9 @@
             // 
             // imageNumberLabel
             // 
-            this.imageNumberLabel.Location = new System.Drawing.Point(111, 217);
+            this.imageNumberLabel.Location = new System.Drawing.Point(112, 217);
             this.imageNumberLabel.Name = "imageNumberLabel";
-            this.imageNumberLabel.Size = new System.Drawing.Size(125, 13);
+            this.imageNumberLabel.Size = new System.Drawing.Size(123, 13);
             this.imageNumberLabel.TabIndex = 10;
             this.imageNumberLabel.Text = "label1";
             this.imageNumberLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -124,18 +123,6 @@
             this.lastButton.Text = ">>";
             this.lastButton.UseVisualStyleBackColor = true;
             this.lastButton.Click += new System.EventHandler(this.lastButton_Click);
-            // 
-            // darkModeCheckbox
-            // 
-            this.darkModeCheckbox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.darkModeCheckbox.AutoSize = true;
-            this.darkModeCheckbox.Location = new System.Drawing.Point(353, 300);
-            this.darkModeCheckbox.Name = "darkModeCheckbox";
-            this.darkModeCheckbox.Size = new System.Drawing.Size(79, 17);
-            this.darkModeCheckbox.TabIndex = 4;
-            this.darkModeCheckbox.Text = "Dark Mode";
-            this.darkModeCheckbox.UseVisualStyleBackColor = true;
-            this.darkModeCheckbox.CheckedChanged += new System.EventHandler(this.darkModeCheckbox_CheckedChanged);
             // 
             // applyButton
             // 
@@ -162,8 +149,9 @@
             // 
             // themeLinkLabel
             // 
+            this.themeLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.themeLinkLabel.AutoSize = true;
-            this.themeLinkLabel.Location = new System.Drawing.Point(136, 300);
+            this.themeLinkLabel.Location = new System.Drawing.Point(314, 300);
             this.themeLinkLabel.Name = "themeLinkLabel";
             this.themeLinkLabel.Size = new System.Drawing.Size(118, 13);
             this.themeLinkLabel.TabIndex = 3;
@@ -173,6 +161,7 @@
             // 
             // importButton
             // 
+            this.importButton.AutoSize = true;
             this.importButton.Location = new System.Drawing.Point(15, 296);
             this.importButton.Name = "importButton";
             this.importButton.Size = new System.Drawing.Size(107, 23);
@@ -239,7 +228,6 @@
             this.Controls.Add(this.importButton);
             this.Controls.Add(this.themeLinkLabel);
             this.Controls.Add(this.previewBox);
-            this.Controls.Add(this.darkModeCheckbox);
             this.Controls.Add(this.applyButton);
             this.Controls.Add(this.closeButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -265,7 +253,6 @@
         private System.Windows.Forms.Label imageNumberLabel;
         private System.Windows.Forms.Button nextButton;
         private System.Windows.Forms.Button lastButton;
-        private System.Windows.Forms.CheckBox darkModeCheckbox;
         private System.Windows.Forms.Button applyButton;
         private System.Windows.Forms.Button closeButton;
         private System.Windows.Forms.LinkLabel themeLinkLabel;

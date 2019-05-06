@@ -34,7 +34,8 @@ namespace WinDynamicDesktop
             InitializeTrayIcon();
             LocationManager.Initialize();
             ThemeManager.Initialize();
-            LaunchSequence.Launch();
+            wpEngine.RunScheduler();
+            LaunchSequence.NextStep();
             UpdateChecker.Initialize();
         }
 

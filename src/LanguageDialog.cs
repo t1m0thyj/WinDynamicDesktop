@@ -16,9 +16,12 @@ namespace WinDynamicDesktop
 {
     public partial class LanguageDialog : Form
     {
+        private static readonly Func<string, string> _ = Localization.GetTranslation;
+
         public LanguageDialog()
         {
             InitializeComponent();
+            Localization.TranslateForm(this);
 
             this.Font = SystemFonts.MessageBoxFont;
         }
@@ -36,7 +39,33 @@ namespace WinDynamicDesktop
 
         private void okButton_Click(object sender, EventArgs e)
         {
-            // TODO DO SOMETHING WITH STATE
+            string oldLocaleName = Localization.currentLocale;
+            string localeName = Localization.localeNames[comboBox1.SelectedIndex];
+
+            if (localeName != oldLocaleName)
+            {
+                Localization.currentLocale = localeName;
+
+                if (AppContext.notifyIcon == null)  // Has UI been loaded yet?
+                {
+                    Localization.LoadLocale();
+                }
+
+                JsonConfig.settings.language = localeName;
+
+                if (AppContext.notifyIcon != null)
+                {
+                    DialogResult result = MessageBox.Show(_("WinDynamicDesktop needs to restart " +
+                        "for the language to change. Do you want to restart the app now?"),
+                        _("Question"), MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                    if (result == DialogResult.Yes)
+                    {
+                        JsonConfig.EnablePendingRestart();
+                    }
+                }
+            }
+
             this.Close();
         }
 

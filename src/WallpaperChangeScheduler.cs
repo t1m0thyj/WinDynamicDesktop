@@ -40,6 +40,11 @@ namespace WinDynamicDesktop
 
         public void RunScheduler(bool forceImageUpdate = false)
         {
+            if (!LaunchSequence.IsLocationReady() || !ThemeManager.filesVerified)
+            {
+                return;
+            }
+
             schedulerTimer.Stop();
 
             SolarData data = SunriseSunsetService.GetSolarData(DateTime.Today);
@@ -53,8 +58,7 @@ namespace WinDynamicDesktop
                     lastImagePath = null;
                 }
 
-                Tuple<int, long> imageData = GetImageData(data, ThemeManager.currentTheme,
-                    JsonConfig.settings.darkMode);
+                Tuple<int, long> imageData = GetImageData(data, ThemeManager.currentTheme);
                 SetWallpaper(imageData.Item1);
                 nextImageUpdateTime = new DateTime(imageData.Item2);
             }
@@ -104,13 +108,13 @@ namespace WinDynamicDesktop
             }
         }
 
-        public Tuple<int, long> GetImageData(SolarData data, ThemeConfig theme, bool darkMode)
+        public Tuple<int, long> GetImageData(SolarData data, ThemeConfig theme)
         {
             int[] imageList;
             DateTime segmentStart;
             DateTime segmentEnd;
 
-            if (!darkMode)
+            if (!JsonConfig.settings.darkMode)
             {
                 switch (GetCurrentDaySegment(data))
                 {

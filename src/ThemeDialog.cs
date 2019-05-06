@@ -27,7 +27,7 @@ namespace WinDynamicDesktop
         private const string themeLink =
             "https://github.com/t1m0thyj/WinDynamicDesktop/wiki/Community-created-themes";
         private readonly string windowsWallpaper = Directory.GetFiles(
-            @"C:\Windows\Web\Wallpaper\Windows")[0];
+            Environment.ExpandEnvironmentVariables(@"%SystemRoot%\Web\Wallpaper\Windows"))[0];
 
         public ThemeDialog()
         {
@@ -47,7 +47,7 @@ namespace WinDynamicDesktop
 
         public void ImportThemes(List<string> themePaths)
         {
-            ProgressDialog importDialog = new ProgressDialog();
+            ProgressDialog importDialog = new ProgressDialog() { Owner = this };
             importDialog.FormClosing += OnImportDialogClosing;
             importDialog.Show();
             importDialog.InitImport(themePaths);
@@ -142,11 +142,6 @@ namespace WinDynamicDesktop
             }
         }
 
-        private string GetThemeName(ThemeConfig theme)
-        {
-            return theme.displayName ?? theme.themeId.Replace('_', ' ');
-        }
-
         private string GetCreditsText()
         {
             if (selectedIndex > 0)
@@ -166,6 +161,16 @@ namespace WinDynamicDesktop
             return "";
         }
 
+        private List<int> GetImageList(ThemeConfig theme)
+        {
+            List<int> imageList = new List<int>();
+            imageList.AddRange(theme.sunriseImageList);
+            imageList.AddRange(theme.dayImageList);
+            imageList.AddRange(theme.sunsetImageList);
+            imageList.AddRange(theme.nightImageList);
+            return imageList;
+        }
+
         private int GetMaxImageNumber()
         {
             int max = 1;
@@ -173,13 +178,7 @@ namespace WinDynamicDesktop
             if (selectedIndex > 0)
             {
                 ThemeConfig theme = ThemeManager.themeSettings[selectedIndex - 1];
-                max = theme.nightImageList.Length;
-
-                if (!darkModeCheckbox.Checked)
-                {
-                    max += theme.sunriseImageList.Length + theme.dayImageList.Length +
-                        theme.sunsetImageList.Length;
-                }
+                max = GetImageList(theme).Count;
             }
 
             return max;
@@ -207,22 +206,7 @@ namespace WinDynamicDesktop
             else
             {
                 ThemeConfig theme = ThemeManager.themeSettings[selectedIndex - 1];
-                int imageId;
-
-                if (!darkModeCheckbox.Checked)
-                {
-                    List<int> imageList = new List<int>();
-                    imageList.AddRange(theme.sunriseImageList);
-                    imageList.AddRange(theme.dayImageList);
-                    imageList.AddRange(theme.sunsetImageList);
-                    imageList.AddRange(theme.nightImageList);
-                    imageId = imageList[imageNumber - 1];
-                }
-                else
-                {
-                    imageId = theme.nightImageList[imageNumber - 1];
-                }
-
+                int imageId = GetImageList(theme)[imageNumber - 1];
                 string imageFilename = theme.imageFilename.Replace("*", imageId.ToString());
                 pictureBox1.Image = ShrinkImage(Path.Combine("themes", theme.themeId,
                     imageFilename), width, height);
@@ -255,33 +239,22 @@ namespace WinDynamicDesktop
         private void LoadImportedThemes(List<ThemeConfig> themes)
         {
             themes.Sort((t1, t2) => t1.themeId.CompareTo(t2.themeId));
-            List<ThemeConfig> missingThemes = ThemeManager.FindMissingThemes();
             Size thumbnailSize = GetThumbnailSize();
             ImageListViewItem newItem = null;
 
             for (int i = 0; i < themes.Count; i++)
             {
-                if (missingThemes.IndexOf(themes[i]) == -1)
-                {
-                    EnsureThemeNotDuplicated(themes[i].themeId);
+                EnsureThemeNotDuplicated(themes[i].themeId);
 
-                    string themeName = GetThemeName(themes[i]);
-                    themeNames.Add(themeName);
-                    themeNames.Sort();
-                    int itemIndex = themeNames.IndexOf(themeName) + 1;
+                string themeName = ThemeManager.GetThemeName(themes[i]);
+                themeNames.Add(themeName);
+                themeNames.Sort();
+                int itemIndex = themeNames.IndexOf(themeName) + 1;
 
-                    imageListView1.Items.Insert(itemIndex, GetThemeName(themes[i]),
-                        GetThumbnailImage(themes[i], thumbnailSize, false));
-                    newItem = imageListView1.Items[itemIndex];
-                    newItem.Tag = themes[i].themeId;
-                }
-                else
-                {
-                    MessageBox.Show(string.Format(_("Failed to download images for the '{0}' " +
-                        "theme."), GetThemeName(themes[i])), _("Error"), MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
-                    Task.Run(() => ThemeManager.RemoveTheme(themes[i]));
-                }
+                imageListView1.Items.Insert(itemIndex, ThemeManager.GetThemeName(themes[i]),
+                    GetThumbnailImage(themes[i], thumbnailSize, false));
+                newItem = imageListView1.Items[itemIndex];
+                newItem.Tag = themes[i].themeId;
             }
 
             if (newItem != null)
@@ -295,9 +268,6 @@ namespace WinDynamicDesktop
         {
             imageListView1.ContextMenuStrip = contextMenuStrip1;
             imageListView1.SetRenderer(new ThemeListViewRenderer());
-
-            darkModeCheckbox.Checked = JsonConfig.settings.darkMode;
-            applyButton.Enabled = LaunchSequence.IsLocationReady();
 
             Size thumbnailSize = GetThumbnailSize();
             imageListView1.ThumbnailSize = thumbnailSize;
@@ -322,7 +292,7 @@ namespace WinDynamicDesktop
             for (int i = 0; i < ThemeManager.themeSettings.Count; i++)
             {
                 ThemeConfig theme = ThemeManager.themeSettings[i];
-                string themeName = GetThemeName(theme);
+                string themeName = ThemeManager.GetThemeName(theme);
                 themeNames.Add(themeName);
                 themeNames.Sort();
 
@@ -358,9 +328,9 @@ namespace WinDynamicDesktop
                         t => t.themeId == themeId) + 1;
 
                     SolarData solarData = SunriseSunsetService.GetSolarData(DateTime.Today);
-                    imageNumber = AppContext.wpEngine.GetImageData(solarData,
-                        ThemeManager.themeSettings[selectedIndex - 1],
-                        darkModeCheckbox.Checked).Item1;
+                    ThemeConfig theme = ThemeManager.themeSettings[selectedIndex - 1];
+                    imageNumber = GetImageList(theme).IndexOf(
+                        AppContext.wpEngine.GetImageData(solarData, theme).Item1) + 1;
                 }
 
                 creditsLabel.Text = GetCreditsText();
@@ -435,14 +405,12 @@ namespace WinDynamicDesktop
             }
 
             JsonConfig.settings.themeName = ThemeManager.currentTheme?.themeId;
-            JsonConfig.settings.darkMode = darkModeCheckbox.Checked;
-            MainMenu.darkModeItem.Checked = JsonConfig.settings.darkMode;
 
             if (selectedIndex == 0)
             {
                 WallpaperApi.SetWallpaper(windowsWallpaper);
             }
-            else if (LaunchSequence.IsLocationReady())
+            else
             {
                 AppContext.wpEngine.RunScheduler();
             }
@@ -475,7 +443,7 @@ namespace WinDynamicDesktop
             ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
 
             DialogResult result = MessageBox.Show(string.Format(_("Are you sure you want to " +
-                "remove the '{0}' theme?"), GetThemeName(theme)), _("Question"),
+                "remove the '{0}' theme?"), ThemeManager.GetThemeName(theme)), _("Question"),
                 MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
             if (result == DialogResult.Yes)

@@ -102,12 +102,7 @@ namespace WinDynamicDesktop
 
                     if (result == DialogResult.Yes)
                     {
-                        if (LaunchSequence.IsThemeReady())
-                        {
-                            this.Hide();
-                            AppContext.wpEngine.RunScheduler();
-                        }
-
+                        AppContext.wpEngine.RunScheduler();
                         this.Close();
                     }
                 }
@@ -126,11 +121,7 @@ namespace WinDynamicDesktop
 
                 if (locationUpdated)
                 {
-                    if (LaunchSequence.IsThemeReady())
-                    {
-                        AppContext.wpEngine.RunScheduler();
-                    }
-
+                    AppContext.wpEngine.RunScheduler();
                     this.Close();
                 }
                 else

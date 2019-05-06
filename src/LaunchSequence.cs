@@ -52,17 +52,5 @@ namespace WinDynamicDesktop
                 JsonConfig.firstRun = false;  // Don't show this message again
             }
         }
-
-        public static void Launch()
-        {
-            if (IsLocationReady() && IsThemeReady())
-            {
-                AppContext.wpEngine.RunScheduler();
-            }
-            else
-            {
-                NextStep();
-            }
-        }
     }
 }

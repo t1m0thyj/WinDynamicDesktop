@@ -48,10 +48,10 @@ namespace WinDynamicDesktop
                 solarTimes = new DateTime[4]
             };
 
-            data.solarTimes[0] = sunPhases[SunPhaseName.NauticalDawn.Value].ToLocalTime();
+            data.solarTimes[0] = sunPhases[SunPhaseName.Dawn.Value].ToLocalTime();
             data.solarTimes[1] = sunPhases[SunPhaseName.GoldenHourEnd.Value].ToLocalTime();
             data.solarTimes[2] = sunPhases[SunPhaseName.GoldenHour.Value].ToLocalTime();
-            data.solarTimes[3] = sunPhases[SunPhaseName.NauticalDusk.Value].ToLocalTime();
+            data.solarTimes[3] = sunPhases[SunPhaseName.Dusk.Value].ToLocalTime();
 
             return data;
         }
