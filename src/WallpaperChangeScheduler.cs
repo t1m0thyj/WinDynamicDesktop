@@ -15,7 +15,7 @@ namespace WinDynamicDesktop
 {
     class WallpaperChangeScheduler
     {
-        private enum DaySegment { Sunrise, Day, Sunset, Night };
+        private enum DaySegment { AllDay, AllNight, Sunrise, Day, Sunset, Night };
 
         private string lastImagePath;
         private DateTime? nextUpdateTime;
@@ -65,7 +65,11 @@ namespace WinDynamicDesktop
 
             SystemThemeChanger.TryUpdateSystemTheme();
 
-            if (isSunUp)
+            if (data.polarPeriod != PolarPeriod.None)
+            {
+                nextUpdateTime = DateTime.Today.AddDays(1);
+            }
+            else if (isSunUp)
             {
                 nextUpdateTime = data.sunsetTime;
             }
@@ -90,7 +94,15 @@ namespace WinDynamicDesktop
 
         private DaySegment GetCurrentDaySegment(SolarData data)
         {
-            if (data.solarTimes[0] <= DateTime.Now && DateTime.Now < data.solarTimes[1])
+            if (data.polarPeriod == PolarPeriod.PolarDay)
+            {
+                return DaySegment.AllDay;
+            }
+            else if (data.polarPeriod == PolarPeriod.PolarNight)
+            {
+                return DaySegment.AllNight;
+            }
+            else if (data.solarTimes[0] <= DateTime.Now && DateTime.Now < data.solarTimes[1])
             {
                 return DaySegment.Sunrise;
             }
@@ -118,6 +130,16 @@ namespace WinDynamicDesktop
             {
                 switch (GetCurrentDaySegment(data))
                 {
+                    case DaySegment.AllDay:
+                        imageList = theme.dayImageList;
+                        segmentStart = DateTime.Today;
+                        segmentEnd = DateTime.Today.AddDays(1);
+                        break;
+                    case DaySegment.AllNight:
+                        imageList = theme.nightImageList;
+                        segmentStart = DateTime.Today;
+                        segmentEnd = DateTime.Today.AddDays(1);
+                        break;
                     case DaySegment.Sunrise:
                         imageList = theme.sunriseImageList;
                         segmentStart = data.solarTimes[0];
@@ -158,7 +180,12 @@ namespace WinDynamicDesktop
             {
                 imageList = theme.nightImageList;
 
-                if (isSunUp)
+                if (data.polarPeriod != PolarPeriod.None)
+                {
+                    segmentStart = DateTime.Today;
+                    segmentEnd = DateTime.Today.AddDays(1);
+                }
+                else if (isSunUp)
                 {
                     segmentStart = data.sunriseTime;
                     segmentEnd = data.sunsetTime;

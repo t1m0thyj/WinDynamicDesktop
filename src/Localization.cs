@@ -46,6 +46,7 @@ namespace WinDynamicDesktop
             {
                 string systemLocale = CultureInfo.CurrentUICulture.Name.Replace('-', '_');
                 currentLocale = localeNames.Contains(systemLocale) ? systemLocale : "en_US";
+                JsonConfig.settings.language = currentLocale;
             }
 
             LoadLocale();
