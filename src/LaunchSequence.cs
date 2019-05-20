@@ -39,10 +39,7 @@ namespace WinDynamicDesktop
             }
             else if (!IsThemeReady() && !themeReadyOverride)  // Override if theme=None chosen
             {
-                if (ThemeManager.filesVerified)
-                {
-                    ThemeManager.SelectTheme();
-                }
+                ThemeManager.SelectTheme();
             }
             else if (JsonConfig.firstRun)
             {

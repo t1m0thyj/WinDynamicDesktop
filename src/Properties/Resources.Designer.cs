@@ -131,12 +131,32 @@ namespace WinDynamicDesktop.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Mojave_Desert_thumbnail {
+            get {
+                object obj = ResourceManager.GetObject("Mojave_Desert_thumbnail", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         internal static byte[] Solar_Gradients_json {
             get {
                 object obj = ResourceManager.GetObject("Solar_Gradients_json", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Solar_Gradients_thumbnail {
+            get {
+                object obj = ResourceManager.GetObject("Solar_Gradients_thumbnail", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

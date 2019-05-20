@@ -12,11 +12,11 @@ using System.Drawing;
 
 namespace WinDynamicDesktop
 {
-    public partial class InputDialog : Form
+    public partial class LocationDialog : Form
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
 
-        public InputDialog()
+        public LocationDialog()
         {
             InitializeComponent();
             Localization.TranslateForm(this);

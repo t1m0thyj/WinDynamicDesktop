@@ -25,15 +25,8 @@ namespace WinDynamicDesktop
             "中文 (简体)"  // Simplified Chinese
         };
 
-        public static string[] localeNames = new string[]
-        {
-            "de_DE",
-            "en_US",
-            "fr_FR",
-            "el_GR",
-            "ru_RU",
-            "zh_CN"
-        };
+        public static string[] localeNames = new string[] { "de_DE", "en_US", "fr_FR", "el_GR",
+            "ru_RU", "zh_CN" };
 
         public static string currentLocale;
         private static ICatalog catalog = null;

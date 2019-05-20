@@ -40,7 +40,7 @@ namespace WinDynamicDesktop
 
         public void RunScheduler(bool forceImageUpdate = false)
         {
-            if (!LaunchSequence.IsLocationReady() || !ThemeManager.filesVerified)
+            if (!LaunchSequence.IsLocationReady() || !LaunchSequence.IsThemeReady())
             {
                 return;
             }

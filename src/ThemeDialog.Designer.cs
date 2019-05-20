@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.previewBox = new System.Windows.Forms.GroupBox();
+            this.downloadButton = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.firstButton = new System.Windows.Forms.Button();
             this.previousButton = new System.Windows.Forms.Button();
@@ -53,6 +54,7 @@
             // previewBox
             // 
             this.previewBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.previewBox.Controls.Add(this.downloadButton);
             this.previewBox.Controls.Add(this.pictureBox1);
             this.previewBox.Controls.Add(this.firstButton);
             this.previewBox.Controls.Add(this.previousButton);
@@ -65,6 +67,16 @@
             this.previewBox.TabIndex = 1;
             this.previewBox.TabStop = false;
             this.previewBox.Text = "Preview";
+            // 
+            // downloadButton
+            // 
+            this.downloadButton.Location = new System.Drawing.Point(115, 100);
+            this.downloadButton.Name = "downloadButton";
+            this.downloadButton.Size = new System.Drawing.Size(124, 23);
+            this.downloadButton.TabIndex = 11;
+            this.downloadButton.Text = "Download Theme";
+            this.downloadButton.UseVisualStyleBackColor = true;
+            this.downloadButton.Click += new System.EventHandler(this.downloadButton_Click);
             // 
             // pictureBox1
             // 
@@ -262,5 +274,6 @@
         private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
         private System.Windows.Forms.Label creditsLabel;
         private Manina.Windows.Forms.ImageListView imageListView1;
+        private System.Windows.Forms.Button downloadButton;
     }
 }
