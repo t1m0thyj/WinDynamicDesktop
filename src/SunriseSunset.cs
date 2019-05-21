@@ -63,8 +63,8 @@ namespace WinDynamicDesktop
             catch (InvalidOperationException)  // Handle polar day/night
             {
                 DateTime solarNoon = GetSolarTime(sunPhases, SunPhaseName.SolarNoon);
-                double sunAltitude = SunCalcNet.SunCalc.GetSunPosition(solarNoon, latitude,
-                    longitude).Altitude;
+                double sunAltitude = SunCalcNet.SunCalc.GetSunPosition(solarNoon.ToUniversalTime(),
+                    latitude, longitude).Altitude;
 
                 if (sunAltitude > 0)
                 {
