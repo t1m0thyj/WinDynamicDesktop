@@ -17,16 +17,19 @@ namespace WinDynamicDesktop
     class Localization
     {
         public static string[] languageNames = new string[] {
+            "Čeština",  // Czech
             "Deutsch",  // German
             "English",  // English (US)
+            "Español",  // Spanish
             "Français",  // French
             "Eλληνικά",  // Greek
+            "Polski",  // Polish
             "Pусский",  // Russian
             "中文 (简体)"  // Simplified Chinese
         };
 
-        public static string[] localeNames = new string[] { "de_DE", "en_US", "fr_FR", "el_GR",
-            "ru_RU", "zh_CN" };
+        public static string[] localeNames = new string[] { "cs_CZ", "de_DE", "en_US", "es_ES",
+            "fr_FR", "el_GR", "pl_PL", "ru_RU", "zh_CN" };
 
         public static string currentLocale;
         private static ICatalog catalog = null;
