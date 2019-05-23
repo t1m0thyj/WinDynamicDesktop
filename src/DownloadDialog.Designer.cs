@@ -53,30 +53,29 @@
             // 
             // fileSizeProgressLabel
             // 
-            this.fileSizeProgressLabel.AutoSize = true;
-            this.fileSizeProgressLabel.Location = new System.Drawing.Point(12, 67);
+            this.fileSizeProgressLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.fileSizeProgressLabel.Location = new System.Drawing.Point(12, 72);
             this.fileSizeProgressLabel.Name = "fileSizeProgressLabel";
             this.fileSizeProgressLabel.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.fileSizeProgressLabel.Size = new System.Drawing.Size(72, 13);
+            this.fileSizeProgressLabel.Size = new System.Drawing.Size(126, 13);
             this.fileSizeProgressLabel.TabIndex = 3;
             this.fileSizeProgressLabel.Text = "0 MB of 0 MB";
+            this.fileSizeProgressLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // fileTransferSpeedLabel
             // 
-            this.fileTransferSpeedLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.fileTransferSpeedLabel.AutoSize = true;
-            this.fileTransferSpeedLabel.Location = new System.Drawing.Point(225, 67);
+            this.fileTransferSpeedLabel.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.fileTransferSpeedLabel.Location = new System.Drawing.Point(154, 72);
             this.fileTransferSpeedLabel.Name = "fileTransferSpeedLabel";
-            this.fileTransferSpeedLabel.Size = new System.Drawing.Size(42, 13);
+            this.fileTransferSpeedLabel.Size = new System.Drawing.Size(110, 13);
             this.fileTransferSpeedLabel.TabIndex = 4;
             this.fileTransferSpeedLabel.Text = "0 MB/s";
-            this.fileTransferSpeedLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.fileTransferSpeedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // cancelButton
             // 
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(184, 83);
+            this.cancelButton.Location = new System.Drawing.Point(197, 93);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 5;
@@ -90,7 +89,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(284, 118);
+            this.ClientSize = new System.Drawing.Size(284, 128);
             this.ControlBox = false;
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.fileTransferSpeedLabel);

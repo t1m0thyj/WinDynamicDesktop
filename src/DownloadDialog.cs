@@ -69,8 +69,18 @@ namespace WinDynamicDesktop
         {
             UpdatePercentage(e.ProgressPercentage);
 
-            fileTransferSpeedLabel.Text = string.Format(_("{0} MB/s"),
-                (e.BytesReceived / 1024d / 1024d / stopwatch.Elapsed.TotalSeconds).ToString("0.#"));
+            var currentBytesReceived = e.BytesReceived / 1024d / stopwatch.Elapsed.TotalSeconds;
+
+            if (currentBytesReceived < 1024d)
+            {
+                fileTransferSpeedLabel.Text = string.Format(_("{0} KB/s"),
+                    (e.BytesReceived / 1024d / stopwatch.Elapsed.TotalSeconds).ToString("0.#"));
+            }
+            else
+            {
+                fileTransferSpeedLabel.Text = string.Format(_("{0} MB/s"),
+                    (e.BytesReceived / 1024d / 1024d / stopwatch.Elapsed.TotalSeconds).ToString("0.#"));
+            }
 
             fileSizeProgressLabel.Text = string.Format(_("{0} MB of {1} MB"),
                 (e.BytesReceived / 1024d / 1024d).ToString("0.#"),
