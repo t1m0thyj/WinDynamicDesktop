@@ -73,6 +73,16 @@ namespace WinDynamicDesktop.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] locale_cs_CZ {
+            get {
+                object obj = ResourceManager.GetObject("locale_cs_CZ", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] locale_de_DE {
             get {
                 object obj = ResourceManager.GetObject("locale_de_DE", resourceCulture);
@@ -93,9 +103,29 @@ namespace WinDynamicDesktop.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] locale_es_ES {
+            get {
+                object obj = ResourceManager.GetObject("locale_es_ES", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] locale_fr_FR {
             get {
                 object obj = ResourceManager.GetObject("locale_fr_FR", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] locale_pl_PL {
+            get {
+                object obj = ResourceManager.GetObject("locale_pl_PL", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -131,12 +161,32 @@ namespace WinDynamicDesktop.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Mojave_Desert_thumbnail {
+            get {
+                object obj = ResourceManager.GetObject("Mojave_Desert_thumbnail", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         internal static byte[] Solar_Gradients_json {
             get {
                 object obj = ResourceManager.GetObject("Solar_Gradients_json", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Solar_Gradients_thumbnail {
+            get {
+                object obj = ResourceManager.GetObject("Solar_Gradients_thumbnail", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

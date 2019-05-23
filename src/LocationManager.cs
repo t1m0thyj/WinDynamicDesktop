@@ -13,7 +13,7 @@ namespace WinDynamicDesktop
     class LocationManager
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
-        private static InputDialog locationDialog;
+        private static LocationDialog locationDialog;
 
         public static void Initialize()
         {
@@ -33,7 +33,7 @@ namespace WinDynamicDesktop
         {
             if (locationDialog == null)
             {
-                locationDialog = new InputDialog();
+                locationDialog = new LocationDialog();
                 locationDialog.FormClosed += OnLocationDialogClosed;
                 locationDialog.Show();
             }

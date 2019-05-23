@@ -12,8 +12,11 @@ using SunCalcNet.Model;
 
 namespace WinDynamicDesktop
 {
+    public enum PolarPeriod { None, PolarDay, PolarNight };
+
     public class SolarData
     {
+        public PolarPeriod polarPeriod = PolarPeriod.None;
         public DateTime sunriseTime { get; set; }
         public DateTime sunsetTime { get; set; }
         public DateTime[] solarTimes { get; set; }
@@ -21,39 +24,74 @@ namespace WinDynamicDesktop
 
     class SunriseSunsetService
     {
-        private static Dictionary<string,DateTime> GetSunPhases(DateTime date, string lat,
-            string lng)
+        private static readonly Func<string, string> _ = Localization.GetTranslation;
+
+        private static List<SunPhase> GetSunPhases(DateTime date, double latitude,
+            double longitude)
         {
-            double latitude = double.Parse(lat, CultureInfo.InvariantCulture);
-            double longitude = double.Parse(lng, CultureInfo.InvariantCulture);
-            var sunPhases = new Dictionary<string, DateTime>();
+            return SunCalcNet.SunCalc.GetSunPhases(date.AddHours(12).ToUniversalTime(),
+                latitude, longitude).ToList();
+        }
 
-            foreach (SunPhase phase in SunCalcNet.SunCalc.GetSunPhases(date, latitude, longitude))
-            {
-                sunPhases.Add(phase.Name.Value, phase.PhaseTime);
-            }
-
-            return sunPhases;
+        private static DateTime GetSolarTime(List<SunPhase> sunPhases, SunPhaseName desiredPhase)
+        {
+            return sunPhases.Single(sunPhase =>
+                sunPhase.Name.Value == desiredPhase.Value).PhaseTime.ToLocalTime();
         }
 
         public static SolarData GetSolarData(DateTime date)
         {
-            var sunPhases = GetSunPhases(date.AddHours(12).ToUniversalTime(),
-                JsonConfig.settings.latitude, JsonConfig.settings.longitude);
+            double latitude = double.Parse(JsonConfig.settings.latitude,
+                CultureInfo.InvariantCulture);
+            double longitude = double.Parse(JsonConfig.settings.longitude,
+                CultureInfo.InvariantCulture);
+            var sunPhases = GetSunPhases(date, latitude, longitude);
+            SolarData data = new SolarData();
 
-            SolarData data = new SolarData
+            try
             {
-                sunriseTime = sunPhases[SunPhaseName.Sunrise.Value].ToLocalTime(),
-                sunsetTime = sunPhases[SunPhaseName.Sunset.Value].ToLocalTime(),
-                solarTimes = new DateTime[4]
-            };
+                data.sunriseTime = GetSolarTime(sunPhases, SunPhaseName.Sunrise);
+                data.sunsetTime = GetSolarTime(sunPhases, SunPhaseName.Sunset);
+                data.solarTimes = new DateTime[4]
+                {
+                    GetSolarTime(sunPhases, SunPhaseName.Dawn),
+                    GetSolarTime(sunPhases, SunPhaseName.GoldenHourEnd),
+                    GetSolarTime(sunPhases, SunPhaseName.GoldenHour),
+                    GetSolarTime(sunPhases, SunPhaseName.Dusk)
+                };
+            }
+            catch (InvalidOperationException)  // Handle polar day/night
+            {
+                DateTime solarNoon = GetSolarTime(sunPhases, SunPhaseName.SolarNoon);
+                double sunAltitude = SunCalcNet.SunCalc.GetSunPosition(solarNoon.ToUniversalTime(),
+                    latitude, longitude).Altitude;
 
-            data.solarTimes[0] = sunPhases[SunPhaseName.Dawn.Value].ToLocalTime();
-            data.solarTimes[1] = sunPhases[SunPhaseName.GoldenHourEnd.Value].ToLocalTime();
-            data.solarTimes[2] = sunPhases[SunPhaseName.GoldenHour.Value].ToLocalTime();
-            data.solarTimes[3] = sunPhases[SunPhaseName.Dusk.Value].ToLocalTime();
+                if (sunAltitude > 0)
+                {
+                    data.polarPeriod = PolarPeriod.PolarDay;
+                }
+                else
+                {
+                    data.polarPeriod = PolarPeriod.PolarNight;
+                }
+            }
 
             return data;
+        }
+
+        public static string GetSunriseSunsetString(SolarData solarData)
+        {
+            switch (solarData.polarPeriod)
+            {
+                case PolarPeriod.PolarDay:
+                    return _("Sunrise/Sunset: Up all day");
+                case PolarPeriod.PolarNight:
+                    return _("Sunrise/Sunset: Down all day");
+                default:
+                    return string.Format(_("Sunrise: {0}, Sunset: {1}"), 
+                        solarData.sunriseTime.ToShortTimeString(),
+                        solarData.sunsetTime.ToShortTimeString());
+            }
         }
     }
 }

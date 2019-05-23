@@ -1,6 +1,6 @@
 ﻿namespace WinDynamicDesktop
 {
-    partial class InputDialog
+    partial class LocationDialog
     {
         /// <summary>
         /// Required designer variable.

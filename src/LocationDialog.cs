@@ -12,11 +12,11 @@ using System.Drawing;
 
 namespace WinDynamicDesktop
 {
-    public partial class InputDialog : Form
+    public partial class LocationDialog : Form
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
 
-        public InputDialog()
+        public LocationDialog()
         {
             InitializeComponent();
             Localization.TranslateForm(this);
@@ -95,9 +95,8 @@ namespace WinDynamicDesktop
                     SolarData solarData = SunriseSunsetService.GetSolarData(DateTime.Today);
 
                     DialogResult result = MessageBox.Show(string.Format(_("Is this location " +
-                        "correct?\n\n{0}\nSunrise: {1}, Sunset: {2}"), data.display_name,
-                        solarData.sunriseTime.ToShortTimeString(),
-                        solarData.sunsetTime.ToShortTimeString()), _("Question"),
+                        "correct?\n\n{0}\n{1}"), data.display_name,
+                        SunriseSunsetService.GetSunriseSunsetString(solarData)), _("Question"),
                         MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                     if (result == DialogResult.Yes)

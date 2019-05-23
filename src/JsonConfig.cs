@@ -36,7 +36,6 @@ namespace WinDynamicDesktop
     {
         public string themeId { get; set; }
         public string displayName { get; set; }
-        public string imagesZipUri { get; set; }
         public string imageFilename { get; set; }
         public string imageCredits { get; set; }
         public int? dayHighlight { get; set; }

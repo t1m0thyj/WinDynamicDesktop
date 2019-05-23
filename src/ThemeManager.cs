@@ -8,7 +8,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using System.Windows.Forms;
 
 namespace WinDynamicDesktop
 {
@@ -16,14 +15,12 @@ namespace WinDynamicDesktop
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
         public static string[] defaultThemes = new string[] { "Mojave_Desert", "Solar_Gradients" };
-        public static bool filesVerified = false;
         public static List<ThemeConfig> themeSettings = new List<ThemeConfig>();
 
         public static bool importMode = false;
         public static List<string> importPaths;
         public static List<ThemeConfig> importedThemes = new List<ThemeConfig>();
 
-        private static ProgressDialog downloadDialog;
         public static ThemeConfig currentTheme;
         private static ThemeDialog themeDialog;
 
@@ -45,7 +42,6 @@ namespace WinDynamicDesktop
 
             themeIds.Sort();
             LoadInstalledThemes(themeIds);
-            DownloadMissingImages();
         }
 
         public static void SelectTheme()
@@ -73,6 +69,45 @@ namespace WinDynamicDesktop
             return theme.displayName ?? theme.themeId.Replace('_', ' ');
         }
 
+        public static List<Uri> GetThemeUris(string themeId)
+        {
+            if (themeId == defaultThemes[0])
+            {
+                return new List<Uri>
+                {
+                    new Uri("https://onedrive.live.com/download?cid=CC2E3BD0360C1775&resid=CC2E3BD0360C1775%216110&authkey=AOBrcljXRqwNSZo"),
+                    new Uri("https://bitbucket.org/t1m0thyj/wdd-themes/downloads/Mojave_Desert_images.zip")
+                };
+            }
+            else if (themeId == defaultThemes[1])
+            {
+                return new List<Uri>
+                {
+                    new Uri("https://onedrive.live.com/download?cid=CC2E3BD0360C1775&resid=CC2E3BD0360C1775%21721&authkey=AK4kktXlvN1KJzQ"),
+                    new Uri("https://bitbucket.org/t1m0thyj/wdd-themes/downloads/Solar_Gradients_images.zip")
+                };
+            }
+
+            return new List<Uri>();
+        }
+
+        public static bool IsThemeDownloaded(ThemeConfig theme)
+        {
+            string themePath = Path.Combine("themes", theme.themeId);
+            return (Directory.Exists(themePath) &&
+                (Directory.GetFiles(themePath, theme.imageFilename).Length > 0));
+        }
+
+        public static List<int> GetThemeImageList(ThemeConfig theme)
+        {
+            List<int> imageList = new List<int>();
+            imageList.AddRange(theme.sunriseImageList);
+            imageList.AddRange(theme.dayImageList);
+            imageList.AddRange(theme.sunsetImageList);
+            imageList.AddRange(theme.nightImageList);
+            return imageList;
+        }
+
         public static void DisableTheme(string themeId, bool permanent)
         {
             themeSettings.RemoveAll(t => t.themeId == themeId);
@@ -89,7 +124,7 @@ namespace WinDynamicDesktop
             }
         }
 
-        public static ThemeConfig ImportTheme(string importPath)
+        public static ThemeResult ImportTheme(string importPath)
         {
             string themeId = Path.GetFileNameWithoutExtension(importPath);
             int themeIndex = themeSettings.FindIndex(t => t.themeId == themeId);
@@ -101,44 +136,36 @@ namespace WinDynamicDesktop
 
                 if (!shouldOverwrite)
                 {
-                    return null;
+                    return null;  // TODO Update when nullable reference types are supported
                 }
             }
 
             Directory.CreateDirectory(Path.Combine("themes", themeId));
-            bool shouldContinue = true;
-            ThemeConfig theme = null;
+            ThemeResult result;
 
             if (Path.GetExtension(importPath) != ".json")
             {
-                shouldContinue = ThemeLoader.ExtractTheme(importPath, themeId);
+                result = ThemeLoader.ExtractTheme(importPath, themeId);
             }
             else
             {
-                File.Copy(importPath, Path.Combine("themes", themeId, "theme.json"), true);
+                result = ThemeLoader.CopyLocalTheme(importPath, themeId);
             }
 
-            if (shouldContinue)
+            return result.Match(e => new ThemeResult(e), theme =>
             {
-                theme = ThemeLoader.TryLoad(themeId);
-            }
+                if (themeIndex == -1)
+                {
+                    themeSettings.Add(theme);
+                    themeSettings.Sort((t1, t2) => t1.themeId.CompareTo(t2.themeId));
+                }
+                else
+                {
+                    themeSettings[themeIndex] = theme;
+                }
 
-            if (theme == null)
-            {
-                return null;
-            }
-
-            if (themeIndex == -1)
-            {
-                themeSettings.Add(theme);
-                themeSettings.Sort((t1, t2) => t1.themeId.CompareTo(t2.themeId));
-            }
-            else
-            {
-                themeSettings[themeIndex] = theme;
-            }
-
-            return theme;
+                return new ThemeResult(theme);
+            });
         }
 
         public static void RemoveTheme(ThemeConfig theme)
@@ -164,35 +191,18 @@ namespace WinDynamicDesktop
         {
             foreach (string themeId in themeIds)
             {
-                ThemeConfig theme = ThemeLoader.TryLoad(themeId);
-                ThemeLoader.HandleError(themeId);
+                ThemeLoader.TryLoad(themeId).Match(ThemeLoader.HandleError,
+                    theme => {
+                        themeSettings.Add(theme);
 
-                if (theme != null)
-                {
-                    themeSettings.Add(theme);
-
-                    if (theme.themeId == JsonConfig.settings.themeName)
-                    {
-                        currentTheme = theme;
+                        if (theme.themeId == JsonConfig.settings.themeName)
+                        {
+                            currentTheme = theme;
+                        }
                     }
-                }
+                );
             }
         }
-
-        private static void DownloadMissingImages()
-        {
-            List<ThemeConfig> missingThemes = new List<ThemeConfig>();
-
-            foreach (ThemeConfig theme in themeSettings)
-            {
-                string themePath = Path.Combine("themes", theme.themeId);
-
-                if (!Directory.Exists(themePath) ||
-                    (Directory.GetFiles(themePath, theme.imageFilename).Length == 0))
-                {
-                    missingThemes.Add(theme);
-                }
-            }
 
             if (missingThemes.Count == 0)
             {
@@ -200,7 +210,7 @@ namespace WinDynamicDesktop
                 LaunchSequence.NextStep();
                 return;
             }
-
+            
             foreach (ThemeConfig theme in
                 missingThemes.Where(theme => string.IsNullOrEmpty(theme.imagesZipUri)))
             {

@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Microsoft.Win32;
 
 namespace WinDynamicDesktop
 {
@@ -233,6 +234,8 @@ namespace WinDynamicDesktop
 
     public class WallpaperApi
     {
+        private const string registryWallpaperLocation = @"Control Panel\Desktop";
+
         [DllImport("user32.dll", SetLastError = true)]
         private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
@@ -245,6 +248,14 @@ namespace WinDynamicDesktop
             IntPtr result = IntPtr.Zero;
             SendMessageTimeout(FindWindow("Progman", null), 0x52c, IntPtr.Zero, IntPtr.Zero,
                 0, 500, out result);
+        }
+
+        public static void UpdateRegistrySettings(string imagePath)
+        {
+            RegistryKey wallpaperKey = Registry.CurrentUser.OpenSubKey(registryWallpaperLocation,
+                true);
+            wallpaperKey.SetValue("WallPaper", imagePath);
+            wallpaperKey.Close();
         }
 
         public static void SetWallpaper(string imagePath)
@@ -260,9 +271,14 @@ namespace WinDynamicDesktop
                 Marshal.ReleaseComObject(_activeDesktop);
             };
             Thread thread = new Thread(threadStarter);
-            thread.SetApartmentState(ApartmentState.STA);   // Set the thread to STA (required!)
+            thread.SetApartmentState(ApartmentState.STA);  // Set the thread to STA (required!)
             thread.Start();
             thread.Join(2000);
+
+            if (UwpDesktop.IsRunningAsUwp())  // Ensure wallpaper registry setting gets updated
+            {
+                UpdateRegistrySettings(imagePath);
+            }
         }
     }
 }
