@@ -204,36 +204,6 @@ namespace WinDynamicDesktop
             }
         }
 
-            if (missingThemes.Count == 0)
-            {
-                filesVerified = true;
-                LaunchSequence.NextStep();
-                return;
-            }
-            
-            foreach (ThemeConfig theme in
-                missingThemes.Where(theme => string.IsNullOrEmpty(theme.imagesZipUri)))
-            {
-                missingThemes.Remove(theme);
-                ThemeLoader.HandleError(theme.themeId,
-                    string.Format(_("Failed to find images for the '{0}' theme"), theme.themeId));
-            }
-
-            downloadDialog = new ProgressDialog();
-            downloadDialog.FormClosed += OnDownloadDialogClosed;
-            downloadDialog.Show();
-
-            MainMenu.themeItem.Enabled = false;
-            downloadDialog.InitDownload(missingThemes);
-        }
-
-        private static void OnDownloadDialogClosed(object sender, EventArgs e)
-        {
-            MainMenu.themeItem.Enabled = true;
-            filesVerified = true;
-            LaunchSequence.NextStep();
-        }
-
         private static void OnThemeDialogClosed(object sender, EventArgs e)
         {
             themeDialog = null;
