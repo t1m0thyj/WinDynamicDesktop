@@ -37,7 +37,9 @@
             this.creditsButton = new System.Windows.Forms.CheckBox();
             this.donateButton = new System.Windows.Forms.Button();
             this.creditsBox = new System.Windows.Forms.TextBox();
+            this.panel1 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.iconBox)).BeginInit();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // iconBox
@@ -90,7 +92,7 @@
             // closeButton
             // 
             this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.closeButton.Location = new System.Drawing.Point(259, 97);
+            this.closeButton.Location = new System.Drawing.Point(276, 97);
             this.closeButton.Name = "closeButton";
             this.closeButton.Size = new System.Drawing.Size(75, 23);
             this.closeButton.TabIndex = 0;
@@ -123,29 +125,41 @@
             // 
             // creditsBox
             // 
+            this.creditsBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.creditsBox.Location = new System.Drawing.Point(4, 4);
             this.creditsBox.Multiline = true;
             this.creditsBox.Name = "creditsBox";
             this.creditsBox.ReadOnly = true;
-            this.creditsBox.Size = new System.Drawing.Size(335, 85);
+            this.creditsBox.Size = new System.Drawing.Size(352, 85);
             this.creditsBox.TabIndex = 8;
             this.creditsBox.Visible = false;
+            // 
+            // panel1
+            // 
+            this.panel1.AutoSize = true;
+            this.panel1.Controls.Add(this.creditsBox);
+            this.panel1.Controls.Add(this.donateButton);
+            this.panel1.Controls.Add(this.creditsButton);
+            this.panel1.Controls.Add(this.closeButton);
+            this.panel1.Controls.Add(this.iconBox);
+            this.panel1.Controls.Add(this.websiteLabel);
+            this.panel1.Controls.Add(this.descriptionLabel);
+            this.panel1.Controls.Add(this.copyrightLabel);
+            this.panel1.Controls.Add(this.nameLabel);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(359, 126);
+            this.panel1.TabIndex = 0;
             // 
             // AboutDialog
             // 
             this.AcceptButton = this.closeButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(342, 125);
-            this.Controls.Add(this.creditsBox);
-            this.Controls.Add(this.donateButton);
-            this.Controls.Add(this.creditsButton);
-            this.Controls.Add(this.closeButton);
-            this.Controls.Add(this.iconBox);
-            this.Controls.Add(this.websiteLabel);
-            this.Controls.Add(this.descriptionLabel);
-            this.Controls.Add(this.copyrightLabel);
-            this.Controls.Add(this.nameLabel);
+            this.ClientSize = new System.Drawing.Size(359, 126);
+            this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -155,6 +169,8 @@
             this.Text = "About WinDynamicDesktop";
             this.Load += new System.EventHandler(this.AboutDialog_Load);
             ((System.ComponentModel.ISupportInitialize)(this.iconBox)).EndInit();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -171,5 +187,6 @@
         private System.Windows.Forms.CheckBox creditsButton;
         private System.Windows.Forms.Button donateButton;
         private System.Windows.Forms.TextBox creditsBox;
+        private System.Windows.Forms.Panel panel1;
     }
 }

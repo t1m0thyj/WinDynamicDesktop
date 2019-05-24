@@ -33,6 +33,8 @@
             this.okButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
             this.locationCheckBox = new System.Windows.Forms.CheckBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -84,26 +86,38 @@
             this.locationCheckBox.Text = "Use Windows location service";
             this.locationCheckBox.UseVisualStyleBackColor = true;
             // 
-            // InputDialog
+            // panel1
+            // 
+            this.panel1.AutoSize = true;
+            this.panel1.Controls.Add(this.locationCheckBox);
+            this.panel1.Controls.Add(this.cancelButton);
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.okButton);
+            this.panel1.Controls.Add(this.inputBox);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(283, 116);
+            this.panel1.TabIndex = 4;
+            // 
+            // LocationDialog
             // 
             this.AcceptButton = this.okButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
             this.ClientSize = new System.Drawing.Size(283, 116);
-            this.Controls.Add(this.locationCheckBox);
-            this.Controls.Add(this.cancelButton);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.okButton);
-            this.Controls.Add(this.inputBox);
+            this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = global::WinDynamicDesktop.Properties.Resources.AppIcon;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "InputDialog";
+            this.Name = "LocationDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Change Location";
             this.Load += new System.EventHandler(this.InputDialog_Load);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -116,6 +130,7 @@
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.CheckBox locationCheckBox;
+        private System.Windows.Forms.Panel panel1;
     }
 }
 
