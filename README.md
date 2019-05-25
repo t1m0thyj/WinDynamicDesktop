@@ -51,3 +51,8 @@ If you want the app to store its settings and theme files in a different folder 
 I do not own the wallpaper images used by WinDynamicDesktop, they belong to Apple. The icon used in this program was made by [Roundicons](https://www.flaticon.com/authors/roundicons) from [flaticon.com](https://www.flaticon.com/) and is licensed by [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/).
 
 When you enter your location, WinDynamicDesktop uses the [LocationIQ API](https://locationiq.org/) to convert it to latitude and longitude. The Microsoft Store version uses the Windows location API instead if permission is granted. Location data is anonymous and never saved without your consent.
+
+### Where is place settings.conf file
+
+whether for the standard version (.exe) or the UWP version the file is located in your Appdata folder :
+`C:\Users\Julien\AppData\Local\Packages\38719TimothyJohnson.WinDynamicDesktop_rfarkse4rn21a\LocalState`
