@@ -25,6 +25,12 @@ namespace WinDynamicDesktop
             this.FormClosing += OnFormClosing;
         }
 
+        public void HandleLocationChange()
+        {
+            AppContext.wpEngine.RunScheduler();
+            this.Close();
+        }
+
         private void UpdateGuiState()
         {
             inputBox.Enabled = !locationCheckBox.Checked;
@@ -85,34 +91,7 @@ namespace WinDynamicDesktop
 
             if (!locationCheckBox.Checked)
             {
-                LocationIQData data = LocationIQService.GetLocationData(inputBox.Text);
-
-                if (data != null)
-                {
-                    JsonConfig.settings.location = inputBox.Text;
-                    JsonConfig.settings.latitude = data.lat;
-                    JsonConfig.settings.longitude = data.lon;
-                    SolarData solarData = SunriseSunsetService.GetSolarData(DateTime.Today);
-
-                    DialogResult result = MessageBox.Show(string.Format(_("Is this location " +
-                        "correct?\n\n{0}\n{1}"), data.display_name,
-                        SunriseSunsetService.GetSunriseSunsetString(solarData)), _("Question"),
-                        MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-                    if (result == DialogResult.Yes)
-                    {
-                        AppContext.wpEngine.RunScheduler();
-                        this.Close();
-                    }
-                }
-                else
-                {
-                    MessageBox.Show(_("The location you entered was invalid, or you are not " +
-                        "connected to the Internet. Check your Internet connection and try a " +
-                        "different location. You can use a complete address or just the name of " +
-                        "your city/region."), _("Error"), MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
-                }
+                LocationIQService.GetLocationData(inputBox.Text, this);
             }
             else
             {
@@ -120,8 +99,7 @@ namespace WinDynamicDesktop
 
                 if (locationUpdated)
                 {
-                    AppContext.wpEngine.RunScheduler();
-                    this.Close();
+                    HandleLocationChange();
                 }
                 else
                 {
