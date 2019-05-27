@@ -25,6 +25,7 @@ namespace WinDynamicDesktop
 
         public AppContext(string[] args)
         {
+            DebugLogger.WriteLogFile();
             JsonConfig.LoadConfig();
             Localization.Initialize();
 
