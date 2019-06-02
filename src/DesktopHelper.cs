@@ -57,5 +57,13 @@ namespace WinDynamicDesktop
         {
             System.Diagnostics.Process.Start(updateLink);
         }
+
+        public override void SetWallpaper(string imageFilename)
+        {
+            string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "themes",
+                ThemeManager.currentTheme.themeId, imageFilename);
+
+            WallpaperApi.SetWallpaper(imagePath);
+        }
     }
 }

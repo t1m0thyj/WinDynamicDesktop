@@ -227,7 +227,7 @@ namespace WinDynamicDesktop
                 return;
             }
 
-            WallpaperApi.SetWallpaper(imagePath);
+            UwpDesktop.GetHelper().SetWallpaper(imageFilename);
 
             if (UwpDesktop.IsRunningAsUwp() && JsonConfig.settings.changeLockScreen)
             {
