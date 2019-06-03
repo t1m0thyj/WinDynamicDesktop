@@ -14,6 +14,7 @@ namespace WinDynamicDesktop
     {
         public string errorMsg;
         public string themeId;
+        internal static readonly Func<string, string> _ = Localization.GetTranslation;
 
         public ThemeError(string themeId_)
         {
@@ -25,7 +26,7 @@ namespace WinDynamicDesktop
     {
         public FailedToCopyImage(string themeId, string imagePath) : base(themeId)
         {
-            errorMsg = string.Format(Localization.GetTranslation("Failed to copy the image file {0}"), imagePath);
+            errorMsg = string.Format(_("Could not copy image file {0}"), imagePath);
         }
     }
 
@@ -33,7 +34,7 @@ namespace WinDynamicDesktop
     {
         public FailedToDownloadImages(string themeId) : base(themeId)
         {
-            errorMsg = string.Format(Localization.GetTranslation("Failed to download images for the '{0}' theme."), themeId);
+            errorMsg = string.Format(_("Could not download images for '{0}' theme"), themeId);
         }
     }
 
@@ -41,7 +42,7 @@ namespace WinDynamicDesktop
     {
         public FailedToFindLocation(string themeId, string path) : base(themeId)
         {
-            errorMsg = string.Format(Localization.GetTranslation("Failed to find the location {0}"), path);
+            errorMsg = string.Format(_("Could not find location {0}"), path);
         }
     }
 
@@ -49,7 +50,7 @@ namespace WinDynamicDesktop
     {
         public InvalidThemeJSON(string themeId) : base(themeId)
         {
-            errorMsg = Localization.GetTranslation("Theme JSON file could not be read because its format is invalid.");
+            errorMsg = _("Could not read theme JSON file because its format is invalid");
         }
     }
 
@@ -57,8 +58,8 @@ namespace WinDynamicDesktop
     {
         public InvalidZIP(string themeId, string zipPath) : base(themeId)
         {
-            errorMsg = string.Format(Localization.GetTranslation("Failed to read the ZIP file at {0} because its " +
-                "format is invalid."), zipPath);
+            errorMsg = string.Format(_("Could not read ZIP file at {0} because its format is " +
+                "invalid"), zipPath);
         }
     }
 
@@ -66,9 +67,9 @@ namespace WinDynamicDesktop
     {
         public MissingFieldsInThemeJSON(string themeId) : base(themeId)
         {
-            errorMsg = Localization.GetTranslation("Theme JSON file is missing required fields. These include " +
-                "'dayImageList', 'imageFilename', 'nightImageList', 'sunriseImageList', and " +
-                "'sunsetImageList'.");
+            errorMsg = _("Theme JSON file is missing one or more of these required fields: " +
+                "'dayImageList', 'imageFilename', 'nightImageList', 'sunriseImageList', " +
+                "'sunsetImageList'");
         }
     }
 
@@ -76,7 +77,7 @@ namespace WinDynamicDesktop
     {
         public NoImagesInFolder(string themeId, string path) : base(themeId)
         {
-            errorMsg = string.Format(Localization.GetTranslation("No images found in the folder {0}"), path);
+            errorMsg = string.Format(_("No images found in folder {0}"), path);
         }
     }
 
@@ -84,7 +85,7 @@ namespace WinDynamicDesktop
     {
         public NoImagesInZIP(string themeId, string zipPath) : base(themeId)
         {
-            errorMsg = string.Format(Localization.GetTranslation("No images found in the ZIP file {0}"), zipPath);
+            errorMsg = string.Format(_("No images found in ZIP file {0}"), zipPath);
         }
     }
 
@@ -92,7 +93,7 @@ namespace WinDynamicDesktop
     {
         public NoThemeJSON(string themeId) : base(themeId)
         {
-            errorMsg = Localization.GetTranslation("Theme JSON file could not be found.");
+            errorMsg = _("Theme JSON file not found");
         }
     }
 
@@ -100,7 +101,7 @@ namespace WinDynamicDesktop
     {
         public NoThemeJSONInZIP(string themeId, string zipPath) : base(themeId)
         {
-            errorMsg = string.Format(Localization.GetTranslation("No theme JSON found in the ZIP file {0}"), zipPath);
+            errorMsg = string.Format(_("Theme JSON not found in ZIP file {0}"), zipPath);
         }
     }
 }

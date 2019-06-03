@@ -17,6 +17,7 @@ namespace WinDynamicDesktop
         public static string[] defaultThemes = new string[] { "Mojave_Desert", "Solar_Gradients" };
         public static List<ThemeConfig> themeSettings = new List<ThemeConfig>();
 
+        public static bool downloadMode = false;
         public static bool importMode = false;
         public static List<string> importPaths;
         public static List<ThemeConfig> importedThemes = new List<ThemeConfig>();
@@ -67,28 +68,6 @@ namespace WinDynamicDesktop
         public static string GetThemeName(ThemeConfig theme)
         {
             return theme.displayName ?? theme.themeId.Replace('_', ' ');
-        }
-
-        public static List<Uri> GetThemeUris(string themeId)
-        {
-            if (themeId == defaultThemes[0])
-            {
-                return new List<Uri>
-                {
-                    new Uri("https://onedrive.live.com/download?cid=CC2E3BD0360C1775&resid=CC2E3BD0360C1775%216110&authkey=AOBrcljXRqwNSZo"),
-                    new Uri("https://bitbucket.org/t1m0thyj/wdd-themes/downloads/Mojave_Desert_images.zip")
-                };
-            }
-            else if (themeId == defaultThemes[1])
-            {
-                return new List<Uri>
-                {
-                    new Uri("https://onedrive.live.com/download?cid=CC2E3BD0360C1775&resid=CC2E3BD0360C1775%21721&authkey=AK4kktXlvN1KJzQ"),
-                    new Uri("https://bitbucket.org/t1m0thyj/wdd-themes/downloads/Solar_Gradients_images.zip")
-                };
-            }
-
-            return new List<Uri>();
         }
 
         public static bool IsThemeDownloaded(ThemeConfig theme)

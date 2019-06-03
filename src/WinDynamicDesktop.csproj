@@ -91,7 +91,7 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Windows">
-      <HintPath>C:\Program Files (x86)\Windows Kits\10\UnionMetadata\10.0.17763.0\Windows.winmd</HintPath>
+      <HintPath>C:\Program Files (x86)\Windows Kits\10\UnionMetadata\10.0.18362.0\Windows.winmd</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
@@ -151,6 +151,7 @@
     <Compile Include="ThemeListViewRenderer.cs" />
     <Compile Include="ThemeLoader.cs" />
     <Compile Include="ThemeManager.cs" />
+    <Compile Include="ThemeThumbLoader.cs" />
     <Compile Include="UpdateChecker.cs" />
     <Compile Include="UwpDesktop.cs" />
     <Compile Include="UwpHelper.cs" />

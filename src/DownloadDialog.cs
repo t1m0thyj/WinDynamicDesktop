@@ -41,12 +41,13 @@ namespace WinDynamicDesktop
 
         public void InitDownload(ThemeConfig theme)
         {
+            ThemeManager.downloadMode = true;
             this.Invoke(new Action(() =>
                 label1.Text = string.Format(_("Downloading images for '{0}'..."),
                 ThemeManager.GetThemeName(theme))));
 
             imagesZipDest = theme.themeId + "_images.zip";
-            themeUris = ThemeManager.GetThemeUris(theme.themeId);
+            themeUris = theme.imageUrls.ToList();
             themeUriIndex = 0;
             DownloadNext(theme);
         }
@@ -63,6 +64,13 @@ namespace WinDynamicDesktop
             progressBar1.Value = percentage;
             progressBar1.Refresh();
             TaskbarProgress.SetValue(this.Handle, percentage, 100);
+        }
+
+        private bool EnsureZipNotHtml()
+        {
+            // Handle case where HTML page gets downloaded instead of ZIP
+            return (File.Exists(imagesZipDest) &&
+                ((new FileInfo(imagesZipDest)).Length > 1024 * 1024));
         }
 
         private void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
@@ -82,7 +90,7 @@ namespace WinDynamicDesktop
             stopwatch.Stop();
             ThemeConfig theme = (ThemeConfig)e.UserState;
 
-            if (e.Error == null)
+            if ((e.Error == null) && EnsureZipNotHtml())
             {
                 cancelButton.Enabled = false;
                 ThemeResult result = await Task.Run(
@@ -123,6 +131,7 @@ namespace WinDynamicDesktop
         private void OnFormClosing(object sender, FormClosingEventArgs e)
         {
             ThemeLoader.taskbarHandle = IntPtr.Zero;
+            ThemeManager.downloadMode = false;
             wc?.Dispose();
 
             Task.Run(() =>
