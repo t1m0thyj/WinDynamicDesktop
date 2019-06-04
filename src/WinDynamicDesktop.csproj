@@ -105,6 +105,11 @@
     <Compile Include="AppContext.cs" />
     <Compile Include="DebugLogger.cs" />
     <Compile Include="DesktopHelper.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="ThemeResult.cs" />
     <Compile Include="LocationDialog.cs">
       <SubType>Form</SubType>
@@ -175,14 +180,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <EmbeddedResource Include="ThemeDialog.resx">
       <DependentUpon>ThemeDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -210,15 +210,19 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="themes\Catalina.json" />
     <None Include="themes\Mojave_Desert.json" />
     <None Include="themes\Solar_Gradients.json" />
     <None Include="WinDynamicDesktop.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="themes\Mojave_Desert_thumbnail.png" />
+    <None Include="themes\Catalina_thumbnail.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="themes\Solar_Gradients_thumbnail.png" />
+    <None Include="themes\Mojave_Desert_thumbnail.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="themes\Solar_Gradients_thumbnail.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\Fody.5.0.0\build\Fody.targets" Condition="Exists('packages\Fody.5.0.0\build\Fody.targets')" />

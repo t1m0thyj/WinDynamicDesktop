@@ -66,7 +66,7 @@
             this.fileTransferSpeedLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.fileTransferSpeedLabel.AutoSize = true;
-            this.fileTransferSpeedLabel.Location = new System.Drawing.Point(225, 67);
+            this.fileTransferSpeedLabel.Location = new System.Drawing.Point(217, 67);
             this.fileTransferSpeedLabel.Name = "fileTransferSpeedLabel";
             this.fileTransferSpeedLabel.Size = new System.Drawing.Size(42, 13);
             this.fileTransferSpeedLabel.TabIndex = 4;

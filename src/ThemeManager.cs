@@ -14,7 +14,8 @@ namespace WinDynamicDesktop
     class ThemeManager
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
-        public static string[] defaultThemes = new string[] { "Mojave_Desert", "Solar_Gradients" };
+        public static string[] defaultThemes = new string[] { "Catalina", "Mojave_Desert",
+            "Solar_Gradients" };
         public static List<ThemeConfig> themeSettings = new List<ThemeConfig>();
 
         public static bool downloadMode = false;
@@ -80,9 +81,19 @@ namespace WinDynamicDesktop
         public static List<int> GetThemeImageList(ThemeConfig theme)
         {
             List<int> imageList = new List<int>();
-            imageList.AddRange(theme.sunriseImageList);
+
+            if (!theme.sunriseImageList.SequenceEqual(theme.dayImageList))
+            {
+                imageList.AddRange(theme.sunriseImageList);
+            }
+            
             imageList.AddRange(theme.dayImageList);
-            imageList.AddRange(theme.sunsetImageList);
+
+            if (!theme.sunsetImageList.SequenceEqual(theme.dayImageList))
+            {
+                imageList.AddRange(theme.sunsetImageList);
+            }
+            
             imageList.AddRange(theme.nightImageList);
             return imageList;
         }

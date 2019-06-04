@@ -50,6 +50,7 @@ namespace WinDynamicDesktop
             ImportDialog importDialog = new ImportDialog() { Owner = this };
             importDialog.FormClosing += OnImportDialogClosing;
             importDialog.Show();
+            this.Enabled = false;
             importDialog.InitImport(themePaths);
         }
 
@@ -85,7 +86,7 @@ namespace WinDynamicDesktop
             return max;
         }
 
-        private void LoadPreviewImage(int imageNumber)
+        private void LoadPreviewImage(Image image)
         {
             int width = pictureBox1.Size.Width;
             int height = pictureBox1.Size.Height;
@@ -100,18 +101,22 @@ namespace WinDynamicDesktop
                 width = height * 16 / 9;
             }
 
+            pictureBox1.Image = ThemeThumbLoader.ScaleImage(image, new Size(width, height));
+        }
+
+        private void LoadPreviewImage(int imageNumber)
+        {
             if (selectedIndex == 0)
             {
-                pictureBox1.Image = ThemeThumbLoader.ScaleImage(windowsWallpaper,
-                    new Size(width, height));
+                LoadPreviewImage(Image.FromFile(windowsWallpaper));
             }
             else
             {
                 ThemeConfig theme = ThemeManager.themeSettings[selectedIndex - 1];
                 int imageId = ThemeManager.GetThemeImageList(theme)[imageNumber - 1];
                 string imageFilename = theme.imageFilename.Replace("*", imageId.ToString());
-                pictureBox1.Image = ThemeThumbLoader.ScaleImage(Path.Combine("themes",
-                    theme.themeId, imageFilename), new Size(width, height));
+                LoadPreviewImage(Image.FromFile(Path.Combine("themes", theme.themeId,
+                    imageFilename)));
             }
 
             imageNumberLabel.Text = string.Format(_("Image {0} of {1}"), imageNumber,
@@ -184,13 +189,12 @@ namespace WinDynamicDesktop
 
         private void SetThemeDownloaded(bool themeDownloaded)
         {
-            pictureBox1.Visible = themeDownloaded;
             firstButton.Visible = themeDownloaded;
             previousButton.Visible = themeDownloaded;
             imageNumberLabel.Visible = themeDownloaded;
             nextButton.Visible = themeDownloaded;
             lastButton.Visible = themeDownloaded;
-            downloadButton.Visible = !themeDownloaded;
+            downloadLabel.Visible = !themeDownloaded;
         }
 
         private void UpdateSelectedItem()
@@ -215,6 +219,11 @@ namespace WinDynamicDesktop
                         imageNumber = ThemeManager.GetThemeImageList(theme).IndexOf(
                             AppContext.wpEngine.GetImageData(solarData, theme).Item1) + 1;
                     }
+                    else
+                    {
+                        LoadPreviewImage((Image)Properties.Resources.ResourceManager.GetObject(
+                            themeId + "_thumbnail"));
+                    }
                 }
 
                 SetThemeDownloaded(themeDownloaded);
@@ -226,7 +235,7 @@ namespace WinDynamicDesktop
                     LoadPreviewImage(imageNumber);
                 }
 
-                applyButton.Enabled = themeDownloaded;
+                applyButton.Enabled = true;
             }
             else
             {
@@ -293,6 +302,29 @@ namespace WinDynamicDesktop
             }));
         }
 
+        private void ApplySelectedTheme()
+        {
+            if (selectedIndex > 0)
+            {
+                ThemeManager.currentTheme = ThemeManager.themeSettings[selectedIndex - 1];
+            }
+            else
+            {
+                ThemeManager.currentTheme = null;
+            }
+
+            JsonConfig.settings.themeName = ThemeManager.currentTheme?.themeId;
+
+            if (selectedIndex == 0)
+            {
+                WallpaperApi.SetWallpaper(windowsWallpaper);
+            }
+            else
+            {
+                AppContext.wpEngine.RunScheduler();
+            }
+        }
+
         private void imageListView1_SelectionChanged(object sender, EventArgs e)
         {
             UpdateSelectedItem();
@@ -318,15 +350,6 @@ namespace WinDynamicDesktop
             LoadPreviewImage(maxImageNumber);
         }
 
-        private void downloadButton_Click(object sender, EventArgs e)
-        {
-            DownloadDialog downloadDialog = new DownloadDialog() { Owner = this };
-            downloadDialog.FormClosed += OnDownloadDialogClosed;
-            downloadDialog.Show();
-            this.Enabled = false;
-            downloadDialog.InitDownload(ThemeManager.themeSettings[selectedIndex - 1]);
-        }
-
         private void importButton_Click(object sender, EventArgs e)
         {
             DialogResult result = openFileDialog1.ShowDialog();
@@ -350,25 +373,25 @@ namespace WinDynamicDesktop
         private void applyButton_Click(object sender, EventArgs e)
         {
             applyButton.Enabled = false;
+            bool themeDownloaded = true;
 
             if (selectedIndex > 0)
             {
-                ThemeManager.currentTheme = ThemeManager.themeSettings[selectedIndex - 1];
+                themeDownloaded = ThemeManager.IsThemeDownloaded(
+                    ThemeManager.themeSettings[selectedIndex - 1]);
+            }
+
+            if (!themeDownloaded)
+            {
+                DownloadDialog downloadDialog = new DownloadDialog() { Owner = this };
+                downloadDialog.FormClosed += OnDownloadDialogClosed;
+                downloadDialog.Show();
+                this.Enabled = false;
+                downloadDialog.InitDownload(ThemeManager.themeSettings[selectedIndex - 1]);
             }
             else
             {
-                ThemeManager.currentTheme = null;
-            }
-
-            JsonConfig.settings.themeName = ThemeManager.currentTheme?.themeId;
-
-            if (selectedIndex == 0)
-            {
-                WallpaperApi.SetWallpaper(windowsWallpaper);
-            }
-            else
-            {
-                AppContext.wpEngine.RunScheduler();
+                ApplySelectedTheme();
             }
 
             applyButton.Enabled = true;
@@ -416,6 +439,7 @@ namespace WinDynamicDesktop
         {
             if (ThemeManager.IsThemeDownloaded(ThemeManager.themeSettings[selectedIndex - 1]))
             {
+                ApplySelectedTheme();
                 UpdateSelectedItem();
             }
 

@@ -26,7 +26,7 @@ namespace WinDynamicDesktop
             return new Size(scaledWidth, scaledWidth * 9 / 16);
         }
 
-        private static Image ScaleImage(Image tempImage, Size size)
+        public static Image ScaleImage(Image tempImage, Size size)
         {
             if (tempImage.Size == size)
             {
