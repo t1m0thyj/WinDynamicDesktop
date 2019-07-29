@@ -42,45 +42,50 @@
             // 
             // iconBox
             // 
-            this.iconBox.Location = new System.Drawing.Point(4, 4);
+            this.iconBox.Location = new System.Drawing.Point(5, 5);
+            this.iconBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.iconBox.Name = "iconBox";
-            this.iconBox.Size = new System.Drawing.Size(41, 42);
+            this.iconBox.Size = new System.Drawing.Size(55, 52);
             this.iconBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.iconBox.TabIndex = 0;
             this.iconBox.TabStop = false;
             // 
             // nameLabel
             // 
-            this.nameLabel.Location = new System.Drawing.Point(10, 5);
+            this.nameLabel.Location = new System.Drawing.Point(13, 6);
+            this.nameLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.nameLabel.Name = "nameLabel";
-            this.nameLabel.Size = new System.Drawing.Size(367, 25);
+            this.nameLabel.Size = new System.Drawing.Size(489, 31);
             this.nameLabel.TabIndex = 1;
             this.nameLabel.Text = "WinDynamicDesktop";
             this.nameLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // copyrightLabel
             // 
-            this.copyrightLabel.Location = new System.Drawing.Point(10, 33);
+            this.copyrightLabel.Location = new System.Drawing.Point(13, 41);
+            this.copyrightLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.copyrightLabel.Name = "copyrightLabel";
-            this.copyrightLabel.Size = new System.Drawing.Size(367, 17);
+            this.copyrightLabel.Size = new System.Drawing.Size(489, 21);
             this.copyrightLabel.TabIndex = 7;
             this.copyrightLabel.Text = "Copyright © 2019 Timothy Johnson";
             this.copyrightLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // descriptionLabel
             // 
-            this.descriptionLabel.Location = new System.Drawing.Point(9, 51);
+            this.descriptionLabel.Location = new System.Drawing.Point(12, 63);
+            this.descriptionLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.descriptionLabel.Name = "descriptionLabel";
-            this.descriptionLabel.Size = new System.Drawing.Size(370, 17);
+            this.descriptionLabel.Size = new System.Drawing.Size(493, 21);
             this.descriptionLabel.TabIndex = 2;
             this.descriptionLabel.Text = "Port of macOS Mojave Dynamic Desktop feature to Windows 10";
             this.descriptionLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // websiteLabel
             // 
-            this.websiteLabel.Location = new System.Drawing.Point(11, 69);
+            this.websiteLabel.Location = new System.Drawing.Point(15, 85);
+            this.websiteLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.websiteLabel.Name = "websiteLabel";
-            this.websiteLabel.Size = new System.Drawing.Size(367, 17);
+            this.websiteLabel.Size = new System.Drawing.Size(489, 21);
             this.websiteLabel.TabIndex = 1;
             this.websiteLabel.TabStop = true;
             this.websiteLabel.Text = "https://github.com/t1m0thyj/WinDynamicDesktop";
@@ -90,9 +95,10 @@
             // closeButton
             // 
             this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.closeButton.Location = new System.Drawing.Point(259, 97);
+            this.closeButton.Location = new System.Drawing.Point(384, 119);
+            this.closeButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.closeButton.Name = "closeButton";
-            this.closeButton.Size = new System.Drawing.Size(75, 23);
+            this.closeButton.Size = new System.Drawing.Size(100, 28);
             this.closeButton.TabIndex = 0;
             this.closeButton.Text = "Close";
             this.closeButton.UseVisualStyleBackColor = true;
@@ -101,9 +107,10 @@
             // creditsButton
             // 
             this.creditsButton.Appearance = System.Windows.Forms.Appearance.Button;
-            this.creditsButton.Location = new System.Drawing.Point(8, 97);
+            this.creditsButton.Location = new System.Drawing.Point(11, 119);
+            this.creditsButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.creditsButton.Name = "creditsButton";
-            this.creditsButton.Size = new System.Drawing.Size(64, 23);
+            this.creditsButton.Size = new System.Drawing.Size(85, 28);
             this.creditsButton.TabIndex = 2;
             this.creditsButton.Text = "Credits";
             this.creditsButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -113,9 +120,10 @@
             // donateButton
             // 
             this.donateButton.AutoSize = true;
-            this.donateButton.Location = new System.Drawing.Point(80, 97);
+            this.donateButton.Location = new System.Drawing.Point(107, 119);
+            this.donateButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.donateButton.Name = "donateButton";
-            this.donateButton.Size = new System.Drawing.Size(64, 23);
+            this.donateButton.Size = new System.Drawing.Size(85, 28);
             this.donateButton.TabIndex = 3;
             this.donateButton.Text = "Donate";
             this.donateButton.UseVisualStyleBackColor = true;
@@ -123,20 +131,21 @@
             // 
             // creditsBox
             // 
-            this.creditsBox.Location = new System.Drawing.Point(4, 4);
+            this.creditsBox.Location = new System.Drawing.Point(0, 0);
+            this.creditsBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.creditsBox.Multiline = true;
             this.creditsBox.Name = "creditsBox";
             this.creditsBox.ReadOnly = true;
-            this.creditsBox.Size = new System.Drawing.Size(335, 85);
+            this.creditsBox.Size = new System.Drawing.Size(502, 104);
             this.creditsBox.TabIndex = 8;
             this.creditsBox.Visible = false;
             // 
             // AboutDialog
             // 
             this.AcceptButton = this.closeButton;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(342, 125);
+            this.ClientSize = new System.Drawing.Size(495, 154);
             this.Controls.Add(this.creditsBox);
             this.Controls.Add(this.donateButton);
             this.Controls.Add(this.creditsButton);
@@ -147,6 +156,7 @@
             this.Controls.Add(this.copyrightLabel);
             this.Controls.Add(this.nameLabel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "AboutDialog";
