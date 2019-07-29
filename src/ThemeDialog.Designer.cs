@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.previewBox = new System.Windows.Forms.GroupBox();
-            this.downloadButton = new System.Windows.Forms.Button();
+            this.downloadLabel = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.firstButton = new System.Windows.Forms.Button();
             this.previousButton = new System.Windows.Forms.Button();
@@ -54,7 +54,7 @@
             // previewBox
             // 
             this.previewBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.previewBox.Controls.Add(this.downloadButton);
+            this.previewBox.Controls.Add(this.downloadLabel);
             this.previewBox.Controls.Add(this.pictureBox1);
             this.previewBox.Controls.Add(this.firstButton);
             this.previewBox.Controls.Add(this.previousButton);
@@ -68,15 +68,16 @@
             this.previewBox.TabStop = false;
             this.previewBox.Text = "Preview";
             // 
-            // downloadButton
+            // downloadLabel
             // 
-            this.downloadButton.Location = new System.Drawing.Point(115, 100);
-            this.downloadButton.Name = "downloadButton";
-            this.downloadButton.Size = new System.Drawing.Size(124, 23);
-            this.downloadButton.TabIndex = 11;
-            this.downloadButton.Text = "Download Theme";
-            this.downloadButton.UseVisualStyleBackColor = true;
-            this.downloadButton.Click += new System.EventHandler(this.downloadButton_Click);
+            this.downloadLabel.ForeColor = System.Drawing.Color.DarkGreen;
+            this.downloadLabel.Location = new System.Drawing.Point(9, 223);
+            this.downloadLabel.Name = "downloadLabel";
+            this.downloadLabel.Size = new System.Drawing.Size(329, 13);
+            this.downloadLabel.TabIndex = 16;
+            this.downloadLabel.Text = "Theme will be downloaded when you click Apply";
+            this.downloadLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.downloadLabel.Visible = false;
             // 
             // pictureBox1
             // 
@@ -274,6 +275,6 @@
         private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
         private System.Windows.Forms.Label creditsLabel;
         private Manina.Windows.Forms.ImageListView imageListView1;
-        private System.Windows.Forms.Button downloadButton;
+        private System.Windows.Forms.Label downloadLabel;
     }
 }

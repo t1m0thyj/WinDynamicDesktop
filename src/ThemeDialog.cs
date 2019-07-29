@@ -37,7 +37,7 @@ namespace WinDynamicDesktop
             this.Font = SystemFonts.MessageBoxFont;
             this.FormClosing += OnFormClosing;
 
-            int bestWidth = (GetThumbnailSize().Width + 30) * 2 +
+            int bestWidth = (ThemeThumbLoader.GetThumbnailSize(this).Width + 30) * 2 +
                 SystemInformation.VerticalScrollBarWidth;
             int oldWidth = this.imageListView1.Size.Width;
             this.imageListView1.Size = new Size(bestWidth, this.imageListView1.Height);
@@ -50,102 +50,8 @@ namespace WinDynamicDesktop
             ImportDialog importDialog = new ImportDialog() { Owner = this };
             importDialog.FormClosing += OnImportDialogClosing;
             importDialog.Show();
+            this.Enabled = false;
             importDialog.InitImport(themePaths);
-        }
-
-        private Size GetThumbnailSize()
-        {
-            int scaledWidth;
-
-            using (Graphics g = this.CreateGraphics())
-            {
-                scaledWidth = (int)(192 * g.DpiX / 96);
-            }
-
-            return new Size(scaledWidth, scaledWidth * 9 / 16);
-        }
-
-        private Bitmap ShrinkImage(string filename, int width, int height)
-        {
-            // Image scaling code from https://stackoverflow.com/a/7677163/5504760
-            using (var tempImage = Image.FromFile(filename))
-            {
-                Bitmap bmp = new Bitmap(width, height);
-
-                using (Graphics g = Graphics.FromImage(bmp))
-                {
-                    g.DrawImage(tempImage, new Rectangle(0, 0, bmp.Width, bmp.Height));
-                }
-
-                return bmp;
-            }
-        }
-
-        private Image GetThumbnailImage(ThemeConfig theme, Size size, bool useCache = true)
-        {
-            string thumbnailPath = Path.Combine("themes", theme.themeId, "thumbnail.png");
-
-            if (useCache && File.Exists(thumbnailPath))
-            {
-                Image cachedImage = Image.FromFile(thumbnailPath);
-
-                if (cachedImage.Size == size)
-                {
-                    return cachedImage;
-                }
-                else
-                {
-                    cachedImage.Dispose();
-                    File.Delete(thumbnailPath);
-                }
-            }
-            else if (useCache && ThemeManager.defaultThemes.Contains(theme.themeId) &&
-                !File.Exists(thumbnailPath))
-            {
-                return (Image)Properties.Resources.ResourceManager.GetObject(
-                    theme.themeId + "_thumbnail");
-            }
-
-            int imageId1;
-            int imageId2;
-
-            if (theme.dayHighlight.HasValue)
-            {
-                imageId1 = theme.dayHighlight.Value;
-            }
-            else
-            {
-                imageId1 = theme.dayImageList[theme.dayImageList.Length / 2];
-            }
-
-            if (theme.nightHighlight.HasValue)
-            {
-                imageId2 = theme.nightHighlight.Value;
-            }
-            else
-            {
-                imageId2 = theme.nightImageList[theme.nightImageList.Length / 2];
-            }
-
-            string imageFilename1 = theme.imageFilename.Replace("*", imageId1.ToString());
-            string imageFilename2 = theme.imageFilename.Replace("*", imageId2.ToString());
-
-            using (var bmp1 = ShrinkImage(Path.Combine("themes", theme.themeId, imageFilename1),
-                size.Width, size.Height))
-            {
-                Bitmap bmp2 = ShrinkImage(Path.Combine("themes", theme.themeId, imageFilename2),
-                    size.Width, size.Height);
-
-                using (Graphics g = Graphics.FromImage(bmp2))
-                {
-                    g.DrawImage(bmp1, 0, 0, new Rectangle(0, 0, bmp1.Width / 2, bmp1.Height),
-                        GraphicsUnit.Pixel);
-                }
-
-                bmp2.Save(thumbnailPath, System.Drawing.Imaging.ImageFormat.Png);
-
-                return bmp2;
-            }
         }
 
         private string GetCreditsText()
@@ -180,7 +86,7 @@ namespace WinDynamicDesktop
             return max;
         }
 
-        private void LoadPreviewImage(int imageNumber)
+        private void LoadPreviewImage(Image image)
         {
             int width = pictureBox1.Size.Width;
             int height = pictureBox1.Size.Height;
@@ -195,17 +101,22 @@ namespace WinDynamicDesktop
                 width = height * 16 / 9;
             }
 
+            pictureBox1.Image = ThemeThumbLoader.ScaleImage(image, new Size(width, height));
+        }
+
+        private void LoadPreviewImage(int imageNumber)
+        {
             if (selectedIndex == 0)
             {
-                pictureBox1.Image = ShrinkImage(windowsWallpaper, width, height);
+                LoadPreviewImage(Image.FromFile(windowsWallpaper));
             }
             else
             {
                 ThemeConfig theme = ThemeManager.themeSettings[selectedIndex - 1];
                 int imageId = ThemeManager.GetThemeImageList(theme)[imageNumber - 1];
                 string imageFilename = theme.imageFilename.Replace("*", imageId.ToString());
-                pictureBox1.Image = ShrinkImage(Path.Combine("themes", theme.themeId,
-                    imageFilename), width, height);
+                LoadPreviewImage(Image.FromFile(Path.Combine("themes", theme.themeId,
+                    imageFilename)));
             }
 
             imageNumberLabel.Text = string.Format(_("Image {0} of {1}"), imageNumber,
@@ -232,43 +143,58 @@ namespace WinDynamicDesktop
             }
         }
 
-        private void LoadImportedThemes(List<ThemeConfig> themes)
+        private void LoadImportedThemes(List<ThemeConfig> themes, ImportDialog importDialog)
         {
             themes.Sort((t1, t2) => t1.themeId.CompareTo(t2.themeId));
-            Size thumbnailSize = GetThumbnailSize();
+            Size thumbnailSize = ThemeThumbLoader.GetThumbnailSize(this);
             ImageListViewItem newItem = null;
 
+            Task.Run(() =>
+            {
             for (int i = 0; i < themes.Count; i++)
             {
-                EnsureThemeNotDuplicated(themes[i].themeId);
+                this.Invoke(new Action(() => EnsureThemeNotDuplicated(themes[i].themeId)));
 
                 string themeName = ThemeManager.GetThemeName(themes[i]);
                 themeNames.Add(themeName);
                 themeNames.Sort();
                 int itemIndex = themeNames.IndexOf(themeName) + 1;
 
-                imageListView1.Items.Insert(itemIndex, ThemeManager.GetThemeName(themes[i]),
-                    GetThumbnailImage(themes[i], thumbnailSize, false));
-                newItem = imageListView1.Items[itemIndex];
-                newItem.Tag = themes[i].themeId;
+                using (Image thumbnailImage = ThemeThumbLoader.GetThumbnailImage(themes[i],
+                    thumbnailSize, false))
+                {
+                    this.Invoke(new Action(() =>
+                    {
+                        imageListView1.Items.Insert(itemIndex,
+                            ThemeManager.GetThemeName(themes[i]), thumbnailImage);
+                        newItem = imageListView1.Items[itemIndex];
+                        newItem.Tag = themes[i].themeId;
+                    }));
+                }
             }
 
             if (newItem != null)
             {
-                newItem.Selected = true;
-                imageListView1.EnsureVisible(newItem.Index);
+                this.Invoke(new Action(() =>
+                {
+                    newItem.Selected = true;
+                    imageListView1.EnsureVisible(newItem.Index);
+                }));
             }
+
+            importDialog.thumbnailsLoaded = true;
+            this.Invoke(new Action(() => importDialog.Close()));
+            });
         }
 
         private void SetThemeDownloaded(bool themeDownloaded)
         {
-            pictureBox1.Visible = themeDownloaded;
             firstButton.Visible = themeDownloaded;
             previousButton.Visible = themeDownloaded;
             imageNumberLabel.Visible = themeDownloaded;
             nextButton.Visible = themeDownloaded;
             lastButton.Visible = themeDownloaded;
-            downloadButton.Visible = !themeDownloaded;
+            downloadLabel.Visible = !themeDownloaded;
         }
 
         private void UpdateSelectedItem()
@@ -286,7 +212,6 @@ namespace WinDynamicDesktop
                         t => t.themeId == themeId) + 1;
                     ThemeConfig theme = ThemeManager.themeSettings[selectedIndex - 1];
                     themeDownloaded = ThemeManager.IsThemeDownloaded(theme);
-                    SetThemeDownloaded(themeDownloaded);
 
                     if (themeDownloaded)
                     {
@@ -294,8 +219,14 @@ namespace WinDynamicDesktop
                         imageNumber = ThemeManager.GetThemeImageList(theme).IndexOf(
                             AppContext.wpEngine.GetImageData(solarData, theme).Item1) + 1;
                     }
+                    else
+                    {
+                        LoadPreviewImage((Image)Properties.Resources.ResourceManager.GetObject(
+                            themeId + "_thumbnail"));
+                    }
                 }
 
+                SetThemeDownloaded(themeDownloaded);
                 creditsLabel.Text = GetCreditsText();
 
                 if (themeDownloaded)
@@ -304,7 +235,7 @@ namespace WinDynamicDesktop
                     LoadPreviewImage(imageNumber);
                 }
 
-                applyButton.Enabled = themeDownloaded;
+                applyButton.Enabled = true;
             }
             else
             {
@@ -317,10 +248,10 @@ namespace WinDynamicDesktop
             imageListView1.ContextMenuStrip = contextMenuStrip1;
             imageListView1.SetRenderer(new ThemeListViewRenderer());
 
-            Size thumbnailSize = GetThumbnailSize();
+            Size thumbnailSize = ThemeThumbLoader.GetThumbnailSize(this);
             imageListView1.ThumbnailSize = thumbnailSize;
-            imageListView1.Items.Add(_("None"), ShrinkImage(windowsWallpaper, thumbnailSize.Width,
-                thumbnailSize.Height));
+            imageListView1.Items.Add(_("None"), ThemeThumbLoader.ScaleImage(windowsWallpaper,
+                thumbnailSize));
 
             string currentTheme = ThemeManager.currentTheme?.themeId;
             ImageListViewItem focusItem = null;
@@ -337,28 +268,60 @@ namespace WinDynamicDesktop
                 }
             }
 
-            for (int i = 0; i < ThemeManager.themeSettings.Count; i++)
-            {
-                ThemeConfig theme = ThemeManager.themeSettings[i];
-                string themeName = ThemeManager.GetThemeName(theme);
-                themeNames.Add(themeName);
-                themeNames.Sort();
-
-                int itemIndex = themeNames.IndexOf(themeName) + 1;
-                imageListView1.Items.Insert(itemIndex, themeName,
-                    GetThumbnailImage(theme, thumbnailSize));
-                imageListView1.Items[itemIndex].Tag = theme.themeId;
-
-                if (theme.themeId == currentTheme)
+            Task.Run(new Action(() => {
+                for (int i = 0; i < ThemeManager.themeSettings.Count; i++)
                 {
-                    focusItem = imageListView1.Items[itemIndex];
+                    ThemeConfig theme = ThemeManager.themeSettings[i];
+                    string themeName = ThemeManager.GetThemeName(theme);
+                    themeNames.Add(themeName);
+                    themeNames.Sort();
+                    int itemIndex = themeNames.IndexOf(themeName) + 1;
+                    
+                    using (Image thumbnailImage = ThemeThumbLoader.GetThumbnailImage(theme,
+                        thumbnailSize, true))
+                    {
+                        this.Invoke(new Action(() => {
+                            imageListView1.Items.Insert(itemIndex, themeName, thumbnailImage);
+                            imageListView1.Items[itemIndex].Tag = theme.themeId;
+                        }));
+                    }
+
+                    if (theme.themeId == currentTheme)
+                    {
+                        focusItem = imageListView1.Items[itemIndex];
+                    }
                 }
+
+                if (focusItem != null)
+                {
+                    this.Invoke(new Action(() => {
+                        focusItem.Selected = true;
+                        imageListView1.EnsureVisible(focusItem.Index);
+                    }));
+                }
+            }));
+        }
+
+        private void ApplySelectedTheme()
+        {
+            if (selectedIndex > 0)
+            {
+                ThemeManager.currentTheme = ThemeManager.themeSettings[selectedIndex - 1];
+            }
+            else
+            {
+                ThemeManager.currentTheme = null;
             }
 
-            if (focusItem != null)
+            JsonConfig.settings.themeName = ThemeManager.currentTheme?.themeId;
+
+            if (selectedIndex == 0)
             {
-                focusItem.Selected = true;
-                imageListView1.EnsureVisible(focusItem.Index);
+                WallpaperApi.SetWallpaper(windowsWallpaper);
+            }
+            else
+            {
+                AppContext.wpEngine.RunScheduler();
             }
         }
 
@@ -387,15 +350,6 @@ namespace WinDynamicDesktop
             LoadPreviewImage(maxImageNumber);
         }
 
-        private void downloadButton_Click(object sender, EventArgs e)
-        {
-            DownloadDialog downloadDialog = new DownloadDialog() { Owner = this };
-            downloadDialog.FormClosed += OnDownloadDialogClosed;
-            downloadDialog.Show();
-            this.Enabled = false;
-            downloadDialog.InitDownload(ThemeManager.themeSettings[selectedIndex - 1]);
-        }
-
         private void importButton_Click(object sender, EventArgs e)
         {
             DialogResult result = openFileDialog1.ShowDialog();
@@ -419,25 +373,25 @@ namespace WinDynamicDesktop
         private void applyButton_Click(object sender, EventArgs e)
         {
             applyButton.Enabled = false;
+            bool themeDownloaded = true;
 
             if (selectedIndex > 0)
             {
-                ThemeManager.currentTheme = ThemeManager.themeSettings[selectedIndex - 1];
+                themeDownloaded = ThemeManager.IsThemeDownloaded(
+                    ThemeManager.themeSettings[selectedIndex - 1]);
+            }
+
+            if (!themeDownloaded)
+            {
+                DownloadDialog downloadDialog = new DownloadDialog() { Owner = this };
+                downloadDialog.FormClosed += OnDownloadDialogClosed;
+                downloadDialog.Show();
+                this.Enabled = false;
+                downloadDialog.InitDownload(ThemeManager.themeSettings[selectedIndex - 1]);
             }
             else
             {
-                ThemeManager.currentTheme = null;
-            }
-
-            JsonConfig.settings.themeName = ThemeManager.currentTheme?.themeId;
-
-            if (selectedIndex == 0)
-            {
-                WallpaperApi.SetWallpaper(windowsWallpaper);
-            }
-            else
-            {
-                AppContext.wpEngine.RunScheduler();
+                ApplySelectedTheme();
             }
 
             applyButton.Enabled = true;
@@ -485,18 +439,27 @@ namespace WinDynamicDesktop
         {
             if (ThemeManager.IsThemeDownloaded(ThemeManager.themeSettings[selectedIndex - 1]))
             {
+                ApplySelectedTheme();
                 UpdateSelectedItem();
             }
 
-            this.Enabled = true;
+            this.Enabled = !ThemeManager.importMode;
         }
 
         private void OnImportDialogClosing(object sender, FormClosingEventArgs e)
         {
-            LoadImportedThemes(ThemeManager.importedThemes);
-            ThemeManager.importedThemes.Clear();
+            ImportDialog importDialog = (ImportDialog)sender;
 
-            this.Enabled = true;
+            if (!importDialog.thumbnailsLoaded)
+            {
+                e.Cancel = true;
+                LoadImportedThemes(ThemeManager.importedThemes, importDialog);
+            }
+            else
+            {
+                ThemeManager.importedThemes.Clear();
+                this.Enabled = !ThemeManager.downloadMode;
+            }
         }
 
         private void OnFormClosing(object sender, FormClosingEventArgs e)

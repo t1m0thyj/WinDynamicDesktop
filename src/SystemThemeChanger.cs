@@ -23,7 +23,7 @@ namespace WinDynamicDesktop
         {
             RegistryKey themeKey = Registry.CurrentUser.OpenSubKey(registryThemeLocation);
 
-            if (themeKey != null)
+            if (!UwpDesktop.IsRunningAsUwp() && (themeKey != null))
             {
                 themeKey.Close();
 

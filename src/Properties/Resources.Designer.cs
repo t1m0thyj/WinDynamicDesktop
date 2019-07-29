@@ -73,6 +73,26 @@ namespace WinDynamicDesktop.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] Catalina_json {
+            get {
+                object obj = ResourceManager.GetObject("Catalina_json", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Catalina_thumbnail {
+            get {
+                object obj = ResourceManager.GetObject("Catalina_thumbnail", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] locale_cs_CZ {
             get {
                 object obj = ResourceManager.GetObject("locale_cs_CZ", resourceCulture);

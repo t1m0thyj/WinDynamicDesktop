@@ -14,8 +14,9 @@ namespace WinDynamicDesktop
     public partial class AboutDialog : Form
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
-        private static string websiteLink = "https://github.com/t1m0thyj/WinDynamicDesktop";
-        private static string donateLink =
+        private static readonly string websiteLink =
+            "https://github.com/t1m0thyj/WinDynamicDesktop";
+        private static readonly string donateLink =
             "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=H8ZZXM9ABRJFU";
 
         public AboutDialog()
@@ -78,7 +79,7 @@ namespace WinDynamicDesktop
                 _("Thanks to:"),
                 "",
                 _("Apple for the Mojave wallpapers"),
-                _("Contributors on GitHub"),
+                _("Contributors and translators on GitHub"),
                 _("LocationIQ for their free geocoding API"),
                 _("Roundicons from flaticon.com for the icon (licensed by CC 3.0 BY)")
             };

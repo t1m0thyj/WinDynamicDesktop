@@ -19,6 +19,7 @@ namespace WinDynamicDesktop
         private static readonly Func<string, string> _ = Localization.GetTranslation;
         private Queue<string> importQueue;
         private int numJobs;
+        public bool thumbnailsLoaded = false;
 
         public ImportDialog()
         {

@@ -250,14 +250,6 @@ namespace WinDynamicDesktop
                 0, 500, out result);
         }
 
-        public static void UpdateRegistrySettings(string imagePath)
-        {
-            RegistryKey wallpaperKey = Registry.CurrentUser.OpenSubKey(registryWallpaperLocation,
-                true);
-            wallpaperKey.SetValue("WallPaper", imagePath);
-            wallpaperKey.Close();
-        }
-
         public static void SetWallpaper(string imagePath)
         {
             EnableTransitions();
@@ -274,11 +266,6 @@ namespace WinDynamicDesktop
             thread.SetApartmentState(ApartmentState.STA);  // Set the thread to STA (required!)
             thread.Start();
             thread.Join(2000);
-
-            if (UwpDesktop.IsRunningAsUwp())  // Ensure wallpaper registry setting gets updated
-            {
-                UpdateRegistrySettings(imagePath);
-            }
         }
     }
 }

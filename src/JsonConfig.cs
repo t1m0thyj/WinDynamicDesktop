@@ -35,6 +35,7 @@ namespace WinDynamicDesktop
     public class ThemeConfig
     {
         public string themeId { get; set; }
+        public Uri[] imageUrls { get; set; }
         public string displayName { get; set; }
         public string imageFilename { get; set; }
         public string imageCredits { get; set; }
