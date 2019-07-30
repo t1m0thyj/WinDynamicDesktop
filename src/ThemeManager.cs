@@ -86,14 +86,14 @@ namespace WinDynamicDesktop
             {
                 imageList.AddRange(theme.sunriseImageList);
             }
-            
+
             imageList.AddRange(theme.dayImageList);
 
             if (!theme.sunsetImageList.SequenceEqual(theme.dayImageList))
             {
                 imageList.AddRange(theme.sunsetImageList);
             }
-            
+
             imageList.AddRange(theme.nightImageList);
             return imageList;
         }
