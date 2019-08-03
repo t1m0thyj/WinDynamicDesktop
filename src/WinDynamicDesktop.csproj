@@ -76,6 +76,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Runtime.WindowsRuntime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETCore\v4.5\System.Runtime.WindowsRuntime.dll</HintPath>
@@ -103,6 +104,14 @@
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="AppContext.cs" />
+    <Compile Include="BrightnessController.cs" />
+    <Compile Include="BrightnessDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BrightnessDialog.Designer.cs">
+      <DependentUpon>BrightnessDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BrightnessManager.cs" />
     <Compile Include="DebugLogger.cs" />
     <Compile Include="DesktopHelper.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -165,6 +174,9 @@
     <Compile Include="WallpaperChangeScheduler.cs" />
     <EmbeddedResource Include="AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BrightnessDialog.resx">
+      <DependentUpon>BrightnessDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LocationDialog.resx">
       <DependentUpon>LocationDialog.cs</DependentUpon>
