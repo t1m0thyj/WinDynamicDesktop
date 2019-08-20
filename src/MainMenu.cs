@@ -74,7 +74,7 @@ namespace WinDynamicDesktop
             List<ToolStripItem> items = new List<ToolStripItem>();
 
             items.Add(new ToolStripMenuItem(_("Select &Language..."), null, OnLanguageItemClick));
-            items.Add(new ToolStripMenuItem(_("Set Auto Brightness"), null, OnAutoDimDisplayItemClick));
+            items.Add(new ToolStripMenuItem(_("Set Auto Brightness"), null, OnSetAutoBrightnessItemClick));
             items.Add(new ToolStripSeparator());
             items.AddRange(SystemThemeChanger.GetMenuItems());
             items.AddRange(UpdateChecker.GetMenuItems());
@@ -136,7 +136,7 @@ namespace WinDynamicDesktop
             Localization.SelectLanguage();
         }
 
-        private static void OnAutoDimDisplayItemClick(object sender, EventArgs e)
+        private static void OnSetAutoBrightnessItemClick(object sender, EventArgs e)
         {
             (new BrightnessDialog()).ShowDialog();
         }
