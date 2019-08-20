@@ -17,7 +17,7 @@ namespace WinDynamicDesktop
 
             if (JsonConfig.settings.showBrightnessChangeNotificationToast)
             {
-                AppContext.ShowPopup(("Display brightness has been set to " + value.ToString() + "%"));
+                AppContext.ShowPopup(("Display brightness set to " + value.ToString() + "%"));
             }
         }
 
