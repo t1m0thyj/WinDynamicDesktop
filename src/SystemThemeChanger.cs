@@ -42,7 +42,7 @@ namespace WinDynamicDesktop
             automaticAppThemeItem = new ToolStripMenuItem(
                 Localization.GetTranslation("Change Windows 10 &app theme automatically"),
                 null, OnAppThemeItemClick);
-            automaticAppThemeItem.Checked = JsonConfig.settings.changeSystemTheme;
+            automaticAppThemeItem.Checked = JsonConfig.settings.changeAppTheme;
 
             return new List<ToolStripItem>() {
                 new ToolStripSeparator(),
