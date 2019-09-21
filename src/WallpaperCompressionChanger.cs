@@ -67,6 +67,7 @@ namespace WinDynamicDesktop
         {
             TryApplyWallpaperCompressionTweak();
             compressionTweakItem.Checked = isWallpaperCompressionTweaked;
+            MessageBox.Show(Localization.GetTranslation("This tweak only affects wallpapers that are JPEG images. In order for this change to take effect, you should restart your computer."));
         }
     }
 }
