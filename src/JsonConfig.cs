@@ -3,14 +3,14 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.IO;
-using System.Timers;
 using Newtonsoft.Json;
+using System.Windows.Forms;
+using Timer = System.Timers.Timer;
 
 namespace WinDynamicDesktop
 {
@@ -65,8 +65,16 @@ namespace WinDynamicDesktop
 
             if (!firstRun)
             {
-                string jsonText = File.ReadAllText("settings.conf");
-                settings = JsonConvert.DeserializeObject<AppConfig>(jsonText);
+                try
+                {
+                    string jsonText = File.ReadAllText("settings.conf");
+                    settings = JsonConvert.DeserializeObject<AppConfig>(jsonText);
+                }
+                catch (JsonReaderException)
+                {
+                    MessageBox.Show("Your configuration file was corrupt and has been reset to the default settings.");
+                    firstRun = true;
+                }
             }
 
             unsavedChanges = false;
