@@ -9,8 +9,7 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using System.IO;
 using Newtonsoft.Json;
-using System.Windows.Forms;
-using Timer = System.Timers.Timer;
+using System.Timers;
 
 namespace WinDynamicDesktop
 {
@@ -72,7 +71,9 @@ namespace WinDynamicDesktop
                 }
                 catch (JsonReaderException)
                 {
-                    MessageBox.Show("Your configuration file was corrupt and has been reset to the default settings.");
+                    System.Windows.Forms.MessageBox.Show("Your WinDynamicDesktop configuration file was corrupt and has been reset to the default settings.", "Warning",
+                    System.Windows.Forms.MessageBoxButtons.OK,
+                    System.Windows.Forms.MessageBoxIcon.Warning);
                     firstRun = true;
                 }
             }
