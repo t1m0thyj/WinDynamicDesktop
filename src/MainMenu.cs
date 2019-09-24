@@ -91,9 +91,14 @@ namespace WinDynamicDesktop
             AppContext.wpEngine.RunScheduler();
         }
 
-        private static void OnEditConfigFileClick(object sender, EventArgs e)
+        private static void EditConfigFile()
         {
             Process.Start("settings.conf");
+        }
+
+        private static void OnEditConfigFileClick(object sender, EventArgs e)
+        {
+            EditConfigFile();
         }
 
         private static void OnThemeItemClick(object sender, EventArgs e)
