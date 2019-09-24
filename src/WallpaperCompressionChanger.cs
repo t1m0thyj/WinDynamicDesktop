@@ -16,6 +16,7 @@ namespace WinDynamicDesktop
     {
         private const string registryCompressionLocation = @"Control Panel\Desktop";
 
+        private static readonly Func<string, string> _ = Localization.GetTranslation;
         private static ToolStripMenuItem compressionTweakItem;
         private static bool isWallpaperCompressionTweaked;
 
@@ -33,7 +34,7 @@ namespace WinDynamicDesktop
             desktopKey.Close();
 
             compressionTweakItem = new ToolStripMenuItem(
-                Localization.GetTranslation("Disable Windows 10 &JPEG wallpaper compression"),
+                _("Disable Windows 10 &JPEG wallpaper compression"),
                 null, OnWallpaperCompressionItemClick);
             compressionTweakItem.Checked = isWallpaperCompressionTweaked;
 
@@ -67,7 +68,11 @@ namespace WinDynamicDesktop
         {
             TryApplyWallpaperCompressionTweak();
             compressionTweakItem.Checked = isWallpaperCompressionTweaked;
-            MessageBox.Show(Localization.GetTranslation("This tweak only affects wallpapers that are JPEG images. In order for this change to take effect, you should restart your computer."));
+            MessageBox.Show(
+                _("This tweak only affects wallpapers that are JPEG images. In order for this change to take effect, you should restart your computer."),
+                _("WinDynamicDesktop"),
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
         }
     }
 }
