@@ -1,4 +1,4 @@
-﻿// This Source Code Form is subject to the terms of the Mozilla Public
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -26,6 +26,7 @@ namespace WinDynamicDesktop
         public bool disableAutoUpdate { get; set; }
         public string lastUpdateCheck { get; set; }
         public bool changeSystemTheme { get; set; }
+        public bool changeAppTheme { get; set; }
         public string themeName { get; set; }
         public bool useWindowsLocation { get; set; }
         public bool changeLockScreen { get; set; }
