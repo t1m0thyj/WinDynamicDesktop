@@ -45,7 +45,7 @@ namespace WinDynamicDesktop
             }
 
             locationCheckBox.Checked = JsonConfig.settings.useWindowsLocation;
-            locationCheckBox.Enabled = UwpDesktop.IsRunningAsUwp();
+            locationCheckBox.Visible = UwpDesktop.IsRunningAsUwp();
 
             UpdateGuiState();
             locationCheckBox.CheckedChanged += locationCheckBox_CheckedChanged;
