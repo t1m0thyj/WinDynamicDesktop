@@ -3,14 +3,13 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.IO;
-using System.Timers;
 using Newtonsoft.Json;
+using System.Timers;
 
 namespace WinDynamicDesktop
 {
@@ -66,8 +65,18 @@ namespace WinDynamicDesktop
 
             if (!firstRun)
             {
-                string jsonText = File.ReadAllText("settings.conf");
-                settings = JsonConvert.DeserializeObject<AppConfig>(jsonText);
+                try
+                {
+                    string jsonText = File.ReadAllText("settings.conf");
+                    settings = JsonConvert.DeserializeObject<AppConfig>(jsonText);
+                }
+                catch (JsonReaderException)
+                {
+                    System.Windows.Forms.MessageBox.Show("Your WinDynamicDesktop configuration file was corrupt and has been reset to the default settings.", "Warning",
+                    System.Windows.Forms.MessageBoxButtons.OK,
+                    System.Windows.Forms.MessageBoxIcon.Warning);
+                    firstRun = true;
+                }
             }
 
             unsavedChanges = false;
