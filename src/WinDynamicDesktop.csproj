@@ -163,6 +163,7 @@
     <Compile Include="UwpLocation.cs" />
     <Compile Include="WallpaperApi.cs" />
     <Compile Include="WallpaperChangeScheduler.cs" />
+    <Compile Include="WallpaperCompressionChanger.cs" />
     <EmbeddedResource Include="AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </EmbeddedResource>

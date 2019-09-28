@@ -75,6 +75,7 @@ namespace WinDynamicDesktop
 
             items.Add(new ToolStripMenuItem(_("Select &Language..."), null, OnLanguageItemClick));
             items.AddRange(SystemThemeChanger.GetMenuItems());
+            items.AddRange(WallpaperCompressionChanger.GetMenuItems());
             items.AddRange(UpdateChecker.GetMenuItems());
 
             return items;
