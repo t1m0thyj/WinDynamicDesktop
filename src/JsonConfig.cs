@@ -35,7 +35,6 @@ namespace WinDynamicDesktop
     public class ThemeConfig
     {
         public string themeId { get; set; }
-        public Uri[] imageUrls { get; set; }
         public string displayName { get; set; }
         public string imageFilename { get; set; }
         public string imageCredits { get; set; }
@@ -90,18 +89,8 @@ namespace WinDynamicDesktop
 
         public static ThemeConfig LoadTheme(string name)
         {
-            string jsonText;
             ThemeConfig theme;
-
-            if (ThemeManager.defaultThemes.Contains(name))
-            {
-                jsonText = Encoding.UTF8.GetString(
-                    (byte[])Properties.Resources.ResourceManager.GetObject(name + "_json"));
-            }
-            else
-            {
-                jsonText = File.ReadAllText(Path.Combine("themes", name, "theme.json"));
-            }
+            string jsonText = File.ReadAllText(Path.Combine("themes", name, "theme.json"));
 
             try
             {

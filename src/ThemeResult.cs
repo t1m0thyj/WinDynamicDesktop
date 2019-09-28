@@ -65,18 +65,5 @@ namespace WinDynamicDesktop
                 rightAction(this.right);
             }
         }
-
-        public void DoLeft(Action<ThemeError> leftAction)
-        {
-            if (leftAction == null)
-            {
-                throw new ArgumentNullException(nameof(leftAction));
-            }
-
-            if (this.isLeft)
-            {
-                leftAction(this.left);
-            }
-        }
     }
 }

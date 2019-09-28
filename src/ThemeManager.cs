@@ -14,8 +14,6 @@ namespace WinDynamicDesktop
     class ThemeManager
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
-        public static string[] defaultThemes = new string[] { "Catalina", "Mojave_Desert",
-            "Solar_Gradients" };
         public static List<ThemeConfig> themeSettings = new List<ThemeConfig>();
 
         public static bool downloadMode = false;
@@ -24,12 +22,15 @@ namespace WinDynamicDesktop
         public static List<ThemeConfig> importedThemes = new List<ThemeConfig>();
 
         public static ThemeConfig currentTheme;
+        public static string[] defaultThemes;
         private static ThemeDialog themeDialog;
 
         public static void Initialize()
         {
             Directory.CreateDirectory("themes");
-            List<string> themeIds = defaultThemes.ToList();
+            
+            defaultThemes = CustomAppConfig.GetDefaultThemes();
+            List<string> themeIds = new List<string>();
 
             foreach (string filePath in Directory.EnumerateFiles("themes", "*.json",
                 SearchOption.AllDirectories))
@@ -42,7 +43,6 @@ namespace WinDynamicDesktop
                 }
             }
 
-            themeIds.Sort();
             LoadInstalledThemes(themeIds);
         }
 
@@ -118,6 +118,7 @@ namespace WinDynamicDesktop
         {
             string themeId = Path.GetFileNameWithoutExtension(importPath);
             int themeIndex = themeSettings.FindIndex(t => t.themeId == themeId);
+            ThemeResult result;
 
             if (themeIndex != -1)
             {
@@ -129,9 +130,6 @@ namespace WinDynamicDesktop
                     return null;  // TODO Update when nullable reference types are supported
                 }
             }
-
-            Directory.CreateDirectory(Path.Combine("themes", themeId));
-            ThemeResult result;
 
             if (Path.GetExtension(importPath) != ".json")
             {
@@ -191,6 +189,14 @@ namespace WinDynamicDesktop
                         }
                     }
                 );
+            }
+
+            foreach (string themeId in defaultThemes)
+            {
+                if (!themeIds.Contains(themeId))
+                {
+                    themeSettings.Add(new ThemeConfig() { themeId = themeId });
+                }
             }
         }
 
