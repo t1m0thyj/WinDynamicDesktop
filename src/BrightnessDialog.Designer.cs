@@ -28,27 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BrightnessDialog));
             this.panel1 = new System.Windows.Forms.Panel();
             this.applyButton = new System.Windows.Forms.Button();
             this.ddcErrorTextBox = new System.Windows.Forms.TextBox();
             this.setBrightnessGroupBox = new System.Windows.Forms.GroupBox();
-            this.allNightComboBox = new System.Windows.Forms.ComboBox();
+            this.setCustomAutoBrightnessRadioButton = new System.Windows.Forms.RadioButton();
+            this.nightNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.enableAutoBrightnessRadioButton = new System.Windows.Forms.RadioButton();
+            this.disableAutoBrightnessRadioButton = new System.Windows.Forms.RadioButton();
+            this.sunsetNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.dayNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.sunriseNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.label9 = new System.Windows.Forms.Label();
-            this.allDayComboBox = new System.Windows.Forms.ComboBox();
             this.label8 = new System.Windows.Forms.Label();
             this.showBrightnessNotificationToastcheckBox = new System.Windows.Forms.CheckBox();
-            this.enableAutoBrightnesscheckBox = new System.Windows.Forms.CheckBox();
-            this.nightComboBox = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.sunsetComboBox = new System.Windows.Forms.ComboBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.dayComboBox = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.sunriseComboBox = new System.Windows.Forms.ComboBox();
-            this.setBrightnessCustomcheckBox = new System.Windows.Forms.CheckBox();
-            this.setBrightnessAutocheckBox = new System.Windows.Forms.CheckBox();
             this.currentDisplayBrightnessValueLabel = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.ddcSupportLabel = new System.Windows.Forms.Label();
@@ -56,8 +53,16 @@
             this.label2 = new System.Windows.Forms.Label();
             this.cancelButton = new System.Windows.Forms.Button();
             this.okButton = new System.Windows.Forms.Button();
+            this.allDaynumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.allNightnumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.panel1.SuspendLayout();
             this.setBrightnessGroupBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nightNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.sunsetNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dayNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.sunriseNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.allDaynumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.allNightnumericUpDown)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -75,13 +80,13 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(782, 333);
+            this.panel1.Size = new System.Drawing.Size(782, 341);
             this.panel1.TabIndex = 0;
             // 
             // applyButton
             // 
             this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.applyButton.Location = new System.Drawing.Point(669, 283);
+            this.applyButton.Location = new System.Drawing.Point(669, 291);
             this.applyButton.Margin = new System.Windows.Forms.Padding(4);
             this.applyButton.Name = "applyButton";
             this.applyButton.Size = new System.Drawing.Size(100, 28);
@@ -111,22 +116,22 @@
             // 
             this.setBrightnessGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.setBrightnessGroupBox.Controls.Add(this.allNightComboBox);
-            this.setBrightnessGroupBox.Controls.Add(this.label9);
-            this.setBrightnessGroupBox.Controls.Add(this.allDayComboBox);
-            this.setBrightnessGroupBox.Controls.Add(this.label8);
+            this.setBrightnessGroupBox.Controls.Add(this.allNightnumericUpDown);
+            this.setBrightnessGroupBox.Controls.Add(this.allDaynumericUpDown);
             this.setBrightnessGroupBox.Controls.Add(this.showBrightnessNotificationToastcheckBox);
-            this.setBrightnessGroupBox.Controls.Add(this.enableAutoBrightnesscheckBox);
-            this.setBrightnessGroupBox.Controls.Add(this.nightComboBox);
+            this.setBrightnessGroupBox.Controls.Add(this.setCustomAutoBrightnessRadioButton);
+            this.setBrightnessGroupBox.Controls.Add(this.nightNumericUpDown);
+            this.setBrightnessGroupBox.Controls.Add(this.enableAutoBrightnessRadioButton);
+            this.setBrightnessGroupBox.Controls.Add(this.disableAutoBrightnessRadioButton);
+            this.setBrightnessGroupBox.Controls.Add(this.sunsetNumericUpDown);
+            this.setBrightnessGroupBox.Controls.Add(this.dayNumericUpDown);
+            this.setBrightnessGroupBox.Controls.Add(this.sunriseNumericUpDown);
+            this.setBrightnessGroupBox.Controls.Add(this.label9);
+            this.setBrightnessGroupBox.Controls.Add(this.label8);
             this.setBrightnessGroupBox.Controls.Add(this.label7);
-            this.setBrightnessGroupBox.Controls.Add(this.sunsetComboBox);
             this.setBrightnessGroupBox.Controls.Add(this.label6);
-            this.setBrightnessGroupBox.Controls.Add(this.dayComboBox);
             this.setBrightnessGroupBox.Controls.Add(this.label5);
             this.setBrightnessGroupBox.Controls.Add(this.label3);
-            this.setBrightnessGroupBox.Controls.Add(this.sunriseComboBox);
-            this.setBrightnessGroupBox.Controls.Add(this.setBrightnessCustomcheckBox);
-            this.setBrightnessGroupBox.Controls.Add(this.setBrightnessAutocheckBox);
             this.setBrightnessGroupBox.Location = new System.Drawing.Point(14, 80);
             this.setBrightnessGroupBox.Name = "setBrightnessGroupBox";
             this.setBrightnessGroupBox.Size = new System.Drawing.Size(755, 170);
@@ -134,14 +139,68 @@
             this.setBrightnessGroupBox.TabStop = false;
             this.setBrightnessGroupBox.Text = "Auto Brightness Options";
             // 
-            // allNightComboBox
+            // setCustomAutoBrightnessRadioButton
             // 
-            this.allNightComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.allNightComboBox.FormattingEnabled = true;
-            this.allNightComboBox.Location = new System.Drawing.Point(585, 120);
-            this.allNightComboBox.Name = "allNightComboBox";
-            this.allNightComboBox.Size = new System.Drawing.Size(114, 24);
-            this.allNightComboBox.TabIndex = 26;
+            this.setCustomAutoBrightnessRadioButton.AutoSize = true;
+            this.setCustomAutoBrightnessRadioButton.Location = new System.Drawing.Point(19, 90);
+            this.setCustomAutoBrightnessRadioButton.Name = "setCustomAutoBrightnessRadioButton";
+            this.setCustomAutoBrightnessRadioButton.Size = new System.Drawing.Size(172, 21);
+            this.setCustomAutoBrightnessRadioButton.TabIndex = 2;
+            this.setCustomAutoBrightnessRadioButton.Text = "Set Custom Brightness";
+            this.setCustomAutoBrightnessRadioButton.UseVisualStyleBackColor = true;
+            this.setCustomAutoBrightnessRadioButton.CheckedChanged += new System.EventHandler(this.SetCustomAutoBrightnessRadioButton_CheckedChanged);
+            // 
+            // nightNumericUpDown
+            // 
+            this.nightNumericUpDown.Location = new System.Drawing.Point(443, 120);
+            this.nightNumericUpDown.Name = "nightNumericUpDown";
+            this.nightNumericUpDown.Size = new System.Drawing.Size(120, 22);
+            this.nightNumericUpDown.TabIndex = 30;
+            // 
+            // enableAutoBrightnessRadioButton
+            // 
+            this.enableAutoBrightnessRadioButton.AutoSize = true;
+            this.enableAutoBrightnessRadioButton.Location = new System.Drawing.Point(19, 60);
+            this.enableAutoBrightnessRadioButton.Name = "enableAutoBrightnessRadioButton";
+            this.enableAutoBrightnessRadioButton.Size = new System.Drawing.Size(116, 21);
+            this.enableAutoBrightnessRadioButton.TabIndex = 1;
+            this.enableAutoBrightnessRadioButton.Text = "Enable (Auto)";
+            this.enableAutoBrightnessRadioButton.UseVisualStyleBackColor = true;
+            this.enableAutoBrightnessRadioButton.CheckedChanged += new System.EventHandler(this.EnableAutoBrightnessRadioButton_CheckedChanged);
+            // 
+            // disableAutoBrightnessRadioButton
+            // 
+            this.disableAutoBrightnessRadioButton.AutoSize = true;
+            this.disableAutoBrightnessRadioButton.Checked = true;
+            this.disableAutoBrightnessRadioButton.Location = new System.Drawing.Point(19, 30);
+            this.disableAutoBrightnessRadioButton.Name = "disableAutoBrightnessRadioButton";
+            this.disableAutoBrightnessRadioButton.Size = new System.Drawing.Size(76, 21);
+            this.disableAutoBrightnessRadioButton.TabIndex = 0;
+            this.disableAutoBrightnessRadioButton.TabStop = true;
+            this.disableAutoBrightnessRadioButton.Text = "Disable";
+            this.disableAutoBrightnessRadioButton.UseVisualStyleBackColor = true;
+            this.disableAutoBrightnessRadioButton.CheckedChanged += new System.EventHandler(this.DisableAutoBrightnessRadioButton_CheckedChanged);
+            // 
+            // sunsetNumericUpDown
+            // 
+            this.sunsetNumericUpDown.Location = new System.Drawing.Point(443, 60);
+            this.sunsetNumericUpDown.Name = "sunsetNumericUpDown";
+            this.sunsetNumericUpDown.Size = new System.Drawing.Size(120, 22);
+            this.sunsetNumericUpDown.TabIndex = 29;
+            // 
+            // dayNumericUpDown
+            // 
+            this.dayNumericUpDown.Location = new System.Drawing.Point(300, 120);
+            this.dayNumericUpDown.Name = "dayNumericUpDown";
+            this.dayNumericUpDown.Size = new System.Drawing.Size(120, 22);
+            this.dayNumericUpDown.TabIndex = 28;
+            // 
+            // sunriseNumericUpDown
+            // 
+            this.sunriseNumericUpDown.Location = new System.Drawing.Point(300, 60);
+            this.sunriseNumericUpDown.Name = "sunriseNumericUpDown";
+            this.sunriseNumericUpDown.Size = new System.Drawing.Size(120, 22);
+            this.sunriseNumericUpDown.TabIndex = 27;
             // 
             // label9
             // 
@@ -151,15 +210,6 @@
             this.label9.Size = new System.Drawing.Size(58, 17);
             this.label9.TabIndex = 25;
             this.label9.Text = "All night";
-            // 
-            // allDayComboBox
-            // 
-            this.allDayComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.allDayComboBox.FormattingEnabled = true;
-            this.allDayComboBox.Location = new System.Drawing.Point(585, 60);
-            this.allDayComboBox.Name = "allDayComboBox";
-            this.allDayComboBox.Size = new System.Drawing.Size(114, 24);
-            this.allDayComboBox.TabIndex = 24;
             // 
             // label8
             // 
@@ -173,32 +223,12 @@
             // showBrightnessNotificationToastcheckBox
             // 
             this.showBrightnessNotificationToastcheckBox.AutoSize = true;
-            this.showBrightnessNotificationToastcheckBox.Location = new System.Drawing.Point(20, 125);
+            this.showBrightnessNotificationToastcheckBox.Location = new System.Drawing.Point(19, 123);
             this.showBrightnessNotificationToastcheckBox.Name = "showBrightnessNotificationToastcheckBox";
             this.showBrightnessNotificationToastcheckBox.Size = new System.Drawing.Size(178, 21);
             this.showBrightnessNotificationToastcheckBox.TabIndex = 22;
             this.showBrightnessNotificationToastcheckBox.Text = "Show Notification Toast";
             this.showBrightnessNotificationToastcheckBox.UseVisualStyleBackColor = true;
-            // 
-            // enableAutoBrightnesscheckBox
-            // 
-            this.enableAutoBrightnesscheckBox.AutoSize = true;
-            this.enableAutoBrightnesscheckBox.Location = new System.Drawing.Point(20, 35);
-            this.enableAutoBrightnesscheckBox.Name = "enableAutoBrightnesscheckBox";
-            this.enableAutoBrightnesscheckBox.Size = new System.Drawing.Size(74, 21);
-            this.enableAutoBrightnesscheckBox.TabIndex = 21;
-            this.enableAutoBrightnesscheckBox.Text = "Enable";
-            this.enableAutoBrightnesscheckBox.UseVisualStyleBackColor = true;
-            this.enableAutoBrightnesscheckBox.CheckedChanged += new System.EventHandler(this.EnableAutoBrightnesscheckBox_CheckedChanged);
-            // 
-            // nightComboBox
-            // 
-            this.nightComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.nightComboBox.FormattingEnabled = true;
-            this.nightComboBox.Location = new System.Drawing.Point(443, 120);
-            this.nightComboBox.Name = "nightComboBox";
-            this.nightComboBox.Size = new System.Drawing.Size(114, 24);
-            this.nightComboBox.TabIndex = 20;
             // 
             // label7
             // 
@@ -209,32 +239,14 @@
             this.label7.TabIndex = 19;
             this.label7.Text = "Night";
             // 
-            // sunsetComboBox
-            // 
-            this.sunsetComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.sunsetComboBox.FormattingEnabled = true;
-            this.sunsetComboBox.Location = new System.Drawing.Point(443, 60);
-            this.sunsetComboBox.Name = "sunsetComboBox";
-            this.sunsetComboBox.Size = new System.Drawing.Size(114, 24);
-            this.sunsetComboBox.TabIndex = 18;
-            // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(440, 35);
+            this.label6.Location = new System.Drawing.Point(451, 35);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(52, 17);
             this.label6.TabIndex = 17;
             this.label6.Text = "Sunset";
-            // 
-            // dayComboBox
-            // 
-            this.dayComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.dayComboBox.FormattingEnabled = true;
-            this.dayComboBox.Location = new System.Drawing.Point(300, 120);
-            this.dayComboBox.Name = "dayComboBox";
-            this.dayComboBox.Size = new System.Drawing.Size(114, 24);
-            this.dayComboBox.TabIndex = 16;
             // 
             // label5
             // 
@@ -253,37 +265,6 @@
             this.label3.Size = new System.Drawing.Size(56, 17);
             this.label3.TabIndex = 14;
             this.label3.Text = "Sunrise";
-            // 
-            // sunriseComboBox
-            // 
-            this.sunriseComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.sunriseComboBox.FormattingEnabled = true;
-            this.sunriseComboBox.Location = new System.Drawing.Point(300, 60);
-            this.sunriseComboBox.Name = "sunriseComboBox";
-            this.sunriseComboBox.Size = new System.Drawing.Size(114, 24);
-            this.sunriseComboBox.TabIndex = 2;
-            // 
-            // setBrightnessCustomcheckBox
-            // 
-            this.setBrightnessCustomcheckBox.AutoSize = true;
-            this.setBrightnessCustomcheckBox.Location = new System.Drawing.Point(20, 95);
-            this.setBrightnessCustomcheckBox.Name = "setBrightnessCustomcheckBox";
-            this.setBrightnessCustomcheckBox.Size = new System.Drawing.Size(77, 21);
-            this.setBrightnessCustomcheckBox.TabIndex = 1;
-            this.setBrightnessCustomcheckBox.Text = "Custom";
-            this.setBrightnessCustomcheckBox.UseVisualStyleBackColor = true;
-            this.setBrightnessCustomcheckBox.CheckedChanged += new System.EventHandler(this.SetBrightnessCustomcheckBox_CheckedChanged);
-            // 
-            // setBrightnessAutocheckBox
-            // 
-            this.setBrightnessAutocheckBox.AutoSize = true;
-            this.setBrightnessAutocheckBox.Location = new System.Drawing.Point(20, 65);
-            this.setBrightnessAutocheckBox.Name = "setBrightnessAutocheckBox";
-            this.setBrightnessAutocheckBox.Size = new System.Drawing.Size(59, 21);
-            this.setBrightnessAutocheckBox.TabIndex = 0;
-            this.setBrightnessAutocheckBox.Text = "Auto";
-            this.setBrightnessAutocheckBox.UseVisualStyleBackColor = true;
-            this.setBrightnessAutocheckBox.CheckedChanged += new System.EventHandler(this.SetBrightnessAutocheckBox_CheckedChanged);
             // 
             // currentDisplayBrightnessValueLabel
             // 
@@ -315,6 +296,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
+            this.label1.BackColor = System.Drawing.SystemColors.Control;
             this.label1.Location = new System.Drawing.Point(15, 15);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(111, 17);
@@ -326,7 +308,7 @@
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label2.Location = new System.Drawing.Point(14, 260);
+            this.label2.Location = new System.Drawing.Point(14, 268);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(755, 2);
@@ -337,7 +319,7 @@
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(561, 283);
+            this.cancelButton.Location = new System.Drawing.Point(561, 291);
             this.cancelButton.Margin = new System.Windows.Forms.Padding(4);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(100, 28);
@@ -350,7 +332,7 @@
             // 
             this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.okButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.okButton.Location = new System.Drawing.Point(453, 283);
+            this.okButton.Location = new System.Drawing.Point(453, 291);
             this.okButton.Margin = new System.Windows.Forms.Padding(4);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(100, 28);
@@ -359,13 +341,28 @@
             this.okButton.UseVisualStyleBackColor = true;
             this.okButton.Click += new System.EventHandler(this.OkButton_Click);
             // 
+            // allDaynumericUpDown
+            // 
+            this.allDaynumericUpDown.Location = new System.Drawing.Point(585, 60);
+            this.allDaynumericUpDown.Name = "allDaynumericUpDown";
+            this.allDaynumericUpDown.Size = new System.Drawing.Size(120, 22);
+            this.allDaynumericUpDown.TabIndex = 31;
+            // 
+            // allNightnumericUpDown
+            // 
+            this.allNightnumericUpDown.Location = new System.Drawing.Point(585, 120);
+            this.allNightnumericUpDown.Name = "allNightnumericUpDown";
+            this.allNightnumericUpDown.Size = new System.Drawing.Size(120, 22);
+            this.allNightnumericUpDown.TabIndex = 32;
+            // 
             // BrightnessDialog
             // 
             this.AcceptButton = this.okButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.Control;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(782, 333);
+            this.ClientSize = new System.Drawing.Size(782, 341);
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = global::WinDynamicDesktop.Properties.Resources.AppIcon;
@@ -379,6 +376,12 @@
             this.panel1.PerformLayout();
             this.setBrightnessGroupBox.ResumeLayout(false);
             this.setBrightnessGroupBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nightNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.sunsetNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dayNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.sunriseNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.allDaynumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.allNightnumericUpDown)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -389,28 +392,28 @@
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ComboBox sunriseComboBox;
-        private System.Windows.Forms.CheckBox setBrightnessCustomcheckBox;
-        private System.Windows.Forms.CheckBox setBrightnessAutocheckBox;
         private System.Windows.Forms.Label currentDisplayBrightnessValueLabel;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label ddcSupportLabel;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ComboBox sunsetComboBox;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.ComboBox dayComboBox;
-        private System.Windows.Forms.ComboBox nightComboBox;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.CheckBox enableAutoBrightnesscheckBox;
         private System.Windows.Forms.TextBox ddcErrorTextBox;
         private System.Windows.Forms.CheckBox showBrightnessNotificationToastcheckBox;
-        private System.Windows.Forms.ComboBox allNightComboBox;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.ComboBox allDayComboBox;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button applyButton;
         private System.Windows.Forms.GroupBox setBrightnessGroupBox;
+        private System.Windows.Forms.NumericUpDown sunriseNumericUpDown;
+        private System.Windows.Forms.NumericUpDown nightNumericUpDown;
+        private System.Windows.Forms.NumericUpDown sunsetNumericUpDown;
+        private System.Windows.Forms.NumericUpDown dayNumericUpDown;
+        private System.Windows.Forms.RadioButton setCustomAutoBrightnessRadioButton;
+        private System.Windows.Forms.RadioButton enableAutoBrightnessRadioButton;
+        private System.Windows.Forms.RadioButton disableAutoBrightnessRadioButton;
+        private System.Windows.Forms.NumericUpDown allNightnumericUpDown;
+        private System.Windows.Forms.NumericUpDown allDaynumericUpDown;
     }
 }

@@ -17,13 +17,13 @@
         {
             if (IsDDCSupported())
             {
-                if (JsonConfig.settings.useAutoBrightness)
+                if (JsonConfig.settings.useAutoBrightness || JsonConfig.settings.useCustomAutoBrightness)
                 {
                     switch (timeofDayIndex)
                     {
                         // ALL DAY
                         case 0:
-                            if (JsonConfig.settings.useAutoMode)
+                            if (JsonConfig.settings.useAutoBrightness)
                                 BrightnessController.ChangeBrightness(ALL_DAY_AUTO);
                             else
                                 BrightnessController.ChangeBrightness(JsonConfig.settings.allDayBrightness);
@@ -31,7 +31,7 @@
 
                         // ALL NIGHT
                         case 1:
-                            if (JsonConfig.settings.useAutoMode)
+                            if (JsonConfig.settings.useAutoBrightness)
                                 BrightnessController.ChangeBrightness(ALL_NIGHT_AUTO);
                             else
                                 BrightnessController.ChangeBrightness(JsonConfig.settings.allNightBrightness);
@@ -39,7 +39,7 @@
 
                         // SUNRISE
                         case 2:
-                            if (JsonConfig.settings.useAutoMode)
+                            if (JsonConfig.settings.useAutoBrightness)
                                 BrightnessController.ChangeBrightness(SUNRISE_AUTO);
                             else
                                 BrightnessController.ChangeBrightness(JsonConfig.settings.sunriseBrightness);
@@ -47,7 +47,7 @@
 
                         // DAY
                         case 3:
-                            if (JsonConfig.settings.useAutoMode)
+                            if (JsonConfig.settings.useAutoBrightness)
                                 BrightnessController.ChangeBrightness(DAY_AUTO);
                             else
                                 BrightnessController.ChangeBrightness(JsonConfig.settings.dayBrightness);
@@ -55,7 +55,7 @@
 
                         // SUNSET
                         case 4:
-                            if (JsonConfig.settings.useAutoMode)
+                            if (JsonConfig.settings.useAutoBrightness)
                                 BrightnessController.ChangeBrightness(SUNSET_AUTO);
                             else
                                 BrightnessController.ChangeBrightness(JsonConfig.settings.sunsetBrightness);
@@ -63,7 +63,7 @@
 
                         // NIGHT
                         case 5:
-                            if (JsonConfig.settings.useAutoMode)
+                            if (JsonConfig.settings.useAutoBrightness)
                                 BrightnessController.ChangeBrightness(NIGHT_AUTO);
                             else
                                 BrightnessController.ChangeBrightness(JsonConfig.settings.nightBrightness);
