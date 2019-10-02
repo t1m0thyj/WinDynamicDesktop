@@ -32,10 +32,11 @@ namespace WinDynamicDesktop
         public string language { get; set; }
 
         // Auto Brightness Config
-        public bool useAutoBrightness { get; set; }
+        public bool IsPolarAllDay { get; set; }
+        public bool IsPolarAllNight { get; set; }
         public bool showBrightnessChangeNotificationToast { get; set; }
-        public bool useAutoMode { get; set; }
-        public bool useCustomMode { get; set; }
+        public bool useAutoBrightness { get; set; }
+        public bool useCustomAutoBrightness { get; set; }
         public int allDayBrightness { get; set; }
         public int allNightBrightness { get; set; }
         public int sunriseBrightness { get; set; }
