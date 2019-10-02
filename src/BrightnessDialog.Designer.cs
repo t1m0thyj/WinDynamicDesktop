@@ -368,7 +368,7 @@
             this.ClientSize = new System.Drawing.Size(782, 333);
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Icon = global::WinDynamicDesktop.Properties.Resources.AppIcon;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "BrightnessDialog";
