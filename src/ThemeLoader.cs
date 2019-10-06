@@ -98,8 +98,7 @@ namespace WinDynamicDesktop
             return isAffirmative;
         }
 
-        public static ThemeResult ExtractTheme(string zipPath, string themeId,
-            ThemeConfig preloadedTheme = null)
+        public static ThemeResult ExtractTheme(string zipPath, string themeId)
         {
             if (!File.Exists(zipPath))
             {
@@ -107,32 +106,25 @@ namespace WinDynamicDesktop
             }
 
             string themePath = Path.Combine("themes", themeId);
+            Directory.CreateDirectory(themePath);
             ThemeResult result;
 
             try
             {
                 using (ZipArchive archive = ZipFile.OpenRead(zipPath))
                 {
-                    if (preloadedTheme == null)
+                    try
                     {
-                        try
-                        {
-                            ZipArchiveEntry themeJson = archive.Entries.Single(
-                                entry => Path.GetExtension(entry.Name) == ".json");
-                            themeJson.ExtractToFile(Path.Combine(themePath, "theme.json"), true);
-                        }
-                        catch (InvalidOperationException)
-                        {
-                            return new ThemeResult(new NoThemeJSONInZIP(themeId, zipPath));
-                        }
+                        ZipArchiveEntry themeJson = archive.Entries.Single(
+                            entry => Path.GetExtension(entry.Name) == ".json");
+                        themeJson.ExtractToFile(Path.Combine(themePath, "theme.json"), true);
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        return new ThemeResult(new NoThemeJSONInZIP(themeId, zipPath));
+                    }
 
-                        result = TryLoad(themeId);
-                    }
-                    else
-                    {
-                        Directory.CreateDirectory(themePath);
-                        result = new ThemeResult(preloadedTheme);
-                    }
+                    result = TryLoad(themeId);
 
                     ZipArchiveEntry[] imageEntries = archive.Entries.Where(
                         entry => Path.GetDirectoryName(entry.FullName) == ""

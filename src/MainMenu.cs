@@ -45,7 +45,7 @@ namespace WinDynamicDesktop
             });
             items[0].Enabled = false;
 
-            darkModeItem = new ToolStripMenuItem(_("Enable &Dark Mode"), null, OnDarkModeClick);
+            darkModeItem = new ToolStripMenuItem(_("&Night wallpaper only mode"), null, OnDarkModeClick);
             darkModeItem.Checked = JsonConfig.settings.darkMode;
             startOnBootItem = new ToolStripMenuItem(_("&Start on Boot"), null, OnStartOnBootClick);
 
@@ -82,6 +82,7 @@ namespace WinDynamicDesktop
 
             items.Add(new ToolStripSeparator());
             items.AddRange(SystemThemeChanger.GetMenuItems());
+            items.AddRange(WallpaperCompressionChanger.GetMenuItems());
             items.AddRange(UpdateChecker.GetMenuItems());
 
             return items;

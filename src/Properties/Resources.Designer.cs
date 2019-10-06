@@ -71,16 +71,6 @@ namespace WinDynamicDesktop.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] Catalina_json {
-            get {
-                object obj = ResourceManager.GetObject("Catalina_json", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Catalina_thumbnail {
@@ -143,9 +133,29 @@ namespace WinDynamicDesktop.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] locale_it_IT {
+            get {
+                object obj = ResourceManager.GetObject("locale_it_IT", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] locale_pl_PL {
             get {
                 object obj = ResourceManager.GetObject("locale_pl_PL", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] locale_ro_RO {
+            get {
+                object obj = ResourceManager.GetObject("locale_ro_RO", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -171,32 +181,12 @@ namespace WinDynamicDesktop.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] Mojave_Desert_json {
-            get {
-                object obj = ResourceManager.GetObject("Mojave_Desert_json", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Mojave_Desert_thumbnail {
             get {
                 object obj = ResourceManager.GetObject("Mojave_Desert_thumbnail", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] Solar_Gradients_json {
-            get {
-                object obj = ResourceManager.GetObject("Solar_Gradients_json", resourceCulture);
-                return ((byte[])(obj));
             }
         }
         

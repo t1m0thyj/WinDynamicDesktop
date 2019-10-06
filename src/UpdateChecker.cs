@@ -58,7 +58,10 @@ namespace WinDynamicDesktop
                     null, OnAutoUpdateItemClick);
                 menuItem.Checked = !JsonConfig.settings.disableAutoUpdate;
 
-                return new List<ToolStripItem>() { menuItem };
+                return new List<ToolStripItem>() {
+                    new ToolStripSeparator(),
+                    menuItem
+                };
             }
             else
             {

@@ -47,7 +47,7 @@ namespace WinDynamicDesktop
                 ThemeManager.GetThemeName(theme))));
 
             imagesZipDest = theme.themeId + "_images.zip";
-            themeUris = theme.imageUrls.ToList();
+            themeUris = CustomAppConfig.GetThemeUriList(theme.themeId).ToList();
             themeUriIndex = 0;
             DownloadNext(theme);
         }
@@ -104,8 +104,12 @@ namespace WinDynamicDesktop
             {
                 cancelButton.Enabled = false;
                 ThemeResult result = await Task.Run(
-                    () => ThemeLoader.ExtractTheme(imagesZipDest, theme.themeId, theme));
-                result.DoLeft(ThemeLoader.HandleError);
+                    () => ThemeLoader.ExtractTheme(imagesZipDest, theme.themeId));
+                result.Match(ThemeLoader.HandleError, newTheme =>
+                {
+                    int themeIndex = ThemeManager.themeSettings.FindIndex(t => t.themeId == newTheme.themeId);
+                    ThemeManager.themeSettings[themeIndex] = newTheme;
+                });
                 this.Close();
             }
             else if (themeUriIndex >= themeUris.Count)

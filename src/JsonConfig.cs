@@ -1,16 +1,15 @@
-﻿// This Source Code Form is subject to the terms of the Mozilla Public
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.IO;
-using System.Timers;
 using Newtonsoft.Json;
+using System.Timers;
 
 namespace WinDynamicDesktop
 {
@@ -26,6 +25,7 @@ namespace WinDynamicDesktop
         public bool disableAutoUpdate { get; set; }
         public string lastUpdateCheck { get; set; }
         public bool changeSystemTheme { get; set; }
+        public bool changeAppTheme { get; set; }
         public string themeName { get; set; }
         public bool useWindowsLocation { get; set; }
         public bool changeLockScreen { get; set; }
@@ -48,7 +48,6 @@ namespace WinDynamicDesktop
     public class ThemeConfig
     {
         public string themeId { get; set; }
-        public Uri[] imageUrls { get; set; }
         public string displayName { get; set; }
         public string imageFilename { get; set; }
         public string imageCredits { get; set; }
@@ -78,8 +77,18 @@ namespace WinDynamicDesktop
 
             if (!firstRun)
             {
-                string jsonText = File.ReadAllText("settings.conf");
-                settings = JsonConvert.DeserializeObject<AppConfig>(jsonText);
+                try
+                {
+                    string jsonText = File.ReadAllText("settings.conf");
+                    settings = JsonConvert.DeserializeObject<AppConfig>(jsonText);
+                }
+                catch (JsonReaderException)
+                {
+                    System.Windows.Forms.MessageBox.Show("Your WinDynamicDesktop configuration file was corrupt and has been reset to the default settings.", "Warning",
+                    System.Windows.Forms.MessageBoxButtons.OK,
+                    System.Windows.Forms.MessageBoxIcon.Warning);
+                    firstRun = true;
+                }
             }
 
             unsavedChanges = false;
@@ -93,18 +102,8 @@ namespace WinDynamicDesktop
 
         public static ThemeConfig LoadTheme(string name)
         {
-            string jsonText;
             ThemeConfig theme;
-
-            if (ThemeManager.defaultThemes.Contains(name))
-            {
-                jsonText = Encoding.UTF8.GetString(
-                    (byte[])Properties.Resources.ResourceManager.GetObject(name + "_json"));
-            }
-            else
-            {
-                jsonText = File.ReadAllText(Path.Combine("themes", name, "theme.json"));
-            }
+            string jsonText = File.ReadAllText(Path.Combine("themes", name, "theme.json"));
 
             try
             {
