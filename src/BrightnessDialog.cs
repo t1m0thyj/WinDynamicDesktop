@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Management;
 using System.Windows.Forms;
 using Windows.System.Power;
 
@@ -7,6 +8,11 @@ namespace WinDynamicDesktop
 {
     public partial class BrightnessDialog : Form
     {
+
+        ManagementScope scope = new ManagementScope("root\\WMI");
+        EventQuery queryWmiMonitorBrightnessEvent = new EventQuery("Select* From WmiMonitorBrightnessEvent");
+        ManagementEventWatcher brightnessEventWatcher;
+
         public BrightnessDialog()
         {
             InitializeComponent();
@@ -18,12 +24,10 @@ namespace WinDynamicDesktop
             this.showBrightnessNotificationToastcheckBox.Enabled = false;
             this.allDaynumericUpDown.Enabled = false;
             this.allNightnumericUpDown.Enabled = false;
-
         }
 
         private void BrightnessDialog_Load(object sender, EventArgs e)
         {
-
             ///
             /// Load Radio Button and Checkbox State from JSON config
             ///
@@ -41,7 +45,6 @@ namespace WinDynamicDesktop
             }
 
             this.showBrightnessNotificationToastcheckBox.Checked = JsonConfig.settings.showBrightnessChangeNotificationToast;
-
             ///
             /// Load NumericUpDown Values from JSON config
             ///
@@ -53,20 +56,42 @@ namespace WinDynamicDesktop
             this.allNightnumericUpDown.Value = JsonConfig.settings.allNightBrightness;
         }
 
+        private void BrightnessDialog_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (BrightnessManager.IsDDCSupported())
+            {
+                brightnessEventWatcher.Stop();
+                brightnessEventWatcher.EventArrived -= new EventArrivedEventHandler(WmiEventHandler);
+            }
+        }
+
         private void CheckDDCSupport()
         {
             if (!BrightnessManager.IsDDCSupported())
             {
                 setBrightnessGroupBox.Enabled = false;
-                ddcSupportLabel.Text = BrightnessManager.GetDDCStatus();
                 currentDisplayBrightnessValueLabel.Text = BrightnessManager.CurrentDisplayBrightnessValue();
                 ddcErrorTextBox.Visible = true;
             }
             else
             {
-                ddcSupportLabel.Text = BrightnessManager.GetDDCStatus();
                 currentDisplayBrightnessValueLabel.Text = BrightnessManager.CurrentDisplayBrightnessValue();
+                MonitorCurrentDisplayBrightnessValue();
             }
+        }
+
+        private void MonitorCurrentDisplayBrightnessValue()
+        {
+            brightnessEventWatcher = new ManagementEventWatcher(scope, queryWmiMonitorBrightnessEvent);
+            brightnessEventWatcher.EventArrived += new EventArrivedEventHandler(WmiEventHandler);
+            brightnessEventWatcher.Start();
+        }
+
+        private void WmiEventHandler(object sender, EventArrivedEventArgs e)
+        {
+            this.Invoke(new Action(() =>
+                currentDisplayBrightnessValueLabel.Text = e.NewEvent.Properties["Brightness"].Value.ToString() + "%"
+            ));
         }
 
         private void DisableNumericUpDown()
@@ -127,7 +152,6 @@ namespace WinDynamicDesktop
         {
             SaveConfig();
             AppContext.wpEngine.RunScheduler(true);
-            currentDisplayBrightnessValueLabel.Text = BrightnessManager.CurrentDisplayBrightnessValue();
         }
 
         private void SaveConfig()
@@ -167,5 +191,6 @@ namespace WinDynamicDesktop
             showBrightnessNotificationToastcheckBox.Enabled = true;
             EnableNumericUpDown();
         }
+
     }
 }

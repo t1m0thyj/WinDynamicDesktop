@@ -32,6 +32,9 @@
             this.applyButton = new System.Windows.Forms.Button();
             this.ddcErrorTextBox = new System.Windows.Forms.TextBox();
             this.setBrightnessGroupBox = new System.Windows.Forms.GroupBox();
+            this.allNightnumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.allDaynumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.showBrightnessNotificationToastcheckBox = new System.Windows.Forms.CheckBox();
             this.setCustomAutoBrightnessRadioButton = new System.Windows.Forms.RadioButton();
             this.nightNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.enableAutoBrightnessRadioButton = new System.Windows.Forms.RadioButton();
@@ -41,28 +44,23 @@
             this.sunriseNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.label9 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
-            this.showBrightnessNotificationToastcheckBox = new System.Windows.Forms.CheckBox();
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.currentDisplayBrightnessValueLabel = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.ddcSupportLabel = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.cancelButton = new System.Windows.Forms.Button();
             this.okButton = new System.Windows.Forms.Button();
-            this.allDaynumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.allNightnumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.panel1.SuspendLayout();
             this.setBrightnessGroupBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.allNightnumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.allDaynumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nightNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.sunsetNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dayNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.sunriseNumericUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.allDaynumericUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.allNightnumericUpDown)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -72,21 +70,19 @@
             this.panel1.Controls.Add(this.setBrightnessGroupBox);
             this.panel1.Controls.Add(this.currentDisplayBrightnessValueLabel);
             this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.ddcSupportLabel);
-            this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.cancelButton);
             this.panel1.Controls.Add(this.okButton);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(782, 341);
+            this.panel1.Size = new System.Drawing.Size(782, 303);
             this.panel1.TabIndex = 0;
             // 
             // applyButton
             // 
             this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.applyButton.Location = new System.Drawing.Point(669, 291);
+            this.applyButton.Location = new System.Drawing.Point(670, 262);
             this.applyButton.Margin = new System.Windows.Forms.Padding(4);
             this.applyButton.Name = "applyButton";
             this.applyButton.Size = new System.Drawing.Size(100, 28);
@@ -101,12 +97,12 @@
             this.ddcErrorTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.ddcErrorTextBox.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.ddcErrorTextBox.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ddcErrorTextBox.Location = new System.Drawing.Point(362, 15);
+            this.ddcErrorTextBox.Location = new System.Drawing.Point(315, 20);
             this.ddcErrorTextBox.MaxLength = 64;
             this.ddcErrorTextBox.Multiline = true;
             this.ddcErrorTextBox.Name = "ddcErrorTextBox";
             this.ddcErrorTextBox.ReadOnly = true;
-            this.ddcErrorTextBox.Size = new System.Drawing.Size(407, 59);
+            this.ddcErrorTextBox.Size = new System.Drawing.Size(454, 44);
             this.ddcErrorTextBox.TabIndex = 14;
             this.ddcErrorTextBox.Text = "Your display does not support DDC/CI. Check with your manufacturer if this featur" +
     "e is available.";
@@ -132,12 +128,36 @@
             this.setBrightnessGroupBox.Controls.Add(this.label6);
             this.setBrightnessGroupBox.Controls.Add(this.label5);
             this.setBrightnessGroupBox.Controls.Add(this.label3);
-            this.setBrightnessGroupBox.Location = new System.Drawing.Point(14, 80);
+            this.setBrightnessGroupBox.Location = new System.Drawing.Point(15, 70);
             this.setBrightnessGroupBox.Name = "setBrightnessGroupBox";
             this.setBrightnessGroupBox.Size = new System.Drawing.Size(755, 170);
             this.setBrightnessGroupBox.TabIndex = 13;
             this.setBrightnessGroupBox.TabStop = false;
             this.setBrightnessGroupBox.Text = "Auto Brightness Options";
+            // 
+            // allNightnumericUpDown
+            // 
+            this.allNightnumericUpDown.Location = new System.Drawing.Point(585, 120);
+            this.allNightnumericUpDown.Name = "allNightnumericUpDown";
+            this.allNightnumericUpDown.Size = new System.Drawing.Size(120, 22);
+            this.allNightnumericUpDown.TabIndex = 32;
+            // 
+            // allDaynumericUpDown
+            // 
+            this.allDaynumericUpDown.Location = new System.Drawing.Point(585, 60);
+            this.allDaynumericUpDown.Name = "allDaynumericUpDown";
+            this.allDaynumericUpDown.Size = new System.Drawing.Size(120, 22);
+            this.allDaynumericUpDown.TabIndex = 31;
+            // 
+            // showBrightnessNotificationToastcheckBox
+            // 
+            this.showBrightnessNotificationToastcheckBox.AutoSize = true;
+            this.showBrightnessNotificationToastcheckBox.Location = new System.Drawing.Point(19, 123);
+            this.showBrightnessNotificationToastcheckBox.Name = "showBrightnessNotificationToastcheckBox";
+            this.showBrightnessNotificationToastcheckBox.Size = new System.Drawing.Size(178, 21);
+            this.showBrightnessNotificationToastcheckBox.TabIndex = 22;
+            this.showBrightnessNotificationToastcheckBox.Text = "Show Notification Toast";
+            this.showBrightnessNotificationToastcheckBox.UseVisualStyleBackColor = true;
             // 
             // setCustomAutoBrightnessRadioButton
             // 
@@ -220,16 +240,6 @@
             this.label8.TabIndex = 23;
             this.label8.Text = "All day";
             // 
-            // showBrightnessNotificationToastcheckBox
-            // 
-            this.showBrightnessNotificationToastcheckBox.AutoSize = true;
-            this.showBrightnessNotificationToastcheckBox.Location = new System.Drawing.Point(19, 123);
-            this.showBrightnessNotificationToastcheckBox.Name = "showBrightnessNotificationToastcheckBox";
-            this.showBrightnessNotificationToastcheckBox.Size = new System.Drawing.Size(178, 21);
-            this.showBrightnessNotificationToastcheckBox.TabIndex = 22;
-            this.showBrightnessNotificationToastcheckBox.Text = "Show Notification Toast";
-            this.showBrightnessNotificationToastcheckBox.UseVisualStyleBackColor = true;
-            // 
             // label7
             // 
             this.label7.AutoSize = true;
@@ -269,7 +279,8 @@
             // currentDisplayBrightnessValueLabel
             // 
             this.currentDisplayBrightnessValueLabel.AutoSize = true;
-            this.currentDisplayBrightnessValueLabel.Location = new System.Drawing.Point(220, 40);
+            this.currentDisplayBrightnessValueLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.currentDisplayBrightnessValueLabel.Location = new System.Drawing.Point(15, 40);
             this.currentDisplayBrightnessValueLabel.Name = "currentDisplayBrightnessValueLabel";
             this.currentDisplayBrightnessValueLabel.Size = new System.Drawing.Size(44, 17);
             this.currentDisplayBrightnessValueLabel.TabIndex = 11;
@@ -278,37 +289,18 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(15, 40);
+            this.label4.Location = new System.Drawing.Point(15, 15);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(180, 17);
             this.label4.TabIndex = 10;
             this.label4.Text = "Current Display Brightness:";
-            // 
-            // ddcSupportLabel
-            // 
-            this.ddcSupportLabel.AutoSize = true;
-            this.ddcSupportLabel.Location = new System.Drawing.Point(220, 15);
-            this.ddcSupportLabel.Name = "ddcSupportLabel";
-            this.ddcSupportLabel.Size = new System.Drawing.Size(74, 17);
-            this.ddcSupportLabel.TabIndex = 9;
-            this.ddcSupportLabel.Text = "Supported";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.BackColor = System.Drawing.SystemColors.Control;
-            this.label1.Location = new System.Drawing.Point(15, 15);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(111, 17);
-            this.label1.TabIndex = 8;
-            this.label1.Text = "DDC/CI Support:";
             // 
             // label2
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label2.Location = new System.Drawing.Point(14, 268);
+            this.label2.Location = new System.Drawing.Point(14, 250);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(755, 2);
@@ -319,7 +311,7 @@
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(561, 291);
+            this.cancelButton.Location = new System.Drawing.Point(560, 262);
             this.cancelButton.Margin = new System.Windows.Forms.Padding(4);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(100, 28);
@@ -332,7 +324,7 @@
             // 
             this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.okButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.okButton.Location = new System.Drawing.Point(453, 291);
+            this.okButton.Location = new System.Drawing.Point(450, 262);
             this.okButton.Margin = new System.Windows.Forms.Padding(4);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(100, 28);
@@ -341,20 +333,6 @@
             this.okButton.UseVisualStyleBackColor = true;
             this.okButton.Click += new System.EventHandler(this.OkButton_Click);
             // 
-            // allDaynumericUpDown
-            // 
-            this.allDaynumericUpDown.Location = new System.Drawing.Point(585, 60);
-            this.allDaynumericUpDown.Name = "allDaynumericUpDown";
-            this.allDaynumericUpDown.Size = new System.Drawing.Size(120, 22);
-            this.allDaynumericUpDown.TabIndex = 31;
-            // 
-            // allNightnumericUpDown
-            // 
-            this.allNightnumericUpDown.Location = new System.Drawing.Point(585, 120);
-            this.allNightnumericUpDown.Name = "allNightnumericUpDown";
-            this.allNightnumericUpDown.Size = new System.Drawing.Size(120, 22);
-            this.allNightnumericUpDown.TabIndex = 32;
-            // 
             // BrightnessDialog
             // 
             this.AcceptButton = this.okButton;
@@ -362,7 +340,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(782, 341);
+            this.ClientSize = new System.Drawing.Size(782, 303);
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = global::WinDynamicDesktop.Properties.Resources.AppIcon;
@@ -371,17 +349,18 @@
             this.Name = "BrightnessDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Set Auto Brightness";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.BrightnessDialog_FormClosing);
             this.Load += new System.EventHandler(this.BrightnessDialog_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.setBrightnessGroupBox.ResumeLayout(false);
             this.setBrightnessGroupBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.allNightnumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.allDaynumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nightNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.sunsetNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dayNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.sunriseNumericUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.allDaynumericUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.allNightnumericUpDown)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -392,10 +371,7 @@
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label currentDisplayBrightnessValueLabel;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label ddcSupportLabel;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label6;
@@ -415,5 +391,6 @@
         private System.Windows.Forms.RadioButton disableAutoBrightnessRadioButton;
         private System.Windows.Forms.NumericUpDown allNightnumericUpDown;
         private System.Windows.Forms.NumericUpDown allDaynumericUpDown;
+        public System.Windows.Forms.Label currentDisplayBrightnessValueLabel;
     }
 }
