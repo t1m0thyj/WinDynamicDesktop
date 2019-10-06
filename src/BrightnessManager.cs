@@ -2,6 +2,7 @@
 {
     public class BrightnessManager
     {
+
         // Default brightness values for 'Auto'
         private static readonly int ALL_DAY_AUTO = 80;
         private static readonly int ALL_NIGHT_AUTO = 20;
@@ -9,9 +10,11 @@
         private static readonly int DAY_AUTO = 80;
         private static readonly int SUNSET_AUTO = 30;
         private static readonly int NIGHT_AUTO = 20;
+
         public static void Initialize()
         {
             BrightnessController.GetBrightness();
+
         }
         public static void ChangeBrightness(int timeofDayIndex)
         {
@@ -75,6 +78,7 @@
                 }
             }
         }
+
 
         public static bool IsDDCSupported()
         {

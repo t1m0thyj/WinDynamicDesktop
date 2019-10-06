@@ -8,6 +8,8 @@ namespace WinDynamicDesktop
         public static bool IsDDCSupported { get; set; }
 
         private static readonly ManagementScope scope = new ManagementScope("root\\WMI");
+        private static readonly SelectQuery queryWmiMonitorBrightness = new SelectQuery("WmiMonitorBrightness");
+        private static readonly SelectQuery queryWmiMonitorBrightnessMethods = new SelectQuery("WmiMonitorBrightnessMethods");
 
         public static void ChangeBrightness(int value)
         {
@@ -21,30 +23,23 @@ namespace WinDynamicDesktop
             }
         }
 
-        /**
-         * 
-         * Query the Windows Management Instrumentation to check if the user's PC has
-         * the ability to change display brightness. 
-         * 
-         * **/
+        /** GetBrightness
+         *  For the application to allow brightness change, it must query Windows Management Instrumentation first.
+         *  In this case, it will query "WmiMonitorBrightness" from the root\wmi namespace. For PCs or monitors that do not have
+         *  DDC/CI or any form of EDID support will throw an "Not Supported" exception.
+         */
         public static int GetBrightness()
         {
-            SelectQuery query = new SelectQuery("WmiMonitorBrightness");
-
-            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query))
+            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, queryWmiMonitorBrightness))
             {
                 using (ManagementObjectCollection objectCollection = searcher.Get())
                 {
                     try
                     {
                         foreach (ManagementObject mObj in objectCollection)
-                        {
-                            var currentBrightnessObject = mObj.Properties["CurrentBrightness"].Value;
-                            int.TryParse(currentBrightnessObject + "", out int brightnessValue);
-
+                        {       
                             IsDDCSupported = true;
-
-                            return brightnessValue;
+                            return Convert.ToInt32(mObj.Properties["CurrentBrightness"].Value);
                         }
                     }
                     catch (ManagementException e)
@@ -54,13 +49,11 @@ namespace WinDynamicDesktop
                 }
             }
             return 0;
-
         }
+
         private static void SetBrightness(byte brightnessValue)
         {
-            SelectQuery query = new SelectQuery("WmiMonitorBrightnessMethods");
-
-            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query))
+            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, queryWmiMonitorBrightnessMethods))
             {
                 using (ManagementObjectCollection objectCollection = searcher.Get())
                 {
