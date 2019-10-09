@@ -29,11 +29,12 @@ namespace WinDynamicDesktop
             "Polski",  // Polish
             "Română",  // Romanian
             "Pусский",  // Russian
+            "Türkçe",  // Turkish
             "中文 (简体)"  // Simplified Chinese
         };
 
         public static string[] localeNames = new string[] { "cs_CZ", "de_DE", "en_US", "es_ES",
-            "fr_FR", "el_GR", "it_IT", "pl_PL", "ro_RO", "ru_RU", "zh_CN" };
+            "fr_FR", "el_GR", "it_IT", "pl_PL", "ro_RO", "ru_RU", "tr_TR", "zh_CN" };
 
         public static string currentLocale;
         private static ICatalog moCatalog = null;

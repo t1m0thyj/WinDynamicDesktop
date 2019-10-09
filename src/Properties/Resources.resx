@@ -160,4 +160,7 @@
   <data name="locale_ro_RO" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\locale\ro_RO.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="locale_tr_TR" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\locale\tr_TR.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

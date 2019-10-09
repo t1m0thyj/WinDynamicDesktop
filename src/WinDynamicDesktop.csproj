@@ -200,6 +200,7 @@
     <None Include="locale\pl_PL.mo" />
     <None Include="locale\ro_RO.mo" />
     <None Include="locale\ru_RU.mo" />
+    <None Include="locale\tr_TR.mo" />
     <None Include="locale\zh_CN.mo" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
