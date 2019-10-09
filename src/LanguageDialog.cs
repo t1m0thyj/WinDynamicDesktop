@@ -29,6 +29,13 @@ namespace WinDynamicDesktop
         private void LanguageDialog_Load(object sender, EventArgs e)
         {
             comboBox1.Items.AddRange(Localization.languageNames);
+
+            if (Localization.IsLocaleFromWeb())
+            {
+                comboBox1.Enabled = false;
+                return;
+            }
+
             int langIndex = Array.IndexOf(Localization.localeNames, Localization.currentLocale);
 
             if (langIndex != -1)
@@ -48,7 +55,7 @@ namespace WinDynamicDesktop
 
                 if (AppContext.notifyIcon == null)  // Has UI been loaded yet?
                 {
-                    Localization.LoadLocale();
+                    Localization.LoadLocaleFromFile();
                 }
 
                 JsonConfig.settings.language = localeName;

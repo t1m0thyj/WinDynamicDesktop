@@ -9,7 +9,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Globalization;
 using System.IO;
+using System.Net;
 using System.Windows.Forms;
+using Karambolo.PO;
 using NGettext;
 
 namespace WinDynamicDesktop
@@ -34,7 +36,8 @@ namespace WinDynamicDesktop
             "fr_FR", "el_GR", "it_IT", "pl_PL", "ro_RO", "ru_RU", "zh_CN" };
 
         public static string currentLocale;
-        private static ICatalog catalog = null;
+        private static ICatalog moCatalog = null;
+        private static POCatalog poCatalog = null;
 
         public static void Initialize()
         {
@@ -46,8 +49,15 @@ namespace WinDynamicDesktop
                 currentLocale = localeNames.Contains(systemLocale) ? systemLocale : "en_US";
                 JsonConfig.settings.language = currentLocale;
             }
+            else if (!IsLocaleFromWeb())
+            {
+                LoadLocaleFromFile();
+            }
+            else
+            {
+                LoadLocaleFromWeb();
+            }
 
-            LoadLocale();
 
             if (JsonConfig.firstRun)
             {
@@ -55,15 +65,29 @@ namespace WinDynamicDesktop
             }
         }
 
-        public static void LoadLocale()
+        public static bool IsLocaleFromWeb()
         {
+            return currentLocale.StartsWith("http://") || currentLocale.StartsWith("https://");
+        }
+
+        public static void LoadLocaleFromFile()
+        {
+            string poFile = currentLocale + ".po";
             string moFile = currentLocale + ".mo";
 
-            if (File.Exists(moFile))
+            if (File.Exists(poFile))
+            {
+                using (Stream stream = File.OpenRead(poFile))
+                {
+                    POParser parser = new POParser();
+                    poCatalog = parser.Parse(stream).Catalog;
+                }
+            }
+            else if (File.Exists(moFile))
             {
                 using (Stream stream = File.OpenRead(moFile))
                 {
-                    catalog = new Catalog(stream,
+                    moCatalog = new Catalog(stream,
                         new CultureInfo(currentLocale.Replace('_', '-')));
                 }
             }
@@ -79,9 +103,19 @@ namespace WinDynamicDesktop
 
                 using (Stream stream = new MemoryStream(embeddedMo))
                 {
-                    catalog = new Catalog(stream,
+                    moCatalog = new Catalog(stream,
                         new CultureInfo(currentLocale.Replace('_', '-')));
                 }
+            }
+        }
+
+        private static void LoadLocaleFromWeb()
+        {
+            using (WebClient wc = new WebClient())
+            {
+                string poText = wc.DownloadString(currentLocale);
+                POParser parser = new POParser();
+                poCatalog = parser.Parse(poText).Catalog;
             }
         }
 
@@ -93,7 +127,16 @@ namespace WinDynamicDesktop
 
         public static string GetTranslation(string msg)
         {
-            return (catalog != null) ? catalog.GetString(msg) : msg;
+            if (moCatalog != null)
+            {
+                return moCatalog.GetString(msg);
+            }
+            else if (poCatalog != null)
+            {
+                return poCatalog.GetTranslation(new POKey(msg));
+            }
+
+            return msg;
         }
 
         // Code from https://stackoverflow.com/a/664083/5504760

@@ -163,7 +163,7 @@ namespace WinDynamicDesktop
                 currentTheme = null;
             }
 
-            if (themeSettings.Contains(theme))
+            if (themeSettings.Contains(theme) && !defaultThemes.Contains(theme.themeId))
             {
                 themeSettings.Remove(theme);
             }

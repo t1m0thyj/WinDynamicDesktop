@@ -24,8 +24,7 @@ namespace WinDynamicDesktop
         private List<string> themeNames = new List<string>();
 
         private static readonly Func<string, string> _ = Localization.GetTranslation;
-        private const string themeLink =
-            "https://github.com/t1m0thyj/WinDynamicDesktop/wiki/Community-created-themes";
+        private const string themeLink = "https://windd.info/themes/";
         private readonly string windowsWallpaper = Directory.GetFiles(
             Environment.ExpandEnvironmentVariables(@"%SystemRoot%\Web\Wallpaper\Windows"))[0];
 
@@ -407,11 +406,24 @@ namespace WinDynamicDesktop
             imageListView1.HitTest(imageListView1.PointToClient(Cursor.Position),
                 out var hitTestInfo);
             int itemIndex = hitTestInfo.ItemIndex;
+            string themeId = (string)imageListView1.Items[itemIndex].Tag;
 
-            if (itemIndex <= 0 || ThemeManager.defaultThemes.Contains(
-                (string)imageListView1.Items[itemIndex].Tag))
+            if (itemIndex <= 0 || ThemeManager.defaultThemes.Contains(themeId))
             {
-                e.Cancel = true;
+                ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId); 
+                
+                if (ThemeManager.IsThemeDownloaded(theme))
+                {
+                    contextMenuStrip1.Items[0].Text = _("Remove files");
+                }
+                else
+                {
+                    e.Cancel = true;
+                }
+            }
+            else
+            {
+                contextMenuStrip1.Items[0].Text = _("Delete");
             }
         }
 
@@ -427,11 +439,21 @@ namespace WinDynamicDesktop
 
             if (result == DialogResult.Yes)
             {
-                imageListView1.Items.RemoveAt(itemIndex);
-                imageListView1.Items[itemIndex - 1].Selected = true;
-                themeNames.RemoveAt(itemIndex - 1);
+                if (!ThemeManager.defaultThemes.Contains(theme.themeId))
+                {
+                    imageListView1.Items.RemoveAt(itemIndex);
+                    imageListView1.Items[itemIndex - 1].Selected = true;
+                    themeNames.RemoveAt(itemIndex - 1);
+                }
 
-                Task.Run(() => ThemeManager.RemoveTheme(theme));
+                Task.Run(() => {
+                    ThemeManager.RemoveTheme(theme);
+
+                    if (ThemeManager.defaultThemes.Contains(theme.themeId))
+                    {
+                        this.Invoke(new Action(() => UpdateSelectedItem()));
+                    }
+                });
             }
         }
 
