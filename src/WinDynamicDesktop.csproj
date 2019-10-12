@@ -105,6 +105,7 @@
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="AppContext.cs" />
+    <Compile Include="Compatibility.cs" />
     <Compile Include="CustomAppConfig.cs" />
     <Compile Include="DebugLogger.cs" />
     <Compile Include="DesktopHelper.cs" />
