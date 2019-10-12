@@ -52,6 +52,9 @@
     <Reference Include="ImageListView, Version=13.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\ImageListView.13.4.0\lib\net35\ImageListView.dll</HintPath>
     </Reference>
+    <Reference Include="Karambolo.PO, Version=1.5.0.0, Culture=neutral, PublicKeyToken=496b38436bb9edeb, processorArchitecture=MSIL">
+      <HintPath>packages\Karambolo.PO.Minimal.1.5.1\lib\net45\Karambolo.PO.dll</HintPath>
+    </Reference>
     <Reference Include="NamedPipeWrapper, Version=1.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\NamedPipeWrapper.1.5.0\lib\net40\NamedPipeWrapper.dll</HintPath>
     </Reference>
@@ -111,6 +114,8 @@
       <DependentUpon>BrightnessDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="BrightnessManager.cs" />
+    <Compile Include="Compatibility.cs" />
+    <Compile Include="CustomAppConfig.cs" />
     <Compile Include="DebugLogger.cs" />
     <Compile Include="DesktopHelper.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -208,6 +213,7 @@
     <None Include="locale\pl_PL.mo" />
     <None Include="locale\ro_RO.mo" />
     <None Include="locale\ru_RU.mo" />
+    <None Include="locale\tr_TR.mo" />
     <None Include="locale\zh_CN.mo" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

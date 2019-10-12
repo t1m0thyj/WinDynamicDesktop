@@ -28,6 +28,7 @@ namespace WinDynamicDesktop
         public static void Initialize()
         {
             Directory.CreateDirectory("themes");
+            Compatibility.CompatibilizeThemes();
             
             defaultThemes = CustomAppConfig.GetDefaultThemes();
             List<string> themeIds = new List<string>();
@@ -163,7 +164,7 @@ namespace WinDynamicDesktop
                 currentTheme = null;
             }
 
-            if (themeSettings.Contains(theme))
+            if (themeSettings.Contains(theme) && !defaultThemes.Contains(theme.themeId))
             {
                 themeSettings.Remove(theme);
             }

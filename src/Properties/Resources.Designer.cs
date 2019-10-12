@@ -173,6 +173,16 @@ namespace WinDynamicDesktop.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] locale_tr_TR {
+            get {
+                object obj = ResourceManager.GetObject("locale_tr_TR", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] locale_zh_CN {
             get {
                 object obj = ResourceManager.GetObject("locale_zh_CN", resourceCulture);
