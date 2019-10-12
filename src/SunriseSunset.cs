@@ -84,10 +84,14 @@ namespace WinDynamicDesktop
             switch (solarData.polarPeriod)
             {
                 case PolarPeriod.PolarDay:
+                    JsonConfig.settings.IsPolarAllDay = true;
                     return _("Sunrise/Sunset: Up all day");
                 case PolarPeriod.PolarNight:
+                    JsonConfig.settings.IsPolarAllNight = true;
                     return _("Sunrise/Sunset: Down all day");
                 default:
+                    JsonConfig.settings.IsPolarAllDay = false;
+                    JsonConfig.settings.IsPolarAllNight = false;
                     return string.Format(_("Sunrise: {0}, Sunset: {1}"), 
                         solarData.sunriseTime.ToShortTimeString(),
                         solarData.sunsetTime.ToShortTimeString());

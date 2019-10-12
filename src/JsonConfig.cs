@@ -30,6 +30,19 @@ namespace WinDynamicDesktop
         public bool useWindowsLocation { get; set; }
         public bool changeLockScreen { get; set; }
         public string language { get; set; }
+
+        // Auto Brightness Config
+        public bool IsPolarAllDay { get; set; }
+        public bool IsPolarAllNight { get; set; }
+        public bool showBrightnessChangeNotificationToast { get; set; }
+        public bool useAutoBrightness { get; set; }
+        public bool useCustomAutoBrightness { get; set; }
+        public int allDayBrightness { get; set; }
+        public int allNightBrightness { get; set; }
+        public int sunriseBrightness { get; set; }
+        public int dayBrightness { get; set; }
+        public int sunsetBrightness { get; set; }
+        public int nightBrightness { get; set; }
     }
 
     public class ThemeConfig
@@ -129,7 +142,7 @@ namespace WinDynamicDesktop
 
             await Task.Run(() =>
             {
-                string jsonText = JsonConvert.SerializeObject(settings);
+                string jsonText = JsonConvert.SerializeObject(settings, Formatting.Indented);
                 File.WriteAllText("settings.conf", jsonText);
             });
 

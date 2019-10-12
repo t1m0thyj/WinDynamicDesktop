@@ -134,26 +134,31 @@ namespace WinDynamicDesktop
                         imageList = theme.dayImageList;
                         segmentStart = DateTime.Today;
                         segmentEnd = DateTime.Today.AddDays(1);
+                        BrightnessManager.ChangeBrightness(0);
                         break;
                     case DaySegment.AllNight:
                         imageList = theme.nightImageList;
                         segmentStart = DateTime.Today;
                         segmentEnd = DateTime.Today.AddDays(1);
+                        BrightnessManager.ChangeBrightness(1);
                         break;
                     case DaySegment.Sunrise:
                         imageList = theme.sunriseImageList;
                         segmentStart = data.solarTimes[0];
                         segmentEnd = data.solarTimes[1];
+                        BrightnessManager.ChangeBrightness(2);
                         break;
                     case DaySegment.Day:
                         imageList = theme.dayImageList;
                         segmentStart = data.solarTimes[1];
                         segmentEnd = data.solarTimes[2];
+                        BrightnessManager.ChangeBrightness(3);
                         break;
                     case DaySegment.Sunset:
                         imageList = theme.sunsetImageList;
                         segmentStart = data.solarTimes[2];
                         segmentEnd = data.solarTimes[3];
+                        BrightnessManager.ChangeBrightness(4);
                         break;
                     default:
                         imageList = theme.nightImageList;
@@ -173,12 +178,15 @@ namespace WinDynamicDesktop
                             segmentEnd = tomorrowsData.solarTimes[0];
                         }
 
+                        BrightnessManager.ChangeBrightness(5);
                         break;
                 }
             }
             else
             {
                 imageList = theme.nightImageList;
+
+                BrightnessManager.ChangeBrightness(5);
 
                 if (data.polarPeriod != PolarPeriod.None)
                 {
