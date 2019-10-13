@@ -4,9 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
 
@@ -99,9 +96,42 @@ namespace WinDynamicDesktop
             AppContext.wpEngine.RunScheduler();
         }
 
+        /// <summary>
+        /// 
+        /// Note: Starting with Windows 10 20H1, Notepad can be uninstalled from Windows.
+        /// 
+        /// To prevent issues going forward, the Try-Catch block will try to launch
+        /// in Notepad first as all Windows PCs come shipped with it. However, if the
+        /// user uninstalls Notepad, WinDynamicDesktop will ask the user to launch from another
+        /// application.
+        /// 
+        /// </summary>
+        /// 
+
         private static void EditConfigFile()
         {
-            Process.Start("settings.conf");
+
+            try
+            {
+                Process.Start("notepad.exe", "settings.conf");
+            }
+            catch (Exception e)
+            {
+                using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                {
+                    openFileDialog.InitialDirectory = "C:\\Program Files";
+                    openFileDialog.Filter = "Application (*.exe)|*.exe";
+                    openFileDialog.RestoreDirectory = true;
+
+                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        string filePath = openFileDialog.FileName;
+                        Process.Start(filePath, "settings.conf");
+                    }
+
+                }
+            }
+
         }
 
         private static void OnEditConfigFileClick(object sender, EventArgs e)
