@@ -45,10 +45,10 @@ namespace WinDynamicDesktop
 
             if (!hasAccess)
             {
-                DialogResult result = MessageBox.Show(_("WinDynamicDesktop needs location " +
-                    "access for this feature. Click OK to open the Windows 10 location settings " +
-                    "and grant location access to the app, then select the checkbox again."),
-                    _("Location Access"), MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+                DialogResult result = MessageDialog.ShowInfo(_("WinDynamicDesktop needs " +
+                    "location access for this feature. Click OK to open the Windows 10 location " +
+                    "settings and grant location access to the app, then select the checkbox " +
+                    "again."), _("Location Access"), true);
 
                 if (result == DialogResult.OK)
                 {

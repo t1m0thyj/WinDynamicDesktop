@@ -62,13 +62,13 @@ namespace WinDynamicDesktop
                 File.AppendAllText(logFilename,
                     string.Format("[{0}] {1}\n\n", timestamp, errorMessage));
 
-                MessageBox.Show("See the logfile '" + logFilename + "' for details",
-                    "Errors occurred", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageDialog.ShowError("See the logfile '" + logFilename + "' for details",
+                    "Errors occurred");
             }
             catch
             {
-                MessageBox.Show("The logfile '" + logFilename + "' could not be opened:\n " +
-                    errorMessage, "Errors occurred", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageDialog.ShowError("The logfile '" + logFilename + "' could not be " +
+                    "opened:\n " + errorMessage, "Errors occurred");
             }
         }
     }

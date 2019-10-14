@@ -30,12 +30,6 @@ namespace WinDynamicDesktop
         {
             comboBox1.Items.AddRange(Localization.languageNames);
 
-            if (Localization.IsLocaleFromWeb())
-            {
-                comboBox1.Enabled = false;
-                return;
-            }
-
             int langIndex = Array.IndexOf(Localization.localeNames, Localization.currentLocale);
 
             if (langIndex != -1)
@@ -62,9 +56,9 @@ namespace WinDynamicDesktop
 
                 if (AppContext.notifyIcon != null)
                 {
-                    DialogResult result = MessageBox.Show(_("WinDynamicDesktop needs to restart " +
-                        "for the language to change. Do you want to restart the app now?"),
-                        _("Question"), MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    DialogResult result = MessageDialog.ShowQuestion(_("WinDynamicDesktop needs " +
+                        "to restart for the language to change. Do you want to restart the app " +
+                        "now?"), _("Question"));
 
                     if (result == DialogResult.Yes)
                     {

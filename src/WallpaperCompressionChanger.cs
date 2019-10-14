@@ -39,8 +39,8 @@ namespace WinDynamicDesktop
             compressionTweakItem.Checked = isWallpaperCompressionTweaked;
 
             return new List<ToolStripItem>() {
-                new ToolStripSeparator(),
                 compressionTweakItem,
+                new ToolStripSeparator()
             };
         }
 
@@ -68,11 +68,8 @@ namespace WinDynamicDesktop
         {
             TryApplyWallpaperCompressionTweak();
             compressionTweakItem.Checked = isWallpaperCompressionTweaked;
-            MessageBox.Show(
-                _("This tweak only affects wallpapers that are JPEG images. In order for this change to take effect, you should restart your computer."),
-                _("WinDynamicDesktop"),
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information);
+            MessageDialog.ShowInfo(_("This tweak only affects wallpapers that are JPEG images. " +
+                "In order for this change to take effect, you should restart your computer."));
         }
     }
 }

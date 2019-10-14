@@ -42,7 +42,7 @@ namespace WinDynamicDesktop
                             return Convert.ToInt32(mObj.Properties["CurrentBrightness"].Value);
                         }
                     }
-                    catch (ManagementException e)
+                    catch (ManagementException)
                     {
                         IsDDCSupported = false;
                     }

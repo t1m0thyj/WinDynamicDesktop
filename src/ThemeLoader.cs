@@ -61,15 +61,14 @@ namespace WinDynamicDesktop
 
             if (ThemeManager.downloadMode || ThemeManager.importMode)
             {
-                MessageBox.Show(string.Format(_("Failed to import '{0}' theme:\n{1}"), e.themeId,
-                    e.errorMsg), _("Error"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageDialog.ShowWarning(string.Format(_("Failed to import '{0}' theme:\n{1}"),
+                    e.themeId, e.errorMsg), _("Error"));
             }
             else
             {
-                DialogResult result = MessageBox.Show(string.Format(_("Failed to load '{0}' " +
-                    "theme:\n{1}\n\nDo you want to disable this theme to prevent the error from " +
-                    "happening again?"), e.themeId, e.errorMsg), _("Error"),
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                DialogResult result = MessageDialog.ShowQuestion(string.Format(_("Failed to " +
+                    "load '{0}' theme:\n{1}\n\nDo you want to disable this theme to prevent the " +
+                    "error from happening again?"), e.themeId, e.errorMsg), _("Error"), true);
                 ThemeManager.DisableTheme(e.themeId, result == DialogResult.Yes);
             }
 
@@ -86,8 +85,7 @@ namespace WinDynamicDesktop
                 TaskbarProgress.SetState(taskbarHandle, TaskbarProgress.TaskbarStates.Paused);
             }
 
-            DialogResult result = MessageBox.Show(dialogText, _("Question"),
-                MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            DialogResult result = MessageDialog.ShowQuestion(dialogText, _("Question"), true);
             bool isAffirmative = (result == DialogResult.Yes);
 
             if (taskbarHandle != IntPtr.Zero)

@@ -7,8 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace WinDynamicDesktop
 {
@@ -61,7 +61,6 @@ namespace WinDynamicDesktop
                 startOnBootItem,
                 optionsItem,
                 new ToolStripSeparator(),
-                new ToolStripMenuItem(_("Edit Configuration File"), null, OnEditConfigFileClick),
                 new ToolStripMenuItem(_("&Check for Updates"), null, OnUpdateItemClick),
                 new ToolStripMenuItem(_("&About"), null, OnAboutItemClick),
                 new ToolStripSeparator(),
@@ -76,6 +75,7 @@ namespace WinDynamicDesktop
             List<ToolStripItem> items = new List<ToolStripItem>();
 
             items.Add(new ToolStripMenuItem(_("Select &Language..."), null, OnLanguageItemClick));
+            items.Add(new ToolStripMenuItem(_("Edit Configuration File"), null, OnEditConfigFileClick));
 
             if (BrightnessController.IsDDCSupported)
             {
@@ -99,14 +99,9 @@ namespace WinDynamicDesktop
             AppContext.wpEngine.RunScheduler();
         }
 
-        private static void EditConfigFile()
-        {
-            Process.Start("settings.conf");
-        }
-
         private static void OnEditConfigFileClick(object sender, EventArgs e)
         {
-            EditConfigFile();
+            Process.Start("explorer", "settings.conf");
         }
 
         private static void OnThemeItemClick(object sender, EventArgs e)

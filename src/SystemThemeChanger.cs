@@ -45,9 +45,9 @@ namespace WinDynamicDesktop
             automaticAppThemeItem.Checked = JsonConfig.settings.changeAppTheme;
 
             return new List<ToolStripItem>() {
-                new ToolStripSeparator(),
                 automaticSystemThemeItem,
-                automaticAppThemeItem
+                automaticAppThemeItem,
+                new ToolStripSeparator(),
             };
         }
 

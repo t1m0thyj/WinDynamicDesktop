@@ -53,9 +53,13 @@ namespace WinDynamicDesktop
             importDialog.InitImport(themePaths);
         }
 
-        private string GetCreditsText()
+        private string GetCreditsText(bool themeDownloaded)
         {
-            if (selectedIndex > 0)
+            if (!themeDownloaded)
+            {
+                return _("Image Credits: Apple");
+            }
+            else if (selectedIndex > 0)
             {
                 ThemeConfig theme = ThemeManager.themeSettings[selectedIndex - 1];
 
@@ -150,39 +154,39 @@ namespace WinDynamicDesktop
 
             Task.Run(() =>
             {
-            for (int i = 0; i < themes.Count; i++)
-            {
-                this.Invoke(new Action(() => EnsureThemeNotDuplicated(themes[i].themeId)));
+                for (int i = 0; i < themes.Count; i++)
+                {
+                    this.Invoke(new Action(() => EnsureThemeNotDuplicated(themes[i].themeId)));
 
-                string themeName = ThemeManager.GetThemeName(themes[i]);
-                themeNames.Add(themeName);
-                themeNames.Sort();
-                int itemIndex = themeNames.IndexOf(themeName) + 1;
+                    string themeName = ThemeManager.GetThemeName(themes[i]);
+                    themeNames.Add(themeName);
+                    themeNames.Sort();
+                    int itemIndex = themeNames.IndexOf(themeName) + 1;
 
-                using (Image thumbnailImage = ThemeThumbLoader.GetThumbnailImage(themes[i],
-                    thumbnailSize, false))
+                    using (Image thumbnailImage = ThemeThumbLoader.GetThumbnailImage(themes[i],
+                        thumbnailSize, false))
+                    {
+                        this.Invoke(new Action(() =>
+                        {
+                            imageListView1.Items.Insert(itemIndex,
+                                ThemeManager.GetThemeName(themes[i]), thumbnailImage);
+                            newItem = imageListView1.Items[itemIndex];
+                            newItem.Tag = themes[i].themeId;
+                        }));
+                    }
+                }
+
+                if (newItem != null)
                 {
                     this.Invoke(new Action(() =>
                     {
-                        imageListView1.Items.Insert(itemIndex,
-                            ThemeManager.GetThemeName(themes[i]), thumbnailImage);
-                        newItem = imageListView1.Items[itemIndex];
-                        newItem.Tag = themes[i].themeId;
+                        newItem.Selected = true;
+                        imageListView1.EnsureVisible(newItem.Index);
                     }));
                 }
-            }
 
-            if (newItem != null)
-            {
-                this.Invoke(new Action(() =>
-                {
-                    newItem.Selected = true;
-                    imageListView1.EnsureVisible(newItem.Index);
-                }));
-            }
-
-            importDialog.thumbnailsLoaded = true;
-            this.Invoke(new Action(() => importDialog.Close()));
+                importDialog.thumbnailsLoaded = true;
+                this.Invoke(new Action(() => importDialog.Close()));
             });
         }
 
@@ -226,7 +230,7 @@ namespace WinDynamicDesktop
                 }
 
                 SetThemeDownloaded(themeDownloaded);
-                creditsLabel.Text = GetCreditsText();
+                creditsLabel.Text = GetCreditsText(themeDownloaded);
 
                 if (themeDownloaded)
                 {
@@ -321,6 +325,8 @@ namespace WinDynamicDesktop
             else
             {
                 AppContext.wpEngine.RunScheduler();
+                AppContext.ShowPopup(string.Format(_("New theme applied: {0}"),
+                    ThemeManager.GetThemeName(ThemeManager.currentTheme)));
             }
         }
 
@@ -433,9 +439,9 @@ namespace WinDynamicDesktop
             string themeId = (string)imageListView1.Items[itemIndex].Tag;
             ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
 
-            DialogResult result = MessageBox.Show(string.Format(_("Are you sure you want to " +
-                "remove the '{0}' theme?"), ThemeManager.GetThemeName(theme)), _("Question"),
-                MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            DialogResult result = MessageDialog.ShowQuestion(string.Format(_("Are you sure you " +
+                "want to remove the '{0}' theme?"), ThemeManager.GetThemeName(theme)),
+                _("Question"), true);
 
             if (result == DialogResult.Yes)
             {
@@ -488,10 +494,9 @@ namespace WinDynamicDesktop
         {
             if (JsonConfig.firstRun && ThemeManager.currentTheme == null)
             {
-                DialogResult result = MessageBox.Show(_("WinDynamicDesktop cannot dynamically " +
-                    "update your wallpaper until you have selected a theme. Are you sure you " +
-                    "want to continue without a theme selected?"), _("Question"),
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                DialogResult result = MessageDialog.ShowQuestion(_("WinDynamicDesktop cannot " +
+                    "dynamically update your wallpaper until you have selected a theme. Are you " +
+                    "sure you want to continue without a theme selected?"), _("Question"), true);
 
                 if (result != DialogResult.Yes)
                 {

@@ -59,7 +59,6 @@ namespace WinDynamicDesktop
                 menuItem.Checked = !JsonConfig.settings.disableAutoUpdate;
 
                 return new List<ToolStripItem>() {
-                    new ToolStripSeparator(),
                     menuItem
                 };
             }
@@ -103,15 +102,15 @@ namespace WinDynamicDesktop
 
             if (latestVersion == null)
             {
-                MessageBox.Show(_("WinDynamicDesktop could not connect to the Internet to check " +
-                    "for updates."), _("Error"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageDialog.ShowWarning(_("WinDynamicDesktop could not connect to the " +
+                    "Internet to check for updates."), _("Error"));
             }
             else if (IsUpdateAvailable(currentVersion, latestVersion))
             {
-                DialogResult result = MessageBox.Show(string.Format(_("There is a newer version " +
-                    "of WinDynamicDesktop available. Do you want to download the update now?\n\n" +
-                    "Current Version: {0}\nLatest Version: {1}"), currentVersion, latestVersion),
-                    _("Update Available"), MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                DialogResult result = MessageDialog.ShowQuestion(string.Format(_("There is a " +
+                    "newer version of WinDynamicDesktop available. Do you want to download the " +
+                    "update now?\n\nCurrent Version: {0}\nLatest Version: {1}"), currentVersion,
+                    latestVersion), _("Update Available"));
 
                 if (result == DialogResult.Yes)
                 {
@@ -120,9 +119,8 @@ namespace WinDynamicDesktop
             }
             else
             {
-                MessageBox.Show(_("You already have the latest version of WinDynamicDesktop " +
-                    "installed."), _("Up To Date"), MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                MessageDialog.ShowInfo(_("You already have the latest version of " +
+                    "WinDynamicDesktop installed."), _("Up To Date"));
             }
         }
 

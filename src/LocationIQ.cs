@@ -40,10 +40,9 @@ namespace WinDynamicDesktop
             JsonConfig.settings.longitude = data.lon;
             SolarData solarData = SunriseSunsetService.GetSolarData(DateTime.Today);
 
-            DialogResult result = MessageBox.Show(string.Format(_("Is this location " +
+            DialogResult result = MessageDialog.ShowQuestion(string.Format(_("Is this location " +
                 "correct?\n\n{0}\n{1}"), data.display_name,
-                SunriseSunsetService.GetSunriseSunsetString(solarData)), _("Question"),
-                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                SunriseSunsetService.GetSunriseSunsetString(solarData)), _("Question"), true);
 
             if (result == DialogResult.Yes)
             {
@@ -70,11 +69,10 @@ namespace WinDynamicDesktop
                 }
                 else
                 {
-                    MessageBox.Show(_("The location you entered was invalid, or you are not " +
-                        "connected to the Internet. Check your Internet connection and try a " +
-                        "different location. You can use a complete address or just the name of " +
-                        "your city/region."), _("Error"), MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
+                    MessageDialog.ShowWarning(_("The location you entered was invalid, or you " +
+                        "are not connected to the Internet. Check your Internet connection and " +
+                        "try a different location. You can use a complete address or just the " +
+                        "name of your city/region."), _("Error"));
                 }
             });
         }

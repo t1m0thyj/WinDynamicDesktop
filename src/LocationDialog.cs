@@ -103,8 +103,8 @@ namespace WinDynamicDesktop
                 }
                 else
                 {
-                    MessageBox.Show(_("Failed to get location from Windows location service."),
-                        _("Error"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageDialog.ShowWarning(_("Failed to get location from Windows location " +
+                        "service."), _("Error"));
                 }
             }
 
@@ -120,11 +120,10 @@ namespace WinDynamicDesktop
         {
             if (JsonConfig.settings.latitude == null || JsonConfig.settings.longitude == null)
             {
-                DialogResult result = MessageBox.Show(_("WinDynamicDesktop cannot display " +
-                    "wallpapers until you have entered a valid location, so that it can " +
+                DialogResult result = MessageDialog.ShowQuestion(_("WinDynamicDesktop cannot " +
+                    "display wallpapers until you have entered a valid location, so that it can " +
                     "calculate sunrise and sunset times for your location. Are you sure you " +
-                    "want to cancel and quit the program?"), _("Question"),
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    "want to cancel and quit the program?"), _("Question"), true);
 
                 if (result == DialogResult.Yes)
                 {

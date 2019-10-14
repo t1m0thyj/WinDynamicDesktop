@@ -234,8 +234,6 @@ namespace WinDynamicDesktop
 
     public class WallpaperApi
     {
-        private const string registryWallpaperLocation = @"Control Panel\Desktop";
-
         [DllImport("user32.dll", SetLastError = true)]
         private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 

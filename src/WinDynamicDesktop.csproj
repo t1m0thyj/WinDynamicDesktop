@@ -89,7 +89,6 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -118,6 +117,7 @@
     <Compile Include="CustomAppConfig.cs" />
     <Compile Include="DebugLogger.cs" />
     <Compile Include="DesktopHelper.cs" />
+    <Compile Include="MessageDialog.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -179,9 +179,11 @@
     <Compile Include="WallpaperCompressionChanger.cs" />
     <EmbeddedResource Include="AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="BrightnessDialog.resx">
       <DependentUpon>BrightnessDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="LocationDialog.resx">
       <DependentUpon>LocationDialog.cs</DependentUpon>

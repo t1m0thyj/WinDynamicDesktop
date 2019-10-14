@@ -84,9 +84,8 @@ namespace WinDynamicDesktop
                 }
                 catch (JsonReaderException)
                 {
-                    System.Windows.Forms.MessageBox.Show("Your WinDynamicDesktop configuration file was corrupt and has been reset to the default settings.", "Warning",
-                    System.Windows.Forms.MessageBoxButtons.OK,
-                    System.Windows.Forms.MessageBoxIcon.Warning);
+                    MessageDialog.ShowWarning("Your WinDynamicDesktop configuration file was " +
+                        "corrupt and has been reset to the default settings.", "Warning");
                     firstRun = true;
                 }
             }

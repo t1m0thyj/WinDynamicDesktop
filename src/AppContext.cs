@@ -65,9 +65,9 @@ namespace WinDynamicDesktop
                 }
                 else
                 {
-                    MessageBox.Show(_("Another instance of WinDynamicDesktop is already " +
-                        "running. You can access it by clicking on the icon in the system tray."),
-                        _("Error"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageDialog.ShowWarning(_("Another instance of WinDynamicDesktop is " +
+                        "already running. You can access it by clicking on the icon in the " +
+                        "system tray."), _("Error"));
                 }
 
                 Environment.Exit(0);

@@ -66,7 +66,7 @@ namespace WinDynamicDesktop
             }
         }
 
-        public static bool IsLocaleFromWeb()
+        private static bool IsLocaleFromWeb()
         {
             return currentLocale.StartsWith("http://") || currentLocale.StartsWith("https://");
         }
