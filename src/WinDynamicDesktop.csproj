@@ -212,6 +212,7 @@
     <None Include="locale\es_ES.mo" />
     <None Include="locale\fr_FR.mo" />
     <None Include="locale\it_IT.mo" />
+    <None Include="locale\mk_MK.mo" />
     <None Include="locale\pl_PL.mo" />
     <None Include="locale\ro_RO.mo" />
     <None Include="locale\ru_RU.mo" />

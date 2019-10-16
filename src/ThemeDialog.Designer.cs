@@ -224,7 +224,7 @@
             this.imageListView1.Name = "imageListView1";
             this.imageListView1.PersistentCacheDirectory = "";
             this.imageListView1.PersistentCacheSize = ((long)(100));
-            this.imageListView1.Size = new System.Drawing.Size(422, 275);
+            this.imageListView1.Size = new System.Drawing.Size(422, 276);
             this.imageListView1.TabIndex = 15;
             this.imageListView1.UseWIC = true;
             this.imageListView1.SelectionChanged += new System.EventHandler(this.imageListView1_SelectionChanged);

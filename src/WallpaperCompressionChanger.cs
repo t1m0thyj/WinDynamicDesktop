@@ -39,8 +39,8 @@ namespace WinDynamicDesktop
             compressionTweakItem.Checked = isWallpaperCompressionTweaked;
 
             return new List<ToolStripItem>() {
-                compressionTweakItem,
-                new ToolStripSeparator()
+                new ToolStripSeparator(),
+                compressionTweakItem
             };
         }
 

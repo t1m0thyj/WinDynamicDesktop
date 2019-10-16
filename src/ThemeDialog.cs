@@ -46,10 +46,37 @@ namespace WinDynamicDesktop
 
         public void ImportThemes(List<string> themePaths)
         {
+            this.Enabled = false;
+            List<string> duplicateThemeNames = new List<string>();
+
+            foreach (string themePath in themePaths)
+            {
+                string themeId = Path.GetFileNameWithoutExtension(themePath);
+                int themeIndex = ThemeManager.themeSettings.FindIndex(t => t.themeId == themeId);
+
+                if (themeIndex != -1)
+                {
+                    duplicateThemeNames.Add(ThemeManager.GetThemeName(
+                        ThemeManager.themeSettings[themeIndex]));
+                }
+            }
+
+            if (duplicateThemeNames.Count > 0)
+            {
+                DialogResult result = MessageDialog.ShowQuestion(string.Format(_("The following " +
+                    "themes are already installed:\n\t{0}\n\nDo you want to overwrite them?"),
+                    string.Join("\n\t", duplicateThemeNames)), _("Question"), true);
+
+                if (result != DialogResult.Yes)
+                {
+                    this.Enabled = true;
+                    return;
+                }
+            }
+
             ImportDialog importDialog = new ImportDialog() { Owner = this };
             importDialog.FormClosing += OnImportDialogClosing;
             importDialog.Show();
-            this.Enabled = false;
             importDialog.InitImport(themePaths);
         }
 

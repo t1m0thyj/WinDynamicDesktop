@@ -1,7 +1,8 @@
 import glob
+import json
 import os
-import subprocess
 import sys
+import urllib.request
 
 LOCALE_MAPPING = {
     "cs": "cs_CZ",
@@ -10,6 +11,7 @@ LOCALE_MAPPING = {
     "es_ES": "es_ES",
     "fr": "fr_FR",
     "it": "it_IT",
+    "mk": "mk_MK",
     "pl": "pl_PL",
     "ro": "ro_RO",
     "ru": "ru_RU",
@@ -21,7 +23,16 @@ sys.path.append(os.path.join(os.path.dirname(sys.executable), "Tools", "i18n"))
 
 from msgfmt import make
 
-subprocess.run(["powershell.exe", "zanata-cli/bin/zanata-cli", "pull", "-B"])
+if not os.path.isdir("po"):
+    os.mkdir("po")
+
+with urllib.request.urlopen("https://translate.zanata.org/rest/project/windynamicdesktop/") as fileobj:
+    iteration_slug = json.load(fileobj)["iterations"][0]["id"]
+
+for name in LOCALE_MAPPING.keys():
+    url_name = name.replace("_", "-")
+    print(f"Downloading translation for {url_name}")
+    urllib.request.urlretrieve(f"https://translate.zanata.org/rest/file/translation/windynamicdesktop/{iteration_slug}/{url_name}/po?docId=messages", f"po/{name}.po")
 
 for filename in glob.glob("../src/locale/*.mo"):
     os.remove(filename)

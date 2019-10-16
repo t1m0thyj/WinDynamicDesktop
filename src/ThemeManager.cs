@@ -121,17 +121,6 @@ namespace WinDynamicDesktop
             int themeIndex = themeSettings.FindIndex(t => t.themeId == themeId);
             ThemeResult result;
 
-            if (themeIndex != -1)
-            {
-                bool shouldOverwrite = ThemeLoader.PromptDialog(string.Format(_("The '{0}' " +
-                    "theme is already installed. Do you want to overwrite it?"), themeId));
-
-                if (!shouldOverwrite)
-                {
-                    return null;  // TODO Update when nullable reference types are supported
-                }
-            }
-
             if (Path.GetExtension(importPath) != ".json")
             {
                 result = ThemeLoader.ExtractTheme(importPath, themeId);

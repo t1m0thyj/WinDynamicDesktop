@@ -26,6 +26,7 @@ namespace WinDynamicDesktop
             "Français",  // French
             "Eλληνικά",  // Greek
             "Italiano",  // Italian
+            "Македонски",  // Macedonian
             "Polski",  // Polish
             "Română",  // Romanian
             "Pусский",  // Russian
@@ -34,7 +35,7 @@ namespace WinDynamicDesktop
         };
 
         public static string[] localeNames = new string[] { "cs_CZ", "de_DE", "en_US", "es_ES",
-            "fr_FR", "el_GR", "it_IT", "pl_PL", "ro_RO", "ru_RU", "tr_TR", "zh_CN" };
+            "fr_FR", "el_GR", "it_IT", "mk_MK", "pl_PL", "ro_RO", "ru_RU", "tr_TR", "zh_CN" };
 
         public static string currentLocale;
         private static ICatalog moCatalog = null;
@@ -114,6 +115,7 @@ namespace WinDynamicDesktop
         {
             using (WebClient wc = new WebClient())
             {
+                wc.Encoding = Encoding.UTF8;
                 string poText = wc.DownloadString(currentLocale);
                 POParser parser = new POParser();
                 poCatalog = parser.Parse(poText).Catalog;
@@ -134,7 +136,8 @@ namespace WinDynamicDesktop
             }
             else if (poCatalog != null)
             {
-                return poCatalog.GetTranslation(new POKey(msg));
+                string translated = poCatalog.GetTranslation(new POKey(msg));
+                return string.IsNullOrEmpty(translated) ? msg : translated;
             }
 
             return msg;
@@ -149,6 +152,7 @@ namespace WinDynamicDesktop
                 {
                     yield return grandChild;
                 }
+
                 yield return childControl;
             }
         }

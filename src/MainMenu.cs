@@ -46,7 +46,7 @@ namespace WinDynamicDesktop
             });
             items[0].Enabled = false;
 
-            darkModeItem = new ToolStripMenuItem(_("&Night wallpaper only mode"), null, OnDarkModeClick);
+            darkModeItem = new ToolStripMenuItem(_("&Night Wallpaper Only Mode"), null, OnDarkModeClick);
             darkModeItem.Checked = JsonConfig.settings.darkMode;
             startOnBootItem = new ToolStripMenuItem(_("&Start on Boot"), null, OnStartOnBootClick);
 
@@ -79,10 +79,10 @@ namespace WinDynamicDesktop
 
             if (BrightnessController.IsDDCSupported)
             {
+                items.Add(new ToolStripSeparator());
                 items.Add(new ToolStripMenuItem(_("Set Auto Brightness"), null, OnSetAutoBrightnessItemClick));
             }
 
-            items.Add(new ToolStripSeparator());
             items.AddRange(SystemThemeChanger.GetMenuItems());
             items.AddRange(WallpaperCompressionChanger.GetMenuItems());
             items.AddRange(UpdateChecker.GetMenuItems());
