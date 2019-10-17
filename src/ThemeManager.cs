@@ -30,7 +30,7 @@ namespace WinDynamicDesktop
             Directory.CreateDirectory("themes");
             Compatibility.CompatibilizeThemes();
             
-            defaultThemes = CustomAppConfig.GetDefaultThemes();
+            defaultThemes = DefaultThemes.GetDefaultThemes();
             List<string> themeIds = new List<string>();
 
             foreach (string filePath in Directory.EnumerateFiles("themes", "*.json",

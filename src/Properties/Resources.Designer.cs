@@ -83,6 +83,16 @@ namespace WinDynamicDesktop.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] default_themes {
+            get {
+                object obj = ResourceManager.GetObject("default_themes", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] locale_cs_CZ {
             get {
                 object obj = ResourceManager.GetObject("locale_cs_CZ", resourceCulture);

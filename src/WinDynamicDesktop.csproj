@@ -74,7 +74,6 @@
       <HintPath>packages\SunCalcNet.1.1.0\lib\net461\SunCalcNet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
@@ -114,9 +113,10 @@
     </Compile>
     <Compile Include="BrightnessManager.cs" />
     <Compile Include="Compatibility.cs" />
-    <Compile Include="CustomAppConfig.cs" />
     <Compile Include="DebugLogger.cs" />
+    <Compile Include="DefaultThemes.cs" />
     <Compile Include="DesktopHelper.cs" />
+    <Compile Include="DpiHelper.cs" />
     <Compile Include="MessageDialog.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -234,6 +234,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\Catalina_thumbnail.jpg" />
+    <None Include="resources\default_themes.yaml" />
     <None Include="resources\Mojave_Desert_thumbnail.jpg" />
     <None Include="resources\Solar_Gradients_thumbnail.jpg" />
     <None Include="resources\WinDynamicDesktop.ico" />

@@ -47,7 +47,7 @@ namespace WinDynamicDesktop
                 ThemeManager.GetThemeName(theme))));
 
             imagesZipDest = theme.themeId + "_images.zip";
-            themeUris = CustomAppConfig.GetThemeUriList(theme.themeId).ToList();
+            themeUris = DefaultThemes.GetThemeUriList(theme.themeId).ToList();
             themeUriIndex = 0;
             DownloadNext(theme);
         }

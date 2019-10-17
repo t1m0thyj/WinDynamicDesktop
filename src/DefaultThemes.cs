@@ -1,0 +1,38 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace WinDynamicDesktop
+{
+    class DefaultThemes
+    {
+        private static string[] yamlLines;
+
+        public static string[] GetDefaultThemes()
+        {
+            string yamlText = Encoding.UTF8.GetString(Properties.Resources.default_themes);
+            yamlLines = yamlText.Split(new[] { Environment.NewLine },
+                StringSplitOptions.RemoveEmptyEntries).Select((line) => line.Trim()).ToArray();
+
+            return yamlLines.Where((line) => !line.StartsWith("-")).Select(
+                (line) => line.Substring(0, line.Length - 1)).ToArray();
+        }
+
+        public static Uri[] GetThemeUriList(string themeId)
+        {
+            int startIndex = yamlLines.ToList().FindIndex((line) => line == themeId + ":") + 1;
+            List<Uri> uriList = new List<Uri>();
+
+            while ((startIndex < yamlLines.Length) && yamlLines[startIndex].StartsWith("-"))
+            {
+                uriList.Add(new Uri(yamlLines[startIndex].Substring(
+                    yamlLines[startIndex].LastIndexOf(" ") + 1)));
+                startIndex++;
+            }
+
+            return uriList.ToArray();
+        }
+    }
+}
