@@ -241,7 +241,7 @@ namespace WinDynamicDesktop
         private static extern int SendMessageTimeout(IntPtr hWnd, uint Msg, IntPtr wParam,
             IntPtr lParam, uint fuFlags, uint uTimeout, out IntPtr result);
 
-        private static void EnableTransitions()
+        public static void EnableTransitions()
         {
             IntPtr result = IntPtr.Zero;
             SendMessageTimeout(FindWindow("Progman", null), 0x52c, IntPtr.Zero, IntPtr.Zero,
@@ -250,8 +250,6 @@ namespace WinDynamicDesktop
 
         public static void SetWallpaper(string imagePath)
         {
-            EnableTransitions();
-
             ThreadStart threadStarter = () =>
             {
                 IActiveDesktop _activeDesktop = ActiveDesktopWrapper.GetActiveDesktop();

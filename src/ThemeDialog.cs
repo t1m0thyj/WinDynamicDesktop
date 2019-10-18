@@ -84,7 +84,7 @@ namespace WinDynamicDesktop
         {
             if (!themeDownloaded)
             {
-                return _("Image Credits: Apple");
+                return string.Format(_("Image Credits: {0}"), "Apple");
             }
             else if (selectedIndex > 0)
             {
@@ -97,7 +97,7 @@ namespace WinDynamicDesktop
             }
             else
             {
-                return _("Image Credits: Microsoft");
+                return string.Format(_("Image Credits: {0}"), "Microsoft");
             }
 
             return "";
