@@ -112,25 +112,30 @@ namespace WinDynamicDesktop
                 });
                 this.Close();
             }
-            else if (themeUriIndex >= themeUris.Count)
-            {
-                bool shouldRetry = ThemeLoader.PromptDialog(string.Format(_("Failed to " +
-                    "download images for the '{0}' theme. Do you want to try again?"),
-                    theme.themeId));
-
-                if (shouldRetry)
-                {
-                    InitDownload(theme);
-                }
-                else
-                {
-                    ThemeLoader.HandleError(new FailedToDownloadImages(theme.themeId));
-                }
-            }
             else
             {
                 themeUriIndex++;
-                DownloadNext(theme);
+
+                if (themeUriIndex >= themeUris.Count)
+                {
+                    bool shouldRetry = ThemeLoader.PromptDialog(string.Format(_("Failed to " +
+                        "download images for the '{0}' theme. Do you want to try again?"),
+                        theme.themeId));
+
+                    if (shouldRetry)
+                    {
+                        InitDownload(theme);
+                    }
+                    else
+                    {
+                        ThemeLoader.HandleError(new FailedToDownloadImages(theme.themeId));
+                        this.Close();
+                    }
+                }
+                else
+                {
+                    DownloadNext(theme);
+                }
             }
         }
 
