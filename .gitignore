@@ -1,8 +1,8 @@
 /dist
-/i18n/.zanata-cache
 /i18n/messages.pot
+/i18n/mo
 /i18n/po
-/i18n/zanata-cli
+/i18n/poeditor_token
 /src/.vs
 /src/packages
 /src/**/settings.conf

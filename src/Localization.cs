@@ -11,47 +11,31 @@ using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Windows.Forms;
-using Karambolo.PO;
 using NGettext;
+using RestSharp;
 
 namespace WinDynamicDesktop
 {
     class Localization
     {
-        public static string[] languageNames = new string[] {
-            "Čeština",  // Czech
-            "Deutsch",  // German
-            "English",  // English (US)
-            "Español",  // Spanish
-            "Français",  // French
-            "Eλληνικά",  // Greek
-            "Italiano",  // Italian
-            "Македонски",  // Macedonian
-            "Polski",  // Polish
-            "Română",  // Romanian
-            "Pусский",  // Russian
-            "Türkçe",  // Turkish
-            "中文 (简体)"  // Simplified Chinese
-        };
-
-        public static string[] localeNames = new string[] { "cs_CZ", "de_DE", "en_US", "es_ES",
-            "fr_FR", "el_GR", "it_IT", "mk_MK", "pl_PL", "ro_RO", "ru_RU", "tr_TR", "zh_CN" };
+        public static List<string> languageCodes = new List<string>(); 
+        public static List<string> languageNames = new List<string>();
 
         public static string currentLocale;
-        private static ICatalog moCatalog = null;
-        private static POCatalog poCatalog = null;
+        private static ICatalog catalog = null;
 
         public static void Initialize()
         {
             currentLocale = JsonConfig.settings.language;
+            LoadLanguages();
 
             if (currentLocale == null)
             {
                 string systemLocale = CultureInfo.CurrentUICulture.Name.Replace('-', '_');
-                currentLocale = localeNames.Contains(systemLocale) ? systemLocale : "en_US";
+                currentLocale = languageCodes.Contains(systemLocale) ? systemLocale : "en_US";
                 JsonConfig.settings.language = currentLocale;
             }
-            else if (!IsLocaleFromWeb())
+            else if (JsonConfig.settings.poeditorApiToken == null)
             {
                 LoadLocaleFromFile();
             }
@@ -67,29 +51,38 @@ namespace WinDynamicDesktop
             }
         }
 
-        private static bool IsLocaleFromWeb()
+        private static void LoadLanguages()
         {
-            return currentLocale.StartsWith("http://") || currentLocale.StartsWith("https://");
+            AddLanguage("Čeština", "cs");  // Czech
+            AddLanguage("Deutsch", "de");  // German
+            AddLanguage("English (USA)", "en_US");  // English (USA)
+            AddLanguage("Español", "es");  // Spanish
+            AddLanguage("Français", "fr");  // French
+            AddLanguage("Eλληνικά", "el");  // Greek
+            AddLanguage("Italiano", "it");  // Italian
+            AddLanguage("Македонски", "mk");  // Macedonian
+            AddLanguage("Polski", "pl");  // Polish
+            AddLanguage("Română", "ro");  // Romanian
+            AddLanguage("Pусский", "ru");  // Russian
+            AddLanguage("Türkçe", "tr");  // Turkish
+            AddLanguage("中文 (简体)", "zh_CN");  // Chinese (Simplified)
+        }
+
+        private static void AddLanguage(string languageName, string languageCode)
+        {
+            languageNames.Add(languageName);
+            languageCodes.Add(languageCode);
         }
 
         public static void LoadLocaleFromFile()
         {
-            string poFile = currentLocale + ".po";
             string moFile = currentLocale + ".mo";
 
-            if (File.Exists(poFile))
-            {
-                using (Stream stream = File.OpenRead(poFile))
-                {
-                    POParser parser = new POParser();
-                    poCatalog = parser.Parse(stream).Catalog;
-                }
-            }
-            else if (File.Exists(moFile))
+            if (File.Exists(moFile))
             {
                 using (Stream stream = File.OpenRead(moFile))
                 {
-                    moCatalog = new Catalog(stream,
+                    catalog = new Catalog(stream,
                         new CultureInfo(currentLocale.Replace('_', '-')));
                 }
             }
@@ -105,7 +98,7 @@ namespace WinDynamicDesktop
 
                 using (Stream stream = new MemoryStream(embeddedMo))
                 {
-                    moCatalog = new Catalog(stream,
+                    catalog = new Catalog(stream,
                         new CultureInfo(currentLocale.Replace('_', '-')));
                 }
             }
@@ -113,12 +106,28 @@ namespace WinDynamicDesktop
 
         private static void LoadLocaleFromWeb()
         {
+            var client = new RestClient("https://api.poeditor.com");
+            var request = new RestRequest("/v2/projects/export", Method.POST);
+            request.AddParameter("api_token", JsonConfig.settings.poeditorApiToken);
+            request.AddParameter("id", "293081");
+            request.AddParameter("language", currentLocale.Replace('_', '-'));
+            request.AddParameter("type", "mo");
+
+            var response = client.Execute<PoEditorApiData>(request);
+            if (!response.IsSuccessful)
+            {
+                return;
+            }
+
             using (WebClient wc = new WebClient())
             {
-                wc.Encoding = Encoding.UTF8;
-                string poText = wc.DownloadString(currentLocale);
-                POParser parser = new POParser();
-                poCatalog = parser.Parse(poText).Catalog;
+                byte[] moBinary = wc.DownloadData(response.Data.result.url);
+
+                using (Stream stream = new MemoryStream(moBinary))
+                {
+                    catalog = new Catalog(stream,
+                        new CultureInfo(currentLocale.Replace('_', '-')));
+                }
             }
         }
 
@@ -130,17 +139,7 @@ namespace WinDynamicDesktop
 
         public static string GetTranslation(string msg)
         {
-            if (moCatalog != null)
-            {
-                return moCatalog.GetString(msg);
-            }
-            else if (poCatalog != null)
-            {
-                string translated = poCatalog.GetTranslation(new POKey(msg));
-                return string.IsNullOrEmpty(translated) ? msg : translated;
-            }
-
-            return msg;
+            return (catalog != null) ? catalog.GetString(msg) : msg;
         }
 
         // Code from https://stackoverflow.com/a/664083/5504760

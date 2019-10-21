@@ -37,7 +37,7 @@ for filename in glob.glob("../src/*.cs"):
                     add_to_pot_data(match.group(1), filename[3:], i + 1)
 
                 if not msg_history:
-                    match = re.search(r'(?:_|Localization\.GetTranslation)\("(.+)"[^)]', line)
+                    match = re.search(r'(?:_|Localization\.GetTranslation)\("(.+)"[^)\w]', line)
 
                     if match:
                         msg_history = [match.group(1), i + 1]
@@ -80,10 +80,9 @@ for msgid, locs in pot_data.items():
         pot_lines.extend(["\"{}\"".format(line) for line in msgid_lines])
     else:
         pot_lines.append("msgid \"{}\"".format(msgid))
-    
+
     pot_lines.append("msgstr \"\"")
 
 with open("messages.pot", 'w', encoding="utf8") as pot_file:
     for line in pot_lines:
-        print(line)
         print(line, file=pot_file)

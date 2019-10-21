@@ -28,9 +28,9 @@ namespace WinDynamicDesktop
 
         private void LanguageDialog_Load(object sender, EventArgs e)
         {
-            comboBox1.Items.AddRange(Localization.languageNames);
+            comboBox1.Items.AddRange(Localization.languageNames.ToArray());
 
-            int langIndex = Array.IndexOf(Localization.localeNames, Localization.currentLocale);
+            int langIndex = Localization.languageCodes.IndexOf(Localization.currentLocale);
 
             if (langIndex != -1)
             {
@@ -40,19 +40,19 @@ namespace WinDynamicDesktop
 
         private void okButton_Click(object sender, EventArgs e)
         {
-            string oldLocaleName = Localization.currentLocale;
-            string localeName = Localization.localeNames[comboBox1.SelectedIndex];
+            string oldLocale = Localization.currentLocale;
+            string languageCode = Localization.languageCodes[comboBox1.SelectedIndex];
 
-            if (localeName != oldLocaleName)
+            if (languageCode != oldLocale)
             {
-                Localization.currentLocale = localeName;
+                Localization.currentLocale = languageCode;
 
                 if (AppContext.notifyIcon == null)  // Has UI been loaded yet?
                 {
                     Localization.LoadLocaleFromFile();
                 }
 
-                JsonConfig.settings.language = localeName;
+                JsonConfig.settings.language = languageCode;
 
                 if (AppContext.notifyIcon != null)
                 {

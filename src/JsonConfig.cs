@@ -30,6 +30,7 @@ namespace WinDynamicDesktop
         public bool useWindowsLocation { get; set; }
         public bool changeLockScreen { get; set; }
         public string language { get; set; }
+        public string poeditorApiToken { get; set; }
 
         // Auto Brightness Config
         public bool IsPolarAllDay { get; set; }

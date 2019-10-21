@@ -12,25 +12,9 @@ using RestSharp;
 
 namespace WinDynamicDesktop
 {
-    class LocationIQData
-    {
-        public string place_id { get; set; }
-        public string licence { get; set; }
-        public string osm_type { get; set; }
-        public string osm_id { get; set; }
-        public List<string> boundingbox { get; set; }
-        public string lat { get; set; }
-        public string lon { get; set; }
-        public string display_name { get; set; }
-        public string @class { get; set; }
-        public string type { get; set; }
-        public double importance { get; set; }
-        public string icon { get; set; }
-    }
-
     class LocationIQService
     {
-        private static string apiKey = Encoding.UTF8.GetString(Convert.FromBase64String(
+        private static readonly string apiKey = Encoding.UTF8.GetString(Convert.FromBase64String(
             "cGsuYmRhNTk1NDRhN2VjZWMxYjAxMDZkNzg5MzdlMDQzOTk ="));
         private static readonly Func<string, string> _ = Localization.GetTranslation;
 
