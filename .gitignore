@@ -7,7 +7,6 @@
 /src/.vs
 /src/packages
 /uwp/*.wapproj.user
-/uwp/*StoreKey.pfx
 /uwp/AppPackages
 /uwp/BundleArtifacts
 /uwp/Package.StoreAssociation.xml

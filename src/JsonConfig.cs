@@ -8,11 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.IO;
-using Newtonsoft.Json;
 using System.Timers;
+using Newtonsoft.Json;
+using PropertyChanged;
 
 namespace WinDynamicDesktop
 {
+    [AddINotifyPropertyChangedInterface]
     public class AppConfig : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
