@@ -114,5 +114,54 @@ namespace WinDynamicDesktop
                 File.WriteAllText(Path.Combine("themes", "Solar_Gradients", "theme.json"), Solar_Gradients_JSON);
             }
         }
+
+        // TODO Added 2019-10-22, remove eventually
+        public static void CompatibilizeLocale()
+        {
+            switch (JsonConfig.settings.language)
+            {
+                case "cs_CZ":
+                    JsonConfig.settings.language = "cs";
+                    return;
+                case "de_DE":
+                    JsonConfig.settings.language = "de";
+                    return;
+                case "en_US":
+                    JsonConfig.settings.language = "en";
+                    return;
+                case "es_ES":
+                    JsonConfig.settings.language = "es";
+                    return;
+                case "fr_FR":
+                    JsonConfig.settings.language = "fr";
+                    return;
+                case "el_GR":
+                    JsonConfig.settings.language = "el";
+                    return;
+                case "it_IT":
+                    JsonConfig.settings.language = "it";
+                    return;
+                case "mk_MK":
+                    JsonConfig.settings.language = "mk";
+                    return;
+                case "pl_PL":
+                    JsonConfig.settings.language = "pl";
+                    return;
+                case "ro_RO":
+                    JsonConfig.settings.language = "ro";
+                    return;
+                case "ru_RU":
+                    JsonConfig.settings.language = "ru";
+                    return;
+                case "tr_TR":
+                    JsonConfig.settings.language = "tr";
+                    return;
+                case "zh_CN":
+                    JsonConfig.settings.language = "zh-Hans";
+                    return;
+                default:
+                    return;
+            }
+        }
     }
 }

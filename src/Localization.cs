@@ -26,13 +26,14 @@ namespace WinDynamicDesktop
 
         public static void Initialize()
         {
+            Compatibility.CompatibilizeLocale();
             currentLocale = JsonConfig.settings.language;
             LoadLanguages();
 
             if (currentLocale == null)
             {
-                string systemLocale = CultureInfo.CurrentUICulture.Name.Replace('-', '_');
-                currentLocale = languageCodes.Contains(systemLocale) ? systemLocale : "en_US";
+                string systemLocale = CultureInfo.CurrentUICulture.Name;
+                currentLocale = languageCodes.Contains(systemLocale) ? systemLocale : "en";
                 JsonConfig.settings.language = currentLocale;
             }
             else if (JsonConfig.settings.poeditorApiToken == null)
@@ -55,7 +56,7 @@ namespace WinDynamicDesktop
         {
             AddLanguage("Čeština", "cs");  // Czech
             AddLanguage("Deutsch", "de");  // German
-            AddLanguage("English (USA)", "en_US");  // English (USA)
+            AddLanguage("English", "en");  // English
             AddLanguage("Español", "es");  // Spanish
             AddLanguage("Français", "fr");  // French
             AddLanguage("Eλληνικά", "el");  // Greek
@@ -65,7 +66,7 @@ namespace WinDynamicDesktop
             AddLanguage("Română", "ro");  // Romanian
             AddLanguage("Pусский", "ru");  // Russian
             AddLanguage("Türkçe", "tr");  // Turkish
-            AddLanguage("中文 (简体)", "zh_CN");  // Chinese (Simplified)
+            AddLanguage("中文 (简体)", "zh-Hans");  // Chinese (Simplified)
         }
 
         private static void AddLanguage(string languageName, string languageCode)
@@ -82,14 +83,13 @@ namespace WinDynamicDesktop
             {
                 using (Stream stream = File.OpenRead(moFile))
                 {
-                    catalog = new Catalog(stream,
-                        new CultureInfo(currentLocale.Replace('_', '-')));
+                    catalog = new Catalog(stream, new CultureInfo(currentLocale));
                 }
             }
             else
             {
                 byte[] embeddedMo = (byte[])Properties.Resources.ResourceManager.GetObject(
-                    "locale_" + currentLocale);
+                    "locale_" + currentLocale.Replace('-', '_'));
 
                 if (embeddedMo == null)
                 {
@@ -98,8 +98,7 @@ namespace WinDynamicDesktop
 
                 using (Stream stream = new MemoryStream(embeddedMo))
                 {
-                    catalog = new Catalog(stream,
-                        new CultureInfo(currentLocale.Replace('_', '-')));
+                    catalog = new Catalog(stream, new CultureInfo(currentLocale));
                 }
             }
         }
@@ -110,7 +109,7 @@ namespace WinDynamicDesktop
             var request = new RestRequest("/v2/projects/export", Method.POST);
             request.AddParameter("api_token", JsonConfig.settings.poeditorApiToken);
             request.AddParameter("id", "293081");
-            request.AddParameter("language", currentLocale.Replace('_', '-'));
+            request.AddParameter("language", currentLocale);
             request.AddParameter("type", "mo");
 
             var response = client.Execute<PoEditorApiData>(request);
@@ -125,8 +124,7 @@ namespace WinDynamicDesktop
 
                 using (Stream stream = new MemoryStream(moBinary))
                 {
-                    catalog = new Catalog(stream,
-                        new CultureInfo(currentLocale.Replace('_', '-')));
+                    catalog = new Catalog(stream, new CultureInfo(currentLocale));
                 }
             }
         }
