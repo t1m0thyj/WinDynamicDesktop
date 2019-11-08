@@ -20,8 +20,7 @@ namespace WinDynamicDesktop
 
         public static ThemeResult TryLoad(string themeId)
         {
-            if (!ThemeManager.defaultThemes.Contains(themeId) &&
-                !File.Exists(Path.Combine("themes", themeId, "theme.json")))
+            if (!File.Exists(Path.Combine("themes", themeId, "theme.json")))
             {
                 return new ThemeResult(new NoThemeJSON(themeId));
             }
@@ -154,7 +153,9 @@ namespace WinDynamicDesktop
                 return new ThemeResult(new FailedToFindLocation(themeId, jsonPath));
             }
 
-            File.Copy(jsonPath, Path.Combine("themes", themeId, "theme.json"), true);
+            string themePath = Path.Combine("themes", themeId);
+            Directory.CreateDirectory(themePath);
+            File.Copy(jsonPath, Path.Combine(themePath, "theme.json"), true);
 
             return TryLoad(themeId).Match(e => new ThemeResult(e), theme =>
             {
@@ -170,8 +171,8 @@ namespace WinDynamicDesktop
                 {
                     try
                     {
-                        File.Copy(imagePath, Path.Combine("themes", theme.themeId,
-                            Path.GetFileName(imagePath)), true);
+                        File.Copy(imagePath, Path.Combine(themePath, Path.GetFileName(imagePath)),
+                            true);
                     }
                     catch
                     {
