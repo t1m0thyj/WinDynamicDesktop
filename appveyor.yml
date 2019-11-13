@@ -1,5 +1,7 @@
 version: 1.0.{build}
 image: Visual Studio 2019
+environment:
+  UseTemporarySignCert: true
 before_build:
 - ps: >-
     if ($env:APPVEYOR_REPO_TAG -eq "true")
