@@ -4,7 +4,7 @@ import time
 from collections import OrderedDict
 
 app_name = "WinDynamicDesktop"
-exclude_patterns = [app_name + r'$', r'\w+://', r'label\d+$', r'\W+$']
+exclude_patterns = [app_name + r'$', r'\w+://', r'\w+\d+$', r'\W+$']
 pot_data = OrderedDict()
 
 

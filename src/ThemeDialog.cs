@@ -207,6 +207,7 @@ namespace WinDynamicDesktop
                 {
                     this.Invoke(new Action(() =>
                     {
+                        imageListView1.ClearSelection();
                         newItem.Selected = true;
                         imageListView1.EnsureVisible(newItem.Index);
                     }));

@@ -17,7 +17,9 @@ namespace WinDynamicDesktop
     [AddINotifyPropertyChangedInterface]
     public class AppConfig : INotifyPropertyChanged
     {
+#pragma warning disable 67
         public event PropertyChangedEventHandler PropertyChanged;
+#pragma warning restore 67
 
         public string location { get; set; }
         public string latitude { get; set; }
