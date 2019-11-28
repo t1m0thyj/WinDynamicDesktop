@@ -248,7 +248,7 @@ namespace WinDynamicDesktop
                     {
                         SolarData solarData = SunriseSunsetService.GetSolarData(DateTime.Today);
                         imageNumber = ThemeManager.GetThemeImageList(theme).IndexOf(
-                            AppContext.wpEngine.GetImageData(solarData, theme).Item1) + 1;
+                            AppContext.wpEngine.GetImageData(solarData, theme).imageId) + 1;
                     }
                     else
                     {
@@ -352,6 +352,7 @@ namespace WinDynamicDesktop
             }
             else
             {
+                WallpaperShuffler.AddThemeToHistory(ThemeManager.currentTheme.themeId);
                 AppContext.wpEngine.RunScheduler();
                 AppContext.ShowPopup(string.Format(_("New theme applied: {0}"),
                     ThemeManager.GetThemeName(ThemeManager.currentTheme)));

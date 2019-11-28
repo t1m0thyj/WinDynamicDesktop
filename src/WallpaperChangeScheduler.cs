@@ -13,9 +13,17 @@ using System.Timers;
 
 namespace WinDynamicDesktop
 {
+    public class ImageData
+    {
+        public int imageId;
+        public long nextUpdateTicks;
+        public int daySegment2;  // TODO Populate this correctly
+        public int daySegment4;
+    }
+
     class WallpaperChangeScheduler
     {
-        private enum DaySegment { AllDay, AllNight, Sunrise, Day, Sunset, Night };
+        private enum DaySegment { Sunrise, Day, Sunset, Night, AllDay, AllNight };
 
         private string lastImagePath;
         private DateTime? nextUpdateTime;
@@ -58,9 +66,10 @@ namespace WinDynamicDesktop
                     lastImagePath = null;
                 }
 
-                Tuple<int, long> imageData = GetImageData(data, ThemeManager.currentTheme);
-                SetWallpaper(imageData.Item1);
-                nextImageUpdateTime = new DateTime(imageData.Item2);
+                WallpaperShuffler.MaybeShuffleWallpaper();
+                ImageData imageData = GetImageData(data, ThemeManager.currentTheme);
+                SetWallpaper(imageData.imageId);
+                nextImageUpdateTime = new DateTime(imageData.nextUpdateTicks);
             }
 
             SystemThemeChanger.TryUpdateSystemTheme();
@@ -120,11 +129,12 @@ namespace WinDynamicDesktop
             }
         }
 
-        public Tuple<int, long> GetImageData(SolarData data, ThemeConfig theme)
+        public ImageData GetImageData(SolarData data, ThemeConfig theme)
         {
             int[] imageList;
             DateTime segmentStart;
             DateTime segmentEnd;
+            ImageData imageData = new ImageData();
 
             if (!JsonConfig.settings.darkMode)
             {
@@ -134,34 +144,35 @@ namespace WinDynamicDesktop
                         imageList = theme.dayImageList;
                         segmentStart = DateTime.Today;
                         segmentEnd = DateTime.Today.AddDays(1);
-                        BrightnessManager.ChangeBrightness(0);
+                        imageData.daySegment4 = 1;
                         break;
                     case DaySegment.AllNight:
                         imageList = theme.nightImageList;
                         segmentStart = DateTime.Today;
                         segmentEnd = DateTime.Today.AddDays(1);
-                        BrightnessManager.ChangeBrightness(1);
+                        imageData.daySegment4 = 3;
                         break;
                     case DaySegment.Sunrise:
                         imageList = theme.sunriseImageList;
                         segmentStart = data.solarTimes[0];
                         segmentEnd = data.solarTimes[1];
-                        BrightnessManager.ChangeBrightness(2);
+                        imageData.daySegment4 = 0;
                         break;
                     case DaySegment.Day:
                         imageList = theme.dayImageList;
                         segmentStart = data.solarTimes[1];
                         segmentEnd = data.solarTimes[2];
-                        BrightnessManager.ChangeBrightness(3);
+                        imageData.daySegment4 = 1;
                         break;
                     case DaySegment.Sunset:
                         imageList = theme.sunsetImageList;
                         segmentStart = data.solarTimes[2];
                         segmentEnd = data.solarTimes[3];
-                        BrightnessManager.ChangeBrightness(4);
+                        imageData.daySegment4 = 2;
                         break;
                     default:
                         imageList = theme.nightImageList;
+                        imageData.daySegment4 = 3;
 
                         if (DateTime.Now < data.solarTimes[0])
                         {
@@ -178,7 +189,6 @@ namespace WinDynamicDesktop
                             segmentEnd = tomorrowsData.solarTimes[0];
                         }
 
-                        BrightnessManager.ChangeBrightness(5);
                         break;
                 }
             }
@@ -218,9 +228,10 @@ namespace WinDynamicDesktop
             TimeSpan timerLength = new TimeSpan(segmentLength.Ticks / imageList.Length);
 
             int imageNumber = (int)((DateTime.Now - segmentStart).Ticks / timerLength.Ticks);
-            long nextUpdateTicks = segmentStart.Ticks + timerLength.Ticks * (imageNumber + 1);
+            imageData.imageId = imageList[imageNumber];
+            imageData.nextUpdateTicks = segmentStart.Ticks + timerLength.Ticks * (imageNumber + 1);
 
-            return new Tuple<int, long>(imageList[imageNumber], nextUpdateTicks);
+            return imageData;
         }
 
         private void SetWallpaper(int imageId)

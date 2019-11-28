@@ -18,6 +18,7 @@ namespace WinDynamicDesktop
         public static ToolStripMenuItem themeItem;
         public static ToolStripMenuItem darkModeItem;
         public static ToolStripMenuItem startOnBootItem;
+        public static ToolStripMenuItem shuffleItem;
 
         public static ContextMenuStrip GetMenu()
         {
@@ -76,6 +77,11 @@ namespace WinDynamicDesktop
 
             items.Add(new ToolStripMenuItem(_("Select &Language..."), null, OnLanguageItemClick));
             items.Add(new ToolStripMenuItem(_("Edit Configuration File"), null, OnEditConfigFileClick));
+            items.Add(new ToolStripSeparator());
+
+            shuffleItem = new ToolStripMenuItem(_("Shuffle Wallpaper Daily"), null, OnShuffleItemClick);
+            shuffleItem.Checked = JsonConfig.settings.enableShuffle;
+            items.Add(shuffleItem);
 
             if (BrightnessController.IsDDCSupported)
             {
@@ -102,6 +108,11 @@ namespace WinDynamicDesktop
         private static void OnEditConfigFileClick(object sender, EventArgs e)
         {
             Process.Start("explorer", "settings.conf");
+        }
+
+        private static void OnShuffleItemClick(object sender, EventArgs e)
+        {
+            WallpaperShuffler.ToggleShuffle();
         }
 
         private static void OnThemeItemClick(object sender, EventArgs e)

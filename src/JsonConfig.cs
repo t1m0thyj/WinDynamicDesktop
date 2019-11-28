@@ -35,6 +35,9 @@ namespace WinDynamicDesktop
         public bool changeLockScreen { get; set; }
         public string language { get; set; }
         public string poeditorApiToken { get; set; }
+        public bool enableShuffle { get; set; }
+        public string lastShuffleDate { get; set; }
+        public string[] shuffleHistory { get; set; }
 
         // Auto Brightness Config
         public bool IsPolarAllDay { get; set; }
