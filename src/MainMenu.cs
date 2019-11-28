@@ -92,6 +92,7 @@ namespace WinDynamicDesktop
             items.AddRange(SystemThemeChanger.GetMenuItems());
             items.AddRange(WallpaperCompressionChanger.GetMenuItems());
             items.AddRange(UpdateChecker.GetMenuItems());
+            items.AddRange(PluginManager.GetMenuItems());
 
             return items;
         }

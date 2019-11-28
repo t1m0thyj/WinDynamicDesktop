@@ -115,6 +115,7 @@
     <Compile Include="DesktopHelper.cs" />
     <Compile Include="DpiHelper.cs" />
     <Compile Include="MessageDialog.cs" />
+    <Compile Include="PluginManager.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

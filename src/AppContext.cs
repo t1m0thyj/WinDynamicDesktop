@@ -29,6 +29,7 @@ namespace WinDynamicDesktop
             JsonConfig.LoadConfig();
             Localization.Initialize();
             BrightnessManager.Initialize();
+            PluginManager.Initialize();
 
             ThemeManager.importPaths = args.Where(System.IO.File.Exists).ToList();
             HandleMultiInstance();
@@ -36,6 +37,8 @@ namespace WinDynamicDesktop
             InitializeTrayIcon();
             LocationManager.Initialize();
             ThemeManager.Initialize();
+            PluginManager.ProcessEvent(PluginEvent.ON_INIT);
+
             wpEngine.RunScheduler();
             LaunchSequence.NextStep();
             UpdateChecker.Initialize();
@@ -121,6 +124,8 @@ namespace WinDynamicDesktop
 
         private void OnApplicationExit(object sender, EventArgs e)
         {
+            PluginManager.ProcessEvent(PluginEvent.ON_EXIT);
+
             foreach (Form form in Application.OpenForms)
             {
                 form.Close();
