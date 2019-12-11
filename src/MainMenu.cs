@@ -47,7 +47,7 @@ namespace WinDynamicDesktop
             });
             items[0].Enabled = false;
 
-            darkModeItem = new ToolStripMenuItem(_("&Night Wallpaper Only Mode"), null, OnDarkModeClick);
+            darkModeItem = new ToolStripMenuItem(_("&Night Mode"), null, OnDarkModeClick);
             darkModeItem.Checked = JsonConfig.settings.darkMode;
             startOnBootItem = new ToolStripMenuItem(_("&Start on Boot"), null, OnStartOnBootClick);
 
@@ -76,7 +76,10 @@ namespace WinDynamicDesktop
             List<ToolStripItem> items = new List<ToolStripItem>();
 
             items.Add(new ToolStripMenuItem(_("Select &Language..."), null, OnLanguageItemClick));
+            items.Add(new ToolStripSeparator());
+
             items.Add(new ToolStripMenuItem(_("Edit Configuration File"), null, OnEditConfigFileClick));
+            items.Add(new ToolStripMenuItem(_("Reload Configuration File"), null, OnReloadConfigFileClick));
             items.Add(new ToolStripSeparator());
 
             shuffleItem = new ToolStripMenuItem(_("Shuffle Wallpaper Daily"), null, OnShuffleItemClick);
@@ -108,6 +111,11 @@ namespace WinDynamicDesktop
         private static void OnEditConfigFileClick(object sender, EventArgs e)
         {
             Process.Start("explorer", "settings.conf");
+        }
+
+        private static void OnReloadConfigFileClick(object sender, EventArgs e)
+        {
+            JsonConfig.ReloadConfig();
         }
 
         private static void OnShuffleItemClick(object sender, EventArgs e)

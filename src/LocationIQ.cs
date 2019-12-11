@@ -18,7 +18,7 @@ namespace WinDynamicDesktop
             "cGsuYmRhNTk1NDRhN2VjZWMxYjAxMDZkNzg5MzdlMDQzOTk ="));
         private static readonly Func<string, string> _ = Localization.GetTranslation;
 
-        private static void HandleLocationSuccess(LocationIQData data, LocationDialog dialog)
+        private static void HandleLocationSuccess(LocationIQData data, ScheduleDialog dialog)
         {
             JsonConfig.settings.latitude = data.lat;
             JsonConfig.settings.longitude = data.lon;
@@ -30,11 +30,11 @@ namespace WinDynamicDesktop
 
             if (result == DialogResult.Yes)
             {
-                dialog.Invoke(new Action(() => dialog.HandleLocationChange()));
+                dialog.Invoke(new Action(() => dialog.HandleScheduleChange()));
             }
         }
 
-        public static void GetLocationData(string locationStr, LocationDialog dialog)
+        public static void GetLocationData(string locationStr, ScheduleDialog dialog)
         {
             var client = new RestClient("https://us1.locationiq.org");
 

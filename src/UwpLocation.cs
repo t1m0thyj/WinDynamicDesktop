@@ -31,7 +31,7 @@ namespace WinDynamicDesktop
             {
                 hasAccess = Task.Run(() => UnsafeRequestAccess()).Result;
             }
-            catch   // Error when attempting to show UWP location prompt in WPF app
+            catch   // Error when attempting to show UWP location prompt in WinForms app
             {
                 hasAccess = false;
             }
@@ -45,16 +45,12 @@ namespace WinDynamicDesktop
 
             if (!hasAccess)
             {
-                DialogResult result = MessageDialog.ShowInfo(_("WinDynamicDesktop needs " +
-                    "location access for this feature. Click OK to open the Windows 10 location " +
-                    "settings and grant location access to the app, then select the checkbox " +
-                    "again."), _("Location Access"), true);
-
-                if (result == DialogResult.OK)
-                {
-                    await Windows.System.Launcher.LaunchUriAsync(
-                        new Uri("ms-settings:privacy-location"));
-                }
+                AppContext.ShowPopup(_("In Windows 10 location settings, grant location access " +
+                    "to WinDynamicDesktop. Then return to the app and click \"Check for " +
+                    "Permission\"."));
+                
+                await Windows.System.Launcher.LaunchUriAsync(
+                    new Uri("ms-settings:privacy-location"));
             }
 
             return hasAccess;

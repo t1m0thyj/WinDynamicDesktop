@@ -13,7 +13,7 @@ using System.Timers;
 
 namespace WinDynamicDesktop
 {
-    public class ImageData
+    public class SchedulerState
     {
         public int imageId;
         public long nextUpdateTicks;
@@ -67,7 +67,7 @@ namespace WinDynamicDesktop
                 }
 
                 WallpaperShuffler.MaybeShuffleWallpaper();
-                ImageData imageData = GetImageData(data, ThemeManager.currentTheme);
+                SchedulerState imageData = GetImageData(data, ThemeManager.currentTheme);
                 SetWallpaper(imageData.imageId);
                 nextImageUpdateTime = new DateTime(imageData.nextUpdateTicks);
             }
@@ -129,12 +129,12 @@ namespace WinDynamicDesktop
             }
         }
 
-        public ImageData GetImageData(SolarData data, ThemeConfig theme)
+        public SchedulerState GetImageData(SolarData data, ThemeConfig theme)
         {
             int[] imageList;
             DateTime segmentStart;
             DateTime segmentEnd;
-            ImageData imageData = new ImageData();
+            SchedulerState imageData = new SchedulerState();
 
             if (!JsonConfig.settings.darkMode)
             {

@@ -38,6 +38,10 @@ namespace WinDynamicDesktop
         public bool enableShuffle { get; set; }
         public string lastShuffleDate { get; set; }
         public string[] shuffleHistory { get; set; }
+        public bool dontUseLocation { get; set; }
+        public string sunriseTime { get; set; }
+        public string sunsetTime { get; set; }
+        public int sunriseSunsetDuration { get; set; }
 
         // Auto Brightness Config
         public bool IsPolarAllDay { get; set; }
@@ -125,7 +129,7 @@ namespace WinDynamicDesktop
             return theme;
         }
 
-        public static void EnablePendingRestart()
+        public static void ReloadConfig()
         {
             restartPending = true;
             autoSaveTimer.Start();

@@ -63,7 +63,7 @@ namespace WinDynamicDesktop
 
                     if (result == DialogResult.Yes)
                     {
-                        JsonConfig.EnablePendingRestart();
+                        JsonConfig.ReloadConfig();
                     }
                 }
             }
