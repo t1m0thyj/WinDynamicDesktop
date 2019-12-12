@@ -101,6 +101,15 @@ namespace WinDynamicDesktop
             StartTimer(nextUpdateTime.Value);
         }
 
+        public void ToggleDarkMode()
+        {
+            bool isEnabled = JsonConfig.settings.darkMode ^ true;
+            JsonConfig.settings.darkMode = isEnabled;
+            MainMenu.darkModeItem.Checked = isEnabled;
+
+            RunScheduler();
+        }
+
         private DaySegment GetCurrentDaySegment(SolarData data)
         {
             if (data.polarPeriod == PolarPeriod.PolarDay)

@@ -42,14 +42,14 @@ namespace WinDynamicDesktop
             {
                 new ToolStripMenuItem("WinDynamicDesktop"),
                 new ToolStripSeparator(),
-                themeItem,
-                new ToolStripMenuItem(_("&Change Location..."), null, OnLocationItemClick)
+                new ToolStripMenuItem(_("&Configure Timing..."), null, OnScheduleItemClick),
+                themeItem
             });
             items[0].Enabled = false;
 
             darkModeItem = new ToolStripMenuItem(_("&Night Mode"), null, OnDarkModeClick);
             darkModeItem.Checked = JsonConfig.settings.darkMode;
-            startOnBootItem = new ToolStripMenuItem(_("&Start on Boot"), null, OnStartOnBootClick);
+            startOnBootItem = new ToolStripMenuItem(_("Start on &Boot"), null, OnStartOnBootClick);
 
             ToolStripMenuItem optionsItem = new ToolStripMenuItem(_("More &Options"));
             optionsItem.DropDownItems.AddRange(GetOptionsMenuItems().ToArray());
@@ -99,38 +99,14 @@ namespace WinDynamicDesktop
             return items;
         }
 
-        private static void ToggleDarkMode()
+        private static void OnScheduleItemClick(object sender, EventArgs e)
         {
-            bool isEnabled = JsonConfig.settings.darkMode ^ true;
-            JsonConfig.settings.darkMode = isEnabled;
-            darkModeItem.Checked = isEnabled;
-
-            AppContext.wpEngine.RunScheduler();
-        }
-
-        private static void OnEditConfigFileClick(object sender, EventArgs e)
-        {
-            Process.Start("explorer", "settings.conf");
-        }
-
-        private static void OnReloadConfigFileClick(object sender, EventArgs e)
-        {
-            JsonConfig.ReloadConfig();
-        }
-
-        private static void OnShuffleItemClick(object sender, EventArgs e)
-        {
-            WallpaperShuffler.ToggleShuffle();
+            LocationManager.ChangeLocation();
         }
 
         private static void OnThemeItemClick(object sender, EventArgs e)
         {
             ThemeManager.SelectTheme();
-        }
-
-        private static void OnLocationItemClick(object sender, EventArgs e)
-        {
-            LocationManager.ChangeLocation();
         }
 
         private static void OnRefreshItemClick(object sender, EventArgs e)
@@ -140,7 +116,7 @@ namespace WinDynamicDesktop
 
         private static void OnDarkModeClick(object sender, EventArgs e)
         {
-            ToggleDarkMode();
+            AppContext.wpEngine.ToggleDarkMode();
         }
 
         private static void OnStartOnBootClick(object sender, EventArgs e)
@@ -166,6 +142,21 @@ namespace WinDynamicDesktop
         private static void OnLanguageItemClick(object sender, EventArgs e)
         {
             Localization.SelectLanguage();
+        }
+
+        private static void OnEditConfigFileClick(object sender, EventArgs e)
+        {
+            Process.Start("explorer", "settings.conf");
+        }
+
+        private static void OnReloadConfigFileClick(object sender, EventArgs e)
+        {
+            JsonConfig.ReloadConfig();
+        }
+
+        private static void OnShuffleItemClick(object sender, EventArgs e)
+        {
+            WallpaperShuffler.ToggleShuffle();
         }
 
         private static void OnSetAutoBrightnessItemClick(object sender, EventArgs e)

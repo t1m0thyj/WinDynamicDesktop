@@ -16,8 +16,7 @@ namespace WinDynamicDesktop
         private static readonly Func<string, string> _ = Localization.GetTranslation;
         private static readonly string websiteLink =
             "https://github.com/t1m0thyj/WinDynamicDesktop";
-        private static readonly string donateLink =
-            "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=H8ZZXM9ABRJFU";
+        private static readonly string donateLink = "https://paypal.me/t1m0thyj";
 
         public AboutDialog()
         {
