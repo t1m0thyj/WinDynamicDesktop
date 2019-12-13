@@ -29,6 +29,7 @@ namespace WinDynamicDesktop
         private DateTime? nextUpdateTime;
 
         public static bool isSunUp;
+        public FullScreenApi fullScreenChecker;
 
         private Timer backgroundTimer = new Timer();
         private Timer schedulerTimer = new Timer();
@@ -36,6 +37,8 @@ namespace WinDynamicDesktop
 
         public WallpaperChangeScheduler()
         {
+            fullScreenChecker = new FullScreenApi(this);
+            
             backgroundTimer.AutoReset = true;
             backgroundTimer.Interval = 60e3;
             backgroundTimer.Elapsed += OnBackgroundTimerElapsed;
@@ -281,8 +284,14 @@ namespace WinDynamicDesktop
             schedulerTimer.Start();
         }
 
-        private void HandleTimerEvent(bool updateLocation)
+        public void HandleTimerEvent(bool updateLocation)
         {
+            if (JsonConfig.settings.fullScreenPause && fullScreenChecker.runningFullScreen)
+            {
+                fullScreenChecker.timerEventPending = true;
+                return;
+            }
+
             if (updateLocation && JsonConfig.settings.useWindowsLocation)
             {
                 Task.Run(() => UwpLocation.UpdateGeoposition());

@@ -42,6 +42,7 @@ namespace WinDynamicDesktop
         public string sunriseTime { get; set; }
         public string sunsetTime { get; set; }
         public int sunriseSunsetDuration { get; set; }
+        public bool fullScreenPause { get; set; }
 
         // Auto Brightness Config
         public bool IsPolarAllDay { get; set; }

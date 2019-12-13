@@ -19,6 +19,7 @@ namespace WinDynamicDesktop
         public static ToolStripMenuItem darkModeItem;
         public static ToolStripMenuItem startOnBootItem;
         public static ToolStripMenuItem shuffleItem;
+        public static ToolStripMenuItem fullScreenItem;
 
         public static ContextMenuStrip GetMenu()
         {
@@ -82,9 +83,13 @@ namespace WinDynamicDesktop
             items.Add(new ToolStripMenuItem(_("Reload Configuration File"), null, OnReloadConfigFileClick));
             items.Add(new ToolStripSeparator());
 
-            shuffleItem = new ToolStripMenuItem(_("Shuffle Wallpaper Daily"), null, OnShuffleItemClick);
+            shuffleItem = new ToolStripMenuItem(_("Shuffle wallpaper daily"), null, OnShuffleItemClick);
             shuffleItem.Checked = JsonConfig.settings.enableShuffle;
             items.Add(shuffleItem);
+
+            fullScreenItem = new ToolStripMenuItem(_("Pause while fullscreen apps running"), null, OnFullScreenItemClick);
+            fullScreenItem.Checked = JsonConfig.settings.fullScreenPause;
+            items.Add(fullScreenItem);
 
             if (BrightnessController.IsDDCSupported)
             {
@@ -157,6 +162,11 @@ namespace WinDynamicDesktop
         private static void OnShuffleItemClick(object sender, EventArgs e)
         {
             WallpaperShuffler.ToggleShuffle();
+        }
+
+        private static void OnFullScreenItemClick(object sender, EventArgs e)
+        {
+            AppContext.wpEngine.fullScreenChecker.ToggleFullScreenPause();
         }
 
         private static void OnSetAutoBrightnessItemClick(object sender, EventArgs e)
