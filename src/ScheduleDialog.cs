@@ -131,22 +131,7 @@ namespace WinDynamicDesktop
             UpdateGuiState();
         }
 
-        private void radioButton1_CheckedChanged(object sender, EventArgs e)
-        {
-            UpdateGuiState();  // TODO Can these 3 be combined?
-        }
-
-        private void radioButton2_CheckedChanged(object sender, EventArgs e)
-        {
-            UpdateGuiState();
-        }
-
-        private void radioButton3_CheckedChanged(object sender, EventArgs e)
-        {
-            UpdateGuiState();
-        }
-
-        private void inputBox_TextChanged(object sender, EventArgs e)
+        private void OnInputValueChanged(object sender, EventArgs e)
         {
             UpdateGuiState();
         }
@@ -161,16 +146,6 @@ namespace WinDynamicDesktop
         {
             hasLocationPermission = UwpLocation.HasAccess();
             UpdateLocationState();
-        }
-
-        private void sunriseTimePicker_ValueChanged(object sender, EventArgs e)
-        {
-            UpdateGuiState();
-        }
-
-        private void sunsetTimePicker_ValueChanged(object sender, EventArgs e)
-        {
-            UpdateGuiState();
         }
 
         private async void okButton_Click(object sender, EventArgs e)

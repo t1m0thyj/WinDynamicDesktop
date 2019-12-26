@@ -62,7 +62,7 @@
             this.locationBox.Name = "locationBox";
             this.locationBox.Size = new System.Drawing.Size(293, 20);
             this.locationBox.TabIndex = 0;
-            this.locationBox.TextChanged += new System.EventHandler(this.inputBox_TextChanged);
+            this.locationBox.TextChanged += new System.EventHandler(this.OnInputValueChanged);
             // 
             // okButton
             // 
@@ -97,7 +97,7 @@
             this.radioButton1.TabStop = true;
             this.radioButton1.Text = "Use location to determine sunrise and sunset times";
             this.radioButton1.UseVisualStyleBackColor = true;
-            this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
+            this.radioButton1.CheckedChanged += new System.EventHandler(this.OnInputValueChanged);
             // 
             // radioButton2
             // 
@@ -109,7 +109,7 @@
             this.radioButton2.TabIndex = 5;
             this.radioButton2.Text = "Use Windows location service to determine times";
             this.radioButton2.UseVisualStyleBackColor = true;
-            this.radioButton2.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
+            this.radioButton2.CheckedChanged += new System.EventHandler(this.OnInputValueChanged);
             // 
             // radioButton3
             // 
@@ -120,7 +120,7 @@
             this.radioButton3.TabIndex = 6;
             this.radioButton3.Text = "Use specific sunrise and sunset times";
             this.radioButton3.UseVisualStyleBackColor = true;
-            this.radioButton3.CheckedChanged += new System.EventHandler(this.radioButton3_CheckedChanged);
+            this.radioButton3.CheckedChanged += new System.EventHandler(this.OnInputValueChanged);
             // 
             // locationPermissionLabel
             // 
@@ -162,7 +162,7 @@
             this.sunriseTimePicker.Size = new System.Drawing.Size(94, 20);
             this.sunriseTimePicker.TabIndex = 12;
             this.sunriseTimePicker.Value = new System.DateTime(1970, 1, 1, 6, 0, 0, 0);
-            this.sunriseTimePicker.ValueChanged += new System.EventHandler(this.sunriseTimePicker_ValueChanged);
+            this.sunriseTimePicker.ValueChanged += new System.EventHandler(this.OnInputValueChanged);
             // 
             // sunsetTimePicker
             // 
@@ -174,7 +174,7 @@
             this.sunsetTimePicker.Size = new System.Drawing.Size(94, 20);
             this.sunsetTimePicker.TabIndex = 13;
             this.sunsetTimePicker.Value = new System.DateTime(1970, 1, 1, 18, 0, 0, 0);
-            this.sunsetTimePicker.ValueChanged += new System.EventHandler(this.sunsetTimePicker_ValueChanged);
+            this.sunsetTimePicker.ValueChanged += new System.EventHandler(this.OnInputValueChanged);
             // 
             // sunriseSunsetDurationLabel
             // 

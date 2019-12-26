@@ -17,7 +17,7 @@ namespace WinDynamicDesktop
     {
         public int imageId;
         public long nextUpdateTicks;
-        public int daySegment2;  // TODO Populate this correctly
+        public int daySegment2;
         public int daySegment4;
     }
 
@@ -146,7 +146,7 @@ namespace WinDynamicDesktop
             int[] imageList;
             DateTime segmentStart;
             DateTime segmentEnd;
-            SchedulerState imageData = new SchedulerState();
+            SchedulerState imageData = new SchedulerState() { daySegment2 = isSunUp ? 0 : 1 };
 
             if (!JsonConfig.settings.darkMode)
             {
