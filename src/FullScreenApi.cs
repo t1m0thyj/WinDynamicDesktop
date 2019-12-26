@@ -16,6 +16,7 @@ namespace WinDynamicDesktop
 
         private Action timerEventHandler;
         private IntPtr winEventHook;
+        private WinEventDelegate winEventProc;
 
         private struct RECT
         {
@@ -70,9 +71,9 @@ namespace WinDynamicDesktop
         {
             if (fullScreenPause)
             {
-                WinEventDelegate del = new WinEventDelegate(WinEventProc);
+                winEventProc = new WinEventDelegate(WinEventProc);
                 winEventHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND,
-                    IntPtr.Zero, del, 0, 0, WINEVENT_OUTOFCONTEXT);
+                    IntPtr.Zero, winEventProc, 0, 0, WINEVENT_OUTOFCONTEXT);
             }
             else
             {

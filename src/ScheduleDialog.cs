@@ -62,8 +62,8 @@ namespace WinDynamicDesktop
                 }
             }
 
-            //sunriseTimePicker.MaxDate = sunsetTimePicker.Value;
-            //sunsetTimePicker.MinDate = sunriseTimePicker.Value;
+            sunriseTimePicker.MaxDate = sunsetTimePicker.Value.AddHours(-1);
+            sunsetTimePicker.MinDate = sunriseTimePicker.Value.AddHours(1);
 
             bool isInputValid = radioButton3.Checked;
             if (radioButton1.Checked)
@@ -104,11 +104,19 @@ namespace WinDynamicDesktop
             {
                 sunriseTimePicker.Value = DateTime.Parse(JsonConfig.settings.sunriseTime);
                 sunsetTimePicker.Value = DateTime.Parse(JsonConfig.settings.sunsetTime);
+            }
+            else
+            {
+                sunriseTimePicker.Value = DateTime.Today.AddHours(6);
+                sunsetTimePicker.Value = DateTime.Today.AddHours(18);
+            }
 
-                if (JsonConfig.settings.sunriseSunsetDuration > 0)
-                {
-                    sunriseSunsetDurationBox.Value = JsonConfig.settings.sunriseSunsetDuration;
-                }
+            sunriseTimePicker.MinDate = sunriseTimePicker.Value.Date;
+            sunriseTimePicker.MaxDate = sunsetTimePicker.Value.Date.AddHours(24);
+
+            if (JsonConfig.settings.sunriseSunsetDuration > 0)
+            {
+                sunriseSunsetDurationBox.Value = JsonConfig.settings.sunriseSunsetDuration;
             }
 
             if (JsonConfig.settings.useWindowsLocation)
@@ -155,10 +163,21 @@ namespace WinDynamicDesktop
             UpdateLocationState();
         }
 
+        private void sunriseTimePicker_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateGuiState();
+        }
+
+        private void sunsetTimePicker_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateGuiState();
+        }
+
         private async void okButton_Click(object sender, EventArgs e)
         {
             okButton.Enabled = false;
             JsonConfig.settings.useWindowsLocation = radioButton2.Checked;
+            JsonConfig.settings.dontUseLocation = radioButton3.Checked;
 
             if (radioButton1.Checked)
             {
@@ -177,6 +196,13 @@ namespace WinDynamicDesktop
                     MessageDialog.ShowWarning(_("Failed to get location from Windows location " +
                         "service."), _("Error"));
                 }
+            }
+            else if (radioButton3.Checked)
+            {
+                JsonConfig.settings.sunriseTime = sunriseTimePicker.Value.ToLongTimeString();
+                JsonConfig.settings.sunsetTime = sunsetTimePicker.Value.ToLongTimeString();
+                JsonConfig.settings.sunriseSunsetDuration = (int)sunriseSunsetDurationBox.Value;
+                this.Close();
             }
 
             okButton.Enabled = true;

@@ -162,6 +162,7 @@
             this.sunriseTimePicker.Size = new System.Drawing.Size(94, 20);
             this.sunriseTimePicker.TabIndex = 12;
             this.sunriseTimePicker.Value = new System.DateTime(1970, 1, 1, 6, 0, 0, 0);
+            this.sunriseTimePicker.ValueChanged += new System.EventHandler(this.sunriseTimePicker_ValueChanged);
             // 
             // sunsetTimePicker
             // 
@@ -173,6 +174,7 @@
             this.sunsetTimePicker.Size = new System.Drawing.Size(94, 20);
             this.sunsetTimePicker.TabIndex = 13;
             this.sunsetTimePicker.Value = new System.DateTime(1970, 1, 1, 18, 0, 0, 0);
+            this.sunsetTimePicker.ValueChanged += new System.EventHandler(this.sunsetTimePicker_ValueChanged);
             // 
             // sunriseSunsetDurationLabel
             // 

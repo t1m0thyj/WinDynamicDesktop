@@ -26,6 +26,22 @@ namespace WinDynamicDesktop
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
 
+        private static SolarData GetUserProvidedSolarData()
+        {
+            SolarData data = new SolarData();
+            data.sunriseTime = DateTime.Parse(JsonConfig.settings.sunriseTime);
+            data.sunsetTime = DateTime.Parse(JsonConfig.settings.sunsetTime);
+            int halfSunriseSunsetDuration = JsonConfig.settings.sunriseSunsetDuration * 30;
+            data.solarTimes = new DateTime[4]
+            {
+                data.sunriseTime.AddSeconds(-halfSunriseSunsetDuration),
+                data.sunriseTime.AddSeconds(halfSunriseSunsetDuration),
+                data.sunsetTime.AddSeconds(-halfSunriseSunsetDuration),
+                data.sunsetTime.AddSeconds(halfSunriseSunsetDuration)
+            };
+            return data;
+        }
+
         private static List<SunPhase> GetSunPhases(DateTime date, double latitude,
             double longitude)
         {
@@ -41,6 +57,11 @@ namespace WinDynamicDesktop
 
         public static SolarData GetSolarData(DateTime date)
         {
+            if (JsonConfig.settings.dontUseLocation)
+            {
+                return GetUserProvidedSolarData();
+            }
+
             double latitude = double.Parse(JsonConfig.settings.latitude,
                 CultureInfo.InvariantCulture);
             double longitude = double.Parse(JsonConfig.settings.longitude,
