@@ -28,7 +28,6 @@ namespace WinDynamicDesktop
             DebugLogger.WriteLogFile();
             JsonConfig.LoadConfig();
             Localization.Initialize();
-            BrightnessManager.Initialize();
 
             ThemeManager.importPaths = args.Where(System.IO.File.Exists).ToList();
             HandleMultiInstance();
@@ -36,6 +35,8 @@ namespace WinDynamicDesktop
             InitializeTrayIcon();
             LocationManager.Initialize();
             ThemeManager.Initialize();
+            ScriptManager.Initialize();
+
             wpEngine.RunScheduler();
             LaunchSequence.NextStep();
             UpdateChecker.Initialize();

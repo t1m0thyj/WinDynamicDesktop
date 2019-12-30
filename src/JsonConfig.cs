@@ -14,6 +14,7 @@ using PropertyChanged;
 
 namespace WinDynamicDesktop
 {
+#nullable disable
     [AddINotifyPropertyChangedInterface]
     public class AppConfig : INotifyPropertyChanged
     {
@@ -28,11 +29,8 @@ namespace WinDynamicDesktop
         public bool hideTrayIcon { get; set; }
         public bool disableAutoUpdate { get; set; }
         public string lastUpdateCheck { get; set; }
-        public bool changeSystemTheme { get; set; }
-        public bool changeAppTheme { get; set; }
         public string themeName { get; set; }
         public bool useWindowsLocation { get; set; }
-        public bool changeLockScreen { get; set; }
         public string language { get; set; }
         public string poeditorApiToken { get; set; }
         public bool enableShuffle { get; set; }
@@ -43,19 +41,7 @@ namespace WinDynamicDesktop
         public string sunsetTime { get; set; }
         public int sunriseSunsetDuration { get; set; }
         public bool fullScreenPause { get; set; }
-
-        // Auto Brightness Config
-        public bool IsPolarAllDay { get; set; }
-        public bool IsPolarAllNight { get; set; }
-        public bool showBrightnessChangeNotificationToast { get; set; }
-        public bool useAutoBrightness { get; set; }
-        public bool useCustomAutoBrightness { get; set; }
-        public int allDayBrightness { get; set; }
-        public int allNightBrightness { get; set; }
-        public int sunriseBrightness { get; set; }
-        public int dayBrightness { get; set; }
-        public int sunsetBrightness { get; set; }
-        public int nightBrightness { get; set; }
+        public bool enableScripts { get; set; }
     }
 
     public class ThemeConfig
@@ -71,6 +57,7 @@ namespace WinDynamicDesktop
         public int[] sunsetImageList { get; set; }
         public int[] nightImageList { get; set; }
     }
+#nullable restore
 
     class JsonConfig
     {

@@ -70,12 +70,22 @@ namespace WinDynamicDesktop
                 }
 
                 WallpaperShuffler.MaybeShuffleWallpaper();
-                SchedulerState imageData = GetImageData(data, ThemeManager.currentTheme);
+            }
+
+            SchedulerState imageData = GetImageData(data, ThemeManager.currentTheme);
+
+            if (ThemeManager.currentTheme != null)
+            {
                 SetWallpaper(imageData.imageId);
                 nextImageUpdateTime = new DateTime(imageData.nextUpdateTicks);
             }
 
-            SystemThemeChanger.TryUpdateSystemTheme();
+            ScriptManager.RunScripts(new ScriptArgs()
+            {
+                daySegment2 = imageData.daySegment2,
+                daySegment4 = imageData.daySegment4,
+                imagePath = (ThemeManager.currentTheme != null) ? lastImagePath : null
+            });
 
             if (data.polarPeriod != PolarPeriod.None)
             {
@@ -143,7 +153,7 @@ namespace WinDynamicDesktop
 
         public SchedulerState GetImageData(SolarData data, ThemeConfig theme)
         {
-            int[] imageList;
+            int[] imageList = null;
             DateTime segmentStart;
             DateTime segmentEnd;
             SchedulerState imageData = new SchedulerState() { daySegment2 = isSunUp ? 0 : 1 };
@@ -153,42 +163,37 @@ namespace WinDynamicDesktop
                 switch (GetCurrentDaySegment(data))
                 {
                     case DaySegment.AllDay:
-                        imageList = theme.dayImageList;
+                        imageList = theme?.dayImageList;
                         segmentStart = DateTime.Today;
                         segmentEnd = DateTime.Today.AddDays(1);
-                        BrightnessManager.ChangeBrightness(0);
                         imageData.daySegment4 = 1;
                         break;
                     case DaySegment.AllNight:
-                        imageList = theme.nightImageList;
+                        imageList = theme?.nightImageList;
                         segmentStart = DateTime.Today;
                         segmentEnd = DateTime.Today.AddDays(1);
-                        BrightnessManager.ChangeBrightness(1);
                         imageData.daySegment4 = 3;
                         break;
                     case DaySegment.Sunrise:
-                        imageList = theme.sunriseImageList;
+                        imageList = theme?.sunriseImageList;
                         segmentStart = data.solarTimes[0];
                         segmentEnd = data.solarTimes[1];
-                        BrightnessManager.ChangeBrightness(2);
                         imageData.daySegment4 = 0;
                         break;
                     case DaySegment.Day:
-                        imageList = theme.dayImageList;
+                        imageList = theme?.dayImageList;
                         segmentStart = data.solarTimes[1];
                         segmentEnd = data.solarTimes[2];
-                        BrightnessManager.ChangeBrightness(3);
                         imageData.daySegment4 = 1;
                         break;
                     case DaySegment.Sunset:
-                        imageList = theme.sunsetImageList;
+                        imageList = theme?.sunsetImageList;
                         segmentStart = data.solarTimes[2];
                         segmentEnd = data.solarTimes[3];
-                        BrightnessManager.ChangeBrightness(4);
                         imageData.daySegment4 = 2;
                         break;
                     default:
-                        imageList = theme.nightImageList;
+                        imageList = theme?.nightImageList;
                         imageData.daySegment4 = 3;
 
                         if (DateTime.Now < data.solarTimes[0])
@@ -206,15 +211,12 @@ namespace WinDynamicDesktop
                             segmentEnd = tomorrowsData.solarTimes[0];
                         }
 
-                        BrightnessManager.ChangeBrightness(5);
                         break;
                 }
             }
             else
             {
-                imageList = theme.nightImageList;
-
-                BrightnessManager.ChangeBrightness(5);
+                imageList = theme?.nightImageList;
 
                 if (data.polarPeriod != PolarPeriod.None)
                 {
@@ -242,12 +244,15 @@ namespace WinDynamicDesktop
                 }
             }
 
-            TimeSpan segmentLength = segmentEnd - segmentStart;
-            TimeSpan timerLength = new TimeSpan(segmentLength.Ticks / imageList.Length);
+            if (imageList != null)
+            {
+                TimeSpan segmentLength = segmentEnd - segmentStart;
+                TimeSpan timerLength = new TimeSpan(segmentLength.Ticks / imageList.Length);
 
-            int imageNumber = (int)((DateTime.Now - segmentStart).Ticks / timerLength.Ticks);
-            imageData.imageId = imageList[imageNumber];
-            imageData.nextUpdateTicks = segmentStart.Ticks + timerLength.Ticks * (imageNumber + 1);
+                int imageNumber = (int)((DateTime.Now - segmentStart).Ticks / timerLength.Ticks);
+                imageData.imageId = imageList[imageNumber];
+                imageData.nextUpdateTicks = segmentStart.Ticks + timerLength.Ticks * (imageNumber + 1);
+            }
 
             return imageData;
         }
@@ -266,11 +271,6 @@ namespace WinDynamicDesktop
 
             WallpaperApi.EnableTransitions();
             UwpDesktop.GetHelper().SetWallpaper(imageFilename);
-
-            if (UwpDesktop.IsRunningAsUwp() && JsonConfig.settings.changeLockScreen)
-            {
-                UwpHelper.SetLockScreenImage(imageFilename);
-            }
 
             lastImagePath = imagePath;
         }

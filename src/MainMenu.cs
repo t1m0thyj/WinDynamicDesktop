@@ -18,6 +18,7 @@ namespace WinDynamicDesktop
         public static ToolStripMenuItem themeItem;
         public static ToolStripMenuItem darkModeItem;
         public static ToolStripMenuItem startOnBootItem;
+        public static ToolStripMenuItem enableScriptsItem;
         public static ToolStripMenuItem shuffleItem;
         public static ToolStripMenuItem fullScreenItem;
 
@@ -91,15 +92,14 @@ namespace WinDynamicDesktop
             fullScreenItem.Checked = JsonConfig.settings.fullScreenPause;
             items.Add(fullScreenItem);
 
-            if (BrightnessController.IsDDCSupported)
-            {
-                items.Add(new ToolStripSeparator());
-                items.Add(new ToolStripMenuItem(_("Set Auto Brightness"), null, OnSetAutoBrightnessItemClick));
-            }
-
-            items.AddRange(SystemThemeChanger.GetMenuItems());
-            items.AddRange(WallpaperCompressionChanger.GetMenuItems());
+            items.AddRange(RegistryTweaker.GetMenuItems());
             items.AddRange(UpdateChecker.GetMenuItems());
+            items.Add(new ToolStripSeparator());
+
+            enableScriptsItem = new ToolStripMenuItem(_("Enable PowerShell scripting"), null, OnEnableScriptsClick);
+            enableScriptsItem.Checked = JsonConfig.settings.enableScripts;
+            items.Add(enableScriptsItem);
+            items.Add(new ToolStripMenuItem(_("Manage installed scripts"), null, OnManageScriptsClick));
 
             return items;
         }
@@ -169,9 +169,14 @@ namespace WinDynamicDesktop
             AppContext.wpEngine.fullScreenChecker.ToggleFullScreenPause();
         }
 
-        private static void OnSetAutoBrightnessItemClick(object sender, EventArgs e)
+        private static void OnEnableScriptsClick(object sender, EventArgs e)
         {
-            (new BrightnessDialog()).ShowDialog();
+            ScriptManager.ToggleEnableScripts();
+        }
+
+        private static void OnManageScriptsClick(object sender, EventArgs e)
+        {
+            Process.Start("explorer", "scripts");
         }
     }
 }

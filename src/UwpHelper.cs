@@ -85,16 +85,5 @@ namespace WinDynamicDesktop
                 Windows.System.UserProfile.UserProfilePersonalizationSettings.Current;
             await profileSettings.TrySetWallpaperImageAsync(file);
         }
-
-        public static async void SetLockScreenImage(string imageFilename)
-        {
-            var uri = new Uri("ms-appdata:///local/themes/" + ThemeManager.currentTheme.themeId +
-                "/" + imageFilename);
-            var file = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri);
-
-            var profileSettings =
-                Windows.System.UserProfile.UserProfilePersonalizationSettings.Current;
-            await profileSettings.TrySetLockScreenImageAsync(file);
-        }
     }
 }

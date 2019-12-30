@@ -12,7 +12,7 @@ namespace WinDynamicDesktop
 {
     class DefaultThemes
     {
-        private static string[] yamlLines;
+        private static string[] yamlLines = Array.Empty<string>();
 
         public static string[] GetDefaultThemes()
         {

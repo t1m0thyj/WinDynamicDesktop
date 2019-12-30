@@ -16,6 +16,8 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -67,14 +69,18 @@
     <Reference Include="RestSharp, Version=106.6.10.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
       <HintPath>packages\RestSharp.106.6.10\lib\net452\RestSharp.dll</HintPath>
     </Reference>
-    <Reference Include="SunCalcNet, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\SunCalcNet.1.1.0\lib\net461\SunCalcNet.dll</HintPath>
+    <Reference Include="SunCalcNet, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\SunCalcNet.1.1.1\lib\netstandard2.0\SunCalcNet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Management" />
+    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\WindowsPowerShell\3.0\System.Management.Automation.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System.Runtime.WindowsRuntime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETCore\v4.5\System.Runtime.WindowsRuntime.dll</HintPath>
@@ -101,14 +107,6 @@
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="AppContext.cs" />
-    <Compile Include="BrightnessController.cs" />
-    <Compile Include="BrightnessDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="BrightnessDialog.Designer.cs">
-      <DependentUpon>BrightnessDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="BrightnessManager.cs" />
     <Compile Include="Compatibility.cs" />
     <Compile Include="DebugLogger.cs" />
     <Compile Include="DefaultThemes.cs" />
@@ -121,7 +119,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="RegistryTweaker.cs" />
     <Compile Include="RestResponse.cs" />
+    <Compile Include="ScriptManager.cs" />
     <Compile Include="ThemeResult.cs" />
     <Compile Include="ScheduleDialog.cs">
       <SubType>Form</SubType>
@@ -156,7 +156,6 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SunriseSunset.cs" />
-    <Compile Include="SystemThemeChanger.cs" />
     <Compile Include="TaskbarProgress.cs" />
     <Compile Include="ThemeDialog.cs">
       <SubType>Form</SubType>
@@ -175,14 +174,9 @@
     <Compile Include="UwpLocation.cs" />
     <Compile Include="WallpaperApi.cs" />
     <Compile Include="WallpaperChangeScheduler.cs" />
-    <Compile Include="WallpaperCompressionChanger.cs" />
     <Compile Include="WallpaperShuffler.cs" />
     <EmbeddedResource Include="AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="BrightnessDialog.resx">
-      <DependentUpon>BrightnessDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ScheduleDialog.resx">
