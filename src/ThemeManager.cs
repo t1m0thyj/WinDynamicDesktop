@@ -28,7 +28,7 @@ namespace WinDynamicDesktop
         public static void Initialize()
         {
             Directory.CreateDirectory("themes");
-            Compatibility.CompatibilizeThemes();
+            UpdateHandler.CompatibilizeThemes();
             
             defaultThemes = DefaultThemes.GetDefaultThemes();
             List<string> themeIds = new List<string>();

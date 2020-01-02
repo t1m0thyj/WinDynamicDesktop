@@ -59,15 +59,11 @@ namespace WinDynamicDesktop
         private static async Task<Windows.Devices.Geolocation.BasicGeoposition>
             UnsafeUpdateGeoposition()
         {
-            var geolocator = new Windows.Devices.Geolocation.Geolocator
-            {
-                DesiredAccuracyInMeters = 0
-            };
+            var geolocator = new Windows.Devices.Geolocation.Geolocator();
+            var geoposition = await geolocator.GetGeopositionAsync(
+                maximumAge: TimeSpan.FromMinutes(1), timeout: TimeSpan.FromSeconds(10));
 
-            var pos = await geolocator.GetGeopositionAsync(maximumAge: TimeSpan.FromMinutes(5),
-                timeout: TimeSpan.FromSeconds(10));
-
-            return pos.Coordinate.Point.Position;
+            return geoposition.Coordinate.Point.Position;
         }
 
         public static async Task<bool> UpdateGeoposition()

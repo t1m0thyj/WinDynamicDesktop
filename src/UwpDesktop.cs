@@ -40,6 +40,11 @@ namespace WinDynamicDesktop
             return _isRunningAsUwp.Value;
         }
 
+        public static bool IsUwpSupported()
+        {
+            return Environment.OSVersion.Version.Major >= 10;
+        }
+
         public static PlatformHelper GetHelper()
         {
             if (helper == null)

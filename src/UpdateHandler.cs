@@ -8,10 +8,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace WinDynamicDesktop
 {
-    class Compatibility
+    public class LegacyConfig
+    {
+        public bool changeSystemTheme { get; set; }
+        public bool changeAppTheme { get; set; }
+        public bool changeLockScreen { get; set; }
+        public bool useAutoBrightness { get; set; }
+        public bool useCustomAutoBrightness { get; set; }
+    }
+
+    class UpdateHandler
     {
         private readonly static string Catalina_JSON = @"{
   'imageUrls': [
@@ -100,8 +110,7 @@ namespace WinDynamicDesktop
   ]
 }";
 
-        // TODO Added 2019-10-10, remove eventually
-        public static void CompatibilizeThemes()
+        public static void CompatibilizeThemes()  // Added 2019-10-10
         {
             if (Directory.Exists(Path.Combine("themes", "Catalina")) && !File.Exists(Path.Combine("themes", "Catalina", "theme.json")))
             {
@@ -119,8 +128,7 @@ namespace WinDynamicDesktop
             }
         }
 
-        // TODO Added 2019-10-22, remove eventually
-        public static void CompatibilizeLocale()
+        public static void CompatibilizeLocale()  // Added 2019-10-22
         {
             switch (JsonConfig.settings.language)
             {
@@ -165,6 +173,22 @@ namespace WinDynamicDesktop
                     return;
                 default:
                     return;
+            }
+        }
+
+        public static void UpdateToVersion4()  // Added 2020-01-01
+        {
+            string jsonText = File.ReadAllText("settings.conf");
+            LegacyConfig settings = JsonConvert.DeserializeObject<LegacyConfig>(jsonText);
+            bool legacySettingsEnabled = (settings.changeSystemTheme ||
+                settings.changeAppTheme || settings.changeLockScreen ||
+                settings.useAutoBrightness || settings.useCustomAutoBrightness);
+            if (legacySettingsEnabled)
+            {
+                jsonText = JsonConvert.SerializeObject(
+                    JsonConvert.DeserializeObject<AppConfig>(jsonText), Formatting.Indented);
+                File.WriteAllText("settings.conf", jsonText);
+                // TODO Inform user about upgrade path for legacy settings
             }
         }
     }

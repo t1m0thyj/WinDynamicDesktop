@@ -97,7 +97,7 @@ namespace WinDynamicDesktop
                 locationBox.Text = JsonConfig.settings.location;
             }
 
-            radioButton2.Enabled = UwpDesktop.IsRunningAsUwp();
+            radioButton2.Enabled = UwpDesktop.IsUwpSupported();
             hasLocationPermission = UwpLocation.HasAccess();
 
             if (JsonConfig.settings.sunriseTime != null && JsonConfig.settings.sunsetTime != null)
@@ -168,6 +168,8 @@ namespace WinDynamicDesktop
                 }
                 else
                 {
+                    hasLocationPermission = UwpLocation.HasAccess();
+                    UpdateLocationState();
                     MessageDialog.ShowWarning(_("Failed to get location from Windows location " +
                         "service."), _("Error"));
                 }
@@ -190,7 +192,7 @@ namespace WinDynamicDesktop
 
         private void OnFormClosing(object sender, FormClosingEventArgs e)
         {
-            if (JsonConfig.settings.latitude == null || JsonConfig.settings.longitude == null)
+            if (!LaunchSequence.IsLocationReady())
             {
                 DialogResult result = MessageDialog.ShowQuestion(_("WinDynamicDesktop cannot " +
                     "display wallpapers until you have entered a valid location, so that it can " +

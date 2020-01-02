@@ -18,11 +18,13 @@ namespace WinDynamicDesktop
 
     class ScriptManager
     {
+        private static readonly Func<string, string> _ = Localization.GetTranslation;
+
         public static void Initialize()
         {
             Directory.CreateDirectory("scripts");
 
-            string urlShortcutFile = Path.Combine("scripts", Localization.GetTranslation("Browse for scripts online") + ".url");
+            string urlShortcutFile = Path.Combine("scripts", _("Browse for scripts online") + ".url");
             if (!File.Exists(urlShortcutFile))
             {
                 File.WriteAllText(urlShortcutFile, "[InternetShortcut]\nURL=https://windd.info/scripts/");
@@ -57,12 +59,20 @@ namespace WinDynamicDesktop
         private static void RunScript(string path, ScriptArgs args)
         {
             using var ps = PowerShell.Create();
-            ps.AddScript("Set-ExecutionPolicy Unrestricted");
+            ps.AddScript("Set-ExecutionPolicy Bypass -Scope Process -Force");
             ps.AddScript(File.ReadAllText(path));
             ps.AddArgument(args.daySegment2);
             ps.AddArgument(args.daySegment4);
             ps.AddArgument(args.imagePath);
-            ps.Invoke();  // TODO Error handling?
+            ps.Invoke();
+
+            if (ps.Streams.Error.Count > 0)
+            {
+                MessageDialog.ShowWarning(string.Format(
+                    _("Error running the PowerShell script '{0}':\n\n{1}"), path,
+                    string.Join("\n", ps.Streams.Error.ReadAll().Select(
+                        (er) => er.Exception.ToString()))), _("Script Error"));
+            }
         }
     }
 }

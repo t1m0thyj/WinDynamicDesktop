@@ -16,7 +16,16 @@ namespace WinDynamicDesktop
 
         public static bool IsLocationReady()
         {
-            return JsonConfig.settings.latitude != null && JsonConfig.settings.longitude != null;
+            if (!JsonConfig.settings.dontUseLocation)
+            {
+                return (JsonConfig.settings.latitude != null &&
+                    JsonConfig.settings.longitude != null);
+            }
+            else
+            {
+                return (JsonConfig.settings.sunriseTime != null &&
+                    JsonConfig.settings.sunsetTime != null);
+            }
         }
 
         public static bool IsThemeReady()

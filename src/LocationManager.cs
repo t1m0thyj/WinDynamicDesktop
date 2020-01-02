@@ -17,7 +17,7 @@ namespace WinDynamicDesktop
 
         public static void Initialize()
         {
-            if (!UwpDesktop.IsRunningAsUwp())
+            if (!UwpDesktop.IsUwpSupported())
             {
                 JsonConfig.settings.useWindowsLocation = false;
             }
