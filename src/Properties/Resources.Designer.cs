@@ -93,6 +93,16 @@ namespace WinDynamicDesktop.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] locale_bn {
+            get {
+                object obj = ResourceManager.GetObject("locale_bn", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] locale_cs {
             get {
                 object obj = ResourceManager.GetObject("locale_cs", resourceCulture);
@@ -143,6 +153,26 @@ namespace WinDynamicDesktop.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] locale_hi {
+            get {
+                object obj = ResourceManager.GetObject("locale_hi", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] locale_id {
+            get {
+                object obj = ResourceManager.GetObject("locale_id", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] locale_it {
             get {
                 object obj = ResourceManager.GetObject("locale_it", resourceCulture);
@@ -166,6 +196,16 @@ namespace WinDynamicDesktop.Properties {
         internal static byte[] locale_pl {
             get {
                 object obj = ResourceManager.GetObject("locale_pl", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] locale_pt_br {
+            get {
+                object obj = ResourceManager.GetObject("locale_pt_br", resourceCulture);
                 return ((byte[])(obj));
             }
         }

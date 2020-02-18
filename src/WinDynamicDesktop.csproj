@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="packages\PropertyChanged.Fody.3.2.1\build\PropertyChanged.Fody.props" Condition="Exists('packages\PropertyChanged.Fody.3.2.1\build\PropertyChanged.Fody.props')" />
+  <Import Project="packages\PropertyChanged.Fody.3.2.6\build\PropertyChanged.Fody.props" Condition="Exists('packages\PropertyChanged.Fody.3.2.6\build\PropertyChanged.Fody.props')" />
   <Import Project="packages\Costura.Fody.4.1.0\build\Costura.Fody.props" Condition="Exists('packages\Costura.Fody.4.1.0\build\Costura.Fody.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -48,8 +48,8 @@
     <Reference Include="Costura, Version=4.1.0.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
       <HintPath>packages\Costura.Fody.4.1.0\lib\net40\Costura.dll</HintPath>
     </Reference>
-    <Reference Include="DesktopBridge.Helpers, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\DesktopBridge.Helpers.1.2.1\lib\net45\DesktopBridge.Helpers.dll</HintPath>
+    <Reference Include="DesktopBridge.Helpers, Version=1.2.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\DesktopBridge.Helpers.1.2.2\lib\net45\DesktopBridge.Helpers.dll</HintPath>
     </Reference>
     <Reference Include="ImageListView, Version=13.7.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\ImageListView.13.7.2\lib\net35\ImageListView.dll</HintPath>
@@ -63,11 +63,11 @@
     <Reference Include="NGettext, Version=0.6.1.0, Culture=neutral, PublicKeyToken=08d3d1c89dfd2985, processorArchitecture=MSIL">
       <HintPath>packages\NGettext.0.6.5\lib\net46\NGettext.dll</HintPath>
     </Reference>
-    <Reference Include="PropertyChanged, Version=3.2.1.0, Culture=neutral, PublicKeyToken=ee3ee20bcf148ddd, processorArchitecture=MSIL">
-      <HintPath>packages\PropertyChanged.Fody.3.2.1\lib\net40\PropertyChanged.dll</HintPath>
+    <Reference Include="PropertyChanged, Version=3.2.6.0, Culture=neutral, PublicKeyToken=ee3ee20bcf148ddd, processorArchitecture=MSIL">
+      <HintPath>packages\PropertyChanged.Fody.3.2.6\lib\net40\PropertyChanged.dll</HintPath>
     </Reference>
-    <Reference Include="RestSharp, Version=106.6.10.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
-      <HintPath>packages\RestSharp.106.6.10\lib\net452\RestSharp.dll</HintPath>
+    <Reference Include="RestSharp, Version=106.0.0.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>packages\RestSharp.106.10.1\lib\net452\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="SunCalcNet, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\SunCalcNet.1.1.1\lib\netstandard2.0\SunCalcNet.dll</HintPath>
@@ -200,14 +200,18 @@
       <DependentUpon>ThemeDialog.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.manifest" />
+    <None Include="locale\bn.mo" />
     <None Include="locale\cs.mo" />
     <None Include="locale\de.mo" />
     <None Include="locale\el.mo" />
     <None Include="locale\es.mo" />
     <None Include="locale\fr.mo" />
+    <None Include="locale\hi.mo" />
+    <None Include="locale\id.mo" />
     <None Include="locale\it.mo" />
     <None Include="locale\mk.mo" />
     <None Include="locale\pl.mo" />
+    <None Include="locale\pt-br.mo" />
     <None Include="locale\ro.mo" />
     <None Include="locale\ru.mo" />
     <None Include="locale\tr.mo" />
@@ -239,8 +243,8 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('packages\Costura.Fody.4.1.0\build\Costura.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Costura.Fody.4.1.0\build\Costura.Fody.props'))" />
-    <Error Condition="!Exists('packages\Fody.6.0.5\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Fody.6.0.5\build\Fody.targets'))" />
-    <Error Condition="!Exists('packages\PropertyChanged.Fody.3.2.1\build\PropertyChanged.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\PropertyChanged.Fody.3.2.1\build\PropertyChanged.Fody.props'))" />
+    <Error Condition="!Exists('packages\Fody.6.1.0\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Fody.6.1.0\build\Fody.targets'))" />
+    <Error Condition="!Exists('packages\PropertyChanged.Fody.3.2.6\build\PropertyChanged.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\PropertyChanged.Fody.3.2.6\build\PropertyChanged.Fody.props'))" />
   </Target>
-  <Import Project="packages\Fody.6.0.5\build\Fody.targets" Condition="Exists('packages\Fody.6.0.5\build\Fody.targets')" />
+  <Import Project="packages\Fody.6.1.0\build\Fody.targets" Condition="Exists('packages\Fody.6.1.0\build\Fody.targets')" />
 </Project>

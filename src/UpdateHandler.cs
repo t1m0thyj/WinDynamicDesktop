@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 
 namespace WinDynamicDesktop
 {
+#nullable disable
     public class LegacyConfig
     {
         public bool changeSystemTheme { get; set; }
@@ -20,6 +21,7 @@ namespace WinDynamicDesktop
         public bool useAutoBrightness { get; set; }
         public bool useCustomAutoBrightness { get; set; }
     }
+#nullable restore
 
     class UpdateHandler
     {
@@ -178,6 +180,10 @@ namespace WinDynamicDesktop
 
         public static void UpdateToVersion4()  // Added 2020-01-01
         {
+            if (!File.Exists("settings.conf"))
+            {
+                return;
+            }
             string jsonText = File.ReadAllText("settings.conf");
             LegacyConfig settings = JsonConvert.DeserializeObject<LegacyConfig>(jsonText);
             bool legacySettingsEnabled = (settings.changeSystemTheme ||
@@ -188,7 +194,12 @@ namespace WinDynamicDesktop
                 jsonText = JsonConvert.SerializeObject(
                     JsonConvert.DeserializeObject<AppConfig>(jsonText), Formatting.Indented);
                 File.WriteAllText("settings.conf", jsonText);
-                // TODO Inform user about upgrade path for legacy settings
+                MessageDialog.ShowInfo("Updated to WinDynamicDesktop 4.0 successfully. Some " +
+                    "features you were using have been disabled because they were removed from " +
+                    "the core app. You were using one or more of the following features:\n\n* " +
+                    "Change Windows 10 app/system theme\n* Change screen brightness\n* Change " +
+                    "lockscreen image\n\nTo re-enable these features, install scripts for them " +
+                    "from here: https://windd.info/scripts/");
             }
         }
     }

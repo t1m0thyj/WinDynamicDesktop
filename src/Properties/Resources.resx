@@ -169,4 +169,16 @@
   <data name="locale_zh_Hans" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\locale\zh-Hans.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="locale_bn" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\locale\bn.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="locale_hi" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\locale\hi.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="locale_id" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\locale\id.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="locale_pt_br" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\locale\pt-br.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

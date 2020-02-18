@@ -1,4 +1,8 @@
-﻿using System;
+﻿// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -61,16 +65,16 @@ namespace WinDynamicDesktop
             using var ps = PowerShell.Create();
             ps.AddScript("Set-ExecutionPolicy Bypass -Scope Process -Force");
             ps.AddScript(File.ReadAllText(path));
-            ps.AddArgument(args.daySegment2);
-            ps.AddArgument(args.daySegment4);
-            ps.AddArgument(args.imagePath);
+            ps.AddParameter("daySegment2", args.daySegment2);
+            ps.AddParameter("daySegment4", args.daySegment4);
+            ps.AddParameter("imagePath", args.imagePath);
             ps.Invoke();
 
             if (ps.Streams.Error.Count > 0)
             {
                 MessageDialog.ShowWarning(string.Format(
-                    _("Error running the PowerShell script '{0}':\n\n{1}"), path,
-                    string.Join("\n", ps.Streams.Error.ReadAll().Select(
+                    _("Error(s) running PowerShell script '{0}':\n\n{1}"), path,
+                    string.Join("\n\n", ps.Streams.Error.ReadAll().Select(
                         (er) => er.Exception.ToString()))), _("Script Error"));
             }
         }

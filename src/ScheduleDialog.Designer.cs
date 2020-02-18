@@ -128,9 +128,9 @@
             this.locationPermissionLabel.Enabled = false;
             this.locationPermissionLabel.Location = new System.Drawing.Point(28, 118);
             this.locationPermissionLabel.Name = "locationPermissionLabel";
-            this.locationPermissionLabel.Size = new System.Drawing.Size(179, 13);
+            this.locationPermissionLabel.Size = new System.Drawing.Size(146, 13);
             this.locationPermissionLabel.TabIndex = 7;
-            this.locationPermissionLabel.Text = "Only available in Microsoft Store app";
+            this.locationPermissionLabel.Text = "Only available in Windows 10";
             // 
             // sunriseTimeLabel
             // 
@@ -180,7 +180,7 @@
             // 
             this.sunriseSunsetDurationLabel.AutoSize = true;
             this.sunriseSunsetDurationLabel.Enabled = false;
-            this.sunriseSunsetDurationLabel.Location = new System.Drawing.Point(27, 227);
+            this.sunriseSunsetDurationLabel.Location = new System.Drawing.Point(27, 228);
             this.sunriseSunsetDurationLabel.Name = "sunriseSunsetDurationLabel";
             this.sunriseSunsetDurationLabel.Size = new System.Drawing.Size(176, 13);
             this.sunriseSunsetDurationLabel.TabIndex = 15;
@@ -204,7 +204,7 @@
             0,
             0,
             0});
-            this.sunriseSunsetDurationBox.Location = new System.Drawing.Point(209, 224);
+            this.sunriseSunsetDurationBox.Location = new System.Drawing.Point(209, 225);
             this.sunriseSunsetDurationBox.Maximum = new decimal(new int[] {
             1800,
             0,
@@ -261,7 +261,6 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = global::WinDynamicDesktop.Properties.Resources.AppIcon;
             this.MaximizeBox = false;
-            this.MinimizeBox = false;
             this.Name = "ScheduleDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Configure Timing";

@@ -80,10 +80,6 @@ namespace WinDynamicDesktop
             items.Add(new ToolStripMenuItem(_("Select &Language..."), null, OnLanguageItemClick));
             items.Add(new ToolStripSeparator());
 
-            items.Add(new ToolStripMenuItem(_("Edit Configuration File"), null, OnEditConfigFileClick));
-            items.Add(new ToolStripMenuItem(_("Reload Configuration File"), null, OnReloadConfigFileClick));
-            items.Add(new ToolStripSeparator());
-
             shuffleItem = new ToolStripMenuItem(_("Shuffle wallpaper daily"), null, OnShuffleItemClick);
             shuffleItem.Checked = JsonConfig.settings.enableShuffle;
             items.Add(shuffleItem);
@@ -96,7 +92,11 @@ namespace WinDynamicDesktop
             items.AddRange(UpdateChecker.GetMenuItems());
             items.Add(new ToolStripSeparator());
 
-            enableScriptsItem = new ToolStripMenuItem(_("Enable PowerShell scripting"), null, OnEnableScriptsClick);
+            items.Add(new ToolStripMenuItem(_("Edit configuration file"), null, OnEditConfigFileClick));
+            items.Add(new ToolStripMenuItem(_("Reload configuration file"), null, OnReloadConfigFileClick));
+            items.Add(new ToolStripSeparator());
+
+            enableScriptsItem = new ToolStripMenuItem(_("Enable PowerShell scripts"), null, OnEnableScriptsClick);
             enableScriptsItem.Checked = JsonConfig.settings.enableScripts;
             items.Add(enableScriptsItem);
             items.Add(new ToolStripMenuItem(_("Manage installed scripts"), null, OnManageScriptsClick));
@@ -149,16 +149,6 @@ namespace WinDynamicDesktop
             Localization.SelectLanguage();
         }
 
-        private static void OnEditConfigFileClick(object sender, EventArgs e)
-        {
-            Process.Start("explorer", "settings.conf");
-        }
-
-        private static void OnReloadConfigFileClick(object sender, EventArgs e)
-        {
-            JsonConfig.ReloadConfig();
-        }
-
         private static void OnShuffleItemClick(object sender, EventArgs e)
         {
             WallpaperShuffler.ToggleShuffle();
@@ -167,6 +157,16 @@ namespace WinDynamicDesktop
         private static void OnFullScreenItemClick(object sender, EventArgs e)
         {
             AppContext.wpEngine.fullScreenChecker.ToggleFullScreenPause();
+        }
+
+        private static void OnEditConfigFileClick(object sender, EventArgs e)
+        {
+            Process.Start("explorer", "settings.conf");
+        }
+
+        private static void OnReloadConfigFileClick(object sender, EventArgs e)
+        {
+            JsonConfig.ReloadConfig();
         }
 
         private static void OnEnableScriptsClick(object sender, EventArgs e)
