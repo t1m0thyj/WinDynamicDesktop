@@ -1,5 +1,6 @@
 version: 1.0.{build}
 image: Visual Studio 2019
+configuration: Release
 environment:
   UseTemporarySignCert: true
 before_build:
@@ -21,7 +22,7 @@ before_build:
 build:
   verbosity: minimal
 artifacts:
-- path: '**\WinDynamicDesktop.exe'
+- path: src\bin\Release\WinDynamicDesktop.exe
   name: Portable EXE
-- path: '**\WinDynamicDesktop*.appxbundle'
+- path: uwp\**\WinDynamicDesktop*.appxbundle
   name: UWP app
