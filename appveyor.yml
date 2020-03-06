@@ -21,7 +21,7 @@ before_build:
 build:
   verbosity: minimal
 artifacts:
-- path: src\bin\Release\WinDynamicDesktop.exe
+- path: '**\WinDynamicDesktop.exe'
   name: Portable EXE
-- path: uwp\AppPackages\WinDynamicDesktop.Package*Test\WinDynamicDesktop.Package*AnyCPU.appxbundle
+- path: '**\WinDynamicDesktop*.appxbundle'
   name: UWP app
