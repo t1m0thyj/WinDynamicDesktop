@@ -20,3 +20,8 @@ before_build:
     nuget restore src/WinDynamicDesktop.sln
 build:
   verbosity: minimal
+artifacts:
+- path: src\bin\Release\WinDynamicDesktop.exe
+  name: Portable EXE
+- path: uwp\AppPackages\WinDynamicDesktop.Package*Test\WinDynamicDesktop.Package*AnyCPU.appxbundle
+  name: UWP app

@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Globalization;
 
 namespace WinDynamicDesktop
 {
@@ -102,8 +103,10 @@ namespace WinDynamicDesktop
 
             if (JsonConfig.settings.sunriseTime != null && JsonConfig.settings.sunsetTime != null)
             {
-                sunriseTimePicker.Value = DateTime.Parse(JsonConfig.settings.sunriseTime);
-                sunsetTimePicker.Value = DateTime.Parse(JsonConfig.settings.sunsetTime);
+                sunriseTimePicker.Value = DateTime.Parse(JsonConfig.settings.sunriseTime,
+                    CultureInfo.InvariantCulture);
+                sunsetTimePicker.Value = DateTime.Parse(JsonConfig.settings.sunsetTime,
+                    CultureInfo.InvariantCulture);
             }
             else
             {

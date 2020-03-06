@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace WinDynamicDesktop
 {
@@ -30,7 +31,8 @@ namespace WinDynamicDesktop
 
             shuffleHistory.Add(themeId);
             JsonConfig.settings.shuffleHistory = shuffleHistory.ToArray();
-            JsonConfig.settings.lastShuffleDate = DateTime.Now.ToString();
+            JsonConfig.settings.lastShuffleDate = DateTime.Now.ToString(
+                CultureInfo.InvariantCulture);
         }
 
         public static void MaybeShuffleWallpaper()
@@ -42,7 +44,8 @@ namespace WinDynamicDesktop
 
             if (JsonConfig.settings.lastShuffleDate != null)
             {
-                DateTime lastShuffleDate = DateTime.Parse(JsonConfig.settings.lastShuffleDate);
+                DateTime lastShuffleDate = DateTime.Parse(JsonConfig.settings.lastShuffleDate,
+                    CultureInfo.InvariantCulture);
 
                 if (lastShuffleDate.Date == DateTime.Now.Date)
                 {

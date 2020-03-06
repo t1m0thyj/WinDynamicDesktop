@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
 using System.Reflection;
 using System.Windows.Forms;
 using RestSharp;
@@ -120,7 +121,8 @@ namespace WinDynamicDesktop
                     "here to download it."), latestVersion), _("Update Available"));
             }
 
-            JsonConfig.settings.lastUpdateCheck = DateTime.Now.ToString();
+            JsonConfig.settings.lastUpdateCheck = DateTime.Now.ToString(
+                CultureInfo.InvariantCulture);
         }
 
         public static void TryCheckAuto(bool forceIfEnabled = false)
@@ -132,7 +134,8 @@ namespace WinDynamicDesktop
 
             if (JsonConfig.settings.lastUpdateCheck != null && !forceIfEnabled)
             {
-                DateTime lastUpdateCheck = DateTime.Parse(JsonConfig.settings.lastUpdateCheck);
+                DateTime lastUpdateCheck = DateTime.Parse(JsonConfig.settings.lastUpdateCheck,
+                    CultureInfo.InvariantCulture);
                 TimeSpan timeDiff = new TimeSpan(DateTime.Now.Ticks - lastUpdateCheck.Ticks);
 
                 if (timeDiff.Days < 7)
