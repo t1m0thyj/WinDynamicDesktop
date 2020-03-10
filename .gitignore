@@ -3,6 +3,7 @@
 /i18n/mo
 /i18n/po
 /i18n/poeditor_token
+/pkg/*.nupkg
 /src/**/settings.conf
 /src/.vs
 /src/packages
