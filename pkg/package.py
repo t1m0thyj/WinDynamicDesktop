@@ -5,6 +5,7 @@ import sys
 
 import requests
 
+chocolatey_repo = "https://push.chocolatey.org/"
 nuspec_filename = "windynamicdesktop.nuspec"
 script_filename = "tools/chocolateyInstall.ps1"
 
@@ -30,12 +31,13 @@ def write_file(filename, contents):
 
 r = requests.get("https://api.github.com/repos/t1m0thyj/WinDynamicDesktop/releases/latest")
 response = r.json()
-installerUrl = response["assets"][1]["browser_download_url"]
+installer_url = response["assets"][1]["browser_download_url"]
+package_version = response["tag_name"][1:]
 replacers = {
-    "installerChecksum": sha256_checksum("../dist/" + os.path.basename(installerUrl)),
-    "installerUrl": installerUrl,
-    "packageVersion": response["tag_name"][1:],
-    "releaseNotes": response["body"]
+    "installerChecksum": sha256_checksum("../dist/" + os.path.basename(installer_url)),
+    "installerUrl": installer_url,
+    "packageVersion": package_version,
+    "releaseNotes": "\n".join(response["body"].splitlines())
 }
 
 old_nuspec = render_template(nuspec_filename, replacers)
@@ -45,3 +47,7 @@ subprocess.call(["choco", "pack"])
 
 write_file(nuspec_filename, old_nuspec)
 write_file(script_filename, old_script)
+
+nupkg_filename = f"windynamicdesktop.{package_version}.nupkg"
+if input(f"Push {nupkg_filename}? (y/N) ").lower() == "y":
+    subprocess.call(["choco", "push", nupkg_filename, "-s", chocolatey_repo])

@@ -27,7 +27,7 @@ This is a nuspec. It mostly adheres to https://docs.nuget.org/create/Nuspec-Refe
     <!-- Is the version a prerelease of a version? https://docs.nuget.org/create/versioning#creating-prerelease-packages -->
     <!-- Note that unstable versions like 0.0.1 can be considered a released version, but it's possible that one can release a 0.0.1-beta before you release a 0.0.1 version. If the version number is final, that is considered a released version and not a prerelease. -->
     <version>{{packageVersion}}</version>
-    <packageSourceUrl>https://github.com/t1m0thyj/WinDynamicDesktop</packageSourceUrl>
+    <packageSourceUrl>https://github.com/t1m0thyj/WinDynamicDesktop/tree/v{{packageVersion}}</packageSourceUrl>
     <!-- owners is a poor name for maintainers of the package. It sticks around by this name for compatibility reasons. It basically means you. -->
     <owners>Timothy Johnson</owners>
     <!-- ============================== -->
@@ -38,12 +38,12 @@ This is a nuspec. It mostly adheres to https://docs.nuget.org/create/Nuspec-Refe
     <authors>Timothy Johnson</authors>
     <!-- projectUrl is required for the community feed -->
     <projectUrl>https://github.com/t1m0thyj/WinDynamicDesktop</projectUrl>
-    <iconUrl>https://github.com/t1m0thyj/WinDynamicDesktop/raw/master/imgs/choco_icon.png</iconUrl>
+    <iconUrl>https://cdn.statically.io/gh/t1m0thyj/WinDynamicDesktop/189f4bb0/imgs/choco_icon.png</iconUrl>
     <copyright>2020 Timothy Johnson</copyright>
     <!-- If there is a license Url available, it is required for the community feed -->
     <licenseUrl>https://www.mozilla.org/en-US/MPL/2.0/</licenseUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
-    <projectSourceUrl>https://github.com/t1m0thyj/WinDynamicDesktop</projectSourceUrl>
+    <!--<projectSourceUrl>https://github.com/t1m0thyj/WinDynamicDesktop</projectSourceUrl>-->
     <docsUrl>https://github.com/t1m0thyj/WinDynamicDesktop/wiki</docsUrl>
     <mailingListUrl>https://gitter.im/t1m0thyj/WinDynamicDesktop</mailingListUrl>
     <bugTrackerUrl>https://github.com/t1m0thyj/WinDynamicDesktop/issues</bugTrackerUrl>

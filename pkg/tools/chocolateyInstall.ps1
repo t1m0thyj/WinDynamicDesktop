@@ -8,14 +8,11 @@ $packageArgs = @{
   unzipLocation = $toolsDir
   fileType      = 'EXE'
   url           = $url
-  url64bit      = $url
 
   softwareName  = 'WinDynamicDesktop*'
 
   checksum      = '{{installerChecksum}}'
   checksumType  = 'sha256'
-  checksum64    = $checksum
-  checksumType64= 'sha256'
 
   silentArgs    = '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-'
   validExitCodes= @(0)
