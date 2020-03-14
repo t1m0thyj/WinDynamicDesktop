@@ -1,11 +1,11 @@
 # WinDynamicDesktop
 Port of macOS Mojave Dynamic Desktop feature to Windows 10. Available on GitHub and the Microsoft Store.
 
-[![GitHub releases](https://img.shields.io/github/downloads/t1m0thyj/WinDynamicDesktop/total.svg)](https://github.com/t1m0thyj/WinDynamicDesktop/releases)
+[![GitHub releases](https://img.shields.io/github/downloads/t1m0thyj/WinDynamicDesktop/total)](https://github.com/t1m0thyj/WinDynamicDesktop/releases)
 [![Chocolatey package](https://img.shields.io/chocolatey/v/windynamicdesktop?color=brightgreen)](https://chocolatey.org/packages/windynamicdesktop)
 [![Build status](https://img.shields.io/appveyor/build/t1m0thyj/WinDynamicDesktop)](https://ci.appveyor.com/project/t1m0thyj/WinDynamicDesktop)
 
-[![Gitter chat](https://img.shields.io/gitter/room/t1m0thyj/WinDynamicDesktop.svg)](https://gitter.im/t1m0thyj/WinDynamicDesktop)
+[![Gitter chat](https://img.shields.io/gitter/room/t1m0thyj/WinDynamicDesktop)](https://gitter.im/t1m0thyj/WinDynamicDesktop)
 [![Donate](https://img.shields.io/badge/donate-paypal-brightgreen.svg)](https://paypal.me/t1m0thyj)
 [![Translate](https://img.shields.io/badge/translate-poeditor-brightgreen.svg)](https://poeditor.com/join/project/DEgfVpyuiK)
 

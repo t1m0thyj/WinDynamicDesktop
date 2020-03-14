@@ -4,14 +4,13 @@
 /i18n/po
 /i18n/poeditor_token
 /pkg/*.nupkg
-/src/**/settings.conf
-/src/.vs
 /src/packages
 /uwp/*.wapproj.user
 /uwp/AppPackages
 /uwp/BundleArtifacts
 /uwp/Package.StoreAssociation.xml
 /uwp/_pkginfo.txt
+.vs
 __pycache__
 bin
 obj

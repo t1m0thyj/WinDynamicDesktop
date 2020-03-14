@@ -35,6 +35,7 @@ namespace WinDynamicDesktop
             this.FormClosing += OnFormClosing;
             ThemeLoader.taskbarHandle = this.Handle;
 
+            ProxyServer.ApplyProxyToClient(wc);
             wc.DownloadProgressChanged += OnDownloadProgressChanged;
             wc.DownloadFileCompleted += OnDownloadFileCompleted;
         }
@@ -157,6 +158,7 @@ namespace WinDynamicDesktop
             {
                 try
                 {
+                    System.Threading.Thread.Sleep(1000);  // Wait a second for file to free up
                     File.Delete(imagesZipDest);
                 }
                 catch { }
