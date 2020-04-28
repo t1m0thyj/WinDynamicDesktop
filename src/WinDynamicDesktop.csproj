@@ -120,7 +120,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="RegistryTweaker.cs" />
     <Compile Include="RestResponse.cs" />
     <Compile Include="ScriptManager.cs" />
     <Compile Include="ThemeResult.cs" />

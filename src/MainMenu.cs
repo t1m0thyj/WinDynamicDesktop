@@ -88,7 +88,6 @@ namespace WinDynamicDesktop
             fullScreenItem.Checked = JsonConfig.settings.fullScreenPause;
             items.Add(fullScreenItem);
 
-            items.AddRange(RegistryTweaker.GetMenuItems());
             items.AddRange(UpdateChecker.GetMenuItems());
             items.Add(new ToolStripSeparator());
 
