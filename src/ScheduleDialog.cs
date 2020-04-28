@@ -17,6 +17,7 @@ namespace WinDynamicDesktop
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
         private bool hasLocationPermission = false;
+        private bool isLoaded = false;
 
         public ScheduleDialog()
         {
@@ -101,6 +102,9 @@ namespace WinDynamicDesktop
             radioButton2.Enabled = UwpDesktop.IsUwpSupported();
             hasLocationPermission = UwpLocation.HasAccess();
 
+            sunriseTimePicker.MinDate = DateTime.Today;
+            sunsetTimePicker.MaxDate = DateTime.Today.AddDays(1);
+
             if (JsonConfig.settings.sunriseTime != null && JsonConfig.settings.sunsetTime != null)
             {
                 sunriseTimePicker.Value = DateTime.Parse(JsonConfig.settings.sunriseTime,
@@ -113,9 +117,6 @@ namespace WinDynamicDesktop
                 sunriseTimePicker.Value = DateTime.Today.AddHours(6);
                 sunsetTimePicker.Value = DateTime.Today.AddHours(18);
             }
-
-            sunriseTimePicker.MinDate = sunriseTimePicker.Value.Date;
-            sunriseTimePicker.MaxDate = sunsetTimePicker.Value.Date.AddHours(24);
 
             if (JsonConfig.settings.sunriseSunsetDuration > 0)
             {
@@ -132,11 +133,15 @@ namespace WinDynamicDesktop
             }
 
             UpdateGuiState();
+            isLoaded = true;
         }
 
         private void OnInputValueChanged(object sender, EventArgs e)
         {
-            UpdateGuiState();
+            if (isLoaded)
+            {
+                UpdateGuiState();
+            }
         }
 
         private async void grantPermissionButton_Click(object sender, EventArgs e)

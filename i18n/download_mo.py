@@ -15,7 +15,7 @@ client = POEditorAPI(api_token)
 projects = client.list_projects()
 project_id = [p for p in projects if p["name"] == "WinDynamicDesktop"][0]["id"]
 languages = client.list_project_languages(project_id)
-language_codes = [l["code"] for l in languages]
+language_codes = [l["code"] for l in languages if l["translations"]]
 
 for lc in language_codes:
     print(f"Downloading translation for {lc}")

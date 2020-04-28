@@ -1,4 +1,8 @@
-﻿using System;
+﻿// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,6 +32,14 @@ namespace WinDynamicDesktop
                     string[] credentialsAndAddress = proxyAddress.Split(new char[] { '@' }, 2);
                     proxyCredentials = credentialsAndAddress[0];
                     proxyAddress = credentialsAndAddress[1];
+
+                    if (proxyCredentials.Contains("://"))
+                    {
+                        string[] schemeAndCredentials = proxyCredentials.Split(
+                            new string[] { "://" }, 2, StringSplitOptions.None);
+                        proxyAddress = schemeAndCredentials[0] + "://" + proxyAddress;
+                        proxyCredentials = schemeAndCredentials[1];
+                    }
                 }
             }
 

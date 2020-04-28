@@ -80,7 +80,7 @@ namespace WinDynamicDesktop
                 nextImageUpdateTime = new DateTime(imageData.nextUpdateTicks);
             }
 
-            ScriptManager.RunScripts(new ScriptArgs()
+            ScriptManager.RunScripts(new ScriptArgs
             {
                 daySegment2 = imageData.daySegment2,
                 daySegment4 = imageData.daySegment4,

@@ -25,7 +25,7 @@ namespace WinDynamicDesktop
 
     class UpdateHandler
     {
-        private readonly static string Catalina_JSON = @"{
+        private static readonly string Catalina_JSON = @"{
   'imageUrls': [
     'https://onedrive.live.com/download?cid=CC2E3BD0360C1775&resid=CC2E3BD0360C1775%216170&authkey=AIMgqOpAsERVe0c',
     'https://bitbucket.org/t1m0thyj/wdd-themes/downloads/Catalina_images.zip'
@@ -46,7 +46,7 @@ namespace WinDynamicDesktop
   ]
 }";
 
-        private readonly static string Mojave_Desert_JSON = @"{
+        private static readonly string Mojave_Desert_JSON = @"{
   'imageUrls': [
     'https://onedrive.live.com/download?cid=CC2E3BD0360C1775&resid=CC2E3BD0360C1775%216110&authkey=AOBrcljXRqwNSZo',
     'https://bitbucket.org/t1m0thyj/wdd-themes/downloads/Mojave_Desert_images.zip'
@@ -79,7 +79,7 @@ namespace WinDynamicDesktop
   ]
 }";
 
-        private readonly static string Solar_Gradients_JSON = @"{
+        private static readonly string Solar_Gradients_JSON = @"{
   'imageUrls': [
     'https://onedrive.live.com/download?cid=CC2E3BD0360C1775&resid=CC2E3BD0360C1775%21721&authkey=AK4kktXlvN1KJzQ',
     'https://bitbucket.org/t1m0thyj/wdd-themes/downloads/Solar_Gradients_images.zip'

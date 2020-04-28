@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 
 namespace WinDynamicDesktop
@@ -36,7 +37,7 @@ namespace WinDynamicDesktop
             // Image scaling code from https://stackoverflow.com/a/7677163/5504760
             using (tempImage)
             {
-                Bitmap bmp = new Bitmap(size.Width, size.Height);
+                Bitmap bmp = new Bitmap(size.Width, size.Height, PixelFormat.Format32bppArgb);
 
                 using (Graphics g = Graphics.FromImage(bmp))
                 {
@@ -97,7 +98,7 @@ namespace WinDynamicDesktop
                         GraphicsUnit.Pixel);
                 }
 
-                bmp2.Save(thumbnailPath, System.Drawing.Imaging.ImageFormat.Png);
+                bmp2.Save(thumbnailPath, ImageFormat.Png);
 
                 return bmp2;
             }

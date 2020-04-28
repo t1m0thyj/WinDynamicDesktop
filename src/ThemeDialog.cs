@@ -131,6 +131,7 @@ namespace WinDynamicDesktop
                 width = height * 16 / 9;
             }
 
+            pictureBox1.Image?.Dispose();
             pictureBox1.Image = ThemeThumbLoader.ScaleImage(image, new Size(width, height));
         }
 
@@ -138,14 +139,14 @@ namespace WinDynamicDesktop
         {
             if (selectedIndex == 0)
             {
-                LoadPreviewImage(Image.FromFile(windowsWallpaper));
+                LoadPreviewImage(new Bitmap(windowsWallpaper));
             }
             else
             {
                 ThemeConfig theme = ThemeManager.themeSettings[selectedIndex - 1];
                 int imageId = ThemeManager.GetThemeImageList(theme)[imageNumber - 1];
                 string imageFilename = theme.imageFilename.Replace("*", imageId.ToString());
-                LoadPreviewImage(Image.FromFile(Path.Combine("themes", theme.themeId,
+                LoadPreviewImage(new Bitmap(Path.Combine("themes", theme.themeId,
                     imageFilename)));
             }
 
@@ -443,22 +444,20 @@ namespace WinDynamicDesktop
             int itemIndex = hitTestInfo.ItemIndex;
             string themeId = (string)imageListView1.Items[itemIndex].Tag;
 
-            if (itemIndex <= 0 || ThemeManager.defaultThemes.Contains(themeId))
+            if (itemIndex == 0)
             {
-                ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId); 
-                
-                if (ThemeManager.IsThemeDownloaded(theme))
-                {
-                    contextMenuStrip1.Items[0].Text = _("Remove files");
-                }
-                else
-                {
-                    e.Cancel = true;
-                }
+                e.Cancel = true;
+            }
+            else if (ThemeManager.defaultThemes.Contains(themeId))
+            {
+                ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
+                contextMenuStrip1.Items[0].Text = _("Remove files");
+                contextMenuStrip1.Items[0].Enabled = ThemeManager.IsThemeDownloaded(theme);
             }
             else
             {
                 contextMenuStrip1.Items[0].Text = _("Delete");
+                contextMenuStrip1.Items[0].Enabled = true;
             }
         }
 
@@ -530,9 +529,11 @@ namespace WinDynamicDesktop
                 if (result != DialogResult.Yes)
                 {
                     e.Cancel = true;
-                    this.Show();
+                    return;
                 }
             }
+
+            pictureBox1.Image?.Dispose();
         }
     }
 }
