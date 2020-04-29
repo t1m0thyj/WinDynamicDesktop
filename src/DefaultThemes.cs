@@ -17,11 +17,11 @@ namespace WinDynamicDesktop
         public static string[] GetDefaultThemes()
         {
             string yamlText = Encoding.UTF8.GetString(Properties.Resources.default_themes);
-            yamlLines = yamlText.Split(new[] { Environment.NewLine },
-                StringSplitOptions.RemoveEmptyEntries).Select((line) => line.Trim()).ToArray();
+            yamlLines = yamlText.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
+                .Select((line) => line.Trim()).ToArray();
 
-            return yamlLines.Where((line) => !line.StartsWith("-")).Select(
-                (line) => line.Substring(0, line.Length - 1)).ToArray();
+            return yamlLines.Where((line) => !line.StartsWith("-"))
+                .Select((line) => line.Substring(0, line.Length - 1)).ToArray();
         }
 
         public static Uri[] GetThemeUriList(string themeId)
@@ -31,8 +31,7 @@ namespace WinDynamicDesktop
 
             while ((startIndex < yamlLines.Length) && yamlLines[startIndex].StartsWith("-"))
             {
-                uriList.Add(new Uri(yamlLines[startIndex].Substring(
-                    yamlLines[startIndex].LastIndexOf(" ") + 1)));
+                uriList.Add(new Uri(yamlLines[startIndex].Substring(yamlLines[startIndex].LastIndexOf(" ") + 1)));
                 startIndex++;
             }
 

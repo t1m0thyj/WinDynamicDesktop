@@ -22,10 +22,8 @@ namespace WinDynamicDesktop
         static void Main(string[] args)
         {
             string localFolder = UwpDesktop.GetHelper().GetLocalFolder();
-            Application.ThreadException +=
-                (sender, e) => OnThreadException(sender, e, localFolder);
-            AppDomain.CurrentDomain.UnhandledException +=
-                (sender, e) => OnUnhandledException(sender, e, localFolder);
+            Application.ThreadException += (sender, e) => OnThreadException(sender, e, localFolder);
+            AppDomain.CurrentDomain.UnhandledException += (sender, e) => OnUnhandledException(sender, e, localFolder);
 
             string cwd = localFolder;
             if (File.Exists(Path.Combine(localFolder, "WinDynamicDesktop.pth")))
@@ -54,23 +52,20 @@ namespace WinDynamicDesktop
         static void LogError(string cwd, Exception exc)
         {
             string errorMessage = exc.ToString();
-            string logFilename = Path.Combine(cwd,
-                Path.GetFileName(Environment.GetCommandLineArgs()[0]) + ".log");
+            string logFilename = Path.Combine(cwd, Path.GetFileName(Environment.GetCommandLineArgs()[0]) + ".log");
 
             try
             {
-                string timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff",
-                    CultureInfo.InvariantCulture);
-                File.AppendAllText(logFilename,
-                    string.Format("[{0}] {1}\n\n", timestamp, errorMessage));
+                string timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+                File.AppendAllText(logFilename, string.Format("[{0}] {1}\n\n", timestamp, errorMessage));
 
-                MessageDialog.ShowError("See the logfile '" + logFilename + "' for details",
+                MessageDialog.ShowError(string.Format("See the logfile '{0}' for details", logFilename),
                     "Errors occurred");
             }
             catch
             {
-                MessageDialog.ShowError("The logfile '" + logFilename + "' could not be " +
-                    "opened:\n " + errorMessage, "Errors occurred");
+                MessageDialog.ShowError(string.Format("The logfile '{0}' could not be opened:\n {1}", logFilename,
+                    errorMessage), "Errors occurred");
             }
         }
     }

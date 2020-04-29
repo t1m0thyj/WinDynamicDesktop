@@ -46,16 +46,18 @@ namespace WinDynamicDesktop
         private static extern bool UnhookWinEvent(IntPtr hWinEventHook);
 
         [DllImport("user32.dll")]
-        private static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
+        private static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc,
+            WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
 
         private const uint WINEVENT_OUTOFCONTEXT = 0;
         private const uint EVENT_SYSTEM_FOREGROUND = 3;
 
-        private delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
+        private delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject,
+            int idChild, uint dwEventThread, uint dwmsEventTime);
 
         public FullScreenApi(WallpaperChangeScheduler wcs)
         {
-            timerEventHandler = new Action(() => { wcs.HandleTimerEvent(true); });
+            timerEventHandler = new Action(() => wcs.HandleTimerEvent(true));
 
             if (JsonConfig.settings.fullScreenPause)
             {
@@ -76,8 +78,8 @@ namespace WinDynamicDesktop
             if (fullScreenPause)
             {
                 winEventProc = new WinEventDelegate(WinEventProc);
-                winEventHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND,
-                    IntPtr.Zero, winEventProc, 0, 0, WINEVENT_OUTOFCONTEXT);
+                winEventHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero,
+                    winEventProc, 0, 0, WINEVENT_OUTOFCONTEXT);
             }
             else
             {
@@ -109,8 +111,8 @@ namespace WinDynamicDesktop
             return false;
         }
 
-        private void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject,
-            int idChild, uint dwEventThread, uint dwmsEventTime)
+        private void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild,
+            uint dwEventThread, uint dwmsEventTime)
         {
             runningFullScreen = IsRunningFullScreen();
 

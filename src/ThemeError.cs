@@ -58,8 +58,7 @@ namespace WinDynamicDesktop
     {
         public InvalidZIP(string themeId, string zipPath) : base(themeId)
         {
-            errorMsg = string.Format(_("Could not read ZIP file at {0} because its format is " +
-                "invalid"), zipPath);
+            errorMsg = string.Format(_("Could not read ZIP file at {0} because its format is invalid"), zipPath);
         }
     }
 
@@ -67,9 +66,8 @@ namespace WinDynamicDesktop
     {
         public MissingFieldsInThemeJSON(string themeId) : base(themeId)
         {
-            errorMsg = _("Theme JSON file is missing one or more of these required fields: " +
-                "'dayImageList', 'imageFilename', 'nightImageList', 'sunriseImageList', " +
-                "'sunsetImageList'");
+            errorMsg = _("Theme JSON file is missing one or more of these required fields: 'dayImageList', " +
+                "'imageFilename', 'nightImageList', 'sunriseImageList', 'sunsetImageList'");
         }
     }
 

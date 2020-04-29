@@ -114,17 +114,20 @@ namespace WinDynamicDesktop
 
         public static void CompatibilizeThemes()  // Added 2019-10-10
         {
-            if (Directory.Exists(Path.Combine("themes", "Catalina")) && !File.Exists(Path.Combine("themes", "Catalina", "theme.json")))
+            if (Directory.Exists(Path.Combine("themes", "Catalina")) &&
+                !File.Exists(Path.Combine("themes", "Catalina", "theme.json")))
             {
                 File.WriteAllText(Path.Combine("themes", "Catalina", "theme.json"), Catalina_JSON);
             }
 
-            if (Directory.Exists(Path.Combine("themes", "Mojave_Desert")) && !File.Exists(Path.Combine("themes", "Mojave_Desert", "theme.json")))
+            if (Directory.Exists(Path.Combine("themes", "Mojave_Desert")) &&
+                !File.Exists(Path.Combine("themes", "Mojave_Desert", "theme.json")))
             {
                 File.WriteAllText(Path.Combine("themes", "Mojave_Desert", "theme.json"), Mojave_Desert_JSON);
             }
 
-            if (Directory.Exists(Path.Combine("themes", "Solar_Gradients")) && !File.Exists(Path.Combine("themes", "Solar_Gradients", "theme.json")))
+            if (Directory.Exists(Path.Combine("themes", "Solar_Gradients")) &&
+                !File.Exists(Path.Combine("themes", "Solar_Gradients", "theme.json")))
             {
                 File.WriteAllText(Path.Combine("themes", "Solar_Gradients", "theme.json"), Solar_Gradients_JSON);
             }
@@ -186,20 +189,18 @@ namespace WinDynamicDesktop
             }
             string jsonText = File.ReadAllText("settings.conf");
             LegacyConfig settings = JsonConvert.DeserializeObject<LegacyConfig>(jsonText);
-            bool legacySettingsEnabled = (settings.changeSystemTheme ||
-                settings.changeAppTheme || settings.changeLockScreen ||
-                settings.useAutoBrightness || settings.useCustomAutoBrightness);
+            bool legacySettingsEnabled = (settings.changeSystemTheme || settings.changeAppTheme ||
+                settings.changeLockScreen || settings.useAutoBrightness || settings.useCustomAutoBrightness);
             if (legacySettingsEnabled)
             {
-                jsonText = JsonConvert.SerializeObject(
-                    JsonConvert.DeserializeObject<AppConfig>(jsonText), Formatting.Indented);
+                jsonText = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<AppConfig>(jsonText),
+                    Formatting.Indented);
                 File.WriteAllText("settings.conf", jsonText);
-                MessageDialog.ShowInfo("Updated to WinDynamicDesktop 4.0 successfully. Some " +
-                    "features you were using have been disabled because they were removed from " +
-                    "the core app. You were using one or more of the following features:\n\n* " +
-                    "Change Windows 10 app/system theme\n* Change screen brightness\n* Change " +
-                    "lockscreen image\n\nTo re-enable these features, install scripts for them " +
-                    "from here: https://windd.info/scripts/");
+                MessageDialog.ShowInfo("Updated to WinDynamicDesktop 4.0 successfully. Some features you were using " +
+                    "have been disabled because they were removed from the core app. You were using one or more of " +
+                    "the following features:\n\n* Change Windows 10 app/system theme\n* Change screen brightness\n* " +
+                    "Change lockscreen image\n\nTo re-enable these features, install scripts for them from here: " +
+                    "https://windd.info/scripts/");
             }
         }
     }

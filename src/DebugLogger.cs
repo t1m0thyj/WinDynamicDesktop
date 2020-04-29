@@ -47,8 +47,7 @@ namespace WinDynamicDesktop
 
                 if (Directory.Exists("themes"))
                 {
-                    foreach (string path in Directory.EnumerateFiles("themes", "*",
-                        SearchOption.AllDirectories))
+                    foreach (string path in Directory.EnumerateFiles("themes", "*", SearchOption.AllDirectories))
                     {
                         debugLog.WriteLine("./" + path.Replace('\\', '/'));
 

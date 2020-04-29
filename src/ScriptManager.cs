@@ -72,10 +72,9 @@ namespace WinDynamicDesktop
 
             if (ps.Streams.Error.Count > 0)
             {
-                MessageDialog.ShowWarning(string.Format(
-                    _("Error(s) running PowerShell script '{0}':\n\n{1}"), path,
-                    string.Join("\n\n", ps.Streams.Error.ReadAll().Select(
-                        (er) => er.Exception.ToString()))), _("Script Error"));
+                MessageDialog.ShowWarning(string.Format(_("Error(s) running PowerShell script '{0}':\n\n{1}"), path,
+                    string.Join("\n\n", ps.Streams.Error.ReadAll().Select((er) => er.Exception.ToString()))),
+                    _("Script Error"));
             }
         }
     }

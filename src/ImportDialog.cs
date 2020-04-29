@@ -59,8 +59,7 @@ namespace WinDynamicDesktop
             {
                 string themePath = importQueue.Peek();
                 this.Invoke(new Action(() =>
-                    label1.Text = string.Format(_("Importing theme from {0}..."),
-                    Path.GetFileName(themePath))));
+                    label1.Text = string.Format(_("Importing theme from {0}..."), Path.GetFileName(themePath))));
                 
                 ThemeResult result = ThemeManager.ImportTheme(themePath);
                 result.Match(e => this.Invoke(new Action(() => ThemeLoader.HandleError(e))),

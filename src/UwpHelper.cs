@@ -21,8 +21,7 @@ namespace WinDynamicDesktop
 
         public override async void CheckStartOnBoot()
         {
-            var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync(
-                "WinDynamicDesktopUwp");
+            var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync("WinDynamicDesktopUwp");
 
             switch (startupTask.State)
             {
@@ -43,8 +42,7 @@ namespace WinDynamicDesktop
 
         public override async void ToggleStartOnBoot()
         {
-            var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync(
-                "WinDynamicDesktopUwp");
+            var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync("WinDynamicDesktopUwp");
 
             if (!startOnBoot)
             {
@@ -71,18 +69,15 @@ namespace WinDynamicDesktop
 
         public override async void OpenUpdateLink()
         {
-            await Windows.System.Launcher.LaunchUriAsync(
-                new Uri("ms-windows-store://downloadsandupdates"));
+            await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-windows-store://downloadsandupdates"));
         }
 
         public override async void SetWallpaper(string imageFilename)
         {
-            var uri = new Uri("ms-appdata:///local/themes/" + ThemeManager.currentTheme.themeId +
-                "/" + imageFilename);
+            var uri = new Uri("ms-appdata:///local/themes/" + ThemeManager.currentTheme.themeId + "/" + imageFilename);
             var file = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri);
 
-            var profileSettings =
-                Windows.System.UserProfile.UserProfilePersonalizationSettings.Current;
+            var profileSettings = Windows.System.UserProfile.UserProfilePersonalizationSettings.Current;
             await profileSettings.TrySetWallpaperImageAsync(file);
         }
     }

@@ -15,8 +15,7 @@ namespace WinDynamicDesktop
 {
     class DesktopHelper : PlatformHelper
     {
-        private const string registryStartupLocation =
-            @"Software\Microsoft\Windows\CurrentVersion\Run";
+        private const string registryStartupLocation = @"Software\Microsoft\Windows\CurrentVersion\Run";
         private const string updateLink = "https://github.com/t1m0thyj/WinDynamicDesktop/releases";
 
         private bool startOnBoot;

@@ -107,10 +107,8 @@ namespace WinDynamicDesktop
 
             if (JsonConfig.settings.sunriseTime != null && JsonConfig.settings.sunsetTime != null)
             {
-                sunriseTimePicker.Value = DateTime.Parse(JsonConfig.settings.sunriseTime,
-                    CultureInfo.InvariantCulture);
-                sunsetTimePicker.Value = DateTime.Parse(JsonConfig.settings.sunsetTime,
-                    CultureInfo.InvariantCulture);
+                sunriseTimePicker.Value = DateTime.Parse(JsonConfig.settings.sunriseTime, CultureInfo.InvariantCulture);
+                sunsetTimePicker.Value = DateTime.Parse(JsonConfig.settings.sunsetTime, CultureInfo.InvariantCulture);
             }
             else
             {
@@ -178,8 +176,7 @@ namespace WinDynamicDesktop
                 {
                     hasLocationPermission = UwpLocation.HasAccess();
                     UpdateLocationState();
-                    MessageDialog.ShowWarning(_("Failed to get location from Windows location " +
-                        "service."), _("Error"));
+                    MessageDialog.ShowWarning(_("Failed to get location from Windows location service."), _("Error"));
                 }
             }
             else if (radioButton3.Checked)
@@ -202,10 +199,9 @@ namespace WinDynamicDesktop
         {
             if (!LaunchSequence.IsLocationReady())
             {
-                DialogResult result = MessageDialog.ShowQuestion(_("WinDynamicDesktop cannot " +
-                    "display wallpapers until you have entered a valid location, so that it can " +
-                    "calculate sunrise and sunset times for your location. Are you sure you " +
-                    "want to cancel and quit the program?"), _("Question"), true);
+                DialogResult result = MessageDialog.ShowQuestion(_("WinDynamicDesktop cannot display wallpapers " +
+                    "until you have entered a valid location, so that it can calculate sunrise and sunset times for " +
+                    "your location. Are you sure you want to cancel and quit the program?"), _("Question"), true);
 
                 if (result == DialogResult.Yes)
                 {

@@ -45,12 +45,10 @@ namespace WinDynamicDesktop
 
             if (!hasAccess)
             {
-                AppContext.ShowPopup(_("In Windows 10 location settings, grant location access " +
-                    "to WinDynamicDesktop. Then return to the app and click \"Check for " +
-                    "Permission\"."));
+                AppContext.ShowPopup(_("In Windows 10 location settings, grant location access to WinDynamicDesktop. " +
+                    "Then return to the app and click \"Check for Permission\"."));
                 
-                await Windows.System.Launcher.LaunchUriAsync(
-                    new Uri("ms-settings:privacy-location"));
+                await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings:privacy-location"));
             }
 
             return hasAccess;
@@ -60,8 +58,8 @@ namespace WinDynamicDesktop
             UnsafeUpdateGeoposition()
         {
             var geolocator = new Windows.Devices.Geolocation.Geolocator();
-            var geoposition = await geolocator.GetGeopositionAsync(
-                maximumAge: TimeSpan.FromMinutes(1), timeout: TimeSpan.FromSeconds(10));
+            var geoposition = await geolocator.GetGeopositionAsync(maximumAge: TimeSpan.FromMinutes(1),
+                timeout: TimeSpan.FromSeconds(10));
 
             return geoposition.Coordinate.Point.Position;
         }
@@ -72,8 +70,7 @@ namespace WinDynamicDesktop
             {
                 var pos = await UnsafeUpdateGeoposition();
                 JsonConfig.settings.latitude = pos.Latitude.ToString(CultureInfo.InvariantCulture);
-                JsonConfig.settings.longitude = pos.Longitude.ToString(
-                    CultureInfo.InvariantCulture);
+                JsonConfig.settings.longitude = pos.Longitude.ToString(CultureInfo.InvariantCulture);
 
                 return true;
             }

@@ -18,13 +18,11 @@ namespace WinDynamicDesktop
         {
             if (!JsonConfig.settings.dontUseLocation)
             {
-                return (JsonConfig.settings.latitude != null &&
-                    JsonConfig.settings.longitude != null);
+                return (JsonConfig.settings.latitude != null && JsonConfig.settings.longitude != null);
             }
             else
             {
-                return (JsonConfig.settings.sunriseTime != null &&
-                    JsonConfig.settings.sunsetTime != null);
+                return (JsonConfig.settings.sunriseTime != null && JsonConfig.settings.sunsetTime != null);
             }
         }
 
@@ -42,8 +40,8 @@ namespace WinDynamicDesktop
 
                 if (JsonConfig.firstRun)
                 {
-                    AppContext.ShowPopup(_("Welcome! Please enter your location so the app can " +
-                        "determine sunrise and sunset times."));
+                    AppContext.ShowPopup(_("Welcome! Please enter your location so the app can determine sunrise and " +
+                        "sunset times."));
                 }
             }
             else if (!IsThemeReady() && !themeReadyOverride)  // Override if theme=None chosen
@@ -52,8 +50,8 @@ namespace WinDynamicDesktop
             }
             else if (JsonConfig.firstRun)
             {
-                AppContext.ShowPopup(_("The app is still running in the background. You can " +
-                    "access it at any time by clicking on the icon in the system tray."));
+                AppContext.ShowPopup(_("The app is still running in the background. You can access it at any time by " +
+                    "clicking on the icon in the system tray."));
 
                 JsonConfig.firstRun = false;  // Don't show this message again
             }

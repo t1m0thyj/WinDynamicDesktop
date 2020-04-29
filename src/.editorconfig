@@ -1,0 +1,7 @@
+# All files
+[*]
+guidelines = 80
+
+# C# files
+[*.cs]
+guidelines = 80, 120

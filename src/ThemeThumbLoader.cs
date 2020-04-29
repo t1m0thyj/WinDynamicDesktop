@@ -83,8 +83,7 @@ namespace WinDynamicDesktop
             }
 
             int imageId1 = theme.dayHighlight ?? theme.dayImageList[theme.dayImageList.Length / 2];
-            int imageId2 = theme.nightHighlight ?? theme.nightImageList[
-                theme.nightImageList.Length / 2];
+            int imageId2 = theme.nightHighlight ?? theme.nightImageList[theme.nightImageList.Length / 2];
             string imageFilename1 = theme.imageFilename.Replace("*", imageId1.ToString());
             string imageFilename2 = theme.imageFilename.Replace("*", imageId2.ToString());
 
@@ -94,8 +93,7 @@ namespace WinDynamicDesktop
 
                 using (Graphics g = Graphics.FromImage(bmp2))
                 {
-                    g.DrawImage(bmp1, 0, 0, new Rectangle(0, 0, bmp1.Width / 2, bmp1.Height),
-                        GraphicsUnit.Pixel);
+                    g.DrawImage(bmp1, 0, 0, new Rectangle(0, 0, bmp1.Width / 2, bmp1.Height), GraphicsUnit.Pixel);
                 }
 
                 bmp2.Save(thumbnailPath, ImageFormat.Png);

@@ -42,8 +42,7 @@ namespace WinDynamicDesktop
 
             // ITaskbarList2
             [PreserveSig]
-            void MarkFullscreenWindow(IntPtr hwnd,
-                [MarshalAs(UnmanagedType.Bool)] bool fFullscreen);
+            void MarkFullscreenWindow(IntPtr hwnd, [MarshalAs(UnmanagedType.Bool)] bool fFullscreen);
 
             // ITaskbarList3
             [PreserveSig]
@@ -74,8 +73,7 @@ namespace WinDynamicDesktop
         {
             if (taskbarSupported)
             {
-                taskbarInstance.SetProgressValue(windowHandle, (ulong)progressValue,
-                    (ulong)progressMax);
+                taskbarInstance.SetProgressValue(windowHandle, (ulong)progressValue, (ulong)progressMax);
             }
         }
     }

@@ -158,10 +158,8 @@ namespace WinDynamicDesktop
         ORIGINAL_CSI = 0x00001000,
         RESTORED_CSI = 0x00002000,
         CURITEMSTATE = 0x00004000,
-        ALL = TYPE | CHECKED | DIRTY | NOSCROLL | POS_LEFT | SIZE_WIDTH |
-            SIZE_HEIGHT | POS_ZINDEX | SOURCE |
-            FRIENDLYNAME | POS_TOP | SUBSCRIBEDURL | ORIGINAL_CSI |
-            RESTORED_CSI | CURITEMSTATE
+        ALL = TYPE | CHECKED | DIRTY | NOSCROLL | POS_LEFT | SIZE_WIDTH | SIZE_HEIGHT | POS_ZINDEX | SOURCE |
+            FRIENDLYNAME | POS_TOP | SUBSCRIBEDURL | ORIGINAL_CSI | RESTORED_CSI | CURITEMSTATE
     }
 
     [Flags]
@@ -178,8 +176,8 @@ namespace WinDynamicDesktop
         [PreserveSig]
         int ApplyChanges(AD_Apply dwFlags);
         [PreserveSig]
-        int GetWallpaper([MarshalAs(UnmanagedType.LPWStr)] System.Text.StringBuilder pwszWallpaper,
-            int cchWallpaper, int dwReserved);
+        int GetWallpaper([MarshalAs(UnmanagedType.LPWStr)] System.Text.StringBuilder pwszWallpaper, int cchWallpaper,
+            int dwReserved);
         [PreserveSig]
         int SetWallpaper([MarshalAs(UnmanagedType.LPWStr)] string pwszWallpaper, int dwReserved);
         [PreserveSig]
@@ -187,8 +185,8 @@ namespace WinDynamicDesktop
         [PreserveSig]
         int SetWallpaperOptions(ref WALLPAPEROPT pwpo, int dwReserved);
         [PreserveSig]
-        int GetPattern([MarshalAs(UnmanagedType.LPWStr)] System.Text.StringBuilder pwszPattern,
-            int cchPattern, int dwReserved);
+        int GetPattern([MarshalAs(UnmanagedType.LPWStr)] System.Text.StringBuilder pwszPattern, int cchPattern,
+            int dwReserved);
         [PreserveSig]
         int SetPattern([MarshalAs(UnmanagedType.LPWStr)] string pwszPattern, int dwReserved);
         [PreserveSig]
@@ -210,20 +208,19 @@ namespace WinDynamicDesktop
         [PreserveSig]
         int GetDesktopItemByID(IntPtr dwID, ref COMPONENT pcomp, int dwReserved);
         [PreserveSig]
-        int GenerateDesktopItemHtml([MarshalAs(UnmanagedType.LPWStr)] string pwszFileName,
-            ref COMPONENT pcomp, int dwReserved);
+        int GenerateDesktopItemHtml([MarshalAs(UnmanagedType.LPWStr)] string pwszFileName, ref COMPONENT pcomp,
+            int dwReserved);
         [PreserveSig]
-        int AddUrl(IntPtr hwnd, [MarshalAs(UnmanagedType.LPWStr)] string pszSource,
-            ref COMPONENT pcomp, AddURL dwFlags);
+        int AddUrl(IntPtr hwnd, [MarshalAs(UnmanagedType.LPWStr)] string pszSource, ref COMPONENT pcomp,
+            AddURL dwFlags);
         [PreserveSig]
-        int GetDesktopItemBySource([MarshalAs(UnmanagedType.LPWStr)] string pwszSource,
-            ref COMPONENT pcomp, int dwReserved);
+        int GetDesktopItemBySource([MarshalAs(UnmanagedType.LPWStr)] string pwszSource, ref COMPONENT pcomp,
+            int dwReserved);
     }
 
     public class ActiveDesktopWrapper
     {
-        static readonly Guid CLSID_ActiveDesktop =
-            new Guid("{75048700-EF1F-11D0-9888-006097DEACF9}");
+        static readonly Guid CLSID_ActiveDesktop = new Guid("{75048700-EF1F-11D0-9888-006097DEACF9}");
 
         public static IActiveDesktop GetActiveDesktop()
         {
@@ -234,18 +231,17 @@ namespace WinDynamicDesktop
 
     public class WallpaperApi
     {
-        [DllImport("user32.dll", SetLastError = true)]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern int SendMessageTimeout(IntPtr hWnd, uint Msg, IntPtr wParam,
-            IntPtr lParam, uint fuFlags, uint uTimeout, out IntPtr result);
+        private static extern int SendMessageTimeout(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam, uint fuFlags,
+            uint uTimeout, out IntPtr result);
 
         public static void EnableTransitions()
         {
             IntPtr result = IntPtr.Zero;
-            SendMessageTimeout(FindWindow("Progman", null), 0x52c, IntPtr.Zero, IntPtr.Zero,
-                0, 500, out result);
+            SendMessageTimeout(FindWindow("Progman", null), 0x52c, IntPtr.Zero, IntPtr.Zero, 0, 500, out result);
         }
 
         public static void SetWallpaper(string imagePath)

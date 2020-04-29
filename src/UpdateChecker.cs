@@ -35,8 +35,8 @@ namespace WinDynamicDesktop
         {
             if (!UwpDesktop.IsRunningAsUwp())
             {
-                menuItem = new ToolStripMenuItem(_("Check for &updates automatically once a week"),
-                    null, OnAutoUpdateItemClick);
+                menuItem = new ToolStripMenuItem(_("Check for &updates automatically once a week"), null,
+                    OnAutoUpdateItemClick);
                 menuItem.Checked = !JsonConfig.settings.disableAutoUpdate;
 
                 return new List<ToolStripItem>() {
@@ -86,15 +86,14 @@ namespace WinDynamicDesktop
 
             if (latestVersion == null)
             {
-                MessageDialog.ShowWarning(_("WinDynamicDesktop could not connect to the " +
-                    "Internet to check for updates."), _("Error"));
+                MessageDialog.ShowWarning(_("WinDynamicDesktop could not connect to the Internet to check for " +
+                    "updates."), _("Error"));
             }
             else if (IsUpdateAvailable(currentVersion, latestVersion))
             {
-                DialogResult result = MessageDialog.ShowQuestion(string.Format(_("There is a " +
-                    "newer version of WinDynamicDesktop available. Do you want to download the " +
-                    "update now?\n\nCurrent Version: {0}\nLatest Version: {1}"), currentVersion,
-                    latestVersion), _("Update Available"));
+                DialogResult result = MessageDialog.ShowQuestion(string.Format(_("There is a newer version of " +
+                    "WinDynamicDesktop available. Do you want to download the update now?\n\nCurrent Version: {0}\n" +
+                    "Latest Version: {1}"), currentVersion, latestVersion), _("Update Available"));
 
                 if (result == DialogResult.Yes)
                 {
@@ -103,8 +102,8 @@ namespace WinDynamicDesktop
             }
             else
             {
-                MessageDialog.ShowInfo(_("You already have the latest version of " +
-                    "WinDynamicDesktop installed."), _("Up To Date"));
+                MessageDialog.ShowInfo(_("You already have the latest version of WinDynamicDesktop installed."),
+                    _("Up To Date"));
             }
         }
 
@@ -119,8 +118,8 @@ namespace WinDynamicDesktop
             }
             else if (IsUpdateAvailable(currentVersion, latestVersion))
             {
-                AppContext.ShowPopup(string.Format(_("WinDynamicDesktop {0} is available. Click " +
-                    "here to download it."), latestVersion), _("Update Available"));
+                AppContext.ShowPopup(string.Format(_("WinDynamicDesktop {0} is available. Click here to download it."),
+                    latestVersion), _("Update Available"));
             }
 
             JsonConfig.settings.lastUpdateCheck = DateTime.Now.ToString(

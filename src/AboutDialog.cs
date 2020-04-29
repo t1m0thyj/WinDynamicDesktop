@@ -18,8 +18,7 @@ namespace WinDynamicDesktop
     public partial class AboutDialog : Form
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
-        private static readonly string websiteLink =
-            "https://github.com/t1m0thyj/WinDynamicDesktop";
+        private static readonly string websiteLink = "https://github.com/t1m0thyj/WinDynamicDesktop";
         private static readonly string donateLink = "https://paypal.me/t1m0thyj";
 
         public AboutDialog()
@@ -41,8 +40,7 @@ namespace WinDynamicDesktop
                 websiteLabel.Width = minWidth;
             }
 
-            minWidth = minWidth + (descriptionLabel.Width - minWidth) / 2 +
-                descriptionLabel.Location.X * 2;
+            minWidth = minWidth + (descriptionLabel.Width - minWidth) / 2 + descriptionLabel.Location.X * 2;
 
             if (this.Size.Width < minWidth)
             {

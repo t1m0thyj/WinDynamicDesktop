@@ -44,8 +44,7 @@ namespace WinDynamicDesktop
         {
             ThemeManager.downloadMode = true;
             this.Invoke(new Action(() =>
-                label1.Text = string.Format(_("Downloading images for '{0}'..."),
-                ThemeManager.GetThemeName(theme))));
+                label1.Text = string.Format(_("Downloading images for '{0}'..."), ThemeManager.GetThemeName(theme))));
 
             imagesZipDest = theme.themeId + "_images.zip";
             themeUris = DefaultThemes.GetThemeUriList(theme.themeId).ToList();
@@ -70,8 +69,7 @@ namespace WinDynamicDesktop
         private bool EnsureZipNotHtml()
         {
             // Handle case where HTML page gets downloaded instead of ZIP
-            return (File.Exists(imagesZipDest) &&
-                ((new FileInfo(imagesZipDest)).Length > 1024 * 1024));
+            return (File.Exists(imagesZipDest) && ((new FileInfo(imagesZipDest)).Length > 1024 * 1024));
         }
 
         private void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
@@ -104,8 +102,7 @@ namespace WinDynamicDesktop
             if ((e.Error == null) && EnsureZipNotHtml())
             {
                 cancelButton.Enabled = false;
-                ThemeResult result = await Task.Run(
-                    () => ThemeLoader.ExtractTheme(imagesZipDest, theme.themeId));
+                ThemeResult result = await Task.Run(() => ThemeLoader.ExtractTheme(imagesZipDest, theme.themeId));
                 result.Match(ThemeLoader.HandleError, newTheme =>
                 {
                     int themeIndex = ThemeManager.themeSettings.FindIndex(t => t.themeId == newTheme.themeId);

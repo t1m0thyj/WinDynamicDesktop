@@ -66,9 +66,8 @@ namespace WinDynamicDesktop
                 }
                 else
                 {
-                    MessageDialog.ShowWarning(_("Another instance of WinDynamicDesktop is " +
-                        "already running. You can access it by clicking on the icon in the " +
-                        "system tray."), _("Error"));
+                    MessageDialog.ShowWarning(_("Another instance of WinDynamicDesktop is already running. You can " +
+                        "access it by clicking on the icon in the system tray."), _("Error"));
                 }
 
                 Environment.Exit(0);
@@ -96,15 +95,13 @@ namespace WinDynamicDesktop
             notifyIcon.ShowBalloonTip(10000);
         }
 
-        private void OnNamedPipeClientMessage(NamedPipeConnection<string, string> conn,
-            string message)
+        private void OnNamedPipeClientMessage(NamedPipeConnection<string, string> conn, string message)
         {
             ThemeManager.importPaths.AddRange(message.Split('|'));
 
             if (!ThemeManager.importMode)
             {
-                notifyIcon.ContextMenuStrip.BeginInvoke(
-                    new Action(() => ThemeManager.SelectTheme()));
+                notifyIcon.ContextMenuStrip.BeginInvoke(new Action(() => ThemeManager.SelectTheme()));
             }
         }
 
@@ -133,6 +130,7 @@ namespace WinDynamicDesktop
             }
 
             _namedPipe?.Stop();
+            _mutex?.Dispose();
         }
     }
 }

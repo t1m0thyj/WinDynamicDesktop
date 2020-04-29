@@ -33,8 +33,7 @@ namespace WinDynamicDesktop
             defaultThemes = DefaultThemes.GetDefaultThemes();
             List<string> themeIds = new List<string>();
 
-            foreach (string filePath in Directory.EnumerateFiles("themes", "*.json",
-                SearchOption.AllDirectories))
+            foreach (string filePath in Directory.EnumerateFiles("themes", "*.json", SearchOption.AllDirectories))
             {
                 string themeId = Path.GetFileName(Path.GetDirectoryName(filePath));
 
@@ -75,8 +74,7 @@ namespace WinDynamicDesktop
         public static bool IsThemeDownloaded(ThemeConfig theme)
         {
             string themePath = Path.Combine("themes", theme.themeId);
-            return (Directory.Exists(themePath) &&
-                (Directory.GetFiles(themePath, theme.imageFilename).Length > 0));
+            return (Directory.Exists(themePath) && (Directory.GetFiles(themePath, theme.imageFilename).Length > 0));
         }
 
         public static List<int> GetThemeImageList(ThemeConfig theme)
@@ -169,23 +167,21 @@ namespace WinDynamicDesktop
         {
             foreach (string themeId in themeIds)
             {
-                ThemeLoader.TryLoad(themeId).Match(ThemeLoader.HandleError,
-                    theme => {
-                        themeSettings.Add(theme);
+                ThemeLoader.TryLoad(themeId).Match(ThemeLoader.HandleError, theme => {
+                    themeSettings.Add(theme);
 
-                        if (theme.themeId == JsonConfig.settings.themeName)
-                        {
-                            currentTheme = theme;
-                        }
+                    if (theme.themeId == JsonConfig.settings.themeName)
+                    {
+                        currentTheme = theme;
                     }
-                );
+                });
             }
 
             foreach (string themeId in defaultThemes)
             {
                 if (!themeIds.Contains(themeId))
                 {
-                    themeSettings.Add(new ThemeConfig() { themeId = themeId });
+                    themeSettings.Add(new ThemeConfig { themeId = themeId });
                 }
             }
         }

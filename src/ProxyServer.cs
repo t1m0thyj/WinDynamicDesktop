@@ -35,8 +35,8 @@ namespace WinDynamicDesktop
 
                     if (proxyCredentials.Contains("://"))
                     {
-                        string[] schemeAndCredentials = proxyCredentials.Split(
-                            new string[] { "://" }, 2, StringSplitOptions.None);
+                        string[] schemeAndCredentials = proxyCredentials.Split(new string[] { "://" }, 2,
+                            StringSplitOptions.None);
                         proxyAddress = schemeAndCredentials[0] + "://" + proxyAddress;
                         proxyCredentials = schemeAndCredentials[1];
                     }
@@ -61,8 +61,7 @@ namespace WinDynamicDesktop
 
             if (!proxyCredentials.Contains(':'))
             {
-                proxyCredentials = Encoding.UTF8.GetString(
-                    Convert.FromBase64String(proxyCredentials));
+                proxyCredentials = Encoding.UTF8.GetString(Convert.FromBase64String(proxyCredentials));
             }
 
             userAndPass = proxyCredentials.Split(new char[] { ':' }, 2);

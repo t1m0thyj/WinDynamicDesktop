@@ -63,9 +63,9 @@ namespace WinDynamicDesktop
 
             if (duplicateThemeNames.Count > 0)
             {
-                DialogResult result = MessageDialog.ShowQuestion(string.Format(_("The following " +
-                    "themes are already installed:\n\t{0}\n\nDo you want to overwrite them?"),
-                    string.Join("\n\t", duplicateThemeNames)), _("Question"), true);
+                DialogResult result = MessageDialog.ShowQuestion(string.Format(_("The following themes are already " +
+                    "installed:\n\t{0}\n\nDo you want to overwrite them?"), string.Join("\n\t", duplicateThemeNames)),
+                    _("Question"), true);
 
                 if (result != DialogResult.Yes)
                 {
@@ -146,12 +146,10 @@ namespace WinDynamicDesktop
                 ThemeConfig theme = ThemeManager.themeSettings[selectedIndex - 1];
                 int imageId = ThemeManager.GetThemeImageList(theme)[imageNumber - 1];
                 string imageFilename = theme.imageFilename.Replace("*", imageId.ToString());
-                LoadPreviewImage(new Bitmap(Path.Combine("themes", theme.themeId,
-                    imageFilename)));
+                LoadPreviewImage(new Bitmap(Path.Combine("themes", theme.themeId, imageFilename)));
             }
 
-            imageNumberLabel.Text = string.Format(_("Image {0} of {1}"), imageNumber,
-                maxImageNumber);
+            imageNumberLabel.Text = string.Format(_("Image {0} of {1}"), imageNumber, maxImageNumber);
             firstButton.Enabled = imageNumber > 1;
             previousButton.Enabled = imageNumber > 1;
             nextButton.Enabled = imageNumber < maxImageNumber;
@@ -191,13 +189,12 @@ namespace WinDynamicDesktop
                     themeNames.Sort();
                     int itemIndex = themeNames.IndexOf(themeName) + 1;
 
-                    using (Image thumbnailImage = ThemeThumbLoader.GetThumbnailImage(themes[i],
-                        thumbnailSize, false))
+                    using (Image thumbnailImage = ThemeThumbLoader.GetThumbnailImage(themes[i], thumbnailSize, false))
                     {
                         this.Invoke(new Action(() =>
                         {
-                            imageListView1.Items.Insert(itemIndex,
-                                ThemeManager.GetThemeName(themes[i]), thumbnailImage);
+                            imageListView1.Items.Insert(itemIndex, ThemeManager.GetThemeName(themes[i]),
+                                thumbnailImage);
                             newItem = imageListView1.Items[itemIndex];
                             newItem.Tag = themes[i].themeId;
                         }));
@@ -240,8 +237,7 @@ namespace WinDynamicDesktop
                 if (selectedIndex > 0)
                 {
                     string themeId = (string)imageListView1.Items[selectedIndex].Tag;
-                    selectedIndex = ThemeManager.themeSettings.FindIndex(
-                        t => t.themeId == themeId) + 1;
+                    selectedIndex = ThemeManager.themeSettings.FindIndex(t => t.themeId == themeId) + 1;
                     ThemeConfig theme = ThemeManager.themeSettings[selectedIndex - 1];
                     themeDownloaded = ThemeManager.IsThemeDownloaded(theme);
 
@@ -253,8 +249,7 @@ namespace WinDynamicDesktop
                     }
                     else
                     {
-                        LoadPreviewImage((Image)Properties.Resources.ResourceManager.GetObject(
-                            themeId + "_thumbnail"));
+                        LoadPreviewImage((Image)Properties.Resources.ResourceManager.GetObject(themeId + "_thumbnail"));
                     }
                 }
 
@@ -282,8 +277,7 @@ namespace WinDynamicDesktop
 
             Size thumbnailSize = ThemeThumbLoader.GetThumbnailSize(this);
             imageListView1.ThumbnailSize = thumbnailSize;
-            imageListView1.Items.Add(_("None"), ThemeThumbLoader.ScaleImage(windowsWallpaper,
-                thumbnailSize));
+            imageListView1.Items.Add(_("None"), ThemeThumbLoader.ScaleImage(windowsWallpaper, thumbnailSize));
 
             string currentTheme = ThemeManager.currentTheme?.themeId;
             ImageListViewItem focusItem = null;
@@ -309,8 +303,7 @@ namespace WinDynamicDesktop
                     themeNames.Sort();
                     int itemIndex = themeNames.IndexOf(themeName) + 1;
                     
-                    using (Image thumbnailImage = ThemeThumbLoader.GetThumbnailImage(theme,
-                        thumbnailSize, true))
+                    using (Image thumbnailImage = ThemeThumbLoader.GetThumbnailImage(theme, thumbnailSize, true))
                     {
                         this.Invoke(new Action(() => {
                             imageListView1.Items.Insert(itemIndex, themeName, thumbnailImage);
@@ -412,8 +405,7 @@ namespace WinDynamicDesktop
 
             if (selectedIndex > 0)
             {
-                themeDownloaded = ThemeManager.IsThemeDownloaded(
-                    ThemeManager.themeSettings[selectedIndex - 1]);
+                themeDownloaded = ThemeManager.IsThemeDownloaded(ThemeManager.themeSettings[selectedIndex - 1]);
             }
 
             if (!themeDownloaded)
@@ -439,8 +431,7 @@ namespace WinDynamicDesktop
 
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
         {
-            imageListView1.HitTest(imageListView1.PointToClient(Cursor.Position),
-                out var hitTestInfo);
+            imageListView1.HitTest(imageListView1.PointToClient(Cursor.Position), out var hitTestInfo);
             int itemIndex = hitTestInfo.ItemIndex;
             string themeId = (string)imageListView1.Items[itemIndex].Tag;
 
@@ -467,9 +458,8 @@ namespace WinDynamicDesktop
             string themeId = (string)imageListView1.Items[itemIndex].Tag;
             ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
 
-            DialogResult result = MessageDialog.ShowQuestion(string.Format(_("Are you sure you " +
-                "want to remove the '{0}' theme?"), ThemeManager.GetThemeName(theme)),
-                _("Question"), true);
+            DialogResult result = MessageDialog.ShowQuestion(string.Format(_("Are you sure you want to remove the " +
+                "'{0}' theme?"), ThemeManager.GetThemeName(theme)), _("Question"), true);
 
             if (result == DialogResult.Yes)
             {
@@ -522,9 +512,9 @@ namespace WinDynamicDesktop
         {
             if (JsonConfig.firstRun && ThemeManager.currentTheme == null)
             {
-                DialogResult result = MessageDialog.ShowQuestion(_("WinDynamicDesktop cannot " +
-                    "dynamically update your wallpaper until you have selected a theme. Are you " +
-                    "sure you want to continue without a theme selected?"), _("Question"), true);
+                DialogResult result = MessageDialog.ShowQuestion(_("WinDynamicDesktop cannot dynamically update your " +
+                    "wallpaper until you have selected a theme. Are you sure you want to continue without a theme " +
+                    "selected?"), _("Question"), true);
 
                 if (result != DialogResult.Yes)
                 {

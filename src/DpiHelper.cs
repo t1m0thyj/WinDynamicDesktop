@@ -23,10 +23,10 @@ namespace WinDynamicDesktop
 
         private enum DpiAwarenessContext
         {
-            DpiAwarenessContextUnaware = -1,
-            DpiAwarenessContextSystemAware = -2,
-            DpiAwarenessContextPerMonitorAware = -3,
-            DpiAwarenessContextPerMonitorAwareV2 = -4
+            DpiAwarenessUnaware = -1,
+            DpiAwarenessSystemAware = -2,
+            DpiAwarenessPerMonitorAware = -3,
+            DpiAwarenessPerMonitorAwareV2 = -4
         }
 
         [DllImport("user32.dll", SetLastError = true)]
@@ -38,10 +38,10 @@ namespace WinDynamicDesktop
         [DllImport("user32.dll")]
         private static extern bool SetProcessDPIAware();
 
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern IntPtr LoadLibrary(string fileName);
 
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Ansi)]
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
 
         public static void SetDpiAwareness()
@@ -51,8 +51,8 @@ namespace WinDynamicDesktop
 
             if (method != IntPtr.Zero)
             {
-                if (SetProcessDpiAwarenessContext((IntPtr)DpiAwarenessContext.DpiAwarenessContextPerMonitorAwareV2) ||
-                    SetProcessDpiAwarenessContext((IntPtr)DpiAwarenessContext.DpiAwarenessContextPerMonitorAware))
+                if (SetProcessDpiAwarenessContext((IntPtr)DpiAwarenessContext.DpiAwarenessPerMonitorAwareV2) ||
+                    SetProcessDpiAwarenessContext((IntPtr)DpiAwarenessContext.DpiAwarenessPerMonitorAware))
                 {
                     return;
                 }

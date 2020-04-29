@@ -101,8 +101,7 @@ namespace WinDynamicDesktop
             }
             else
             {
-                SolarData tomorrowsData = SunriseSunsetService.GetSolarData(
-                    DateTime.Today.AddDays(1));
+                SolarData tomorrowsData = SunriseSunsetService.GetSolarData(DateTime.Today.AddDays(1));
                 nextUpdateTime = tomorrowsData.sunriseTime;
             }
 
@@ -198,16 +197,14 @@ namespace WinDynamicDesktop
 
                         if (DateTime.Now < data.solarTimes[0])
                         {
-                            SolarData yesterdaysData = SunriseSunsetService.GetSolarData(
-                                DateTime.Today.AddDays(-1));
+                            SolarData yesterdaysData = SunriseSunsetService.GetSolarData(DateTime.Today.AddDays(-1));
                             segmentStart = yesterdaysData.solarTimes[3];
                             segmentEnd = data.solarTimes[0];
                         }
                         else
                         {
                             segmentStart = data.solarTimes[3];
-                            SolarData tomorrowsData = SunriseSunsetService.GetSolarData(
-                                DateTime.Today.AddDays(1));
+                            SolarData tomorrowsData = SunriseSunsetService.GetSolarData(DateTime.Today.AddDays(1));
                             segmentEnd = tomorrowsData.solarTimes[0];
                         }
 
@@ -230,16 +227,14 @@ namespace WinDynamicDesktop
                 }
                 else if (DateTime.Now < data.sunriseTime)
                 {
-                    SolarData yesterdaysData = SunriseSunsetService.GetSolarData(
-                        DateTime.Today.AddDays(-1));
+                    SolarData yesterdaysData = SunriseSunsetService.GetSolarData(DateTime.Today.AddDays(-1));
                     segmentStart = yesterdaysData.sunsetTime;
                     segmentEnd = data.sunriseTime;
                 }
                 else
                 {
                     segmentStart = data.sunsetTime;
-                    SolarData tomorrowsData = SunriseSunsetService.GetSolarData(
-                        DateTime.Today.AddDays(1));
+                    SolarData tomorrowsData = SunriseSunsetService.GetSolarData(DateTime.Today.AddDays(1));
                     segmentEnd = tomorrowsData.sunriseTime;
                 }
             }
@@ -259,8 +254,7 @@ namespace WinDynamicDesktop
 
         private void SetWallpaper(int imageId)
         {
-            string imageFilename = ThemeManager.currentTheme.imageFilename.Replace("*",
-                imageId.ToString());
+            string imageFilename = ThemeManager.currentTheme.imageFilename.Replace("*", imageId.ToString());
             string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "themes",
                 ThemeManager.currentTheme.themeId, imageFilename);
 

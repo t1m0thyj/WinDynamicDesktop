@@ -80,7 +80,8 @@ namespace WinDynamicDesktop
             Image img = item.GetCachedImage(CachedImageType.Thumbnail);
             if (img != null)
             {
-                Rectangle pos = Utility.GetSizedImageBounds(img, new Rectangle(bounds.Location + itemPadding, ImageListView.ThumbnailSize));
+                Rectangle pos = Utility.GetSizedImageBounds(img, new Rectangle(bounds.Location + itemPadding,
+                    ImageListView.ThumbnailSize));
                 g.DrawImage(img, pos);
             }
 
@@ -98,9 +99,13 @@ namespace WinDynamicDesktop
                     foreColor = ImageListView.Colors.UnFocusedForeColor;
             }
             Size szt = System.Windows.Forms.TextRenderer.MeasureText(item.Text, ImageListView.Font);
-            Rectangle rt = new Rectangle(bounds.Left + itemPadding.Width, bounds.Top + 2 * itemPadding.Height + ImageListView.ThumbnailSize.Height, ImageListView.ThumbnailSize.Width, szt.Height);
+            Rectangle rt = new Rectangle(bounds.Left + itemPadding.Width,
+                bounds.Top + 2 * itemPadding.Height + ImageListView.ThumbnailSize.Height,
+                ImageListView.ThumbnailSize.Width, szt.Height);
             System.Windows.Forms.TextRenderer.DrawText(g, item.Text, ImageListView.Font, rt, foreColor,
-                System.Windows.Forms.TextFormatFlags.EndEllipsis | System.Windows.Forms.TextFormatFlags.HorizontalCenter | System.Windows.Forms.TextFormatFlags.VerticalCenter | System.Windows.Forms.TextFormatFlags.SingleLine);
+                System.Windows.Forms.TextFormatFlags.EndEllipsis |
+                System.Windows.Forms.TextFormatFlags.HorizontalCenter |
+                System.Windows.Forms.TextFormatFlags.VerticalCenter | System.Windows.Forms.TextFormatFlags.SingleLine);
 
             g.Clip = oldClip;
         }

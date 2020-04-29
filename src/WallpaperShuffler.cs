@@ -31,8 +31,7 @@ namespace WinDynamicDesktop
 
             shuffleHistory.Add(themeId);
             JsonConfig.settings.shuffleHistory = shuffleHistory.ToArray();
-            JsonConfig.settings.lastShuffleDate = DateTime.Now.ToString(
-                CultureInfo.InvariantCulture);
+            JsonConfig.settings.lastShuffleDate = DateTime.Now.ToString(CultureInfo.InvariantCulture);
         }
 
         public static void MaybeShuffleWallpaper()

@@ -41,9 +41,9 @@ namespace WinDynamicDesktop
             {
                 return new ThemeResult(new InvalidThemeJSON(theme.themeId));
             }
-            else if (string.IsNullOrEmpty(theme.imageFilename) ||
-                IsNullOrEmpty(theme.sunriseImageList) || IsNullOrEmpty(theme.dayImageList) ||
-                IsNullOrEmpty(theme.sunsetImageList) || IsNullOrEmpty(theme.nightImageList))
+            else if (string.IsNullOrEmpty(theme.imageFilename) || IsNullOrEmpty(theme.sunriseImageList) ||
+                IsNullOrEmpty(theme.dayImageList) || IsNullOrEmpty(theme.sunsetImageList) ||
+                IsNullOrEmpty(theme.nightImageList))
             {
                 return new ThemeResult(new MissingFieldsInThemeJSON(theme.themeId));
             }
@@ -60,14 +60,14 @@ namespace WinDynamicDesktop
 
             if (ThemeManager.downloadMode || ThemeManager.importMode)
             {
-                MessageDialog.ShowWarning(string.Format(_("Failed to import '{0}' theme:\n{1}"),
-                    e.themeId, e.errorMsg), _("Error"));
+                MessageDialog.ShowWarning(string.Format(_("Failed to import '{0}' theme:\n{1}"), e.themeId, e.errorMsg),
+                    _("Error"));
             }
             else
             {
-                DialogResult result = MessageDialog.ShowQuestion(string.Format(_("Failed to " +
-                    "load '{0}' theme:\n{1}\n\nDo you want to disable this theme to prevent the " +
-                    "error from happening again?"), e.themeId, e.errorMsg), _("Error"), true);
+                DialogResult result = MessageDialog.ShowQuestion(string.Format(_("Failed to load '{0}' theme:\n{1}\n" +
+                    "\nDo you want to disable this theme to prevent the error from happening again?"), e.themeId,
+                    e.errorMsg), _("Error"), true);
                 ThemeManager.DisableTheme(e.themeId, result == DialogResult.Yes);
             }
 
@@ -171,8 +171,7 @@ namespace WinDynamicDesktop
                 {
                     try
                     {
-                        File.Copy(imagePath, Path.Combine(themePath, Path.GetFileName(imagePath)),
-                            true);
+                        File.Copy(imagePath, Path.Combine(themePath, Path.GetFileName(imagePath)), true);
                     }
                     catch
                     {

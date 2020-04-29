@@ -57,9 +57,8 @@ namespace WinDynamicDesktop
 
                 if (AppContext.notifyIcon != null)
                 {
-                    DialogResult result = MessageDialog.ShowQuestion(_("WinDynamicDesktop needs " +
-                        "to restart for the language to change. Do you want to restart the app " +
-                        "now?"), _("Question"));
+                    DialogResult result = MessageDialog.ShowQuestion(_("WinDynamicDesktop needs to restart for the " +
+                        "language to change. Do you want to restart the app now?"), _("Question"));
 
                     if (result == DialogResult.Yes)
                     {
