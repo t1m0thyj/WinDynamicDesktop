@@ -211,6 +211,7 @@ namespace WinDynamicDesktop
                     }));
                 }
 
+                ThemeThumbLoader.CacheThumbnails(imageListView1.Items);
                 importDialog.thumbnailsLoaded = true;
                 this.Invoke(new Action(() => importDialog.Close()));
             });
@@ -324,6 +325,8 @@ namespace WinDynamicDesktop
                         imageListView1.EnsureVisible(focusItem.Index);
                     }));
                 }
+
+                ThemeThumbLoader.CacheThumbnails(imageListView1.Items);
             }));
         }
 

@@ -15,6 +15,8 @@ namespace WinDynamicDesktop
 {
     class ThemeThumbLoader
     {
+        private static List<string> outdatedThemeIds = new List<string>();
+
         public static Size GetThumbnailSize(System.Windows.Forms.Control control)
         {
             int scaledWidth;
@@ -71,7 +73,6 @@ namespace WinDynamicDesktop
                     else
                     {
                         cachedImage.Dispose();
-                        File.Delete(thumbnailPath);
                     }
                 }
                 else if (ThemeManager.defaultThemes.Contains(theme.themeId))
@@ -96,9 +97,25 @@ namespace WinDynamicDesktop
                     g.DrawImage(bmp1, 0, 0, new Rectangle(0, 0, bmp1.Width / 2, bmp1.Height), GraphicsUnit.Pixel);
                 }
 
-                bmp2.Save(thumbnailPath, ImageFormat.Png);
-
+                outdatedThemeIds.Add(theme.themeId);
                 return bmp2;
+            }
+        }
+
+        public static void CacheThumbnails(Manina.Windows.Forms.ImageListView.ImageListViewItemCollection items)
+        {
+            foreach (Manina.Windows.Forms.ImageListViewItem item in items.Skip(1))
+            {
+                string themeId = (string)item.Tag;
+
+                if (outdatedThemeIds.Contains(themeId))
+                {
+                    ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
+                    string thumbnailPath = Path.Combine("themes", themeId, "thumbnail.png");
+
+                    item.ThumbnailImage.Save(thumbnailPath, ImageFormat.Png);
+                    outdatedThemeIds.Remove(themeId);
+                }
             }
         }
     }

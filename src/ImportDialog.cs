@@ -71,7 +71,11 @@ namespace WinDynamicDesktop
             else
             {
                 ThemeManager.importMode = false;
-                this.Invoke(new Action(() => this.Close()));
+                this.Invoke(new Action(() =>
+                {
+                    label1.Text = _("Generating thumbnails, please wait...");
+                    this.Close();
+                }));
             }
         }
 
