@@ -107,7 +107,8 @@
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="AppContext.cs" />
-    <Compile Include="ProxyServer.cs" />
+    <Compile Include="HttpEnvironmentProxy.cs" />
+    <Compile Include="ProxyWrapper.cs" />
     <Compile Include="UpdateHandler.cs" />
     <Compile Include="DebugLogger.cs" />
     <Compile Include="DefaultThemes.cs" />

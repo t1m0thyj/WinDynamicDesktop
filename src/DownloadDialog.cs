@@ -35,7 +35,7 @@ namespace WinDynamicDesktop
             this.FormClosing += OnFormClosing;
             ThemeLoader.taskbarHandle = this.Handle;
 
-            ProxyServer.ApplyProxyToClient(wc);
+            ProxyWrapper.ApplyProxyToClient(wc);
             wc.DownloadProgressChanged += OnDownloadProgressChanged;
             wc.DownloadFileCompleted += OnDownloadFileCompleted;
         }

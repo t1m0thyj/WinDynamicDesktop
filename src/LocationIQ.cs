@@ -36,7 +36,7 @@ namespace WinDynamicDesktop
         public static void GetLocationData(string locationStr, ScheduleDialog dialog)
         {
             var client = new RestClient("https://us1.locationiq.org");
-            ProxyServer.ApplyProxyToClient(client);
+            ProxyWrapper.ApplyProxyToClient(client);
 
             var request = new RestRequest("v1/search.php");
             request.AddParameter("key", apiKey);

@@ -42,7 +42,6 @@ namespace WinDynamicDesktop
         public int sunriseSunsetDuration { get; set; }
         public bool fullScreenPause { get; set; }
         public bool enableScripts { get; set; }
-        public string webProxy { get; set; }
     }
 
     public class ThemeConfig

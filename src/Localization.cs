@@ -110,7 +110,7 @@ namespace WinDynamicDesktop
         private static void LoadLocaleFromWeb()
         {
             var client = new RestClient("https://api.poeditor.com");
-            ProxyServer.ApplyProxyToClient(client);
+            ProxyWrapper.ApplyProxyToClient(client);
 
             var request = new RestRequest("/v2/projects/export", Method.POST);
             request.AddParameter("api_token", JsonConfig.settings.poeditorApiToken);
@@ -126,7 +126,7 @@ namespace WinDynamicDesktop
 
             using (WebClient wc = new WebClient())
             {
-                ProxyServer.ApplyProxyToClient(client);
+                ProxyWrapper.ApplyProxyToClient(client);
                 byte[] moBinary = wc.DownloadData(response.Data.result.url);
 
                 using (Stream stream = new MemoryStream(moBinary))
