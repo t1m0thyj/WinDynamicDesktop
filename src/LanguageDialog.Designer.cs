@@ -37,9 +37,10 @@
             // 
             // label1
             // 
+            this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(6, 9);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(253, 13);
+            this.label1.Size = new System.Drawing.Size(251, 13);
             this.label1.TabIndex = 1;
             this.label1.Text = "Select the language to use in WinDynamicDesktop:";
             // 
@@ -103,6 +104,7 @@
             this.Text = "Select Language";
             this.Load += new System.EventHandler(this.LanguageDialog_Load);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 

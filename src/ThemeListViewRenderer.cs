@@ -109,10 +109,5 @@ namespace WinDynamicDesktop
 
             g.Clip = oldClip;
         }
-
-        public override void OnLayout(LayoutEventArgs e)
-        {
-            e.ItemAreaBounds = Rectangle.Inflate(e.ItemAreaBounds, -5, -5);
-        }
     }
 }

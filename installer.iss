@@ -55,6 +55,7 @@ end;
 
 procedure DeleteUserData;
 begin
+  DelTree(ExpandConstant('{app}\scripts'), true, true, true);
   DelTree(ExpandConstant('{app}\themes'), true, true, true);
   DeleteFile(ExpandConstant('{app}\settings.conf'));
   DeleteFile(ExpandConstant('{app}\{#MyAppExeName}.log'));
