@@ -29,8 +29,8 @@ namespace WinDynamicDesktop
         private static SolarData GetUserProvidedSolarData()
         {
             SolarData data = new SolarData();
-            data.sunriseTime = DateTime.Parse(JsonConfig.settings.sunriseTime, CultureInfo.InvariantCulture);
-            data.sunsetTime = DateTime.Parse(JsonConfig.settings.sunsetTime, CultureInfo.InvariantCulture);
+            data.sunriseTime = UpdateHandler.SafeParse(JsonConfig.settings.sunriseTime);
+            data.sunsetTime = UpdateHandler.SafeParse(JsonConfig.settings.sunsetTime);
 
             int halfSunriseSunsetDuration = JsonConfig.settings.sunriseSunsetDuration * 30;
             data.solarTimes = new DateTime[4]

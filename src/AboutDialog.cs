@@ -55,7 +55,7 @@ namespace WinDynamicDesktop
 
             return @"{\rtf1\pc\fs5\par" +
                 @"\sb72\qc\fs30\b WinDynamicDesktop " + versionStr + @"\b0\par" +
-                @"\fs20 " + _("Port of macOS Dynamic Desktop feature to Windows 10") + @"\par " +
+                @"\fs20 " + _("Port of macOS Mojave Dynamic Desktop feature to Windows 10") + @"\par " +
                 copyrightLine + @"\par " +
                 GetRtfLink(websiteLink) + @"\par " +
                 donateRateLine + @"\par" +

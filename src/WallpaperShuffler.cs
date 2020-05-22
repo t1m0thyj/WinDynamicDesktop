@@ -43,8 +43,7 @@ namespace WinDynamicDesktop
 
             if (JsonConfig.settings.lastShuffleDate != null)
             {
-                DateTime lastShuffleDate = DateTime.Parse(JsonConfig.settings.lastShuffleDate,
-                    CultureInfo.InvariantCulture);
+                DateTime lastShuffleDate = UpdateHandler.SafeParse(JsonConfig.settings.lastShuffleDate);
 
                 if (lastShuffleDate.Date == DateTime.Now.Date)
                 {

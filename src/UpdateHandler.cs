@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
 using System.IO;
 using Newtonsoft.Json;
 
@@ -201,6 +202,18 @@ namespace WinDynamicDesktop
                     "the following features:\n\n* Change Windows 10 app/system theme\n* Change screen brightness\n* " +
                     "Change lockscreen image\n\nTo re-enable these features, install scripts for them from here: " +
                     "https://windd.info/scripts/");
+            }
+        }
+
+        public static DateTime SafeParse(string dateTime)  // Added 2020-05-21
+        {
+            try
+            {
+                return DateTime.Parse(dateTime, CultureInfo.InvariantCulture);
+            }
+            catch (FormatException)
+            {
+                return DateTime.Parse(dateTime);
             }
         }
     }
