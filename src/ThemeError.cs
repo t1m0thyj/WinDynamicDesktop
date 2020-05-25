@@ -72,10 +72,13 @@ namespace WinDynamicDesktop
 
     class MissingFieldsInThemeJSON : ThemeError
     {
+        private string[] requiredFields = new string[] { "dayImageList", "imageFilename", "nightImageList",
+            "sunriseImageList", "sunsetImageList" };
+
         public MissingFieldsInThemeJSON(string themeId) : base(themeId)
         {
-            errorMsg = _("Theme JSON file is missing one or more of these required fields: 'dayImageList', " +
-                "'imageFilename', 'nightImageList', 'sunriseImageList', 'sunsetImageList'");
+            errorMsg = string.Format(_("Theme JSON file is missing one or more of these required fields: {0}"),
+                string.Join(", ", requiredFields.Select((field) => "'" + field + "'")));
         }
     }
 

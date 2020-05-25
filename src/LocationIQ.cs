@@ -15,7 +15,7 @@ namespace WinDynamicDesktop
     class LocationIQService
     {
         private static readonly string apiKey = Encoding.UTF8.GetString(Convert.FromBase64String(
-            "cGsuYmRhNTk1NDRhN2VjZWMxYjAxMDZkNzg5MzdlMDQzOTk ="));
+            "cGsuYmRhNTk1NDRhN2VjZWMxYjAxMDZkNzg5MzdlMDQzOTk="));
         private static readonly Func<string, string> _ = Localization.GetTranslation;
 
         private static void HandleLocationSuccess(LocationIQData data, ScheduleDialog dialog)
@@ -44,20 +44,19 @@ namespace WinDynamicDesktop
             request.AddParameter("format", "json");
             request.AddParameter("limit", "1");
 
-            client.ExecuteAsync<List<LocationIQData>>(request, response =>
+            var response = client.Execute<List<LocationIQData>>(request);
+
+            if (response.IsSuccessful)
             {
-                if (response.IsSuccessful)
-                {
-                    JsonConfig.settings.location = locationStr;
-                    HandleLocationSuccess(response.Data[0], dialog);
-                }
-                else
-                {
-                    MessageDialog.ShowWarning(_("The location you entered was invalid, or you are not connected to " +
-                        "the Internet. Check your Internet connection and try a different location. You can use a " +
-                        "complete address or just the name of your city/region."), _("Error"));
-                }
-            });
+                JsonConfig.settings.location = locationStr;
+                HandleLocationSuccess(response.Data[0], dialog);
+            }
+            else
+            {
+                MessageDialog.ShowWarning(_("The location you entered was invalid, or you are not connected to " +
+                    "the Internet. Check your Internet connection and try a different location. You can use a " +
+                    "complete address or just the name of your city/region."), _("Error"));
+            }
         }
     }
 }

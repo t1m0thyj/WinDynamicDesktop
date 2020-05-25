@@ -21,46 +21,44 @@ namespace WinDynamicDesktop
                 return;
             }
 
-            using (StreamWriter debugLog = new StreamWriter("debug.log"))
+            using StreamWriter debugLog = new StreamWriter("debug.log");
+            AppConfig settings = null;
+
+            try
             {
-                AppConfig settings = null;
+                string jsonText = File.ReadAllText("settings.conf");
+                settings = JsonConvert.DeserializeObject<AppConfig>(jsonText);
+            }
+            catch { }
 
-                try
-                {
-                    string jsonText = File.ReadAllText("settings.conf");
-                    settings = JsonConvert.DeserializeObject<AppConfig>(jsonText);
-                }
-                catch { }
+            if (settings != null)
+            {
+                settings.location = "redacted";
+                settings.latitude = "0";
+                settings.longitude = "0";
+                debugLog.WriteLine("./settings.conf");
+                debugLog.WriteLine(JsonConvert.SerializeObject(settings, Formatting.Indented));
+            }
+            else
+            {
+                debugLog.WriteLine("WARNING: Settings file not found or invalid");
+            }
 
-                if (settings != null)
+            if (Directory.Exists("themes"))
+            {
+                foreach (string path in Directory.EnumerateFiles("themes", "*", SearchOption.AllDirectories))
                 {
-                    settings.location = "redacted";
-                    settings.latitude = "0";
-                    settings.longitude = "0";
-                    debugLog.WriteLine("./settings.conf");
-                    debugLog.WriteLine(JsonConvert.SerializeObject(settings, Formatting.Indented));
-                }
-                else
-                {
-                    debugLog.WriteLine("WARNING: Settings file not found or invalid");
-                }
+                    debugLog.WriteLine("./" + path.Replace('\\', '/'));
 
-                if (Directory.Exists("themes"))
-                {
-                    foreach (string path in Directory.EnumerateFiles("themes", "*", SearchOption.AllDirectories))
+                    if (Path.GetExtension(path) == ".json")
                     {
-                        debugLog.WriteLine("./" + path.Replace('\\', '/'));
-
-                        if (Path.GetExtension(path) == ".json")
-                        {
-                            debugLog.WriteLine(File.ReadAllText(path));
-                        }
+                        debugLog.WriteLine(File.ReadAllText(path));
                     }
                 }
-                else
-                {
-                    debugLog.WriteLine("WARNING: Themes directory not found");
-                }
+            }
+            else
+            {
+                debugLog.WriteLine("WARNING: Themes directory not found");
             }
         }
     }

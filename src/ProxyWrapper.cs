@@ -17,6 +17,12 @@ namespace WinDynamicDesktop
 
         private static IWebProxy GetProxy()
         {
+            // Ensure TLS 1.2 is enabled
+            if (!ServicePointManager.SecurityProtocol.HasFlag(SecurityProtocolType.Tls12))
+            {
+                ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
+            }
+            
             if (webProxy == null)
             {
                 // Uses HttpEnvironmentProxy class to mimic .NET Core behavior

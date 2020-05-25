@@ -58,12 +58,7 @@ namespace WinDynamicDesktop
             var request = new RestRequest("/repos/t1m0thyj/WinDynamicDesktop/releases/latest");
             var response = client.Execute<GitHubApiData>(request);
 
-            if (!response.IsSuccessful)
-            {
-                return null;
-            }
-
-            return response.Data.tag_name.Substring(1);
+            return response.IsSuccessful ? response.Data.tag_name.Substring(1) : null;
         }
 
         private static string GetCurrentVersion()
