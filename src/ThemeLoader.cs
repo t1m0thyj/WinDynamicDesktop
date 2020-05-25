@@ -26,29 +26,17 @@ namespace WinDynamicDesktop
             }
             else
             {
-                return ValidateThemeJSON(JsonConfig.LoadTheme(themeId));
-            }
-        }
+                ThemeConfig theme = JsonConfig.LoadTheme(themeId);
 
-        private static bool IsNullOrEmpty(Array array)
-        {
-            return (array == null || array.Length == 0);
-        }
-
-        private static ThemeResult ValidateThemeJSON(ThemeConfig theme)
-        {
-            if (theme == null)
-            {
-                return new ThemeResult(new InvalidThemeJSON(theme.themeId));
+                if (theme == null)
+                {
+                    return new ThemeResult(new InvalidThemeJSON(themeId));
+                }
+                else
+                {
+                    return ThemeJsonValidator.ValidateQuick(theme);
+                }
             }
-            else if (string.IsNullOrEmpty(theme.imageFilename) || IsNullOrEmpty(theme.sunriseImageList) ||
-                IsNullOrEmpty(theme.dayImageList) || IsNullOrEmpty(theme.sunsetImageList) ||
-                IsNullOrEmpty(theme.nightImageList))
-            {
-                return new ThemeResult(new MissingFieldsInThemeJSON(theme.themeId));
-            }
-
-            return new ThemeResult(theme);
         }
 
         public static void HandleError(ThemeError e)
@@ -104,7 +92,6 @@ namespace WinDynamicDesktop
 
             string themePath = Path.Combine("themes", themeId);
             Directory.CreateDirectory(themePath);
-            ThemeResult result;
 
             try
             {
@@ -118,32 +105,34 @@ namespace WinDynamicDesktop
                     }
                     catch (InvalidOperationException)
                     {
-                        return new ThemeResult(new NoThemeJSONInZIP(themeId, zipPath));
+                        return RollbackInstall(new NoThemeJSONInZIP(themeId, zipPath));
                     }
 
-                    result = TryLoad(themeId);
-
-                    ZipArchiveEntry[] imageEntries = archive.Entries.Where(
-                        entry => Path.GetDirectoryName(entry.FullName) == ""
-                        && Path.GetExtension(entry.Name) != ".json").ToArray();
-
-                    if (imageEntries.Length == 0)
+                    return TryLoad(themeId).Match(RollbackInstall, theme =>
                     {
-                        return new ThemeResult(new NoImagesInZIP(themeId, zipPath));
-                    }
+                        ZipArchiveEntry[] imageEntries = archive.Entries.Where(
+                            entry => Path.GetDirectoryName(entry.FullName) == ""
+                            && Path.GetExtension(entry.Name) != ".json").ToArray();
 
-                    foreach (ZipArchiveEntry imageEntry in imageEntries)
-                    {
-                        imageEntry.ExtractToFile(Path.Combine(themePath, imageEntry.Name), true);
-                    }
+                        if (imageEntries.Length == 0)
+                        {
+                            return RollbackInstall(new NoImagesInZIP(themeId, zipPath));
+                        }
+
+                        foreach (ZipArchiveEntry imageEntry in imageEntries)
+                        {
+                            imageEntry.ExtractToFile(Path.Combine(themePath, imageEntry.Name), true);
+                        }
+
+                        return ThemeJsonValidator.ValidateFull(theme).Match(RollbackInstall,
+                            theme => new ThemeResult(theme));
+                    });
                 }
             }
             catch (InvalidDataException)
             {
-                return new ThemeResult(new InvalidZIP(themeId, zipPath));
+                return RollbackInstall(new InvalidZIP(themeId, zipPath));
             }
-
-            return result;
         }
 
         public static ThemeResult CopyLocalTheme(string jsonPath, string themeId)
@@ -157,14 +146,14 @@ namespace WinDynamicDesktop
             Directory.CreateDirectory(themePath);
             File.Copy(jsonPath, Path.Combine(themePath, "theme.json"), true);
 
-            return TryLoad(themeId).Match(e => new ThemeResult(e), theme =>
+            return TryLoad(themeId).Match(RollbackInstall, theme =>
             {
                 string sourcePath = Path.GetDirectoryName(jsonPath);
                 string[] imagePaths = Directory.GetFiles(sourcePath, theme.imageFilename);
 
                 if (imagePaths.Length == 0)
                 {
-                    return new ThemeResult(new NoImagesInFolder(themeId, sourcePath));
+                    return RollbackInstall(new NoImagesInFolder(themeId, sourcePath));
                 }
 
                 foreach (string imagePath in imagePaths)
@@ -175,12 +164,27 @@ namespace WinDynamicDesktop
                     }
                     catch
                     {
-                        return new ThemeResult(new FailedToCopyImage(themeId, imagePath));
+                        return RollbackInstall(new FailedToCopyImage(themeId, imagePath));
                     }
                 }
 
-                return new ThemeResult(theme);
+                return ThemeJsonValidator.ValidateFull(theme).Match(RollbackInstall, theme => new ThemeResult(theme));
             });
+        }
+
+        private static ThemeResult RollbackInstall(ThemeError error)
+        {
+            Task.Run(() =>
+            {
+                try
+                {
+                    System.Threading.Thread.Sleep(100);  // Wait for folder to free up
+                    Directory.Delete(Path.Combine("themes", error.themeId), true);
+                }
+                catch { }
+            });
+
+            return new ThemeResult(error);
         }
     }
 }

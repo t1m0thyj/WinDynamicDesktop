@@ -46,6 +46,14 @@ namespace WinDynamicDesktop
         }
     }
 
+    class InvalidImageInThemeJSON : ThemeError
+    {
+        public InvalidImageInThemeJSON(string themeId, int imageId, string filename) : base(themeId)
+        {
+            errorMsg = string.Format(_("Could not find image {0} at {1}"), imageId, filename);
+        }
+    }
+
     class InvalidThemeJSON : ThemeError
     {
         public InvalidThemeJSON(string themeId) : base(themeId)
@@ -84,6 +92,14 @@ namespace WinDynamicDesktop
         public NoImagesInZIP(string themeId, string zipPath) : base(themeId)
         {
             errorMsg = string.Format(_("No images found in ZIP file {0}"), zipPath);
+        }
+    }
+
+    class NoImagesMatchingPattern : ThemeError
+    {
+        public NoImagesMatchingPattern(string themeId, string pattern) : base(themeId)
+        {
+            errorMsg = string.Format(_("No images found that match the pattern {0}"), pattern);
         }
     }
 

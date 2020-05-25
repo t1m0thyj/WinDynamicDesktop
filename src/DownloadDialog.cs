@@ -19,9 +19,9 @@ namespace WinDynamicDesktop
     public partial class DownloadDialog : Form
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
-        private string imagesZipDest;
         private List<Uri> themeUris;
         private int themeUriIndex;
+        private string themeZipDest;
 
         private Stopwatch stopwatch = new Stopwatch();
         private WebClient wc = new WebClient();
@@ -46,9 +46,9 @@ namespace WinDynamicDesktop
             this.Invoke(new Action(() =>
                 label1.Text = string.Format(_("Downloading images for '{0}'..."), ThemeManager.GetThemeName(theme))));
 
-            imagesZipDest = theme.themeId + "_images.zip";
             themeUris = DefaultThemes.GetThemeUriList(theme.themeId).ToList();
             themeUriIndex = 0;
+            themeZipDest = Path.Combine("themes", theme.themeId + ".zip");
             DownloadNext(theme);
         }
 
@@ -56,7 +56,7 @@ namespace WinDynamicDesktop
         {
             this.Invoke(new Action(() => UpdatePercentage(0)));
             stopwatch.Start();
-            wc.DownloadFileAsync(themeUris[themeUriIndex], imagesZipDest, theme);
+            wc.DownloadFileAsync(themeUris[themeUriIndex], themeZipDest, theme);
         }
 
         private void UpdatePercentage(int percentage)
@@ -69,7 +69,7 @@ namespace WinDynamicDesktop
         private bool EnsureZipNotHtml()
         {
             // Handle case where HTML page gets downloaded instead of ZIP
-            return (File.Exists(imagesZipDest) && ((new FileInfo(imagesZipDest)).Length > 1024 * 1024));
+            return (File.Exists(themeZipDest) && ((new FileInfo(themeZipDest)).Length > 1048576));
         }
 
         private void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
@@ -102,7 +102,7 @@ namespace WinDynamicDesktop
             if ((e.Error == null) && EnsureZipNotHtml())
             {
                 cancelButton.Enabled = false;
-                ThemeResult result = await Task.Run(() => ThemeLoader.ExtractTheme(imagesZipDest, theme.themeId));
+                ThemeResult result = await Task.Run(() => ThemeLoader.ExtractTheme(themeZipDest, theme.themeId));
                 result.Match(ThemeLoader.HandleError, newTheme =>
                 {
                     int themeIndex = ThemeManager.themeSettings.FindIndex(t => t.themeId == newTheme.themeId);
@@ -155,8 +155,8 @@ namespace WinDynamicDesktop
             {
                 try
                 {
-                    System.Threading.Thread.Sleep(1000);  // Wait a second for file to free up
-                    File.Delete(imagesZipDest);
+                    System.Threading.Thread.Sleep(100);  // Wait for file to free up
+                    File.Delete(themeZipDest);
                 }
                 catch { }
             });

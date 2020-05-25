@@ -128,8 +128,7 @@ namespace WinDynamicDesktop
                 result = ThemeLoader.CopyLocalTheme(importPath, themeId);
             }
 
-            return result.Match(e => new ThemeResult(e), theme =>
-            {
+            return result.Match(e => new ThemeResult(e), theme => {
                 if (themeIndex == -1)
                 {
                     themeSettings.Add(theme);

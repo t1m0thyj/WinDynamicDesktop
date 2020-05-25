@@ -385,15 +385,13 @@ namespace WinDynamicDesktop
         {
             DialogResult result = openFileDialog1.ShowDialog();
 
-            if (result != DialogResult.OK)
+            if (result == DialogResult.OK)
             {
-                return;
+                ImportThemes(openFileDialog1.FileNames.ToList());
+
+                openFileDialog1.InitialDirectory = Path.GetDirectoryName(openFileDialog1.FileNames[0]);
+                openFileDialog1.FileName = "";
             }
-
-            ImportThemes(openFileDialog1.FileNames.ToList());
-
-            openFileDialog1.InitialDirectory = Path.GetDirectoryName(openFileDialog1.FileNames[0]);
-            openFileDialog1.FileName = "";
         }
 
         private void themeLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
