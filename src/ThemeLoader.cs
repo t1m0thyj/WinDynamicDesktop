@@ -10,9 +10,26 @@ using System.Threading.Tasks;
 using System.IO;
 using System.IO.Compression;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 
 namespace WinDynamicDesktop
 {
+#nullable disable
+    public class ThemeConfig
+    {
+        public string themeId { get; set; }
+        public string displayName { get; set; }
+        public string imageFilename { get; set; }
+        public string imageCredits { get; set; }
+        public int? dayHighlight { get; set; }
+        public int? nightHighlight { get; set; }
+        public int[] sunriseImageList { get; set; }
+        public int[] dayImageList { get; set; }
+        public int[] sunsetImageList { get; set; }
+        public int[] nightImageList { get; set; }
+    }
+#nullable restore
+
     class ThemeLoader
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
@@ -20,23 +37,26 @@ namespace WinDynamicDesktop
 
         public static ThemeResult TryLoad(string themeId)
         {
-            if (!File.Exists(Path.Combine("themes", themeId, "theme.json")))
+            string jsonPath = Path.Combine("themes", themeId, "theme.json");
+
+            if (!File.Exists(jsonPath))
             {
                 return new ThemeResult(new NoThemeJSON(themeId));
             }
-            else
-            {
-                ThemeConfig theme = JsonConfig.LoadTheme(themeId);
 
-                if (theme == null)
-                {
-                    return new ThemeResult(new InvalidThemeJSON(themeId));
-                }
-                else
-                {
-                    return ThemeJsonValidator.ValidateQuick(theme);
-                }
+            ThemeConfig theme;
+
+            try
+            {
+                theme = JsonConvert.DeserializeObject<ThemeConfig>(File.ReadAllText(jsonPath));
             }
+            catch (JsonException e)
+            {
+                return new ThemeResult(new InvalidThemeJSON(themeId, e.Message));
+            }
+
+            theme.themeId = themeId;
+            return ThemeJsonValidator.ValidateQuick(theme);
         }
 
         public static void HandleError(ThemeError e)

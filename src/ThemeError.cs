@@ -56,9 +56,9 @@ namespace WinDynamicDesktop
 
     class InvalidThemeJSON : ThemeError
     {
-        public InvalidThemeJSON(string themeId) : base(themeId)
+        public InvalidThemeJSON(string themeId, string message) : base(themeId)
         {
-            errorMsg = _("Could not read theme JSON file because its format is invalid");
+            errorMsg = string.Format(_("Could not read theme JSON file: {0}"), message);
         }
     }
 

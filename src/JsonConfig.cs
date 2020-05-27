@@ -43,20 +43,6 @@ namespace WinDynamicDesktop
         public bool fullScreenPause { get; set; }
         public bool enableScripts { get; set; }
     }
-
-    public class ThemeConfig
-    {
-        public string themeId { get; set; }
-        public string displayName { get; set; }
-        public string imageFilename { get; set; }
-        public string imageCredits { get; set; }
-        public int? dayHighlight { get; set; }
-        public int? nightHighlight { get; set; }
-        public int[] sunriseImageList { get; set; }
-        public int[] dayImageList { get; set; }
-        public int[] sunsetImageList { get; set; }
-        public int[] nightImageList { get; set; }
-    }
 #nullable restore
 
     class JsonConfig
@@ -99,24 +85,6 @@ namespace WinDynamicDesktop
 
             settings.PropertyChanged += OnSettingsPropertyChanged;
             autoSaveTimer.Elapsed += OnAutoSaveTimerElapsed;
-        }
-
-        public static ThemeConfig LoadTheme(string name)
-        {
-            ThemeConfig theme;
-            string jsonText = File.ReadAllText(Path.Combine("themes", name, "theme.json"));
-
-            try
-            {
-                theme = JsonConvert.DeserializeObject<ThemeConfig>(jsonText);
-            }
-            catch (JsonException)
-            {
-                return null;
-            }
-
-            theme.themeId = name;
-            return theme;
         }
 
         public static void ReloadConfig()
