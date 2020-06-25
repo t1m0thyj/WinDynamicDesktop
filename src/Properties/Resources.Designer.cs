@@ -73,6 +73,26 @@ namespace WinDynamicDesktop.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Big_Sur_Abstract_thumbnail {
+            get {
+                object obj = ResourceManager.GetObject("Big_Sur_Abstract_thumbnail", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Big_Sur_thumbnail {
+            get {
+                object obj = ResourceManager.GetObject("Big_Sur_thumbnail", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Catalina_thumbnail {
             get {
                 object obj = ResourceManager.GetObject("Catalina_thumbnail", resourceCulture);
@@ -86,6 +106,16 @@ namespace WinDynamicDesktop.Properties {
         internal static byte[] default_themes {
             get {
                 object obj = ResourceManager.GetObject("default_themes", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] locale_bg {
+            get {
+                object obj = ResourceManager.GetObject("locale_bg", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -176,6 +206,16 @@ namespace WinDynamicDesktop.Properties {
         internal static byte[] locale_it {
             get {
                 object obj = ResourceManager.GetObject("locale_it", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] locale_ja {
+            get {
+                object obj = ResourceManager.GetObject("locale_ja", resourceCulture);
                 return ((byte[])(obj));
             }
         }

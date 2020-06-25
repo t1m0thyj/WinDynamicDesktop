@@ -33,7 +33,7 @@ namespace WinDynamicDesktop
         private void AboutDialog_Load(object sender, EventArgs e)
         {
             iconBox.Image = (new Icon(Properties.Resources.AppIcon, 64, 64)).ToBitmap();
-            richTextBox1.Rtf = GetRtfText();
+            richTextBox1.Rtf = GetRtfUnicodeEscapedString(GetRtfText());
         }
 
         private string GetRtfLink(string href, string linkText = null)
@@ -66,6 +66,20 @@ namespace WinDynamicDesktop
                 _("LocationIQ for their free geocoding API") + @"\par " +
                 _("Roundicons from flaticon.com for the icon (licensed by CC 3.0 BY)") + @"\par" +
                 @"\par }";
+        }
+
+        // Code from https://stackoverflow.com/questions/1368020/how-to-output-unicode-string-to-rtf-using-c
+        private string GetRtfUnicodeEscapedString(string s)
+        {
+            var sb = new StringBuilder();
+            foreach (var c in s)
+            {
+                if (c <= 0x7f)
+                    sb.Append(c);
+                else
+                    sb.Append("\\u" + Convert.ToUInt32(c) + "?");
+            }
+            return sb.ToString();
         }
 
         private void richTextBox1_LinkClicked(object sender, LinkClickedEventArgs e)

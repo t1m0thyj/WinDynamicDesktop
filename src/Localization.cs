@@ -68,9 +68,11 @@ namespace WinDynamicDesktop
             AddLanguage("Română", "ro");  // Romanian
             AddLanguage("Pусский", "ru");  // Russian
             AddLanguage("Türkçe", "tr");  // Turkish
+            AddLanguage("Български", "bg");  // Bulgarian
             AddLanguage("हिन्दी", "hi");  // Hindi
             AddLanguage("বাংলা", "bn");  // Bengali
             AddLanguage("中文 (简体)", "zh-Hans");  // Chinese (Simplified)
+            AddLanguage("日本語", "ja");  // Japanese
         }
 
         private static void AddLanguage(string languageName, string languageCode)

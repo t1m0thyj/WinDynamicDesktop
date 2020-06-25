@@ -202,6 +202,7 @@
       <DependentUpon>ThemeDialog.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.manifest" />
+    <None Include="locale\bg.mo" />
     <None Include="locale\bn.mo" />
     <None Include="locale\cs.mo" />
     <None Include="locale\de.mo" />
@@ -211,6 +212,7 @@
     <None Include="locale\hi.mo" />
     <None Include="locale\id.mo" />
     <None Include="locale\it.mo" />
+    <None Include="locale\ja.mo" />
     <None Include="locale\mk.mo" />
     <None Include="locale\pl.mo" />
     <None Include="locale\pt-br.mo" />
@@ -239,6 +241,10 @@
     <None Include="resources\Solar_Gradients_thumbnail.jpg" />
     <None Include="resources\WinDynamicDesktop.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="resources\Big_Sur_Abstract_thumbnail.jpg" />
+    <Content Include="resources\Big_Sur_thumbnail.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -246,7 +252,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('packages\Costura.Fody.4.1.0\build\Costura.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Costura.Fody.4.1.0\build\Costura.Fody.props'))" />
     <Error Condition="!Exists('packages\PropertyChanged.Fody.3.2.8\build\PropertyChanged.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\PropertyChanged.Fody.3.2.8\build\PropertyChanged.Fody.props'))" />
-    <Error Condition="!Exists('packages\Fody.6.1.2\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Fody.6.1.2\build\Fody.targets'))" />
+    <Error Condition="!Exists('packages\Fody.6.2.0\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Fody.6.2.0\build\Fody.targets'))" />
   </Target>
-  <Import Project="packages\Fody.6.1.2\build\Fody.targets" Condition="Exists('packages\Fody.6.1.2\build\Fody.targets')" />
+  <Import Project="packages\Fody.6.2.0\build\Fody.targets" Condition="Exists('packages\Fody.6.2.0\build\Fody.targets')" />
 </Project>
