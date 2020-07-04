@@ -51,6 +51,9 @@
     <Reference Include="DesktopBridge.Helpers, Version=1.2.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\DesktopBridge.Helpers.1.2.2\lib\net45\DesktopBridge.Helpers.dll</HintPath>
     </Reference>
+    <Reference Include="EndianBitConverter, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\EndianBitConverter.1.1.0\lib\net45\EndianBitConverter.dll</HintPath>
+    </Reference>
     <Reference Include="ImageListView, Version=13.8.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\ImageListView.13.8.2\lib\net35\ImageListView.dll</HintPath>
     </Reference>
@@ -62,6 +65,9 @@
     </Reference>
     <Reference Include="NGettext, Version=0.6.1.0, Culture=neutral, PublicKeyToken=08d3d1c89dfd2985, processorArchitecture=MSIL">
       <HintPath>packages\NGettext.0.6.5\lib\net46\NGettext.dll</HintPath>
+    </Reference>
+    <Reference Include="PListNet, Version=3.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\PListNet.3.2.0\lib\netstandard1.0\PListNet.dll</HintPath>
     </Reference>
     <Reference Include="PropertyChanged, Version=3.2.8.0, Culture=neutral, PublicKeyToken=ee3ee20bcf148ddd, processorArchitecture=MSIL">
       <HintPath>packages\PropertyChanged.Fody.3.2.8\lib\net40\PropertyChanged.dll</HintPath>
@@ -107,6 +113,7 @@
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="AppContext.cs" />
+    <Compile Include="HeicMetadata.cs" />
     <Compile Include="HttpEnvironmentProxy.cs" />
     <Compile Include="ProxyWrapper.cs" />
     <Compile Include="ThemeJsonValidator.cs" />
@@ -242,6 +249,7 @@
     <None Include="resources\WinDynamicDesktop.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="LICENSE.EndianBitConverter.txt" />
     <Content Include="resources\Big_Sur_Abstract_thumbnail.jpg" />
     <Content Include="resources\Big_Sur_thumbnail.jpg" />
   </ItemGroup>
