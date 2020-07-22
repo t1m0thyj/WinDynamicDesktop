@@ -25,8 +25,7 @@ namespace WinDynamicDesktop
 
         private static readonly Func<string, string> _ = Localization.GetTranslation;
         private const string themeLink = "https://windd.info/themes/";
-        private readonly string windowsWallpaper = Directory.GetFiles(
-            Environment.ExpandEnvironmentVariables(@"%SystemRoot%\Web\Wallpaper\Windows"))[0];
+        private readonly string windowsWallpaper = ThemeThumbLoader.GetWindowsWallpaper();
 
         public ThemeDialog()
         {

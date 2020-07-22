@@ -61,7 +61,7 @@
       <HintPath>packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NGettext, Version=0.6.1.0, Culture=neutral, PublicKeyToken=08d3d1c89dfd2985, processorArchitecture=MSIL">
-      <HintPath>packages\NGettext.0.6.5\lib\net46\NGettext.dll</HintPath>
+      <HintPath>packages\NGettext.0.6.6\lib\net46\NGettext.dll</HintPath>
     </Reference>
     <Reference Include="PropertyChanged, Version=3.2.8.0, Culture=neutral, PublicKeyToken=ee3ee20bcf148ddd, processorArchitecture=MSIL">
       <HintPath>packages\PropertyChanged.Fody.3.2.8\lib\net40\PropertyChanged.dll</HintPath>
@@ -69,8 +69,8 @@
     <Reference Include="RestSharp, Version=106.11.4.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
       <HintPath>packages\RestSharp.106.11.4\lib\net452\RestSharp.dll</HintPath>
     </Reference>
-    <Reference Include="SunCalcNet, Version=1.1.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\SunCalcNet.1.1.3\lib\netstandard2.0\SunCalcNet.dll</HintPath>
+    <Reference Include="SunCalcNet, Version=1.1.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\SunCalcNet.1.1.4\lib\netstandard2.0\SunCalcNet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
