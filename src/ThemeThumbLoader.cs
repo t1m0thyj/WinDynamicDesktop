@@ -25,7 +25,7 @@ namespace WinDynamicDesktop
 
             using (Graphics g = control.CreateGraphics())
             {
-                scaledWidth = (int)(192 * g.DpiX / 96);
+                scaledWidth = (int)(256 * g.DpiX / 96);
             }
 
             return new Size(scaledWidth, scaledWidth * 9 / 16);

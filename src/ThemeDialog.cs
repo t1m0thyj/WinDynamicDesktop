@@ -35,12 +35,12 @@ namespace WinDynamicDesktop
             this.Font = SystemFonts.MessageBoxFont;
             this.FormClosing += OnFormClosing;
 
-            int bestWidth = (ThemeThumbLoader.GetThumbnailSize(this).Width + 30) * 2 +
-                SystemInformation.VerticalScrollBarWidth;
-            int oldWidth = this.imageListView1.Size.Width;
-            this.imageListView1.Size = new Size(bestWidth, this.imageListView1.Height);
-            this.Size = new Size(this.Width + bestWidth - oldWidth, this.Height);
-            this.CenterToScreen();
+            //int bestWidth = (ThemeThumbLoader.GetThumbnailSize(this).Width + 30) * 2 +
+            //    SystemInformation.VerticalScrollBarWidth;
+            //int oldWidth = this.imageListView1.Size.Width;
+            //this.imageListView1.Size = new Size(bestWidth, this.imageListView1.Height);
+            //this.Size = new Size(this.Width + bestWidth - oldWidth, this.Height);
+            //this.CenterToScreen();
         }
 
         public void ImportThemes(List<string> themePaths)
@@ -148,11 +148,11 @@ namespace WinDynamicDesktop
                 LoadPreviewImage(new Bitmap(Path.Combine("themes", theme.themeId, imageFilename)));
             }
 
-            imageNumberLabel.Text = string.Format(_("Image {0} of {1}"), imageNumber, maxImageNumber);
-            firstButton.Enabled = imageNumber > 1;
-            previousButton.Enabled = imageNumber > 1;
-            nextButton.Enabled = imageNumber < maxImageNumber;
-            lastButton.Enabled = imageNumber < maxImageNumber;
+            //imageNumberLabel.Text = string.Format(_("Image {0} of {1}"), imageNumber, maxImageNumber);
+            //firstButton.Enabled = imageNumber > 1;
+            //previousButton.Enabled = imageNumber > 1;
+            //nextButton.Enabled = imageNumber < maxImageNumber;
+            //lastButton.Enabled = imageNumber < maxImageNumber;
 
             previewImage = imageNumber;
         }
@@ -218,12 +218,12 @@ namespace WinDynamicDesktop
 
         private void SetThemeDownloaded(bool themeDownloaded)
         {
-            firstButton.Visible = themeDownloaded;
-            previousButton.Visible = themeDownloaded;
-            imageNumberLabel.Visible = themeDownloaded;
-            nextButton.Visible = themeDownloaded;
-            lastButton.Visible = themeDownloaded;
-            downloadLabel.Visible = !themeDownloaded;
+            //firstButton.Visible = themeDownloaded;
+            //previousButton.Visible = themeDownloaded;
+            //imageNumberLabel.Visible = themeDownloaded;
+            //nextButton.Visible = themeDownloaded;
+            //lastButton.Visible = themeDownloaded;
+            //downloadLabel.Visible = !themeDownloaded;
         }
 
         private void UpdateSelectedItem()

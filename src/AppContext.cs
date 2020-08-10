@@ -18,7 +18,7 @@ namespace WinDynamicDesktop
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
         private Mutex _mutex;
-        private NamedPipeServer<string> _namedPipe;
+        private NamedPipeServer<string[]> _namedPipe;
 
         public static NotifyIcon notifyIcon;
         public static WallpaperChangeScheduler wpEngine = new WallpaperChangeScheduler();
@@ -49,7 +49,7 @@ namespace WinDynamicDesktop
 
             if (isFirstInstance)
             {
-                _namedPipe = new NamedPipeServer<string>("WinDynamicDesktop");
+                _namedPipe = new NamedPipeServer<string[]>("WinDynamicDesktop");
                 _namedPipe.ClientMessage += OnNamedPipeClientMessage;
                 _namedPipe.Start();
             }
@@ -57,10 +57,10 @@ namespace WinDynamicDesktop
             {
                 if (ThemeManager.importPaths.Count > 0)
                 {
-                    var namedPipeClient = new NamedPipeClient<string>("WinDynamicDesktop");
+                    var namedPipeClient = new NamedPipeClient<string[]>("WinDynamicDesktop");
                     namedPipeClient.Start();
                     namedPipeClient.WaitForConnection();
-                    namedPipeClient.PushMessage(string.Join("|", ThemeManager.importPaths));
+                    namedPipeClient.PushMessage(ThemeManager.importPaths.ToArray());
                     Thread.Sleep(1000);
                     namedPipeClient.Stop();
                 }
@@ -95,9 +95,9 @@ namespace WinDynamicDesktop
             notifyIcon.ShowBalloonTip(10000);
         }
 
-        private void OnNamedPipeClientMessage(NamedPipeConnection<string, string> conn, string message)
+        private void OnNamedPipeClientMessage(NamedPipeConnection<string[], string[]> conn, string[] message)
         {
-            ThemeManager.importPaths.AddRange(message.Split('|'));
+            ThemeManager.importPaths.AddRange(message);
 
             if (!ThemeManager.importMode)
             {
