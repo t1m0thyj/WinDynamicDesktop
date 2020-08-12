@@ -70,7 +70,6 @@ namespace WinDynamicDesktop
             }
             else
             {
-                ThemeManager.importMode = false;
                 this.Invoke(new Action(() =>
                 {
                     label1.Text = _("Generating thumbnails, please wait...");
@@ -94,6 +93,7 @@ namespace WinDynamicDesktop
         private void OnFormClosing(object sender, FormClosingEventArgs e)
         {
             ThemeLoader.taskbarHandle = IntPtr.Zero;
+            ThemeManager.importMode = false;
         }
     }
 }

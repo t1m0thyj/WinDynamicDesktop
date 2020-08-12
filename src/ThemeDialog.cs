@@ -353,7 +353,7 @@ namespace WinDynamicDesktop
 
             if (!themeDownloaded)
             {
-                DownloadDialog downloadDialog = new DownloadDialog() { Owner = this };
+                DownloadDialog downloadDialog = new DownloadDialog() { Owner = this, applyPending = true };
                 downloadDialog.FormClosed += OnDownloadDialogClosed;
                 downloadDialog.Show();
                 this.Enabled = false;
@@ -433,8 +433,8 @@ namespace WinDynamicDesktop
             }
             else
             {
-                DownloadDialog downloadDialog = new DownloadDialog() { Owner = this };
-                downloadDialog.FormClosed += OnDownloadDialogClosed2;
+                DownloadDialog downloadDialog = new DownloadDialog() { Owner = this, applyPending = false };
+                downloadDialog.FormClosed += OnDownloadDialogClosed;
                 downloadDialog.Show();
                 this.Enabled = false;
                 downloadDialog.InitDownload(theme);
@@ -445,23 +445,15 @@ namespace WinDynamicDesktop
         {
             if (ThemeManager.IsThemeDownloaded(ThemeManager.themeSettings[selectedIndex - 1]))
             {
-                ApplySelectedTheme();
+                if (((DownloadDialog)sender).applyPending)
+                {
+                    ApplySelectedTheme();
+                }
+
                 UpdateSelectedItem();
             }
 
             this.Enabled = !ThemeManager.importMode;
-        }
-
-        private void OnDownloadDialogClosed2(object sender, FormClosedEventArgs e)
-        {
-
-            // TODO Investigate cleaner way to define this function considering there is similar one above
-            if (ThemeManager.IsThemeDownloaded(ThemeManager.themeSettings[selectedIndex - 1]))
-            {
-                UpdateSelectedItem();
-            }
-
-            this.Enabled = true;
         }
 
         private void OnImportDialogClosing(object sender, FormClosingEventArgs e)

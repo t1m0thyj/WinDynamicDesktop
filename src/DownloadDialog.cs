@@ -18,6 +18,8 @@ namespace WinDynamicDesktop
 {
     public partial class DownloadDialog : Form
     {
+        public bool applyPending;
+
         private static readonly Func<string, string> _ = Localization.GetTranslation;
         private List<Uri> themeUris;
         private int themeUriIndex;
