@@ -35,22 +35,22 @@
             this.importButton = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.themeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.creditsLabel = new System.Windows.Forms.Label();
             this.imageListView1 = new Manina.Windows.Forms.ImageListView();
-            this.label1 = new System.Windows.Forms.Label();
-            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.previewLinkLabel = new System.Windows.Forms.LinkLabel();
             this.label2 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.nameLabel = new System.Windows.Forms.Label();
+            this.downloadLabel = new System.Windows.Forms.Label();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // applyButton
             // 
-            this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.applyButton.Location = new System.Drawing.Point(860, 416);
+            this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.applyButton.Location = new System.Drawing.Point(586, 321);
             this.applyButton.Name = "applyButton";
             this.applyButton.Size = new System.Drawing.Size(75, 23);
             this.applyButton.TabIndex = 5;
@@ -60,9 +60,9 @@
             // 
             // closeButton
             // 
-            this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.closeButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.closeButton.Location = new System.Drawing.Point(965, 416);
+            this.closeButton.Location = new System.Drawing.Point(691, 321);
             this.closeButton.Name = "closeButton";
             this.closeButton.Size = new System.Drawing.Size(75, 23);
             this.closeButton.TabIndex = 6;
@@ -72,9 +72,9 @@
             // 
             // themeLinkLabel
             // 
-            this.themeLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.themeLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.themeLinkLabel.AutoSize = true;
-            this.themeLinkLabel.Location = new System.Drawing.Point(450, 421);
+            this.themeLinkLabel.Location = new System.Drawing.Point(136, 331);
             this.themeLinkLabel.Name = "themeLinkLabel";
             this.themeLinkLabel.Size = new System.Drawing.Size(118, 13);
             this.themeLinkLabel.TabIndex = 3;
@@ -84,8 +84,9 @@
             // 
             // importButton
             // 
+            this.importButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.importButton.AutoSize = true;
-            this.importButton.Location = new System.Drawing.Point(15, 416);
+            this.importButton.Location = new System.Drawing.Point(12, 326);
             this.importButton.Name = "importButton";
             this.importButton.Size = new System.Drawing.Size(107, 23);
             this.importButton.TabIndex = 2;
@@ -104,23 +105,23 @@
             // 
             this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.removeToolStripMenuItem});
+            this.themeToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(181, 26);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
-            // removeToolStripMenuItem
+            // themeToolStripMenuItem
             // 
-            this.removeToolStripMenuItem.Name = "removeToolStripMenuItem";
-            this.removeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.removeToolStripMenuItem.Text = "toolStripMenuItem1";
-            this.removeToolStripMenuItem.Click += new System.EventHandler(this.removeToolStripMenuItem_Click);
+            this.themeToolStripMenuItem.Name = "themeToolStripMenuItem";
+            this.themeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.themeToolStripMenuItem.Text = "toolStripMenuItem1";
+            this.themeToolStripMenuItem.Click += new System.EventHandler(this.themeToolStripMenuItem_Click);
             // 
             // creditsLabel
             // 
             this.creditsLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.creditsLabel.Enabled = false;
-            this.creditsLabel.Location = new System.Drawing.Point(816, 239);
+            this.creditsLabel.Location = new System.Drawing.Point(543, 208);
             this.creditsLabel.Name = "creditsLabel";
             this.creditsLabel.Size = new System.Drawing.Size(256, 13);
             this.creditsLabel.TabIndex = 14;
@@ -137,58 +138,63 @@
             this.imageListView1.Name = "imageListView1";
             this.imageListView1.PersistentCacheDirectory = "";
             this.imageListView1.PersistentCacheSize = ((long)(100));
-            this.imageListView1.Size = new System.Drawing.Size(780, 360);
+            this.imageListView1.Size = new System.Drawing.Size(504, 300);
             this.imageListView1.TabIndex = 15;
             this.imageListView1.UseWIC = true;
             this.imageListView1.SelectionChanged += new System.EventHandler(this.imageListView1_SelectionChanged);
             // 
-            // label1
+            // previewLinkLabel
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label1.Enabled = false;
-            this.label1.Location = new System.Drawing.Point(819, 273);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(253, 13);
-            this.label1.TabIndex = 16;
-            this.label1.Text = "Image Count: 8";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // linkLabel1
-            // 
-            this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(892, 305);
-            this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(96, 13);
-            this.linkLabel1.TabIndex = 17;
-            this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "Preview in browser";
+            this.previewLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.previewLinkLabel.AutoSize = true;
+            this.previewLinkLabel.Location = new System.Drawing.Point(625, 237);
+            this.previewLinkLabel.Name = "previewLinkLabel";
+            this.previewLinkLabel.Size = new System.Drawing.Size(96, 13);
+            this.previewLinkLabel.TabIndex = 17;
+            this.previewLinkLabel.TabStop = true;
+            this.previewLinkLabel.Text = "Preview in browser";
+            this.previewLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.previewLinkLabel_LinkClicked);
             // 
             // label2
             // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label2.Location = new System.Drawing.Point(803, 4);
+            this.label2.Location = new System.Drawing.Point(530, 10);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(2, 370);
+            this.label2.Size = new System.Drawing.Size(2, 300);
             this.label2.TabIndex = 18;
             this.label2.Text = "label2";
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(816, 72);
+            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox1.Location = new System.Drawing.Point(547, 46);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(256, 144);
             this.pictureBox1.TabIndex = 19;
             this.pictureBox1.TabStop = false;
             // 
-            // label3
+            // nameLabel
             // 
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(816, 41);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(256, 23);
-            this.label3.TabIndex = 20;
-            this.label3.Text = "Big Sur";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.nameLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.nameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.nameLabel.Location = new System.Drawing.Point(547, 15);
+            this.nameLabel.Name = "nameLabel";
+            this.nameLabel.Size = new System.Drawing.Size(256, 23);
+            this.nameLabel.TabIndex = 20;
+            this.nameLabel.Text = "Big Sur";
+            this.nameLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // downloadLabel
+            // 
+            this.downloadLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.downloadLabel.AutoSize = true;
+            this.downloadLabel.Location = new System.Drawing.Point(557, 237);
+            this.downloadLabel.Name = "downloadLabel";
+            this.downloadLabel.Size = new System.Drawing.Size(236, 13);
+            this.downloadLabel.TabIndex = 21;
+            this.downloadLabel.Text = "Theme will be downloaded when you click Apply";
             // 
             // ThemeDialog
             // 
@@ -196,20 +202,20 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.closeButton;
-            this.ClientSize = new System.Drawing.Size(1084, 461);
-            this.Controls.Add(this.label3);
+            this.ClientSize = new System.Drawing.Size(824, 361);
+            this.Controls.Add(this.nameLabel);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.linkLabel1);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.previewLinkLabel);
             this.Controls.Add(this.creditsLabel);
             this.Controls.Add(this.importButton);
             this.Controls.Add(this.themeLinkLabel);
             this.Controls.Add(this.applyButton);
             this.Controls.Add(this.closeButton);
             this.Controls.Add(this.imageListView1);
+            this.Controls.Add(this.downloadLabel);
             this.Icon = global::WinDynamicDesktop.Properties.Resources.AppIcon;
-            this.MaximizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(640, 400);
             this.Name = "ThemeDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Select Theme";
@@ -228,13 +234,13 @@
         private System.Windows.Forms.Button importButton;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem themeToolStripMenuItem;
         private System.Windows.Forms.Label creditsLabel;
         private Manina.Windows.Forms.ImageListView imageListView1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.LinkLabel previewLinkLabel;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label nameLabel;
+        private System.Windows.Forms.Label downloadLabel;
     }
 }

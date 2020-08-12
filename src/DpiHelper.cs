@@ -46,6 +46,7 @@ namespace WinDynamicDesktop
 
         public static void SetDpiAwareness()
         {
+            // TODO Accurately report/handle DPI awareness
             var user32 = LoadLibrary("user32.dll");
             var method = GetProcAddress(user32, nameof(SetProcessDpiAwarenessContext));
 

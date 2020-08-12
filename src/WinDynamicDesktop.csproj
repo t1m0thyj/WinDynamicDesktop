@@ -110,6 +110,7 @@
     <Compile Include="HttpEnvironmentProxy.cs" />
     <Compile Include="ProxyWrapper.cs" />
     <Compile Include="ThemeJsonValidator.cs" />
+    <Compile Include="ThemePreviewer.cs" />
     <Compile Include="UpdateHandler.cs" />
     <Compile Include="DebugLogger.cs" />
     <Compile Include="DefaultThemes.cs" />
@@ -244,6 +245,7 @@
   <ItemGroup>
     <Content Include="resources\Big_Sur_Abstract_thumbnail.jpg" />
     <Content Include="resources\Big_Sur_thumbnail.jpg" />
+    <None Include="resources\preview.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

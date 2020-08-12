@@ -14,7 +14,7 @@ namespace WinDynamicDesktop
 {
     public class ThemeListViewRenderer : ImageListView.ImageListViewRenderer
     {
-        private readonly Size itemPadding = new Size(10, 10);
+        private readonly Size itemPadding = new Size(15, 15);
         private readonly Color hoveredColor = Color.FromArgb(229, 243, 255);
         private readonly Color focusedSelectedColor = Color.FromArgb(205, 232, 255);
         private readonly Color hoveredSelectedColor = Color.FromArgb(204, 232, 255);
@@ -100,7 +100,7 @@ namespace WinDynamicDesktop
             }
             Size szt = System.Windows.Forms.TextRenderer.MeasureText(item.Text, ImageListView.Font);
             Rectangle rt = new Rectangle(bounds.Left + itemPadding.Width,
-                bounds.Top + 2 * itemPadding.Height + ImageListView.ThumbnailSize.Height,
+                bounds.Top + 2 * itemPadding.Height + ImageListView.ThumbnailSize.Height - 5,
                 ImageListView.ThumbnailSize.Width, szt.Height);
             System.Windows.Forms.TextRenderer.DrawText(g, item.Text, ImageListView.Font, rt, foreColor,
                 System.Windows.Forms.TextFormatFlags.EndEllipsis |

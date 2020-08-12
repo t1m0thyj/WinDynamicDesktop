@@ -57,6 +57,7 @@ namespace WinDynamicDesktop
             {
                 if (ThemeManager.importPaths.Count > 0)
                 {
+                    // TODO Test passing string[] through named pipe
                     var namedPipeClient = new NamedPipeClient<string[]>("WinDynamicDesktop");
                     namedPipeClient.Start();
                     namedPipeClient.WaitForConnection();

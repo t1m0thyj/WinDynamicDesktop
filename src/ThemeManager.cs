@@ -71,6 +71,11 @@ namespace WinDynamicDesktop
             return theme.displayName ?? theme.themeId.Replace('_', ' ');
         }
 
+        public static string GetThemeAuthor(ThemeConfig theme)
+        {
+            return IsThemeDownloaded(theme) ? theme.imageCredits : "Apple";
+        }
+
         public static bool IsThemeDownloaded(ThemeConfig theme)
         {
             string themePath = Path.Combine("themes", theme.themeId);
