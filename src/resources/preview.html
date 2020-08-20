@@ -10,9 +10,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.slim.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <style>
+  img {height:100vh; width:100%}
   .carousel {height:100vh; width:100%}
   .carousel-inner {height:100vh; width:100%}
-  .carousel-item img {height:100vh; width:100%}
   #playPauseButton {color:#fff; opacity:50%}
   #playPauseButton:hover {opacity:100%}
   #topLeftPanel {background:rgba(0,0,0,0.5); border-radius:5px; color:#fff; padding:10px; position:fixed; left:20px; top:20px; z-index:999}
@@ -24,6 +24,7 @@
     <big><b>{{themeName}}</b></big><br>
     Image Credits: {{themeAuthor}}
   </div>
+  <!--startCarousel-->
   <div id="topRightPanel">
     <button id="playPauseButton" type="button" class="btn btn-default btn-xs">
       <span id="playPauseIcon"><i class="fa fa-pause" aria-hidden="true"></i></span>
@@ -45,6 +46,7 @@
       </a>
     </div>
   </div>
+  <!--endCarousel-->
 <script>
 var isPaused = false;
 $('#playPauseButton').click(function () {

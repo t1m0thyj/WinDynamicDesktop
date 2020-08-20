@@ -37,7 +37,7 @@ for filename in glob.glob("../src/*.cs"):
                     add_to_pot_data(match.group(1), filename[3:], i + 1)
 
                 if not msg_history:
-                    match = re.search(r'(?:_|Localization\.GetTranslation)\("(.+)"[^)\w]', line)
+                    match = re.search(r'(?:_|Localization\.GetTranslation)\("(.+)"\s', line)
 
                     if match:
                         msg_history = [match.group(1), i + 1]

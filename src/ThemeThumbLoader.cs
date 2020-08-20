@@ -25,7 +25,12 @@ namespace WinDynamicDesktop
 
             using (Graphics g = control.CreateGraphics())
             {
-                scaledWidth = (int)(256 * g.DpiX / 96);
+                scaledWidth = (int)(192 * g.DpiX / 96);
+            }
+
+            if (scaledWidth > 256)
+            {
+                scaledWidth = 256;
             }
 
             return new Size(scaledWidth, scaledWidth * 9 / 16);
@@ -129,10 +134,17 @@ namespace WinDynamicDesktop
             }
         }
 
-        public static void CacheThumbnails(Manina.Windows.Forms.ImageListView.ImageListViewItemCollection items)
+        public static void CacheThumbnails(System.Windows.Forms.ListView.ListViewItemCollection items,
+                                           System.Windows.Forms.ImageList imageList)
         {
-            foreach (Manina.Windows.Forms.ImageListViewItem item in items.Skip(1))
+            // TODO Fix me to work with standard ListView control
+            foreach (System.Windows.Forms.ListViewItem item in items)
             {
+                if (item.Index == 0)
+                {
+                    continue;
+                }
+
                 string themeId = (string)item.Tag;
 
                 if (outdatedThemeIds.Contains(themeId))
@@ -140,7 +152,7 @@ namespace WinDynamicDesktop
                     ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
                     string thumbnailPath = Path.Combine("themes", themeId, "thumbnail.png");
 
-                    item.ThumbnailImage.Save(thumbnailPath, ImageFormat.Png);
+                    imageList.Images[item.ImageIndex].Save(thumbnailPath, ImageFormat.Png);
                     outdatedThemeIds.Remove(themeId);
                 }
             }
