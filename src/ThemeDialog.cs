@@ -117,18 +117,20 @@ namespace WinDynamicDesktop
                     }
                 }
 
-                if (newItem != null)
+                this.Invoke(new Action(() =>
                 {
-                    this.Invoke(new Action(() =>
+                    listView1.Sort();
+
+                    if (newItem != null)
                     {
                         newItem.Selected = true;
                         listView1.EnsureVisible(newItem.Index);
-                    }));
-                }
+                    }
 
-                //ThemeThumbLoader.CacheThumbnails(listView1.Items, listView1.LargeImageList);
-                importDialog.thumbnailsLoaded = true;
-                this.Invoke(new Action(() => importDialog.Close()));
+                    ThemeThumbLoader.CacheThumbnails(listView1);
+                    importDialog.thumbnailsLoaded = true;
+                    importDialog.Close();
+                }));
             });
         }
 
@@ -242,16 +244,14 @@ namespace WinDynamicDesktop
             }
 
             Task.Run(new Action(() => {
-                for (int i = 0; i < ThemeManager.themeSettings.Count; i++)
+                foreach (ThemeConfig theme in ThemeManager.themeSettings)
                 {
-                    ThemeConfig theme = ThemeManager.themeSettings[i];
-                    string themeName = ThemeManager.GetThemeName(theme);
-                    
                     using (Image thumbnailImage = ThemeThumbLoader.GetThumbnailImage(theme, thumbnailSize, true))
                     {
                         this.Invoke(new Action(() => {
                             listView1.LargeImageList.Images.Add(thumbnailImage);
-                            newItem = listView1.Items.Add(themeName, listView1.LargeImageList.Images.Count - 1);
+                            newItem = listView1.Items.Add(ThemeManager.GetThemeName(theme),
+                                listView1.LargeImageList.Images.Count - 1);
                             newItem.Tag = theme.themeId;
 
                             if (theme.themeId == currentTheme)
@@ -262,15 +262,18 @@ namespace WinDynamicDesktop
                     }
                 }
 
-                if (focusItem != null)
+                this.Invoke(new Action(() =>
                 {
-                    this.Invoke(new Action(() => {
+                    listView1.Sort();
+
+                    if (focusItem != null)
+                    {
                         focusItem.Selected = true;
                         listView1.EnsureVisible(focusItem.Index);
-                    }));
-                }
+                    }
 
-                //ThemeThumbLoader.CacheThumbnails(listView1.Items, listView1.LargeImageList);
+                    ThemeThumbLoader.CacheThumbnails(listView1);
+                }));
             }));
         }
 
@@ -458,8 +461,8 @@ namespace WinDynamicDesktop
         {
             ListViewItem item1 = (ListViewItem)x;
             ListViewItem item2 = (ListViewItem)y;
-            string a = (item1.Tag != null) ? item1.Text : "\0";
-            string b = (item2.Tag != null) ? item2.Text : "\0";
+            string a = (item1.Tag != null) ? item1.Text : " ";
+            string b = (item2.Tag != null) ? item2.Text : " ";
             return a.CompareTo(b);
         }
     }

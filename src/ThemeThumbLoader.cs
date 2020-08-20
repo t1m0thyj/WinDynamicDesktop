@@ -134,11 +134,9 @@ namespace WinDynamicDesktop
             }
         }
 
-        public static void CacheThumbnails(System.Windows.Forms.ListView.ListViewItemCollection items,
-                                           System.Windows.Forms.ImageList imageList)
+        public static void CacheThumbnails(System.Windows.Forms.ListView listView)
         {
-            // TODO Fix me to work with standard ListView control
-            foreach (System.Windows.Forms.ListViewItem item in items)
+            foreach (System.Windows.Forms.ListViewItem item in listView.Items)
             {
                 if (item.Index == 0)
                 {
@@ -150,9 +148,10 @@ namespace WinDynamicDesktop
                 if (outdatedThemeIds.Contains(themeId))
                 {
                     ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
+                    Image thumbnailImage = listView.LargeImageList.Images[item.ImageIndex];
                     string thumbnailPath = Path.Combine("themes", themeId, "thumbnail.png");
 
-                    imageList.Images[item.ImageIndex].Save(thumbnailPath, ImageFormat.Png);
+                    Task.Run(new Action(() => thumbnailImage.Save(thumbnailPath, ImageFormat.Png)));
                     outdatedThemeIds.Remove(themeId);
                 }
             }
