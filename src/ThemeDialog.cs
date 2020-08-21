@@ -82,52 +82,69 @@ namespace WinDynamicDesktop
             importDialog.InitImport(themePaths);
         }
 
+        private void LoadThemes(List<ThemeConfig> themes, string activeTheme = null)
+        {
+            Size thumbnailSize = ThemeThumbLoader.GetThumbnailSize(this);
+            ListViewItem focusedItem = null;
+
+            foreach (ThemeConfig theme in themes)
+            {
+                using (Image thumbnailImage = ThemeThumbLoader.GetThumbnailImage(theme, thumbnailSize, true))
+                {
+                    this.Invoke(new Action(() => {
+                        listView1.LargeImageList.Images.Add(thumbnailImage);
+                        ListViewItem newItem = listView1.Items.Add(ThemeManager.GetThemeName(theme),
+                            listView1.LargeImageList.Images.Count - 1);
+                        newItem.Tag = theme.themeId;
+
+                        if (activeTheme == null || activeTheme == theme.themeId)
+                        {
+                            focusedItem = newItem;
+                        }
+                    }));
+                }
+            }
+
+            this.Invoke(new Action(() =>
+            {
+                listView1.Sort();
+
+                if (focusedItem == null)
+                {
+                    focusedItem = listView1.Items[0];
+                }
+
+                focusedItem.Selected = true;
+                listView1.EnsureVisible(focusedItem.Index);
+
+                ThemeThumbLoader.CacheThumbnails(listView1);
+            }));
+        }
+
         private void LoadImportedThemes(List<ThemeConfig> themes, ImportDialog importDialog)
         {
             themes.Sort((t1, t2) => t1.themeId.CompareTo(t2.themeId));
-            Size thumbnailSize = ThemeThumbLoader.GetThumbnailSize(this);
-            ListViewItem newItem = null;
+
+            foreach (ThemeConfig theme in themes)
+            {
+                foreach (ListViewItem item in listView1.Items)
+                {
+                    if ((string)item.Tag == theme.themeId)
+                    {
+                        listView1.Items.RemoveAt(item.Index);
+                        listView1.LargeImageList.Images[item.ImageIndex].Dispose();
+                        break;
+                    }
+
+                }
+            }
 
             Task.Run(() =>
             {
-                foreach (ThemeConfig theme in themes)
-                {
-                    this.Invoke(new Action(() =>
-                    {
-                        foreach (ListViewItem item in listView1.Items)
-                        {
-                            if ((string)item.Tag == theme.themeId)
-                            {
-                                listView1.Items.RemoveAt(item.Index);
-                                listView1.LargeImageList.Images[item.ImageIndex].Dispose();
-                                break;
-                            }
-                        }
-                    }));
-
-                    using (Image thumbnailImage = ThemeThumbLoader.GetThumbnailImage(theme, thumbnailSize, false))
-                    {
-                        this.Invoke(new Action(() =>
-                        {
-                            listView1.LargeImageList.Images.Add(thumbnailImage);
-                            newItem = listView1.Items.Add(ThemeManager.GetThemeName(theme),
-                                listView1.LargeImageList.Images.Count - 1);
-                            newItem.Tag = theme.themeId;
-                        }));
-                    }
-                }
+                LoadThemes(themes);
 
                 this.Invoke(new Action(() =>
                 {
-                    listView1.Sort();
-
-                    if (newItem != null)
-                    {
-                        newItem.Selected = true;
-                        listView1.EnsureVisible(newItem.Index);
-                    }
-
-                    ThemeThumbLoader.CacheThumbnails(listView1);
                     importDialog.thumbnailsLoaded = true;
                     importDialog.Close();
                 }));
@@ -226,55 +243,16 @@ namespace WinDynamicDesktop
             listView1.LargeImageList = imageList;
 
             imageList.Images.Add(ThemeThumbLoader.ScaleImage(windowsWallpaper, thumbnailSize));
-            ListViewItem newItem = listView1.Items.Add(_("None"), 0);
+            listView1.Items.Add(_("None"), 0);
 
-            string currentTheme = ThemeManager.currentTheme?.themeId;
-            ListViewItem focusItem = null;
+            string activeTheme = ThemeManager.currentTheme?.themeId;
 
-            if (currentTheme == null)
+            if (activeTheme == null && (JsonConfig.firstRun || JsonConfig.settings.themeName != null))
             {
-                if (JsonConfig.firstRun || JsonConfig.settings.themeName != null)
-                {
-                    currentTheme = "Mojave_Desert";
-                }
-                else
-                {
-                    focusItem = listView1.Items[0];
-                }
+                activeTheme = "Mojave_Desert";
             }
 
-            Task.Run(new Action(() => {
-                foreach (ThemeConfig theme in ThemeManager.themeSettings)
-                {
-                    using (Image thumbnailImage = ThemeThumbLoader.GetThumbnailImage(theme, thumbnailSize, true))
-                    {
-                        this.Invoke(new Action(() => {
-                            listView1.LargeImageList.Images.Add(thumbnailImage);
-                            newItem = listView1.Items.Add(ThemeManager.GetThemeName(theme),
-                                listView1.LargeImageList.Images.Count - 1);
-                            newItem.Tag = theme.themeId;
-
-                            if (theme.themeId == currentTheme)
-                            {
-                                focusItem = newItem;
-                            }
-                        }));
-                    }
-                }
-
-                this.Invoke(new Action(() =>
-                {
-                    listView1.Sort();
-
-                    if (focusItem != null)
-                    {
-                        focusItem.Selected = true;
-                        listView1.EnsureVisible(focusItem.Index);
-                    }
-
-                    ThemeThumbLoader.CacheThumbnails(listView1);
-                }));
-            }));
+            Task.Run(new Action(() => LoadThemes(ThemeManager.themeSettings, activeTheme)));
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
@@ -336,24 +314,20 @@ namespace WinDynamicDesktop
         {
             var hitTestInfo = listView1.HitTest(listView1.PointToClient(Cursor.Position));
             int itemIndex = hitTestInfo.Item?.Index ?? -1;
-            string themeId = (string)listView1.Items[itemIndex].Tag;
 
-            if (itemIndex == 0)
+            if (itemIndex <= 0)
             {
                 e.Cancel = true;
+                return;
             }
-            else if (ThemeManager.defaultThemes.Contains(themeId))
-            {
-                ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
 
-                if (ThemeManager.IsThemeDownloaded(theme))
-                {
-                    contextMenuStrip1.Items[0].Text = _("Delete");
-                }
-                else
-                {
-                    contextMenuStrip1.Items[0].Text = _("Download");
-                }
+            string themeId = (string)listView1.Items[itemIndex].Tag;
+            ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
+            contextMenuStrip1.Items[0].Enabled = ThemeManager.IsThemeDownloaded(theme);
+
+            if (ThemeManager.defaultThemes.Contains(themeId))
+            {
+                contextMenuStrip1.Items[0].Text = _("Delete");
             }
             else
             {
@@ -367,34 +341,27 @@ namespace WinDynamicDesktop
             string themeId = (string)listView1.Items[itemIndex].Tag;
             ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
 
-            if (ThemeManager.IsThemeDownloaded(theme))
-            {
-                DialogResult result = MessageDialog.ShowQuestion(string.Format(_("Are you sure you want to remove " +
-                    "the '{0}' theme?"), ThemeManager.GetThemeName(theme)), _("Question"), true);
+            DialogResult result = MessageDialog.ShowQuestion(string.Format(_("Are you sure you want to remove " +
+                "the '{0}' theme?"), ThemeManager.GetThemeName(theme)), _("Question"), true);
 
-                if (result == DialogResult.Yes)
+            if (result == DialogResult.Yes)
+            {
+                if (!ThemeManager.defaultThemes.Contains(theme.themeId))
                 {
-                    if (!ThemeManager.defaultThemes.Contains(theme.themeId))
-                    {
-                        int imageIndex = listView1.Items[itemIndex].ImageIndex;
-                        listView1.Items.RemoveAt(itemIndex);
-                        listView1.Items[itemIndex - 1].Selected = true;
-                        listView1.LargeImageList.Images[imageIndex].Dispose();
-                    }
-
-                    Task.Run(() => {
-                        if (ThemeManager.defaultThemes.Contains(theme.themeId))
-                        {
-                            this.Invoke(new Action(() => UpdateSelectedItem()));
-                        }
-
-                        ThemeManager.RemoveTheme(theme);
-                    });
+                    int imageIndex = listView1.Items[itemIndex].ImageIndex;
+                    listView1.Items.RemoveAt(itemIndex);
+                    listView1.Items[itemIndex - 1].Selected = true;
+                    listView1.LargeImageList.Images[imageIndex].Dispose();
                 }
-            }
-            else
-            {
-                DownloadTheme(theme, false);
+
+                Task.Run(() => {
+                    ThemeManager.RemoveTheme(theme);
+
+                    if (ThemeManager.defaultThemes.Contains(theme.themeId))
+                    {
+                        this.Invoke(new Action(() => UpdateSelectedItem()));
+                    }
+                });
             }
         }
 
