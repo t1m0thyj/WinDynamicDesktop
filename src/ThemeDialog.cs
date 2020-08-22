@@ -41,6 +41,10 @@ namespace WinDynamicDesktop
 
             this.chromiumWebBrowser1.Anchor &= ~AnchorStyles.Left;
             this.listView1.Width = newWidth;
+            this.downloadLabel.Left += (newWidth - oldWidth) / 2;
+            this.downloadButton.Left += (newWidth - oldWidth) / 2;
+            this.applyButton.Left += (newWidth - oldWidth) / 2;
+            this.closeButton.Left += (newWidth - oldWidth) / 2;
             this.Width += (newWidth - oldWidth);
             this.chromiumWebBrowser1.Anchor |= AnchorStyles.Left;
             this.Size = new Size(bounds.Width * 5 / 8, bounds.Height * 5 / 8);

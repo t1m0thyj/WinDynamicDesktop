@@ -137,7 +137,6 @@
     <Compile Include="DebugLogger.cs" />
     <Compile Include="DefaultThemes.cs" />
     <Compile Include="DesktopHelper.cs" />
-    <Compile Include="DpiHelper.cs" />
     <Compile Include="FullScreenApi.cs" />
     <Compile Include="MessageDialog.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
