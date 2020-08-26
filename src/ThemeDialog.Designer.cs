@@ -36,7 +36,6 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.themeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.downloadLabel = new System.Windows.Forms.Label();
             this.downloadButton = new System.Windows.Forms.Button();
             this.chromiumWebBrowser1 = new CefSharp.WinForms.ChromiumWebBrowser();
             this.listView1 = new System.Windows.Forms.ListView();
@@ -46,10 +45,10 @@
             // applyButton
             // 
             this.applyButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.applyButton.Location = new System.Drawing.Point(409, 423);
+            this.applyButton.Location = new System.Drawing.Point(459, 423);
             this.applyButton.Name = "applyButton";
             this.applyButton.Size = new System.Drawing.Size(75, 23);
-            this.applyButton.TabIndex = 5;
+            this.applyButton.TabIndex = 0;
             this.applyButton.Text = "Apply";
             this.applyButton.UseVisualStyleBackColor = true;
             this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
@@ -58,7 +57,7 @@
             // 
             this.closeButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.closeButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.closeButton.Location = new System.Drawing.Point(509, 423);
+            this.closeButton.Location = new System.Drawing.Point(559, 423);
             this.closeButton.Name = "closeButton";
             this.closeButton.Size = new System.Drawing.Size(75, 23);
             this.closeButton.TabIndex = 6;
@@ -113,20 +112,10 @@
             this.themeToolStripMenuItem.Text = "toolStripMenuItem1";
             this.themeToolStripMenuItem.Click += new System.EventHandler(this.themeToolStripMenuItem_Click);
             // 
-            // downloadLabel
-            // 
-            this.downloadLabel.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.downloadLabel.Location = new System.Drawing.Point(347, 174);
-            this.downloadLabel.Name = "downloadLabel";
-            this.downloadLabel.Size = new System.Drawing.Size(298, 13);
-            this.downloadLabel.TabIndex = 21;
-            this.downloadLabel.Text = "Preview unavailable until theme is downloaded";
-            this.downloadLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // downloadButton
             // 
-            this.downloadButton.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.downloadButton.Location = new System.Drawing.Point(459, 197);
+            this.downloadButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.downloadButton.Location = new System.Drawing.Point(359, 423);
             this.downloadButton.Name = "downloadButton";
             this.downloadButton.Size = new System.Drawing.Size(75, 23);
             this.downloadButton.TabIndex = 23;
@@ -171,7 +160,6 @@
             this.Controls.Add(this.themeLinkLabel);
             this.Controls.Add(this.applyButton);
             this.Controls.Add(this.closeButton);
-            this.Controls.Add(this.downloadLabel);
             this.Controls.Add(this.chromiumWebBrowser1);
             this.Icon = global::WinDynamicDesktop.Properties.Resources.AppIcon;
             this.Name = "ThemeDialog";
@@ -192,7 +180,6 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem themeToolStripMenuItem;
-        private System.Windows.Forms.Label downloadLabel;
         private System.Windows.Forms.Button downloadButton;
         private CefSharp.WinForms.ChromiumWebBrowser chromiumWebBrowser1;
         private System.Windows.Forms.ListView listView1;

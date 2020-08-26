@@ -16,6 +16,7 @@ namespace WinDynamicDesktop
     public class SchedulerState
     {
         public int imageId;
+        public int imageNumber;
         public long nextUpdateTicks;
         public int daySegment2;
         public int daySegment4;
@@ -246,6 +247,7 @@ namespace WinDynamicDesktop
 
                 int imageNumber = (int)((DateTime.Now - segmentStart).Ticks / timerLength.Ticks);
                 imageData.imageId = imageList[imageNumber];
+                imageData.imageNumber = imageNumber;
                 imageData.nextUpdateTicks = segmentStart.Ticks + timerLength.Ticks * (imageNumber + 1);
             }
 

@@ -41,7 +41,6 @@ namespace WinDynamicDesktop
 
             this.chromiumWebBrowser1.Anchor &= ~AnchorStyles.Left;
             this.listView1.Width = newWidth;
-            this.downloadLabel.Left += (newWidth - oldWidth) / 2;
             this.downloadButton.Left += (newWidth - oldWidth) / 2;
             this.applyButton.Left += (newWidth - oldWidth) / 2;
             this.closeButton.Left += (newWidth - oldWidth) / 2;
@@ -207,27 +206,19 @@ namespace WinDynamicDesktop
                 string themeId = (string)listView1.Items[selectedIndex].Tag;
                 selectedIndex = ThemeManager.themeSettings.FindIndex(t => t.themeId == themeId) + 1;
                 ThemeConfig theme = ThemeManager.themeSettings[selectedIndex - 1];
-                themeDownloaded = ThemeManager.IsThemeDownloaded(theme);
 
-                if (themeDownloaded)
-                {
-                    previewHtml = ThemePreviewer.GeneratePreviewHtml(theme);
-                }
+                themeDownloaded = ThemeManager.IsThemeDownloaded(theme);
+                previewHtml = ThemePreviewer.GeneratePreviewHtml(theme);
             }
             else
             {
                 previewHtml = ThemePreviewer.GeneratePreviewHtml(null);
             }
 
-            downloadLabel.Visible = !themeDownloaded;
-            downloadButton.Visible = !themeDownloaded;
-            chromiumWebBrowser1.Visible = themeDownloaded;
+            downloadButton.Enabled = !themeDownloaded;
             applyButton.Enabled = true;
 
-            if (previewHtml != null)
-            {
-                chromiumWebBrowser1.LoadHtml(previewHtml, "file://");
-            }
+            chromiumWebBrowser1.LoadHtml(previewHtml, "file://");
         }
 
         // Code to change ListView appearance from https://stackoverflow.com/a/4463114/5504760

@@ -82,26 +82,6 @@ namespace WinDynamicDesktop
             return (Directory.Exists(themePath) && (Directory.GetFiles(themePath, theme.imageFilename).Length > 0));
         }
 
-        public static List<int> GetThemeImageList(ThemeConfig theme)
-        {
-            List<int> imageList = new List<int>();
-
-            if (!theme.sunriseImageList.SequenceEqual(theme.dayImageList))
-            {
-                imageList.AddRange(theme.sunriseImageList);
-            }
-
-            imageList.AddRange(theme.dayImageList);
-
-            if (!theme.sunsetImageList.SequenceEqual(theme.dayImageList))
-            {
-                imageList.AddRange(theme.sunsetImageList);
-            }
-
-            imageList.AddRange(theme.nightImageList);
-            return imageList;
-        }
-
         public static void DisableTheme(string themeId, bool permanent)
         {
             themeSettings.RemoveAll(t => t.themeId == themeId);

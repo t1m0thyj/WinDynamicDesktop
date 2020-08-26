@@ -9,11 +9,6 @@ namespace WinDynamicDesktop
 {
     class ThemeJsonValidator
     {
-        private static bool IsNullOrEmpty(Array array)
-        {
-            return (array == null || array.Length == 0);
-        }
-
         public static ThemeResult ValidateQuick(ThemeConfig theme)
         {
             if (string.IsNullOrEmpty(theme.imageFilename) || IsNullOrEmpty(theme.sunriseImageList) ||
@@ -35,7 +30,7 @@ namespace WinDynamicDesktop
                 return new ThemeResult(new NoImagesMatchingPattern(theme.themeId, theme.imageFilename));
             }
 
-            foreach (int imageId in ThemeManager.GetThemeImageList(theme))
+            foreach (int imageId in GetThemeImageList(theme))
             {
                 string imageFilename = theme.imageFilename.Replace("*", imageId.ToString());
                 if (!File.Exists(Path.Combine(themePath, imageFilename)))
@@ -45,6 +40,31 @@ namespace WinDynamicDesktop
             }
 
             return new ThemeResult(theme);
+        }
+
+        private static List<int> GetThemeImageList(ThemeConfig theme)
+        {
+            List<int> imageList = new List<int>();
+
+            if (!theme.sunriseImageList.SequenceEqual(theme.dayImageList))
+            {
+                imageList.AddRange(theme.sunriseImageList);
+            }
+
+            imageList.AddRange(theme.dayImageList);
+
+            if (!theme.sunsetImageList.SequenceEqual(theme.dayImageList))
+            {
+                imageList.AddRange(theme.sunsetImageList);
+            }
+
+            imageList.AddRange(theme.nightImageList);
+            return imageList;
+        }
+
+        private static bool IsNullOrEmpty(Array array)
+        {
+            return (array == null || array.Length == 0);
         }
     }
 }
