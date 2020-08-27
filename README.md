@@ -15,13 +15,13 @@ Port of macOS Mojave Dynamic Desktop feature to Windows 10. Available on GitHub 
 
 Pick from the 3 themes bundled with macOS, or many more themes available for download [here](https://windd.info/themes/)
 
-![Screenshot of Select Theme window](imgs/select_theme.png)
+![Screenshot of Select Theme window](images/select_theme.png)
 
 ## Timing
 
 Choose a schedule for cycling through wallpaper images over 24 hours
 
-![Screenshot of Configure Timing window](imgs/configure_timing.png)
+![Screenshot of Configure Timing window](images/configure_timing.png)
 
 ## Supported Platforms
 
