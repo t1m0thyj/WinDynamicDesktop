@@ -1,10 +1,12 @@
 import hashlib
-import os.path
+import os
 import subprocess
 import sys
 
 import requests
+from dotenv import load_env
 
+load_env()
 chocolatey_repo = "https://push.chocolatey.org/"
 nuspec_filename = "windynamicdesktop.nuspec"
 script_filename = "tools/chocolateyInstall.ps1"
@@ -43,11 +45,11 @@ replacers = {
 old_nuspec = render_template(nuspec_filename, replacers)
 old_script = render_template(script_filename, replacers)
 
-subprocess.call(["choco", "pack"])
+subprocess.call(["choco", "pack", "--out", "../dist"])
 
 write_file(nuspec_filename, old_nuspec)
 write_file(script_filename, old_script)
 
-nupkg_filename = f"windynamicdesktop.{package_version}.nupkg"
+nupkg_filename = f"../dist/windynamicdesktop.{package_version}.nupkg"
 if input(f"Push {nupkg_filename}? (y/N) ").lower() == "y":
-    subprocess.call(["choco", "push", nupkg_filename, "-s", chocolatey_repo])
+    subprocess.call(["choco", "push", nupkg_filename, "-s", chocolatey_repo, "-k", os.getenv("CHOCO_APIKEY")])

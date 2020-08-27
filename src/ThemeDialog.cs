@@ -28,6 +28,14 @@ namespace WinDynamicDesktop
 
         public ThemeDialog()
         {
+            if (!Cef.IsInitialized)
+            {
+                var settings = new CefSharp.WinForms.CefSettings();
+                settings.CefCommandLineArgs.Add("disable-extensions");
+                settings.CefCommandLineArgs.Add("disable-gpu");
+                Cef.Initialize(settings);
+            }
+
             InitializeComponent();
             Localization.TranslateForm(this);
 
@@ -247,7 +255,8 @@ namespace WinDynamicDesktop
                 activeTheme = "Mojave_Desert";
             }
 
-            Task.Run(new Action(() => LoadThemes(ThemeManager.themeSettings, activeTheme)));
+            Task.Run(new Action(() =>
+                LoadThemes(ThemeManager.themeSettings, (activeTheme != null) ? activeTheme : "")));
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)

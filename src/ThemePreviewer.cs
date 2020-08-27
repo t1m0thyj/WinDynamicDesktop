@@ -54,7 +54,7 @@ namespace WinDynamicDesktop
             }
             else
             {
-                replacers.Add("themeAuthor", _("Microsoft"));
+                replacers.Add("themeAuthor", "Microsoft");
 
                 int startCarouselIndex = htmlText.IndexOf("<!--");
                 int endCarouselIndex = htmlText.LastIndexOf("-->") + 3;

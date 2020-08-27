@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "WinDynamicDesktop"
-#define MyAppVersion GetFileVersion("src\bin\Release\WinDynamicDesktop.exe")
+#define MyAppVersion GetFileVersion("..\src\bin\Release\WinDynamicDesktop.exe")
 #define MyAppPublisher "Timothy Johnson"
 #define MyAppURL "https://github.com/t1m0thyj/WinDynamicDesktop"
 #define MyAppExeName "WinDynamicDesktop.exe"
@@ -23,7 +23,7 @@ DefaultDirName={localappdata}\Programs\{#MyAppName}
 DisableProgramGroupPage=yes
 LicenseFile=LICENSE
 PrivilegesRequired=lowest
-OutputDir=dist
+OutputDir=..\dist
 OutputBaseFilename={#MyAppName}_{#MyAppVersion}_Setup
 Compression=lzma
 SolidCompression=yes
@@ -103,7 +103,7 @@ Name: "startonboot"; Description: "&Start {#MyAppName} with Windows"; GroupDescr
 Name: "registerddw"; Description: "&Associate .ddw extension with {#MyAppName}"; GroupDescription: "Other tasks:"
 
 [Files]
-Source: "src\bin\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\src\bin\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

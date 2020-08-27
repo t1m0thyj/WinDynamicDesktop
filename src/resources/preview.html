@@ -11,15 +11,18 @@
   <script src="assets/js/jquery.slim.min.js"></script>
   <script src="assets/js/bootstrap.min.js"></script>
   <style>
-  img {height:100vh; width:100%}
-  .carousel {height:100vh; width:100%}
-  .carousel-inner {height:100vh; width:100%}
-  #playPauseButton {color:#fff; opacity:50%}
-  #playPauseButton:hover {opacity:100%}
-  #topLeftPanel {background:rgba(0,0,0,0.5); border-radius:5px; color:#fff; padding:10px; position:fixed; left:20px; top:20px; z-index:999}
-  #topRightPanel {background:rgba(0,0,0,0.5); border-radius:5px; position:fixed; right:20px; top:20px; z-index:999}
-  #bottomCenterPanel {background:rgba(0,0,0,0.5); border-radius:5px; bottom:15px; color:#fff; left:50%; padding:4px 8px; position:fixed; transform: translateX(-50%); z-index:999}
-  #bottomRightPanel {background:#000; border-radius:5px; bottom:-3px; color:#fff; opacity:50%; padding:2px 8px 8px 8px; position:fixed; right:-3px; z-index:999}
+  img {height: 100vh; width: 100%;}
+  .carousel {height: 100vh; width: 100%;}
+  .carousel-inner {height: 100vh; width: 100%;}
+  #playPauseButton {color: #fff; opacity: 50%;}
+  #playPauseButton:hover {opacity: 100%;}
+  #topLeftPanel {background: rgba(0,0,0,0.5); border-radius: 5px; color: #fff; padding: 10px; position: fixed; left: 20px; top: 20px; z-index: 999;}
+  #topRightPanel {background: rgba(0,0,0,0.5); border-radius: 5px; position: fixed; right: 20px; top: 20px; z-index: 999;}
+  #bottomCenterPanel {background: rgba(0,0,0,0.5); border-radius: 5px; bottom: 15px; color: #fff; left: 50%; padding: 4px 8px; position: fixed; text-align: center; transform: translateX(-50%); z-index: 999;}
+  #bottomRightPanel {background: #000; border-radius: 5px; bottom: -3px; color: #fff; opacity: 50%; padding: 2px 8px 8px 8px; position: fixed; right: -3px; z-index: 999;}
+  @media screen and (min-width: 768px) {
+    #bottomCenterPanel {white-space: nowrap;}
+  }
   </style>
 </head>
 <body>
