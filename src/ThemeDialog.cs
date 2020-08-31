@@ -31,8 +31,12 @@ namespace WinDynamicDesktop
             if (!Cef.IsInitialized)
             {
                 var settings = new CefSharp.WinForms.CefSettings();
-                settings.CefCommandLineArgs.Add("disable-extensions");
-                settings.CefCommandLineArgs.Add("disable-gpu");
+                settings.BrowserSubprocessPath = Path.Combine(Environment.CurrentDirectory,
+                    @"cef\CefSharp.BrowserSubprocess.exe");
+                settings.Locale = Localization.GetCefLocale();
+#if !DEBUG
+                settings.LogSeverity = LogSeverity.Fatal;
+#endif
                 Cef.Initialize(settings);
             }
 

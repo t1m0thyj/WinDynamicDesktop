@@ -1,12 +1,11 @@
 import hashlib
 import os
 import subprocess
-import sys
 
 import requests
-from dotenv import load_env
+from dotenv import load_dotenv
 
-load_env()
+load_dotenv()
 chocolatey_repo = "https://push.chocolatey.org/"
 nuspec_filename = "windynamicdesktop.nuspec"
 script_filename = "tools/chocolateyInstall.ps1"

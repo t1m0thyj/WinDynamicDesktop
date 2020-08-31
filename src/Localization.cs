@@ -52,6 +52,74 @@ namespace WinDynamicDesktop
             }
         }
 
+        public static void LoadLocaleFromFile()
+        {
+            string moFile = currentLocale + ".mo";
+
+            if (File.Exists(moFile))
+            {
+                using (Stream stream = File.OpenRead(moFile))
+                {
+                    catalog = new Catalog(stream, new CultureInfo(currentLocale));
+                }
+            }
+            else
+            {
+                byte[] embeddedMo = (byte[])Properties.Resources.ResourceManager.GetObject(
+                    "locale_" + currentLocale.Replace('-', '_'));
+
+                if (embeddedMo == null)
+                {
+                    return;
+                }
+
+                using (Stream stream = new MemoryStream(embeddedMo))
+                {
+                    catalog = new Catalog(stream, new CultureInfo(currentLocale));
+                }
+            }
+        }
+
+        public static void SelectLanguage()
+        {
+            LanguageDialog langDialog = new LanguageDialog();
+            langDialog.ShowDialog();
+        }
+
+        public static string GetCefLocale()
+        {
+            string cefLocale = (currentLocale == "zh-Hans") ? "zh-CN" : currentLocale;
+
+            if (File.Exists(Path.Combine("cef", "locales", cefLocale.ToLower() + ".pak")))
+            {
+                return cefLocale;
+            }
+
+            return "en-US";
+        }
+
+        public static string GetTranslation(string msg)
+        {
+            return (catalog != null) ? catalog.GetString(msg) : msg;
+        }
+
+        public static void TranslateForm(Form form)
+        {
+            if (form.Text != null)
+            {
+                form.Text = GetTranslation(form.Text);
+            }
+
+            foreach (Control childControl in GetControls(form))
+            {
+                if (childControl.GetType().GetProperty("Text") != null
+                    && childControl.Text != null)
+                {
+                    childControl.Text = GetTranslation(childControl.Text);
+                }
+            }
+        }
+
         private static void LoadLanguages()
         {
             AddLanguage("Bahasa Indonesia", "id");  // Indonesian
@@ -79,34 +147,6 @@ namespace WinDynamicDesktop
         {
             languageNames.Add(languageName);
             languageCodes.Add(languageCode);
-        }
-
-        public static void LoadLocaleFromFile()
-        {
-            string moFile = currentLocale + ".mo";
-
-            if (File.Exists(moFile))
-            {
-                using (Stream stream = File.OpenRead(moFile))
-                {
-                    catalog = new Catalog(stream, new CultureInfo(currentLocale));
-                }
-            }
-            else
-            {
-                byte[] embeddedMo = (byte[])Properties.Resources.ResourceManager.GetObject(
-                    "locale_" + currentLocale.Replace('-', '_'));
-
-                if (embeddedMo == null)
-                {
-                    return;
-                }
-
-                using (Stream stream = new MemoryStream(embeddedMo))
-                {
-                    catalog = new Catalog(stream, new CultureInfo(currentLocale));
-                }
-            }
         }
 
         private static void LoadLocaleFromWeb()
@@ -138,17 +178,6 @@ namespace WinDynamicDesktop
             }
         }
 
-        public static void SelectLanguage()
-        {
-            LanguageDialog langDialog = new LanguageDialog();
-            langDialog.ShowDialog();
-        }
-
-        public static string GetTranslation(string msg)
-        {
-            return (catalog != null) ? catalog.GetString(msg) : msg;
-        }
-
         // Code from https://stackoverflow.com/a/664083/5504760
         private static IEnumerable<Control> GetControls(Control form)
         {
@@ -160,23 +189,6 @@ namespace WinDynamicDesktop
                 }
 
                 yield return childControl;
-            }
-        }
-
-        public static void TranslateForm(Form form)
-        {
-            if (form.Text != null)
-            {
-                form.Text = GetTranslation(form.Text);
-            }
-
-            foreach (Control childControl in GetControls(form))
-            {
-                if (childControl.GetType().GetProperty("Text") != null
-                    && childControl.Text != null)
-                {
-                    childControl.Text = GetTranslation(childControl.Text);
-                }
             }
         }
     }

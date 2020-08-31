@@ -1,6 +1,6 @@
 import os
 
-from dotenv import loadenv
+from dotenv import load_dotenv
 from poeditor import POEditorAPI
 
 load_dotenv()

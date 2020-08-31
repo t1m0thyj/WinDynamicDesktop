@@ -1,0 +1,4 @@
+Pillow
+poeditor
+python-dotenv
+requests

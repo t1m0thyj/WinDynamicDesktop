@@ -1,6 +1,7 @@
 /dist
 /i18n
 /src/packages
+/themes
 /uwp/*.wapproj.user
 /uwp/AppPackages
 /uwp/BundleArtifacts
