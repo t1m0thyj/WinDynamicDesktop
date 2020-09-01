@@ -332,6 +332,7 @@
   <Import Project="packages\CefSharp.Common.84.4.10\build\CefSharp.Common.targets" Condition="Exists('packages\CefSharp.Common.84.4.10\build\CefSharp.Common.targets')" />
   <Import Project="packages\CefSharp.WinForms.84.4.10\build\CefSharp.WinForms.targets" Condition="Exists('packages\CefSharp.WinForms.84.4.10\build\CefSharp.WinForms.targets')" />
   <PropertyGroup>
-    <PostBuildEvent>"$(SolutionDir)..\scripts\post_build.bat" "$(Configuration)" "$(TargetDir)\"</PostBuildEvent>
+    <PostBuildEvent>if exist "$(TargetDir)x86" (if exist "$(TargetDir)cef" rmdir /s /q "$(TargetDir)cef") &amp;&amp; ren "$(TargetDir)x86" cef
+if exist "$(TargetDir)x64" rmdir /s /q "$(TargetDir)x64"</PostBuildEvent>
   </PropertyGroup>
 </Project>

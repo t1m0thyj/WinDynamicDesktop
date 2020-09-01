@@ -28,9 +28,12 @@ before_build:
 build:
   verbosity: minimal
 after_build:
-- ps: SonarScanner.MSBuild.exe end /d:"sonar.login=$env:SonarQubeToken"
+- ps: >-
+    SonarScanner.MSBuild.exe end /d:"sonar.login=$env:SonarQubeToken"
+
+    7z a WinDynamicDesktop_Portable.zip .\src\bin\Release\*
 artifacts:
-- path: src\bin\Release
+- path: WinDynamicDesktop_Portable.zip
   name: Portable ZIP
 - path: uwp\AppPackages\**\WinDynamicDesktop*.appxbundle
   name: UWP app
