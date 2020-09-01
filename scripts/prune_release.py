@@ -2,7 +2,9 @@ import fnmatch
 import os
 import sys
 
-build_dir = "../src/bin/" + ("Debug" if "-d" in sys.argv else "Release")
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
+build_dir = sys.argv[1]
 patterns_exclude = (
     "cef/*.pdb",
     "cef/*.xml",
@@ -38,7 +40,7 @@ for root, dirs, files in os.walk(build_dir, topdown=False):
         rel_name = os.path.join(rel_root, name)
 
         if not os.listdir(abs_name):
-            print(rel_name)
+            print("+ rm", rel_name.replace("\\", "/"))
             os.rmdir(abs_name)
 
     for name in files:
@@ -46,5 +48,5 @@ for root, dirs, files in os.walk(build_dir, topdown=False):
         rel_name = os.path.join(rel_root, name)
 
         if not should_include_file(rel_name):
-            print(rel_name)
+            print("+ rm", rel_name.replace("\\", "/"))
             os.unlink(abs_name)

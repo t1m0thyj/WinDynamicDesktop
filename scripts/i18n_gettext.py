@@ -1,7 +1,10 @@
 import glob
+import os
 import re
 import time
 from collections import OrderedDict
+
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 app_name = "WinDynamicDesktop"
 exclude_patterns = [app_name + r'$', r'\w+://', r'\w+\d+$', r'\W+$']

@@ -1,9 +1,11 @@
 import glob
 import json
-import os.path
+import os
 import sys
 
 from PIL import Image
+
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 img_width = int(sys.argv[1])
 img_height = int(img_width * 9 / 16)
@@ -13,7 +15,7 @@ input_dir = "..\\themes"
 output_dir = f"../src/assets/images"
 
 for theme_dir in glob.glob(f"{input_dir}/**"):
-    print(f"<< {theme_dir}")
+    print(f"<- {theme_dir}")
 
     with open(f"{theme_dir}/theme.json", 'r') as fileobj:
         theme_config = json.load(fileobj)
@@ -51,4 +53,4 @@ for theme_dir in glob.glob(f"{input_dir}/**"):
     img.thumbnail((img_width, img_height))
     img.save(f"{output_dir}/{theme_name}_night.jpg", quality=jpeg_quality)
 
-print(f">> {output_dir}")
+print(f"-> {output_dir}")

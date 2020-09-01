@@ -3,6 +3,8 @@ image: Visual Studio 2019
 configuration: Release
 environment:
   UseTemporarySignCert: true
+  SonarQubeToken:
+    secure: 2aNov8Lbsmce/BShnhVa2ZeD6Og9kSQC2vO/6SegYlWx84TSQb2wI3Iu9fG1JYA3
 before_build:
 - ps: >-
     if ($env:APPVEYOR_REPO_TAG -eq "true")
@@ -19,10 +21,16 @@ before_build:
 
 
     nuget restore src/WinDynamicDesktop.sln
+
+    choco install "sonarscanner-msbuild-net46" -y
+
+    SonarScanner.MSBuild.exe begin /k:"t1m0thyj_WinDynamicDesktop" /d:"sonar.host.url=https://sonarcloud.io" /o:"t1m0thyj" /d:"sonar.login=$env:SonarQubeToken"
 build:
   verbosity: minimal
+after_build:
+- ps: SonarScanner.MSBuild.exe end /d:"sonar.login=$env:SonarQubeToken"
 artifacts:
-- path: src\bin\Release\WinDynamicDesktop.exe
-  name: Portable EXE
+- path: src\bin\Release
+  name: Portable ZIP
 - path: uwp\AppPackages\**\WinDynamicDesktop*.appxbundle
   name: UWP app

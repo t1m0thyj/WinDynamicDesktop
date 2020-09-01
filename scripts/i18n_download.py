@@ -3,7 +3,9 @@ import os
 from dotenv import load_dotenv
 from poeditor import POEditorAPI
 
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
 load_dotenv()
+
 mo_dir = "../i18n/mo"
 po_dir = "../i18n/po"
 

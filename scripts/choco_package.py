@@ -5,7 +5,9 @@ import subprocess
 import requests
 from dotenv import load_dotenv
 
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
 load_dotenv()
+
 chocolatey_repo = "https://push.chocolatey.org/"
 nuspec_filename = "windynamicdesktop.nuspec"
 script_filename = "tools/chocolateyInstall.ps1"

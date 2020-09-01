@@ -36,6 +36,7 @@ namespace WinDynamicDesktop
 
                 if (ThemeManager.IsThemeDownloaded(theme))
                 {
+                    // TODO Why are images flickering?
                     ThemeImageData imageData = GetThemeImageData(theme);
                     int activeImage = imageData.FindIndex(entry => entry.Item2 == wpState.daySegment4) +
                         wpState.imageNumber;
@@ -194,6 +195,7 @@ namespace WinDynamicDesktop
             {
                 template = template.Replace("{{" + replacer.Key + "}}", replacer.Value);
             }
+
             return template;
         }
     }
