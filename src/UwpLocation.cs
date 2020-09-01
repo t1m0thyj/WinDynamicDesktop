@@ -74,7 +74,7 @@ namespace WinDynamicDesktop
 
                 return true;
             }
-            catch { }
+            catch { /* Do nothing */ }
 
             return false;
         }

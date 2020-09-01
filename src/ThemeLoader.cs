@@ -201,7 +201,7 @@ namespace WinDynamicDesktop
                     System.Threading.Thread.Sleep(100);  // Wait for folder to free up
                     Directory.Delete(Path.Combine("themes", error.themeId), true);
                 }
-                catch { }
+                catch { /* Do nothing */ }
             });
 
             return new ThemeResult(error);

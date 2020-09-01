@@ -213,7 +213,7 @@ namespace WinDynamicDesktop
                 {
                     auth = Uri.UnescapeDataString(auth);
                 }
-                catch { };
+                catch { /* Do nothing */ };
 
                 value = value.Substring(separatorIndex + 1);
                 separatorIndex = auth.IndexOf(':');
@@ -270,7 +270,7 @@ namespace WinDynamicDesktop
 
                 return ub.Uri;
             }
-            catch { };
+            catch { /* Do nothing */ };
             return null;
         }
 

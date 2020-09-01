@@ -144,7 +144,7 @@ namespace WinDynamicDesktop
             {
                 Directory.Delete(Path.Combine("themes", theme.themeId), true);
             }
-            catch { }
+            catch { /* Do nothing */ }
         }
 
         private static void LoadInstalledThemes(List<string> themeIds)

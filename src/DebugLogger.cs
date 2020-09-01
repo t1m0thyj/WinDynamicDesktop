@@ -29,7 +29,7 @@ namespace WinDynamicDesktop
                 string jsonText = File.ReadAllText("settings.conf");
                 settings = JsonConvert.DeserializeObject<AppConfig>(jsonText);
             }
-            catch { }
+            catch { /* Do nothing */ }
 
             if (settings != null)
             {

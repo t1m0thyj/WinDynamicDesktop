@@ -31,9 +31,11 @@ after_build:
 - ps: >-
     SonarScanner.MSBuild.exe end /d:"sonar.login=$env:SonarQubeToken"
 
-    7z a WinDynamicDesktop_Portable.zip .\src\bin\Release\*
+    python scripts\prune_release.py src\bin\Release
+
+    7z a dist\WinDynamicDesktop_Portable.zip .\src\bin\Release\*
 artifacts:
-- path: WinDynamicDesktop_Portable.zip
+- path: dist\WinDynamicDesktop_Portable.zip
   name: Portable ZIP
 - path: uwp\AppPackages\**\WinDynamicDesktop*.appxbundle
   name: UWP app

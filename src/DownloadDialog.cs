@@ -160,7 +160,7 @@ namespace WinDynamicDesktop
                     System.Threading.Thread.Sleep(100);  // Wait for file to free up
                     File.Delete(themeZipDest);
                 }
-                catch { }
+                catch { /* Do nothing */ }
             });
         }
     }
