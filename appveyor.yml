@@ -20,9 +20,11 @@ before_build:
     }
 
 
-    nuget restore src/WinDynamicDesktop.sln
+    nuget restore src\WinDynamicDesktop.sln
 
     choco install "sonarscanner-msbuild-net46" -y
+
+    pip install pywin32
 
     SonarScanner.MSBuild.exe begin /k:"t1m0thyj_WinDynamicDesktop" /d:"sonar.host.url=https://sonarcloud.io" /o:"t1m0thyj" /d:"sonar.login=$env:SonarQubeToken"
 build:
@@ -31,11 +33,9 @@ after_build:
 - ps: >-
     SonarScanner.MSBuild.exe end /d:"sonar.login=$env:SonarQubeToken"
 
-    python scripts\prune_release.py src\bin\Release
-
-    7z a dist\WinDynamicDesktop_Portable.zip .\src\bin\Release\*
+    python scripts\package_zip.py
 artifacts:
-- path: dist\WinDynamicDesktop_Portable.zip
+- path: dist\WinDynamicDesktop_Portable*.zip
   name: Portable ZIP
 - path: uwp\AppPackages\**\WinDynamicDesktop*.appxbundle
   name: UWP app

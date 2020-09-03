@@ -21,6 +21,8 @@
     <TargetFrameworkProfile />
     <LangVersion>8.0</LangVersion>
     <CefSharpAnyCpuSupport>true</CefSharpAnyCpuSupport>
+    <CefSharpPlatform>x86</CefSharpPlatform>
+    <CefSharpTargetDir>cef</CefSharpTargetDir>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -237,6 +239,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="resources\Big_Sur_Abstract_thumbnail.jpg" />
+    <None Include="resources\Big_Sur_thumbnail.jpg" />
     <None Include="resources\Catalina_thumbnail.jpg" />
     <None Include="resources\default_themes.yaml" />
     <None Include="resources\Mojave_Desert_thumbnail.jpg" />
@@ -310,8 +314,6 @@
     <Content Include="assets\js\jquery.slim.min.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="resources\Big_Sur_Abstract_thumbnail.jpg" />
-    <Content Include="resources\Big_Sur_thumbnail.jpg" />
     <None Include="resources\preview.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -332,7 +334,6 @@
   <Import Project="packages\CefSharp.Common.84.4.10\build\CefSharp.Common.targets" Condition="Exists('packages\CefSharp.Common.84.4.10\build\CefSharp.Common.targets')" />
   <Import Project="packages\CefSharp.WinForms.84.4.10\build\CefSharp.WinForms.targets" Condition="Exists('packages\CefSharp.WinForms.84.4.10\build\CefSharp.WinForms.targets')" />
   <PropertyGroup>
-    <PostBuildEvent>if exist "$(TargetDir)x86" (if exist "$(TargetDir)cef" rmdir /s /q "$(TargetDir)cef") &amp;&amp; ren "$(TargetDir)x86" cef
-if exist "$(TargetDir)x64" rmdir /s /q "$(TargetDir)x64"</PostBuildEvent>
+    <PreBuildEvent>powershell -ExecutionPolicy Bypass -File "$(SolutionDir)..\scripts\prebuild.ps1"</PreBuildEvent>
   </PropertyGroup>
 </Project>
