@@ -322,18 +322,18 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('packages\Costura.Fody.4.1.0\build\Costura.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Costura.Fody.4.1.0\build\Costura.Fody.props'))" />
-    <Error Condition="!Exists('packages\Fody.6.2.4\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Fody.6.2.4\build\Fody.targets'))" />
     <Error Condition="!Exists('packages\cef.redist.x86.84.4.1\build\cef.redist.x86.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\cef.redist.x86.84.4.1\build\cef.redist.x86.props'))" />
     <Error Condition="!Exists('packages\CefSharp.Common.84.4.10\build\CefSharp.Common.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\CefSharp.Common.84.4.10\build\CefSharp.Common.props'))" />
     <Error Condition="!Exists('packages\CefSharp.Common.84.4.10\build\CefSharp.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\CefSharp.Common.84.4.10\build\CefSharp.Common.targets'))" />
     <Error Condition="!Exists('packages\CefSharp.WinForms.84.4.10\build\CefSharp.WinForms.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\CefSharp.WinForms.84.4.10\build\CefSharp.WinForms.props'))" />
     <Error Condition="!Exists('packages\CefSharp.WinForms.84.4.10\build\CefSharp.WinForms.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\CefSharp.WinForms.84.4.10\build\CefSharp.WinForms.targets'))" />
     <Error Condition="!Exists('packages\PropertyChanged.Fody.3.2.9\build\PropertyChanged.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\PropertyChanged.Fody.3.2.9\build\PropertyChanged.Fody.props'))" />
+    <Error Condition="!Exists('packages\Fody.6.2.5\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Fody.6.2.5\build\Fody.targets'))" />
   </Target>
-  <Import Project="packages\Fody.6.2.4\build\Fody.targets" Condition="Exists('packages\Fody.6.2.4\build\Fody.targets')" />
   <Import Project="packages\CefSharp.Common.84.4.10\build\CefSharp.Common.targets" Condition="Exists('packages\CefSharp.Common.84.4.10\build\CefSharp.Common.targets')" />
   <Import Project="packages\CefSharp.WinForms.84.4.10\build\CefSharp.WinForms.targets" Condition="Exists('packages\CefSharp.WinForms.84.4.10\build\CefSharp.WinForms.targets')" />
   <PropertyGroup>
     <PreBuildEvent>powershell -ExecutionPolicy Bypass -File "$(SolutionDir)..\scripts\prebuild.ps1"</PreBuildEvent>
   </PropertyGroup>
+  <Import Project="packages\Fody.6.2.5\build\Fody.targets" Condition="Exists('packages\Fody.6.2.5\build\Fody.targets')" />
 </Project>

@@ -80,7 +80,7 @@ namespace WinDynamicDesktop
             items.Add(new ToolStripMenuItem(_("Select &Language..."), null, OnLanguageItemClick));
             items.Add(new ToolStripSeparator());
 
-            shuffleItem = new ToolStripMenuItem(_("Shuffle wallpaper daily"), null, OnShuffleItemClick);
+            shuffleItem = new ToolStripMenuItem(_("Shuffle theme daily"), null, OnShuffleItemClick);
             shuffleItem.Checked = JsonConfig.settings.enableShuffle;
             items.Add(shuffleItem);
 
