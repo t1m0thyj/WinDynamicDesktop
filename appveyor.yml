@@ -1,4 +1,5 @@
 version: 1.0.{build}
+skip_branch_with_pr: true
 image: Visual Studio 2019
 configuration: Release
 environment:
@@ -9,27 +10,27 @@ install:
 - ps: choco install "sonarscanner-msbuild-net46" -y
 before_build:
 - ps: >-
-    if ($env:APPVEYOR_REPO_TAG -eq "true")
-
-    {
+    if ($env:APPVEYOR_REPO_TAG -eq "true") {
         Update-AppveyorBuild -Version "$($env:APPVEYOR_REPO_TAG_NAME.TrimStart("v"))"
-    }
-
-    else
-
-    {
+    } else {
         Update-AppveyorBuild -Version "dev-$($env:APPVEYOR_REPO_COMMIT.Substring(0, 7))"
     }
 
 
     nuget restore src\WinDynamicDesktop.sln
 
-    SonarScanner.MSBuild.exe begin /k:"t1m0thyj_WinDynamicDesktop" /d:"sonar.host.url=https://sonarcloud.io" /o:"t1m0thyj" /d:"sonar.login=$env:SonarQubeToken"
+
+    if (-Not $env:APPVEYOR_PULL_REQUEST_NUMBER -And $env:APPVEYOR_REPO_BRANCH -eq "master") {
+        SonarScanner.MSBuild.exe begin /k:"t1m0thyj_WinDynamicDesktop" /d:"sonar.host.url=https://sonarcloud.io" /o:"t1m0thyj" /d:"sonar.login=$env:SonarQubeToken"
+    }
 build:
   verbosity: minimal
 after_build:
 - ps: >-
-    SonarScanner.MSBuild.exe end /d:"sonar.login=$env:SonarQubeToken"
+    if (-Not $env:APPVEYOR_PULL_REQUEST_NUMBER -And $env:APPVEYOR_REPO_BRANCH -eq "master") {
+        SonarScanner.MSBuild.exe end /d:"sonar.login=$env:SonarQubeToken"
+    }
+
 
     powershell scripts\package_zip.ps1
 artifacts:
