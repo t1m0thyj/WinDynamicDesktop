@@ -2,27 +2,26 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+using RestSharp;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using RestSharp;
 
 namespace WinDynamicDesktop
 {
-    class LocationIQService
+    internal class LocationIQService
     {
         private static readonly string apiKey = Encoding.UTF8.GetString(Convert.FromBase64String(
             "cGsuYmRhNTk1NDRhN2VjZWMxYjAxMDZkNzg5MzdlMDQzOTk="));
+
         private static readonly Func<string, string> _ = Localization.GetTranslation;
 
         private static void HandleLocationSuccess(LocationIQData data, ScheduleDialog dialog)
         {
             JsonConfig.settings.latitude = data.lat;
             JsonConfig.settings.longitude = data.lon;
-            SolarData solarData = SunriseSunsetService.GetSolarData(DateTime.Today);
+            SolarData solarData = SunriseSunsetService.GetSolarData(DateTimeTZ.Local.Today.ConvertTime(JsonConfig.settings.timezone));
 
             DialogResult result = MessageDialog.ShowQuestion(string.Format(_("Is this location correct?\n\n{0}\n{1}"),
                 data.display_name, SunriseSunsetService.GetSunriseSunsetString(solarData)), _("Question"), true);

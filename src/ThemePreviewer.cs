@@ -6,14 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WinDynamicDesktop
 {
     using ThemeImageData = List<Tuple<int, int>>;
 
-    class ThemePreviewer
+    internal class ThemePreviewer
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
         private static string[] sunPhases = new string[] { "Sunrise", "Day", "Sunset", "Night" };
@@ -31,7 +29,7 @@ namespace WinDynamicDesktop
                 replacers.Add("themeAuthor", ThemeManager.GetThemeAuthor(theme));
                 replacers.Add("previewMessage", string.Format(_("Previewing {0}"), "<span id=\"previewText\"></span>"));
 
-                SolarData solarData = SunriseSunsetService.GetSolarData(DateTime.Today);
+                SolarData solarData = SunriseSunsetService.GetSolarData(DateTimeTZ.Local.Today.ConvertTime(JsonConfig.settings.timezone));
                 SchedulerState wpState = AppContext.wpEngine.GetImageData(solarData, theme);
 
                 if (ThemeManager.IsThemeDownloaded(theme))

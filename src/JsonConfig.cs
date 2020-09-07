@@ -22,6 +22,9 @@ namespace WinDynamicDesktop
         public event PropertyChangedEventHandler PropertyChanged;
 #pragma warning restore 67
 
+        [JsonIgnore]
+        public string defaultTimeZone = TimeZoneInfo.Local.Id;
+
         public string location { get; set; }
         public string latitude { get; set; }
         public string longitude { get; set; }
@@ -42,6 +45,14 @@ namespace WinDynamicDesktop
         public int sunriseSunsetDuration { get; set; }
         public bool fullScreenPause { get; set; }
         public bool enableScripts { get; set; }
+        public string timezone
+        {
+            get { return this.defaultTimeZone; }
+            set
+            {
+                this.defaultTimeZone = value;
+            }
+        }
     }
 #nullable restore
 

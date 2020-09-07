@@ -3,12 +3,8 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace WinDynamicDesktop
 {
@@ -93,6 +89,11 @@ namespace WinDynamicDesktop
 
         private void InputDialog_Load(object sender, EventArgs e)
         {
+            foreach (TimeZoneInfo tzi in TimeZoneInfo.GetSystemTimeZones())
+            {
+                timezoneBox.Items.Add(tzi.Id);
+            }
+
             if (JsonConfig.settings.location != null)
             {
                 locationBox.Text = JsonConfig.settings.location;
@@ -106,8 +107,8 @@ namespace WinDynamicDesktop
 
             if (JsonConfig.settings.sunriseTime != null && JsonConfig.settings.sunsetTime != null)
             {
-                sunriseTimePicker.Value = UpdateHandler.SafeParse(JsonConfig.settings.sunriseTime);
-                sunsetTimePicker.Value = UpdateHandler.SafeParse(JsonConfig.settings.sunsetTime);
+                sunriseTimePicker.Value = UpdateHandler.SafeParse(JsonConfig.settings.sunriseTime, TimeZoneInfo.FindSystemTimeZoneById(JsonConfig.settings.timezone)).Time;
+                sunsetTimePicker.Value = UpdateHandler.SafeParse(JsonConfig.settings.sunsetTime, TimeZoneInfo.FindSystemTimeZoneById(JsonConfig.settings.timezone)).Time;
             }
             else
             {
@@ -127,6 +128,15 @@ namespace WinDynamicDesktop
             else if (JsonConfig.settings.dontUseLocation)
             {
                 radioButton3.Checked = true;
+            }
+
+            if (JsonConfig.settings.timezone != null)
+            {
+                timezoneBox.Text = JsonConfig.settings.timezone;
+            }
+            else
+            {
+                timezoneBox.Text = TimeZoneInfo.Local.Id;
             }
 
             UpdateGuiState();
@@ -158,6 +168,7 @@ namespace WinDynamicDesktop
             okButton.Enabled = false;
             JsonConfig.settings.useWindowsLocation = radioButton2.Checked;
             JsonConfig.settings.dontUseLocation = radioButton3.Checked;
+            JsonConfig.settings.timezone = timezoneBox.Text;
 
             if (radioButton1.Checked)
             {
@@ -211,6 +222,10 @@ namespace WinDynamicDesktop
                     e.Cancel = true;
                 }
             }
+        }
+
+        private void textEvents_TextChanged(object sender, EventArgs e)
+        {
         }
     }
 }

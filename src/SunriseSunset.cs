@@ -2,13 +2,11 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+using SunCalcNet.Model;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Globalization;
-using SunCalcNet.Model;
+using System.Linq;
 
 namespace WinDynamicDesktop
 {
@@ -17,23 +15,51 @@ namespace WinDynamicDesktop
     public class SolarData
     {
         public PolarPeriod polarPeriod = PolarPeriod.None;
-        public DateTime sunriseTime { get; set; }
-        public DateTime sunsetTime { get; set; }
-        public DateTime[] solarTimes { get; set; }
+
+        //DON'T FORGET TO CHANGE THIS
+        private DateTimeTZ defaultSunriseTime = new DateTimeTZ(TimeZoneInfo.FindSystemTimeZoneById(JsonConfig.settings.timezone), new DateTime());
+
+        private DateTimeTZ defaultSunsetTime = new DateTimeTZ(TimeZoneInfo.FindSystemTimeZoneById(JsonConfig.settings.timezone), new DateTime());
+
+        public DateTimeTZ sunriseTime
+        {
+            get
+            {
+                return this.defaultSunriseTime;
+            }
+            set
+            {
+                this.defaultSunriseTime = value;
+            }
+        }
+
+        public DateTimeTZ sunsetTime
+        {
+            get
+            {
+                return this.defaultSunsetTime;
+            }
+            set
+            {
+                this.defaultSunsetTime = value;
+            }
+        }
+
+        public DateTimeTZ[] solarTimes { get; set; }
     }
 
-    class SunriseSunsetService
+    internal class SunriseSunsetService
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
 
         private static SolarData GetUserProvidedSolarData()
         {
             SolarData data = new SolarData();
-            data.sunriseTime = UpdateHandler.SafeParse(JsonConfig.settings.sunriseTime);
-            data.sunsetTime = UpdateHandler.SafeParse(JsonConfig.settings.sunsetTime);
+            data.sunriseTime = UpdateHandler.SafeParse(JsonConfig.settings.sunriseTime, TimeZoneInfo.FindSystemTimeZoneById(JsonConfig.settings.timezone));
+            data.sunsetTime = UpdateHandler.SafeParse(JsonConfig.settings.sunsetTime, TimeZoneInfo.FindSystemTimeZoneById(JsonConfig.settings.timezone));
 
             int halfSunriseSunsetDuration = JsonConfig.settings.sunriseSunsetDuration * 30;
-            data.solarTimes = new DateTime[4]
+            data.solarTimes = new DateTimeTZ[4]
             {
                 data.sunriseTime.AddSeconds(-halfSunriseSunsetDuration),
                 data.sunriseTime.AddSeconds(halfSunriseSunsetDuration),
@@ -44,17 +70,17 @@ namespace WinDynamicDesktop
             return data;
         }
 
-        private static List<SunPhase> GetSunPhases(DateTime date, double latitude, double longitude)
+        private static List<SunPhase> GetSunPhases(DateTimeTZ date, double latitude, double longitude)
         {
             return SunCalcNet.SunCalc.GetSunPhases(date.AddHours(12).ToUniversalTime(), latitude, longitude).ToList();
         }
 
-        private static DateTime GetSolarTime(List<SunPhase> sunPhases, SunPhaseName desiredPhase)
+        private static DateTimeTZ GetSolarTime(List<SunPhase> sunPhases, SunPhaseName desiredPhase)
         {
-            return sunPhases.Single(sunPhase => sunPhase.Name.Value == desiredPhase.Value).PhaseTime.ToLocalTime();
+            return new DateTimeTZ(TimeZoneInfo.FindSystemTimeZoneById(JsonConfig.settings.timezone), sunPhases.Single(sunPhase => sunPhase.Name.Value == desiredPhase.Value).PhaseTime);
         }
 
-        public static SolarData GetSolarData(DateTime date)
+        public static SolarData GetSolarData(DateTimeTZ date)
         {
             if (JsonConfig.settings.dontUseLocation)
             {
@@ -70,7 +96,7 @@ namespace WinDynamicDesktop
             {
                 data.sunriseTime = GetSolarTime(sunPhases, SunPhaseName.Sunrise);
                 data.sunsetTime = GetSolarTime(sunPhases, SunPhaseName.Sunset);
-                data.solarTimes = new DateTime[4]
+                data.solarTimes = new DateTimeTZ[4]
                 {
                     GetSolarTime(sunPhases, SunPhaseName.Dawn),
                     GetSolarTime(sunPhases, SunPhaseName.GoldenHourEnd),
@@ -80,7 +106,7 @@ namespace WinDynamicDesktop
             }
             catch (InvalidOperationException)  // Handle polar day/night
             {
-                DateTime solarNoon = GetSolarTime(sunPhases, SunPhaseName.SolarNoon);
+                DateTimeTZ solarNoon = GetSolarTime(sunPhases, SunPhaseName.SolarNoon);
                 double sunAltitude = SunCalcNet.SunCalc.GetSunPosition(solarNoon.ToUniversalTime(), latitude,
                     longitude).Altitude;
 
@@ -103,8 +129,10 @@ namespace WinDynamicDesktop
             {
                 case PolarPeriod.PolarDay:
                     return _("Sunrise/Sunset: Up all day");
+
                 case PolarPeriod.PolarNight:
                     return _("Sunrise/Sunset: Down all day");
+
                 default:
                     return string.Format(_("Sunrise: {0}, Sunset: {1}"), solarData.sunriseTime.ToShortTimeString(),
                         solarData.sunsetTime.ToShortTimeString());

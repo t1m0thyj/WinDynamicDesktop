@@ -2,13 +2,10 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Win32;
+using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Timers;
 
 namespace WinDynamicDesktop
@@ -22,11 +19,12 @@ namespace WinDynamicDesktop
         public int daySegment4;
     }
 
-    class WallpaperChangeScheduler
+    internal class WallpaperChangeScheduler
     {
         private enum DaySegment { Sunrise, Day, Sunset, Night, AllDay, AllNight };
 
         private string lastImagePath;
+
         private DateTime? nextUpdateTime;
 
         public static bool isSunUp;
@@ -39,7 +37,7 @@ namespace WinDynamicDesktop
         public WallpaperChangeScheduler()
         {
             fullScreenChecker = new FullScreenApi(this);
-            
+
             backgroundTimer.AutoReset = true;
             backgroundTimer.Interval = 60e3;
             backgroundTimer.Elapsed += OnBackgroundTimerElapsed;
@@ -58,9 +56,12 @@ namespace WinDynamicDesktop
             }
 
             schedulerTimer.Stop();
+            DateTimeTZ DateTimeToday = DateTimeTZ.UTC.Today.ConvertTime(JsonConfig.settings.timezone);
+            SolarData data = SunriseSunsetService.GetSolarData(DateTimeToday);
+            DateTimeTZ DateTimeNow = DateTimeTZ.UTC.Now.ConvertTime(JsonConfig.settings.timezone);//TimeZ.GetDateTime(DateTime.Now);
 
-            SolarData data = SunriseSunsetService.GetSolarData(DateTime.Today);
-            isSunUp = (data.sunriseTime <= DateTime.Now && DateTime.Now < data.sunsetTime);
+            isSunUp = (data.sunriseTime.Time <= DateTimeNow.Time && DateTimeNow.Time < data.sunsetTime.Time);
+
             DateTime? nextImageUpdateTime = null;
 
             if (ThemeManager.currentTheme != null)
@@ -78,7 +79,7 @@ namespace WinDynamicDesktop
             if (ThemeManager.currentTheme != null)
             {
                 SetWallpaper(imageData.imageId);
-                nextImageUpdateTime = new DateTime(imageData.nextUpdateTicks);
+                nextImageUpdateTime = new DateTimeTZ(JsonConfig.settings.timezone, new DateTime(imageData.nextUpdateTicks)).Time;
             }
 
             ScriptManager.RunScripts(new ScriptArgs
@@ -90,20 +91,20 @@ namespace WinDynamicDesktop
 
             if (data.polarPeriod != PolarPeriod.None)
             {
-                nextUpdateTime = DateTime.Today.AddDays(1);
+                nextUpdateTime = DateTimeToday.AddDays(1).Time;
             }
             else if (isSunUp)
             {
-                nextUpdateTime = data.sunsetTime;
+                nextUpdateTime = data.sunsetTime.Time;
             }
-            else if (DateTime.Now < data.solarTimes[0])
+            else if (DateTimeNow.Time < data.solarTimes[0].Time)
             {
-                nextUpdateTime = data.sunriseTime;
+                nextUpdateTime = data.sunriseTime.Time;
             }
             else
             {
-                SolarData tomorrowsData = SunriseSunsetService.GetSolarData(DateTime.Today.AddDays(1));
-                nextUpdateTime = tomorrowsData.sunriseTime;
+                SolarData tomorrowsData = SunriseSunsetService.GetSolarData(DateTimeToday.AddDays(1));
+                nextUpdateTime = tomorrowsData.sunriseTime.Time;
             }
 
             if (nextImageUpdateTime.HasValue && nextImageUpdateTime.Value < nextUpdateTime.Value)
@@ -125,6 +126,7 @@ namespace WinDynamicDesktop
 
         private DaySegment GetCurrentDaySegment(SolarData data)
         {
+            DateTimeTZ DateTimeNow = DateTimeTZ.Local.Now.ConvertTime(JsonConfig.settings.timezone);
             if (data.polarPeriod == PolarPeriod.PolarDay)
             {
                 return DaySegment.AllDay;
@@ -133,15 +135,15 @@ namespace WinDynamicDesktop
             {
                 return DaySegment.AllNight;
             }
-            else if (data.solarTimes[0] <= DateTime.Now && DateTime.Now < data.solarTimes[1])
+            else if (data.solarTimes[0].Time <= DateTimeNow.Time && DateTimeNow.Time < data.solarTimes[1].Time)
             {
                 return DaySegment.Sunrise;
             }
-            else if (data.solarTimes[1] <= DateTime.Now && DateTime.Now < data.solarTimes[2])
+            else if (data.solarTimes[1].Time <= DateTimeNow.Time && DateTimeNow.Time < data.solarTimes[2].Time)
             {
                 return DaySegment.Day;
             }
-            else if (data.solarTimes[2] <= DateTime.Now && DateTime.Now < data.solarTimes[3])
+            else if (data.solarTimes[2].Time <= DateTimeNow.Time && DateTimeNow.Time < data.solarTimes[3].Time)
             {
                 return DaySegment.Sunset;
             }
@@ -154,9 +156,10 @@ namespace WinDynamicDesktop
         public SchedulerState GetImageData(SolarData data, ThemeConfig theme)
         {
             int[] imageList = null;
-            DateTime segmentStart;
-            DateTime segmentEnd;
+            DateTimeTZ segmentStart;
+            DateTimeTZ segmentEnd;
             SchedulerState imageData = new SchedulerState() { daySegment2 = isSunUp ? 0 : 1 };
+            DateTimeTZ DateTimeToday = DateTimeTZ.Local.Today.ConvertTime(JsonConfig.settings.timezone);
 
             if (!JsonConfig.settings.darkMode)
             {
@@ -164,48 +167,53 @@ namespace WinDynamicDesktop
                 {
                     case DaySegment.AllDay:
                         imageList = theme?.dayImageList;
-                        segmentStart = DateTime.Today;
-                        segmentEnd = DateTime.Today.AddDays(1);
+                        segmentStart = DateTimeToday;
+                        segmentEnd = DateTimeToday.AddDays(1);
                         imageData.daySegment4 = 1;
                         break;
+
                     case DaySegment.AllNight:
                         imageList = theme?.nightImageList;
-                        segmentStart = DateTime.Today;
-                        segmentEnd = DateTime.Today.AddDays(1);
+                        segmentStart = DateTimeToday;
+                        segmentEnd = DateTimeToday.AddDays(1);
                         imageData.daySegment4 = 3;
                         break;
+
                     case DaySegment.Sunrise:
                         imageList = theme?.sunriseImageList;
                         segmentStart = data.solarTimes[0];
                         segmentEnd = data.solarTimes[1];
                         imageData.daySegment4 = 0;
                         break;
+
                     case DaySegment.Day:
                         imageList = theme?.dayImageList;
                         segmentStart = data.solarTimes[1];
                         segmentEnd = data.solarTimes[2];
                         imageData.daySegment4 = 1;
                         break;
+
                     case DaySegment.Sunset:
                         imageList = theme?.sunsetImageList;
                         segmentStart = data.solarTimes[2];
                         segmentEnd = data.solarTimes[3];
                         imageData.daySegment4 = 2;
                         break;
+
                     default:
                         imageList = theme?.nightImageList;
                         imageData.daySegment4 = 3;
-
-                        if (DateTime.Now < data.solarTimes[0])
+                        DateTimeTZ DateTimeNow = DateTimeTZ.Local.Now.ConvertTime(JsonConfig.settings.timezone);
+                        if (DateTimeNow.Time < data.solarTimes[0].Time)
                         {
-                            SolarData yesterdaysData = SunriseSunsetService.GetSolarData(DateTime.Today.AddDays(-1));
+                            SolarData yesterdaysData = SunriseSunsetService.GetSolarData(DateTimeToday.AddDays(-1));
                             segmentStart = yesterdaysData.solarTimes[3];
                             segmentEnd = data.solarTimes[0];
                         }
                         else
                         {
                             segmentStart = data.solarTimes[3];
-                            SolarData tomorrowsData = SunriseSunsetService.GetSolarData(DateTime.Today.AddDays(1));
+                            SolarData tomorrowsData = SunriseSunsetService.GetSolarData(DateTimeToday.AddDays(1));
                             segmentEnd = tomorrowsData.solarTimes[0];
                         }
 
@@ -215,40 +223,41 @@ namespace WinDynamicDesktop
             else
             {
                 imageList = theme?.nightImageList;
+                DateTimeTZ DateTimeNow = DateTimeTZ.Local.Now.ConvertTime(JsonConfig.settings.timezone);
 
                 if (data.polarPeriod != PolarPeriod.None)
                 {
-                    segmentStart = DateTime.Today;
-                    segmentEnd = DateTime.Today.AddDays(1);
+                    segmentStart = DateTimeToday;
+                    segmentEnd = DateTimeToday.AddDays(1);
                 }
                 else if (isSunUp)
                 {
                     segmentStart = data.sunriseTime;
                     segmentEnd = data.sunsetTime;
                 }
-                else if (DateTime.Now < data.sunriseTime)
+                else if (DateTimeNow.Time < data.sunriseTime.Time)
                 {
-                    SolarData yesterdaysData = SunriseSunsetService.GetSolarData(DateTime.Today.AddDays(-1));
+                    SolarData yesterdaysData = SunriseSunsetService.GetSolarData(DateTimeToday.AddDays(-1));
                     segmentStart = yesterdaysData.sunsetTime;
                     segmentEnd = data.sunriseTime;
                 }
                 else
                 {
                     segmentStart = data.sunsetTime;
-                    SolarData tomorrowsData = SunriseSunsetService.GetSolarData(DateTime.Today.AddDays(1));
+                    SolarData tomorrowsData = SunriseSunsetService.GetSolarData(DateTimeToday.AddDays(1));
                     segmentEnd = tomorrowsData.sunriseTime;
                 }
             }
 
             if (imageList != null)
             {
-                TimeSpan segmentLength = segmentEnd - segmentStart;
+                TimeSpan segmentLength = segmentEnd.Time - segmentStart.Time;
                 TimeSpan timerLength = new TimeSpan(segmentLength.Ticks / imageList.Length);
-
-                int imageNumber = (int)((DateTime.Now - segmentStart).Ticks / timerLength.Ticks);
+                DateTimeTZ DateTimeNow = DateTimeTZ.Local.Now.ConvertTime(JsonConfig.settings.timezone);
+                int imageNumber = (int)((DateTimeNow.Time - segmentStart.Time).Ticks / timerLength.Ticks);
                 imageData.imageId = imageList[imageNumber];
                 imageData.imageNumber = imageNumber;
-                imageData.nextUpdateTicks = segmentStart.Ticks + timerLength.Ticks * (imageNumber + 1);
+                imageData.nextUpdateTicks = segmentStart.Time.Ticks + timerLength.Ticks * (imageNumber + 1);
             }
 
             return imageData;
@@ -273,7 +282,8 @@ namespace WinDynamicDesktop
 
         private void StartTimer(DateTime futureTime)
         {
-            long intervalTicks = futureTime.Ticks - DateTime.Now.Ticks;
+            DateTimeTZ DateTimeNow = DateTimeTZ.Local.Now.ConvertTime(JsonConfig.settings.timezone);
+            long intervalTicks = futureTime.Ticks - DateTimeNow.Time.Ticks;
 
             if (intervalTicks < timerError)
             {
@@ -305,7 +315,8 @@ namespace WinDynamicDesktop
 
         private void OnBackgroundTimerElapsed(object sender, EventArgs e)
         {
-            if (nextUpdateTime.HasValue && DateTime.Now >= nextUpdateTime.Value)
+            DateTimeTZ DateTimeNow = DateTimeTZ.Local.Now.ConvertTime(JsonConfig.settings.timezone);
+            if (nextUpdateTime.HasValue && DateTimeNow.Time >= nextUpdateTime.Value)
             {
                 HandleTimerEvent(true);
             }

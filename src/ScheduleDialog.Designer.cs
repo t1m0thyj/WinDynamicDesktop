@@ -44,6 +44,8 @@
             this.grantPermissionButton = new System.Windows.Forms.Button();
             this.sunriseSunsetDurationBox = new System.Windows.Forms.NumericUpDown();
             this.checkPermissionButton = new System.Windows.Forms.Button();
+            this.timezoneLabel = new System.Windows.Forms.Label();
+            this.timezoneBox = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.sunriseSunsetDurationBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -66,8 +68,9 @@
             // 
             // okButton
             // 
+            this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.okButton.Location = new System.Drawing.Point(166, 260);
+            this.okButton.Location = new System.Drawing.Point(166, 348);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 23);
             this.okButton.TabIndex = 2;
@@ -77,8 +80,9 @@
             // 
             // cancelButton
             // 
+            this.cancelButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(248, 260);
+            this.cancelButton.Location = new System.Drawing.Point(248, 348);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 3;
@@ -235,13 +239,32 @@
             this.checkPermissionButton.UseVisualStyleBackColor = true;
             this.checkPermissionButton.Click += new System.EventHandler(this.checkPermissionButton_Click);
             // 
+            // timezoneLabel
+            // 
+            this.timezoneLabel.AutoSize = true;
+            this.timezoneLabel.Location = new System.Drawing.Point(27, 284);
+            this.timezoneLabel.Name = "timezoneLabel";
+            this.timezoneLabel.Size = new System.Drawing.Size(136, 13);
+            this.timezoneLabel.TabIndex = 20;
+            this.timezoneLabel.Text = "Enter your timezone (e.g., ):";
+            // 
+            // timezoneBox
+            // 
+            this.timezoneBox.FormattingEnabled = true;
+            this.timezoneBox.Location = new System.Drawing.Point(30, 300);
+            this.timezoneBox.Name = "timezoneBox";
+            this.timezoneBox.Size = new System.Drawing.Size(293, 21);
+            this.timezoneBox.TabIndex = 21;
+            // 
             // ScheduleDialog
             // 
             this.AcceptButton = this.okButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(354, 301);
+            this.ClientSize = new System.Drawing.Size(354, 389);
+            this.Controls.Add(this.timezoneBox);
+            this.Controls.Add(this.timezoneLabel);
             this.Controls.Add(this.checkPermissionButton);
             this.Controls.Add(this.sunriseSunsetDurationBox);
             this.Controls.Add(this.grantPermissionButton);
@@ -289,6 +312,8 @@
         private System.Windows.Forms.Button grantPermissionButton;
         private System.Windows.Forms.NumericUpDown sunriseSunsetDurationBox;
         private System.Windows.Forms.Button checkPermissionButton;
+        private System.Windows.Forms.Label timezoneLabel;
+        private System.Windows.Forms.ComboBox timezoneBox;
     }
 }
 
