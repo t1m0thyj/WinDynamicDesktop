@@ -46,9 +46,8 @@ build:
   verbosity: minimal
 after_build:
 - ps: 'if (-Not $env:APPVEYOR_PULL_REQUEST_NUMBER) { & dotnet sonarscanner end /d:sonar.login="$env:SonarQubeToken" }'
+- ps: python scripts/package_zip.py
 
-
-    python scripts/package_zip.py
 artifacts:
 - path: dist\WinDynamicDesktop_Portable*.zip
   name: Portable ZIP
