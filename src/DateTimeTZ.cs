@@ -7,9 +7,6 @@ namespace WinDynamicDesktop
         public TimeZoneInfo TimeZone;
         public DateTime Time;
 
-        //public bool HasValue { get; internal set; }
-        // public DateTimeTZ Value { get; internal set; }
-
         public DateTimeTZ(TimeZoneInfo tz, DateTime time)
         {
             this.TimeZone = tz ?? throw new ArgumentNullException("The time zone cannot be a null reference.");

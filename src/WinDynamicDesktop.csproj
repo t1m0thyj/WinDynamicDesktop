@@ -35,9 +35,11 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>resources\WinDynamicDesktop.ico</ApplicationIcon>
@@ -61,6 +63,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <Optimize>true</Optimize>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -311,6 +314,9 @@
     </PackageReference>
     <PackageReference Include="cef.redist.x86">
       <Version>84.4.1</Version>
+    </PackageReference>
+    <PackageReference Include="CefSharp.Common">
+      <Version>84.4.10</Version>
     </PackageReference>
     <PackageReference Include="CefSharp.WinForms">
       <Version>84.4.10</Version>

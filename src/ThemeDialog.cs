@@ -2,19 +2,17 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+using CefSharp;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
-using System.Text;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Collections;
-using System.IO;
-using System.Runtime.InteropServices;
-using CefSharp;
 
 namespace WinDynamicDesktop
 {
@@ -29,15 +27,21 @@ namespace WinDynamicDesktop
         public ThemeDialog()
         {
             if (!Cef.IsInitialized)
-            {
+            { 
                 var settings = new CefSharp.WinForms.CefSettings();
-                settings.BrowserSubprocessPath = Path.Combine(Environment.CurrentDirectory,
-                    @"cef\CefSharp.BrowserSubprocess.exe");
+
+                // Set BrowserSubProcessPath based on app bitness at runtime
+                settings.BrowserSubprocessPath = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "cef",
+                                                       Environment.Is64BitProcess ? "x64" : "x86",
+                                                       "CefSharp.BrowserSubprocess.exe");
                 settings.Locale = Localization.GetCefLocale();
+
 #if !DEBUG
                 settings.LogSeverity = LogSeverity.Fatal;
 #endif
-                Cef.Initialize(settings);
+
+                // Make sure you set performDependencyCheck false
+                Cef.Initialize(settings, performDependencyCheck: false, browserProcessHandler: null);
             }
 
             InitializeComponent();
@@ -106,7 +110,8 @@ namespace WinDynamicDesktop
             {
                 using (Image thumbnailImage = ThemeThumbLoader.GetThumbnailImage(theme, thumbnailSize, true))
                 {
-                    this.Invoke(new Action(() => {
+                    this.Invoke(new Action(() =>
+                    {
                         listView1.LargeImageList.Images.Add(thumbnailImage);
                         ListViewItem newItem = listView1.Items.Add(ThemeManager.GetThemeName(theme),
                             listView1.LargeImageList.Images.Count - 1);
@@ -150,7 +155,6 @@ namespace WinDynamicDesktop
                         listView1.LargeImageList.Images[item.ImageIndex].Dispose();
                         break;
                     }
-
                 }
             }
 
@@ -362,7 +366,8 @@ namespace WinDynamicDesktop
                     listView1.LargeImageList.Images[imageIndex].Dispose();
                 }
 
-                Task.Run(() => {
+                Task.Run(() =>
+                {
                     ThemeManager.RemoveTheme(theme);
 
                     if (ThemeManager.defaultThemes.Contains(theme.themeId))
