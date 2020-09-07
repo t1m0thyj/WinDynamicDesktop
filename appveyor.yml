@@ -5,6 +5,15 @@ environment:
   UseTemporarySignCert: true
   SonarQubeToken:
     secure: 2aNov8Lbsmce/BShnhVa2ZeD6Og9kSQC2vO/6SegYlWx84TSQb2wI3Iu9fG1JYA3
+  matrix:
+    # 32 bits
+    - PYTHON: "C:\\Python38"
+      PYTHON_VERSION: "3.8.x"
+      PYTHON_ARCH: "32"
+    # 64 bits
+    - PYTHON: "C:\\Python38-x64"
+      PYTHON_VERSION: "3.8.x"
+      PYTHON_ARCH: "64"
 before_build:
 - ps: >-
     if ($env:APPVEYOR_REPO_TAG -eq "true")
@@ -24,8 +33,6 @@ before_build:
 
     choco install "sonarscanner-msbuild-net46" -y
 
-    pip install pywin32
-
     SonarScanner.MSBuild.exe begin /k:"t1m0thyj_WinDynamicDesktop" /d:"sonar.host.url=https://sonarcloud.io" /o:"t1m0thyj" /d:"sonar.login=$env:SonarQubeToken"
 build:
   verbosity: minimal
@@ -33,7 +40,7 @@ after_build:
 - ps: >-
     SonarScanner.MSBuild.exe end /d:"sonar.login=$env:SonarQubeToken"
 
-    python scripts\package_zip.py
+    %PYTHON%/python scripts\package_zip.py
 artifacts:
 - path: dist\WinDynamicDesktop_Portable*.zip
   name: Portable ZIP
