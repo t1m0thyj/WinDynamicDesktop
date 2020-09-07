@@ -18,7 +18,8 @@ matrix:
   fast_finish: false
 
 install:
-  - cmd: set "PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%"
+  - cmd: set "PATH=%PYTHON%;%PYTHON%\Scripts;$(PROGRAMFILES)\dotnet\;%PATH%"
+  - dotnet tool install --global dotnet-sonarscanner
   
 before_build:
 - ps: >-
@@ -47,6 +48,9 @@ build:
 after_build:
 - ps: 'if (-Not $env:APPVEYOR_PULL_REQUEST_NUMBER) { & dotnet sonarscanner end /d:sonar.login="$env:SonarQubeToken" }'
 - ps: python scripts/package_zip.py
+
+test_script:
+- ps: 'if (-Not $env:APPVEYOR_PULL_REQUEST_NUMBER) { & dotnet sonarscanner end /d:sonar.login="$env:SonarQubeToken" }'
 
 artifacts:
 - path: dist\WinDynamicDesktop_Portable*.zip
