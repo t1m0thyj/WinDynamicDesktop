@@ -20,6 +20,7 @@ matrix:
 install:
   - cmd: set "PATH=%PYTHON%;%PYTHON%\Scripts;$(PROGRAMFILES)\dotnet\;%PATH%"
   - dotnet tool install --global dotnet-sonarscanner
+  - pip install pywin32
   
 before_build:
 - ps: >-
