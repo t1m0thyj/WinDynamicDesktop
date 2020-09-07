@@ -1,5 +1,41 @@
 version: 1.0.{build}
 image: Visual Studio 2019
+matrix:
+    # 32 bits
+    - PYTHON: "C:\\Python27"
+      PYTHON_VERSION: "2.7.x"
+      PYTHON_ARCH: "32"
+    - PYTHON: "C:\\Python35"
+      PYTHON_VERSION: "3.5.x"
+      PYTHON_ARCH: "32"
+    - PYTHON: "C:\\Python36"
+      PYTHON_VERSION: "3.6.x"
+      PYTHON_ARCH: "32"
+    - PYTHON: "C:\\Python37"
+      PYTHON_VERSION: "3.7.x"
+      PYTHON_ARCH: "32"
+    - PYTHON: "C:\\Python38"
+      PYTHON_VERSION: "3.8.x"
+      PYTHON_ARCH: "32"
+    # 64 bits
+    - PYTHON: "C:\\Python27-x64"
+      PYTHON_VERSION: "2.7.x"
+      PYTHON_ARCH: "64"
+    - PYTHON: "C:\\Python35-x64"
+      PYTHON_VERSION: "3.5.x"
+      PYTHON_ARCH: "64"
+    - PYTHON: "C:\\Python36-x64"
+      PYTHON_VERSION: "3.6.x"
+      PYTHON_ARCH: "64"
+    - PYTHON: "C:\\Python37-x64"
+      PYTHON_VERSION: "3.7.x"
+      PYTHON_ARCH: "64"
+    - PYTHON: "C:\\Python38-x64"
+      PYTHON_VERSION: "3.8.x"
+      PYTHON_ARCH: "64"
+init:
+  - "ECHO %PYTHON% %PYTHON_VERSION% %PYTHON_ARCH%"
+  
 configuration: Release
 environment:
   UseTemporarySignCert: true
@@ -24,8 +60,6 @@ before_build:
 
     choco install "sonarscanner-msbuild-net46" -y
 
-    pip install pywin32
-
     SonarScanner.MSBuild.exe begin /k:"t1m0thyj_WinDynamicDesktop" /d:"sonar.host.url=https://sonarcloud.io" /o:"t1m0thyj" /d:"sonar.login=$env:SonarQubeToken"
 build:
   verbosity: minimal
@@ -33,7 +67,7 @@ after_build:
 - ps: >-
     SonarScanner.MSBuild.exe end /d:"sonar.login=$env:SonarQubeToken"
 
-    python scripts\package_zip.py
+    %PYTHON%/python scripts\package_zip.py
 artifacts:
 - path: dist\WinDynamicDesktop_Portable*.zip
   name: Portable ZIP
