@@ -14,6 +14,12 @@ environment:
     - PYTHON: "C:\\Python38-x64"
       PYTHON_VERSION: "3.8.x"
       PYTHON_ARCH: "64"
+matrix:
+  fast_finish: false
+
+install:
+  - cmd: set "PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%"
+  
 before_build:
 - ps: >-
     if ($env:APPVEYOR_REPO_TAG -eq "true")
@@ -39,10 +45,10 @@ build_script:
 build:
   verbosity: minimal
 after_build:
-- ps: >-
-    SonarScanner.MSBuild.exe end /d:"sonar.login=$env:SonarQubeToken"
+- ps: 'if (-Not $env:APPVEYOR_PULL_REQUEST_NUMBER) { & dotnet sonarscanner end /d:sonar.login="$env:SonarQubeToken" }'
 
-    %PYTHON%/python scripts\package_zip.py
+
+    python scripts/package_zip.py
 artifacts:
 - path: dist\WinDynamicDesktop_Portable*.zip
   name: Portable ZIP
