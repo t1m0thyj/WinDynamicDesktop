@@ -1,38 +1,56 @@
 version: 1.0.{build}
-skip_branch_with_pr: true
 image: Visual Studio 2019
 configuration: Release
 environment:
   UseTemporarySignCert: true
   SonarQubeToken:
     secure: 2aNov8Lbsmce/BShnhVa2ZeD6Og9kSQC2vO/6SegYlWx84TSQb2wI3Iu9fG1JYA3
+  matrix:
+    # 32 bits
+    - PYTHON: "C:\\Python38"
+      PYTHON_VERSION: "3.8.x"
+      PYTHON_ARCH: "32"
+    # 64 bits
+    - PYTHON: "C:\\Python38-x64"
+      PYTHON_VERSION: "3.8.x"
+      PYTHON_ARCH: "64"
+matrix:
+  fast_finish: false
+
 install:
-- ps: choco install "sonarscanner-msbuild-net46" -y
+  - cmd: set "PATH=%PYTHON%;%PYTHON%\Scripts;$(PROGRAMFILES)\dotnet\;%PATH%"
+  - dotnet tool install --global dotnet-sonarscanner
+  - pip install pywin32
+  
 before_build:
 - ps: >-
-    if ($env:APPVEYOR_REPO_TAG -eq "true") {
+    if ($env:APPVEYOR_REPO_TAG -eq "true")
+
+    {
         Update-AppveyorBuild -Version "$($env:APPVEYOR_REPO_TAG_NAME.TrimStart("v"))"
-    } else {
+    }
+
+    else
+
+    {
         Update-AppveyorBuild -Version "dev-$($env:APPVEYOR_REPO_COMMIT.Substring(0, 7))"
     }
 
 
     nuget restore src\WinDynamicDesktop.sln
 
+build_script:
+- ps: 'if (-Not $env:APPVEYOR_PULL_REQUEST_NUMBER) { & dotnet sonarscanner begin /k:"t1m0thyj_WinDynamicDesktop" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="$env:SonarQubeToken" /v:"$env:APPVEYOR_BUILD_NUMBER" /d:sonar.cs.opencover.reportsPaths="$env:CD\coverage.xml" }'
 
-    if (-Not $env:APPVEYOR_PULL_REQUEST_NUMBER -And $env:APPVEYOR_REPO_BRANCH -eq "master") {
-        SonarScanner.MSBuild.exe begin /k:"t1m0thyj_WinDynamicDesktop" /d:"sonar.host.url=https://sonarcloud.io" /o:"t1m0thyj" /d:"sonar.login=$env:SonarQubeToken"
-    }
 build:
   verbosity: minimal
+  
 after_build:
-- ps: >-
-    if (-Not $env:APPVEYOR_PULL_REQUEST_NUMBER -And $env:APPVEYOR_REPO_BRANCH -eq "master") {
-        SonarScanner.MSBuild.exe end /d:"sonar.login=$env:SonarQubeToken"
-    }
+- ps: python scripts/package_zip.py
 
+test_script:
+- ps: 'if (-Not $env:APPVEYOR_PULL_REQUEST_NUMBER) { & dotnet sonarscanner end /d:sonar.login="$env:SonarQubeToken" }'
 
-    powershell scripts\package_zip.ps1
 artifacts:
 - path: dist\WinDynamicDesktop_Portable*.zip
   name: Portable ZIP
