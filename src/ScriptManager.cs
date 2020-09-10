@@ -62,19 +62,21 @@ namespace WinDynamicDesktop
 
         private static void RunScript(string path, ScriptArgs args)
         {
-            using var ps = PowerShell.Create();
-            ps.AddScript("Set-ExecutionPolicy Bypass -Scope Process -Force");
-            ps.AddScript(File.ReadAllText(path));
-            ps.AddParameter("daySegment2", args.daySegment2);
-            ps.AddParameter("daySegment4", args.daySegment4);
-            ps.AddParameter("imagePath", args.imagePath);
-            ps.Invoke();
-
-            if (ps.Streams.Error.Count > 0)
+            using (var ps = PowerShell.Create())
             {
-                MessageDialog.ShowWarning(string.Format(_("Error(s) running PowerShell script '{0}':\n\n{1}"), path,
-                    string.Join("\n\n", ps.Streams.Error.ReadAll().Select((er) => er.Exception.ToString()))),
-                    _("Script Error"));
+                ps.AddScript("Set-ExecutionPolicy Bypass -Scope Process -Force");
+                ps.AddScript(File.ReadAllText(path));
+                ps.AddParameter("daySegment2", args.daySegment2);
+                ps.AddParameter("daySegment4", args.daySegment4);
+                ps.AddParameter("imagePath", args.imagePath);
+                ps.Invoke();
+
+                if (ps.Streams.Error.Count > 0)
+                {
+                    MessageDialog.ShowWarning(string.Format(_("Error(s) running PowerShell script '{0}':\n\n{1}"), path,
+                        string.Join("\n\n", ps.Streams.Error.ReadAll().Select((er) => er.Exception.ToString()))),
+                        _("Script Error"));
+                }
             }
         }
     }

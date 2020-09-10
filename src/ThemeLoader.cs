@@ -14,7 +14,6 @@ using Newtonsoft.Json;
 
 namespace WinDynamicDesktop
 {
-#nullable disable
     public class ThemeConfig
     {
         public string themeId { get; set; }
@@ -28,7 +27,6 @@ namespace WinDynamicDesktop
         public int[] sunsetImageList { get; set; }
         public int[] nightImageList { get; set; }
     }
-#nullable restore
 
     class ThemeLoader
     {
@@ -145,7 +143,7 @@ namespace WinDynamicDesktop
                         }
 
                         return ThemeJsonValidator.ValidateFull(theme).Match(RollbackInstall,
-                            theme => new ThemeResult(theme));
+                            theme2 => new ThemeResult(theme2));
                     });
                 }
             }
@@ -188,7 +186,7 @@ namespace WinDynamicDesktop
                     }
                 }
 
-                return ThemeJsonValidator.ValidateFull(theme).Match(RollbackInstall, theme => new ThemeResult(theme));
+                return ThemeJsonValidator.ValidateFull(theme).Match(RollbackInstall, theme2 => new ThemeResult(theme2));
             });
         }
 

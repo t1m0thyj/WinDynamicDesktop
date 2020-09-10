@@ -14,7 +14,6 @@ using PropertyChanged;
 
 namespace WinDynamicDesktop
 {
-#nullable disable
     [AddINotifyPropertyChangedInterface]
     public class AppConfig : INotifyPropertyChanged
     {
@@ -43,7 +42,6 @@ namespace WinDynamicDesktop
         public bool fullScreenPause { get; set; }
         public bool enableScripts { get; set; }
     }
-#nullable restore
 
     class JsonConfig
     {

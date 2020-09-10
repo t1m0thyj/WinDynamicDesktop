@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Globalization;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Windows.Forms;
 using NGettext;
 using RestSharp;
@@ -65,16 +66,15 @@ namespace WinDynamicDesktop
             }
             else
             {
-                byte[] embeddedMo = (byte[])Properties.Resources.ResourceManager.GetObject(
-                    "locale_" + currentLocale.Replace('-', '_'));
+                string resourceName = "WinDynamicDesktop.locale." + moFile;
 
-                if (embeddedMo == null)
+                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
                 {
-                    return;
-                }
+                    if (stream == null)
+                    {
+                        return;
+                    }
 
-                using (Stream stream = new MemoryStream(embeddedMo))
-                {
                     catalog = new Catalog(stream, new CultureInfo(currentLocale));
                 }
             }

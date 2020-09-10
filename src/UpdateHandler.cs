@@ -13,7 +13,6 @@ using Newtonsoft.Json;
 
 namespace WinDynamicDesktop
 {
-#nullable disable
     public class LegacyConfig
     {
         public bool changeSystemTheme { get; set; }
@@ -22,7 +21,6 @@ namespace WinDynamicDesktop
         public bool useAutoBrightness { get; set; }
         public bool useCustomAutoBrightness { get; set; }
     }
-#nullable restore
 
     class UpdateHandler
     {

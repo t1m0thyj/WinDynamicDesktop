@@ -121,77 +121,8 @@
   <data name="AppIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\WinDynamicDesktop.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Catalina_thumbnail" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\Catalina_thumbnail.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Mojave_Desert_thumbnail" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\Mojave_Desert_thumbnail.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Solar_Gradients_thumbnail" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\Solar_Gradients_thumbnail.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="locale_cs" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\locale\cs.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="locale_de" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\locale\de.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="locale_el" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\locale\el.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="locale_es" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\locale\es.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="locale_fr" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\locale\fr.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="locale_it" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\locale\it.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="locale_mk" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\locale\mk.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="locale_pl" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\locale\pl.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="locale_ro" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\locale\ro.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="locale_ru" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\locale\ru.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="locale_tr" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\locale\tr.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="locale_zh_Hans" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\locale\zh-Hans.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="locale_bn" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\locale\bn.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="locale_hi" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\locale\hi.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="locale_id" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\locale\id.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="locale_pt_br" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\locale\pt-br.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="Big_Sur_Abstract_thumbnail" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\Big_Sur_Abstract_thumbnail.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Big_Sur_thumbnail" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\Big_Sur_thumbnail.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="locale_bg" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\locale\bg.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="locale_ja" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\locale\ja.mo;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="default_themes" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\default_themes.yaml;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="default_themes_yaml" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\default_themes.yaml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="preview_html" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\preview.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>

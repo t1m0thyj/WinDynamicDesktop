@@ -21,7 +21,6 @@ namespace WinDynamicDesktop
                 return;
             }
 
-            using StreamWriter debugLog = new StreamWriter("debug.log");
             AppConfig settings = null;
 
             try
@@ -31,34 +30,37 @@ namespace WinDynamicDesktop
             }
             catch { /* Do nothing */ }
 
-            if (settings != null)
+            using (StreamWriter debugLog = new StreamWriter("debug.log"))
             {
-                settings.location = "redacted";
-                settings.latitude = "0";
-                settings.longitude = "0";
-                debugLog.WriteLine("./settings.conf");
-                debugLog.WriteLine(JsonConvert.SerializeObject(settings, Formatting.Indented));
-            }
-            else
-            {
-                debugLog.WriteLine("WARNING: Settings file not found or invalid");
-            }
-
-            if (Directory.Exists("themes"))
-            {
-                foreach (string path in Directory.EnumerateFiles("themes", "*", SearchOption.AllDirectories))
+                if (settings != null)
                 {
-                    debugLog.WriteLine("./" + path.Replace('\\', '/'));
+                    settings.location = "redacted";
+                    settings.latitude = "0";
+                    settings.longitude = "0";
+                    debugLog.WriteLine("./settings.conf");
+                    debugLog.WriteLine(JsonConvert.SerializeObject(settings, Formatting.Indented));
+                }
+                else
+                {
+                    debugLog.WriteLine("WARNING: Settings file not found or invalid");
+                }
 
-                    if (Path.GetExtension(path) == ".json")
+                if (Directory.Exists("themes"))
+                {
+                    foreach (string path in Directory.EnumerateFiles("themes", "*", SearchOption.AllDirectories))
                     {
-                        debugLog.WriteLine(File.ReadAllText(path));
+                        debugLog.WriteLine("./" + path.Replace('\\', '/'));
+
+                        if (Path.GetExtension(path) == ".json")
+                        {
+                            debugLog.WriteLine(File.ReadAllText(path));
+                        }
                     }
                 }
-            }
-            else
-            {
-                debugLog.WriteLine("WARNING: Themes directory not found");
+                else
+                {
+                    debugLog.WriteLine("WARNING: Themes directory not found");
+                }
             }
         }
     }
