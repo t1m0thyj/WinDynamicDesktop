@@ -5,4 +5,6 @@ $appVersion = (Get-Item -path "$buildDir\WinDynamicDesktop.exe").VersionInfo.Pro
 
 python .\clean_release.py "$buildDir"
 
-7z a "..\dist\WinDynamicDesktop_Portable_$appVersion.zip" "$buildDir\*"
+7z a "..\dist\WinDynamicDesktop_$appVersion`_Portable.zip" "$buildDir\*"
+
+iscc .\installer.iss
