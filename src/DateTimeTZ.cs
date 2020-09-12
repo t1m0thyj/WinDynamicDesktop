@@ -75,6 +75,11 @@ namespace WinDynamicDesktop
             return this.ConvertTime(TimeZoneInfo.FindSystemTimeZoneById(timezoneid));
         }
 
+        internal DateTimeTZ ToUniversalTimeTZ()
+        {
+            return new DateTimeTZ(TimeZoneInfo.Utc, TimeZoneInfo.ConvertTimeToUtc(this.Time, this.TimeZone));
+        }
+
         internal DateTime ToUniversalTime()
         {
             return TimeZoneInfo.ConvertTimeToUtc(this.Time, this.TimeZone);

@@ -76,7 +76,7 @@ namespace WinDynamicDesktop
 
         private static DateTimeTZ GetSolarTime(List<SunPhase> sunPhases, SunPhaseName desiredPhase)
         {
-            return new DateTimeTZ(TimeZoneInfo.FindSystemTimeZoneById(JsonConfig.settings.timezone), sunPhases.Single(sunPhase => sunPhase.Name.Value == desiredPhase.Value).PhaseTime);
+            return new DateTimeTZ(TimeZoneInfo.Utc, sunPhases.Single(sunPhase => sunPhase.Name.Value == desiredPhase.Value).PhaseTime.ToUniversalTime()).ConvertTime(JsonConfig.settings.timezone);
         }
 
         public static SolarData GetSolarData(DateTimeTZ date)
@@ -93,8 +93,8 @@ namespace WinDynamicDesktop
 
             try
             {
-                data.sunriseTime = GetSolarTime(sunPhases, SunPhaseName.Sunrise);
-                data.sunsetTime = GetSolarTime(sunPhases, SunPhaseName.Sunset);
+                data.sunriseTime = GetSolarTime(sunPhases, SunPhaseName.Sunrise).ConvertTime(JsonConfig.settings.timezone);
+                data.sunsetTime = GetSolarTime(sunPhases, SunPhaseName.Sunset).ConvertTime(JsonConfig.settings.timezone);
                 data.solarTimes = new DateTimeTZ[4]
                 {
                     GetSolarTime(sunPhases, SunPhaseName.Dawn),
@@ -106,8 +106,7 @@ namespace WinDynamicDesktop
             catch (InvalidOperationException)  // Handle polar day/night
             {
                 DateTimeTZ solarNoon = GetSolarTime(sunPhases, SunPhaseName.SolarNoon);
-                double sunAltitude = SunCalcNet.SunCalc.GetSunPosition(solarNoon.ToUniversalTime(), latitude,
-                    longitude).Altitude;
+                double sunAltitude = SunCalcNet.SunCalc.GetSunPosition(solarNoon.ToUniversalTime(), latitude, longitude).Altitude;
 
                 if (sunAltitude > 0)
                 {
