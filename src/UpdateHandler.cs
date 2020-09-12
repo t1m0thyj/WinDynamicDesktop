@@ -214,5 +214,17 @@ namespace WinDynamicDesktop
                 return DateTime.Parse(dateTime);
             }
         }
+
+        public static DateTimeTZ SafeParse(string dateTime, TimeZoneInfo tz)
+        {
+            try
+            {
+                return DateTimeTZ.Parse(dateTime, tz, CultureInfo.InvariantCulture);
+            }
+            catch (FormatException)
+            {
+                return DateTimeTZ.Parse(dateTime, tz);
+            }
+        }
     }
 }
