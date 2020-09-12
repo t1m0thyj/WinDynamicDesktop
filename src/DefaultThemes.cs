@@ -16,7 +16,7 @@ namespace WinDynamicDesktop
 
         public static string[] GetDefaultThemes()
         {
-            string yamlText = Encoding.UTF8.GetString(Properties.Resources.default_themes);
+            string yamlText = Properties.Resources.default_themes_yaml;
             yamlLines = yamlText.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
                 .Select((line) => line.Trim()).ToArray();
 

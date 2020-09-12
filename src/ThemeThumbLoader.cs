@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Reflection;
 
 namespace WinDynamicDesktop
 {
@@ -109,9 +110,12 @@ namespace WinDynamicDesktop
                 }
                 else if (ThemeManager.defaultThemes.Contains(theme.themeId))
                 {
-                    Image cachedImage = (Image)Properties.Resources.ResourceManager.GetObject(
-                        theme.themeId + "_thumbnail");
-                    return ScaleImage(cachedImage, size);
+                    string resourceName = "WinDynamicDesktop.resources." + theme.themeId + "_thumbnail.jpg";
+
+                    using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+                    {
+                        return ScaleImage(Image.FromStream(stream), size);
+                    }
                 }
             }
 

@@ -14,7 +14,6 @@ using PropertyChanged;
 
 namespace WinDynamicDesktop
 {
-#nullable disable
     [AddINotifyPropertyChangedInterface]
     public class AppConfig : INotifyPropertyChanged
     {
@@ -54,7 +53,6 @@ namespace WinDynamicDesktop
             }
         }
     }
-#nullable restore
 
     class JsonConfig
     {

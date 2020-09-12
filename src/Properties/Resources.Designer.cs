@@ -71,261 +71,40 @@ namespace WinDynamicDesktop.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized string similar to Big_Sur:
+        ///- https://github.com/t1m0thyj/WDD-mac-themes/releases/download/big-sur/Big_Sur.ddw
+        ///- https://onedrive.live.com/download?cid=CC2E3BD0360C1775&amp;resid=CC2E3BD0360C1775%216182&amp;authkey=AA94LmSmEKl9rhM
+        ///
+        ///Big_Sur_Abstract:
+        ///- https://github.com/t1m0thyj/WDD-mac-themes/releases/download/big-sur/Big_Sur_Abstract.ddw
+        ///- https://bitbucket.org/t1m0thyj/wdd-themes/downloads/Big_Sur_Abstract.ddw
+        ///- https://onedrive.live.com/download?cid=CC2E3BD0360C1775&amp;resid=CC2E3BD0360C1775%216183&amp;authkey=ADevG8ifoBg_74Q
+        ///
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static System.Drawing.Bitmap Big_Sur_Abstract_thumbnail {
+        internal static string default_themes_yaml {
             get {
-                object obj = ResourceManager.GetObject("Big_Sur_Abstract_thumbnail", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Big_Sur_thumbnail {
-            get {
-                object obj = ResourceManager.GetObject("Big_Sur_thumbnail", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Catalina_thumbnail {
-            get {
-                object obj = ResourceManager.GetObject("Catalina_thumbnail", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] default_themes {
-            get {
-                object obj = ResourceManager.GetObject("default_themes", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] locale_bg {
-            get {
-                object obj = ResourceManager.GetObject("locale_bg", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] locale_bn {
-            get {
-                object obj = ResourceManager.GetObject("locale_bn", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] locale_cs {
-            get {
-                object obj = ResourceManager.GetObject("locale_cs", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] locale_de {
-            get {
-                object obj = ResourceManager.GetObject("locale_de", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] locale_el {
-            get {
-                object obj = ResourceManager.GetObject("locale_el", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] locale_es {
-            get {
-                object obj = ResourceManager.GetObject("locale_es", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] locale_fr {
-            get {
-                object obj = ResourceManager.GetObject("locale_fr", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] locale_hi {
-            get {
-                object obj = ResourceManager.GetObject("locale_hi", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] locale_id {
-            get {
-                object obj = ResourceManager.GetObject("locale_id", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] locale_it {
-            get {
-                object obj = ResourceManager.GetObject("locale_it", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] locale_ja {
-            get {
-                object obj = ResourceManager.GetObject("locale_ja", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] locale_mk {
-            get {
-                object obj = ResourceManager.GetObject("locale_mk", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] locale_pl {
-            get {
-                object obj = ResourceManager.GetObject("locale_pl", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] locale_pt_br {
-            get {
-                object obj = ResourceManager.GetObject("locale_pt_br", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] locale_ro {
-            get {
-                object obj = ResourceManager.GetObject("locale_ro", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] locale_ru {
-            get {
-                object obj = ResourceManager.GetObject("locale_ru", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] locale_tr {
-            get {
-                object obj = ResourceManager.GetObject("locale_tr", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] locale_zh_Hans {
-            get {
-                object obj = ResourceManager.GetObject("locale_zh_Hans", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Mojave_Desert_thumbnail {
-            get {
-                object obj = ResourceManager.GetObject("Mojave_Desert_thumbnail", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("default_themes_yaml", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
         ///&lt;html lang=&quot;en&quot;&gt;
-        ///
         ///&lt;head&gt;
-        ///    &lt;meta charset=&quot;UTF-8&quot;&gt;
-        ///    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
-        ///    &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;ie=edge&quot;&gt;
-        ///    &lt;title&gt;{{themeName}} | WinDynamicDesktop Themes&lt;/title&gt;
-        ///    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css&quot;&gt;
-        ///    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css&quot;&gt;
-        ///    [rest of string was truncated]&quot;;.
+        ///  &lt;meta charset=&quot;UTF-8&quot;&gt;
+        ///  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+        ///  &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;ie=edge&quot;&gt;
+        ///  &lt;title&gt;{{themeName}} | WinDynamicDesktop Themes&lt;/title&gt;
+        ///  &lt;base href=&quot;{{basePath}}/&quot;&gt;
+        ///  &lt;link rel=&quot;stylesheet&quot; href=&quot;assets/css/font-awesome.min.css&quot;&gt;
+        ///  &lt;link rel=&quot;stylesheet&quot; href=&quot;assets/css/bootstrap.min.css&quot;&gt;
+        ///  &lt;script src=&quot;assets/js/jquery.slim.min.js&quot;&gt;&lt;/script&gt;
+        ///  &lt;script src=&quot;assets/js/bootstrap.mi [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string preview_html {
             get {
                 return ResourceManager.GetString("preview_html", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Solar_Gradients_thumbnail {
-            get {
-                object obj = ResourceManager.GetObject("Solar_Gradients_thumbnail", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

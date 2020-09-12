@@ -21,7 +21,7 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={localappdata}\Programs\{#MyAppName}
 DisableProgramGroupPage=yes
-LicenseFile=LICENSE
+LicenseFile=..\LICENSE
 PrivilegesRequired=lowest
 OutputDir=..\dist
 OutputBaseFilename={#MyAppName}_{#MyAppVersion}_Setup
@@ -103,7 +103,7 @@ Name: "startonboot"; Description: "&Start {#MyAppName} with Windows"; GroupDescr
 Name: "registerddw"; Description: "&Associate .ddw extension with {#MyAppName}"; GroupDescription: "Other tasks:"
 
 [Files]
-Source: "..\src\bin\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\src\bin\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

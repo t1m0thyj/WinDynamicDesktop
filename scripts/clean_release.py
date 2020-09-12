@@ -1,12 +1,11 @@
+#!/usr/bin/env python3
 import fnmatch
 import os
-import subprocess
-
-from win32com.client import Dispatch
+import sys
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
-build_dir = "..\\src\\bin\\Release"
+build_dir = sys.argv[1] if len(sys.argv) > 1 else "..\\src\\bin\\Release"
 patterns_exclude = (
     "cef/*.pdb",
     "cef/*.xml",
@@ -52,6 +51,3 @@ for root, dirs, files in os.walk(build_dir, topdown=False):
         if not should_include_file(rel_name):
             print("+ rm", rel_name.replace("\\", "/"))
             os.unlink(abs_name)
-
-app_version = Dispatch("Scripting.FileSystemObject").GetFileVersion(f"{build_dir}\\WinDynamicDesktop.exe")
-subprocess.call(["7z", "a", f"..\\dist\\WinDynamicDesktop_Portable_{app_version}.zip", f"{build_dir}\\*"])

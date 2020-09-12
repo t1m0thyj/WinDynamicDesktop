@@ -2,15 +2,17 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Globalization;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace WinDynamicDesktop
 {
-#nullable disable
-
     public class LegacyConfig
     {
         public bool changeSystemTheme { get; set; }
@@ -20,9 +22,7 @@ namespace WinDynamicDesktop
         public bool useCustomAutoBrightness { get; set; }
     }
 
-#nullable restore
-
-    internal class UpdateHandler
+    class UpdateHandler
     {
         private static readonly string Catalina_JSON = @"{
   'imageUrls': [
@@ -139,55 +139,42 @@ namespace WinDynamicDesktop
                 case "cs_CZ":
                     JsonConfig.settings.language = "cs";
                     return;
-
                 case "de_DE":
                     JsonConfig.settings.language = "de";
                     return;
-
                 case "en_US":
                     JsonConfig.settings.language = "en";
                     return;
-
                 case "es_ES":
                     JsonConfig.settings.language = "es";
                     return;
-
                 case "fr_FR":
                     JsonConfig.settings.language = "fr";
                     return;
-
                 case "el_GR":
                     JsonConfig.settings.language = "el";
                     return;
-
                 case "it_IT":
                     JsonConfig.settings.language = "it";
                     return;
-
                 case "mk_MK":
                     JsonConfig.settings.language = "mk";
                     return;
-
                 case "pl_PL":
                     JsonConfig.settings.language = "pl";
                     return;
-
                 case "ro_RO":
                     JsonConfig.settings.language = "ro";
                     return;
-
                 case "ru_RU":
                     JsonConfig.settings.language = "ru";
                     return;
-
                 case "tr_TR":
                     JsonConfig.settings.language = "tr";
                     return;
-
                 case "zh_CN":
                     JsonConfig.settings.language = "zh-Hans";
                     return;
-
                 default:
                     return;
             }
@@ -225,18 +212,6 @@ namespace WinDynamicDesktop
             catch (FormatException)
             {
                 return DateTime.Parse(dateTime);
-            }
-        }
-
-        public static DateTimeTZ SafeParse(string dateTime, TimeZoneInfo tz)
-        {
-            try
-            {
-                return DateTimeTZ.Parse(dateTime, tz, CultureInfo.InvariantCulture);
-            }
-            catch (FormatException)
-            {
-                return DateTimeTZ.Parse(dateTime, tz);
             }
         }
     }
