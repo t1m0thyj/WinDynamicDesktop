@@ -31,9 +31,19 @@ namespace WinDynamicDesktop
                 var settings = new CefSharp.WinForms.CefSettings();
 
                 // Set BrowserSubProcessPath based on app bitness at runtime
-                settings.BrowserSubprocessPath = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "cef",
-                                                       Environment.Is64BitProcess ? "x64" : "x86",
-                                                       "CefSharp.BrowserSubprocess.exe");
+                if (Directory.Exists(Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "cef",
+                                                       Environment.Is64BitProcess ? "x64" : "x86")))
+                {
+                    settings.BrowserSubprocessPath = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "cef",
+                                                           Environment.Is64BitProcess ? "x64" : "x86",
+                                                           "CefSharp.BrowserSubprocess.exe");
+                }
+                else
+                {
+                    settings.BrowserSubprocessPath = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "cef",
+                                                           "CefSharp.BrowserSubprocess.exe");
+                }
+
                 settings.Locale = Localization.GetCefLocale();
 
 #if !DEBUG

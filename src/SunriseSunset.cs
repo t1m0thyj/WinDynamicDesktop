@@ -16,33 +16,9 @@ namespace WinDynamicDesktop
     {
         public PolarPeriod polarPeriod = PolarPeriod.None;
 
-        private DateTimeTZ defaultSunriseTime = DateTimeTZ.UTC.Now.ConvertTime(JsonConfig.settings.timezone);
+        public DateTimeTZ sunriseTime { get; set; } = DateTimeTZ.Local.Now.ConvertTime(JsonConfig.settings.timezone);
 
-        private DateTimeTZ defaultSunsetTime = DateTimeTZ.UTC.Now.ConvertTime(JsonConfig.settings.timezone);
-
-        public DateTimeTZ sunriseTime
-        {
-            get
-            {
-                return this.defaultSunriseTime;
-            }
-            set
-            {
-                this.defaultSunriseTime = value;
-            }
-        }
-
-        public DateTimeTZ sunsetTime
-        {
-            get
-            {
-                return this.defaultSunsetTime;
-            }
-            set
-            {
-                this.defaultSunsetTime = value;
-            }
-        }
+        public DateTimeTZ sunsetTime { get; set; } = DateTimeTZ.Local.Now.ConvertTime(JsonConfig.settings.timezone);
 
         public DateTimeTZ[] solarTimes { get; set; }
     }
