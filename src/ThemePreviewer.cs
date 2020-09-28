@@ -32,7 +32,7 @@ namespace WinDynamicDesktop
                 replacers.Add("previewMessage", string.Format(_("Previewing {0}"), "<span id=\"previewText\"></span>"));
 
                 SolarData solarData = SunriseSunsetService.GetSolarData(DateTime.Today);
-                SchedulerState wpState = AppContext.wpEngine.GetImageData(solarData, theme);
+                SchedulerState wpState = AppContext.wpEngine.GetImageData(solarData, theme, DateTime.Now);
 
                 if (ThemeManager.IsThemeDownloaded(theme))
                 {

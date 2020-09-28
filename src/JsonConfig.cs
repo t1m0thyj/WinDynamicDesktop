@@ -41,6 +41,7 @@ namespace WinDynamicDesktop
         public int sunriseSunsetDuration { get; set; }
         public bool fullScreenPause { get; set; }
         public bool enableScripts { get; set; }
+        public bool enableInterpolation { get; set; }
     }
 
     class JsonConfig

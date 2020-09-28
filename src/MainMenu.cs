@@ -18,6 +18,7 @@ namespace WinDynamicDesktop
         public static ToolStripMenuItem themeItem;
         public static ToolStripMenuItem darkModeItem;
         public static ToolStripMenuItem startOnBootItem;
+        public static ToolStripMenuItem interpolateItem;
         public static ToolStripMenuItem enableScriptsItem;
         public static ToolStripMenuItem shuffleItem;
         public static ToolStripMenuItem fullScreenItem;
@@ -99,6 +100,11 @@ namespace WinDynamicDesktop
             enableScriptsItem.Checked = JsonConfig.settings.enableScripts;
             items.Add(enableScriptsItem);
             items.Add(new ToolStripMenuItem(_("Manage installed scripts"), null, OnManageScriptsClick));
+            items.Add(new ToolStripSeparator());
+
+            interpolateItem = new ToolStripMenuItem(_("&Enable image interpolation"), null, OnEnableInterpolationClick);
+            interpolateItem.Checked = JsonConfig.settings.enableInterpolation;
+            items.Add(interpolateItem);
 
             return items;
         }
@@ -176,6 +182,11 @@ namespace WinDynamicDesktop
         private static void OnManageScriptsClick(object sender, EventArgs e)
         {
             Process.Start("explorer", "scripts");
+        }
+
+        private static void OnEnableInterpolationClick(object sender, EventArgs e)
+        {
+            AppContext.wpEngine.ToggleInterpolation();
         }
     }
 }

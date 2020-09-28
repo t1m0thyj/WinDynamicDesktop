@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 using Microsoft.Win32;
 using System.IO;
 using System.Timers;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Drawing.Drawing2D;
 
 namespace WinDynamicDesktop
 {
@@ -17,9 +20,19 @@ namespace WinDynamicDesktop
     {
         public int imageId;
         public int imageNumber;
-        public long nextUpdateTicks;
+        public long startTick;
+        public long endTick;
         public int daySegment2;
         public int daySegment4;
+    }
+
+    public class InterpolationState
+    {
+        public int imageId1;
+        public int imageId2;
+        public long startTick;
+        public long endTick;
+        public float lastPercent;
     }
 
     class WallpaperChangeScheduler
@@ -36,10 +49,13 @@ namespace WinDynamicDesktop
         private Timer schedulerTimer = new Timer();
         private const long timerError = (long)(TimeSpan.TicksPerMillisecond * 15.6);
 
+        private InterpolationState interpolation = new InterpolationState();
+        private static readonly object interpolationLock = new object();
+
         public WallpaperChangeScheduler()
         {
             fullScreenChecker = new FullScreenApi(this);
-            
+
             backgroundTimer.AutoReset = true;
             backgroundTimer.Interval = 60e3;
             backgroundTimer.Elapsed += OnBackgroundTimerElapsed;
@@ -73,12 +89,32 @@ namespace WinDynamicDesktop
                 WallpaperShuffler.MaybeShuffleWallpaper();
             }
 
-            SchedulerState imageData = GetImageData(data, ThemeManager.currentTheme);
+            SchedulerState imageData = GetImageData(data, ThemeManager.currentTheme, DateTime.Now);
 
             if (ThemeManager.currentTheme != null)
             {
-                SetWallpaper(imageData.imageId);
-                nextImageUpdateTime = new DateTime(imageData.nextUpdateTicks);
+                nextImageUpdateTime = new DateTime(imageData.endTick);
+
+                if (JsonConfig.settings.enableInterpolation)
+                {
+                    SchedulerState nextImageData = GetImageData(data, ThemeManager.currentTheme, nextImageUpdateTime.Value);
+
+                    lock (interpolationLock)
+                    {
+                        interpolation.imageId1 = imageData.imageId;
+                        interpolation.imageId2 = nextImageData.imageId;
+                        interpolation.lastPercent = -1;
+                        interpolation.startTick = imageData.startTick;
+                        interpolation.endTick = imageData.endTick;
+                        lastImagePath = null;
+                    }
+
+                    UpdateInterpolation();
+                }
+                else
+                {
+                    SetWallpaper(imageData.imageId);
+                }
             }
 
             ScriptManager.RunScripts(new ScriptArgs
@@ -116,14 +152,28 @@ namespace WinDynamicDesktop
 
         public void ToggleDarkMode()
         {
-            bool isEnabled = JsonConfig.settings.darkMode ^ true;
+            bool isEnabled = !JsonConfig.settings.darkMode;
             JsonConfig.settings.darkMode = isEnabled;
             MainMenu.darkModeItem.Checked = isEnabled;
 
             RunScheduler();
         }
 
-        private DaySegment GetCurrentDaySegment(SolarData data)
+        public void ToggleInterpolation()
+        {
+            bool isEnabled = !JsonConfig.settings.enableInterpolation;
+            JsonConfig.settings.enableInterpolation = isEnabled;
+            MainMenu.interpolateItem.Checked = isEnabled;
+
+            RunScheduler();
+        }
+
+        private static DaySegment GetCurrentDaySegment(SolarData data)
+        {
+            return GetDaySegment(data, DateTime.Now);
+        }
+
+        private static DaySegment GetDaySegment(SolarData data, DateTime time)
         {
             if (data.polarPeriod == PolarPeriod.PolarDay)
             {
@@ -133,15 +183,15 @@ namespace WinDynamicDesktop
             {
                 return DaySegment.AllNight;
             }
-            else if (data.solarTimes[0] <= DateTime.Now && DateTime.Now < data.solarTimes[1])
+            else if (data.solarTimes[0] <= time && time < data.solarTimes[1])
             {
                 return DaySegment.Sunrise;
             }
-            else if (data.solarTimes[1] <= DateTime.Now && DateTime.Now < data.solarTimes[2])
+            else if (data.solarTimes[1] <= time && time < data.solarTimes[2])
             {
                 return DaySegment.Day;
             }
-            else if (data.solarTimes[2] <= DateTime.Now && DateTime.Now < data.solarTimes[3])
+            else if (data.solarTimes[2] <= time && time < data.solarTimes[3])
             {
                 return DaySegment.Sunset;
             }
@@ -151,7 +201,7 @@ namespace WinDynamicDesktop
             }
         }
 
-        public SchedulerState GetImageData(SolarData data, ThemeConfig theme)
+        public SchedulerState GetImageData(SolarData data, ThemeConfig theme, DateTime current)
         {
             int[] imageList = null;
             DateTime segmentStart;
@@ -160,18 +210,18 @@ namespace WinDynamicDesktop
 
             if (!JsonConfig.settings.darkMode)
             {
-                switch (GetCurrentDaySegment(data))
+                switch (GetDaySegment(data, current))
                 {
                     case DaySegment.AllDay:
                         imageList = theme?.dayImageList;
-                        segmentStart = DateTime.Today;
-                        segmentEnd = DateTime.Today.AddDays(1);
+                        segmentStart = current.Date;
+                        segmentEnd = current.Date.AddDays(1);
                         imageData.daySegment4 = 1;
                         break;
                     case DaySegment.AllNight:
                         imageList = theme?.nightImageList;
-                        segmentStart = DateTime.Today;
-                        segmentEnd = DateTime.Today.AddDays(1);
+                        segmentStart = current.Date;
+                        segmentEnd = current.Date.AddDays(1);
                         imageData.daySegment4 = 3;
                         break;
                     case DaySegment.Sunrise:
@@ -196,16 +246,16 @@ namespace WinDynamicDesktop
                         imageList = theme?.nightImageList;
                         imageData.daySegment4 = 3;
 
-                        if (DateTime.Now < data.solarTimes[0])
+                        if (current < data.solarTimes[0])
                         {
-                            SolarData yesterdaysData = SunriseSunsetService.GetSolarData(DateTime.Today.AddDays(-1));
+                            SolarData yesterdaysData = SunriseSunsetService.GetSolarData(current.Date.AddDays(-1));
                             segmentStart = yesterdaysData.solarTimes[3];
                             segmentEnd = data.solarTimes[0];
                         }
                         else
                         {
                             segmentStart = data.solarTimes[3];
-                            SolarData tomorrowsData = SunriseSunsetService.GetSolarData(DateTime.Today.AddDays(1));
+                            SolarData tomorrowsData = SunriseSunsetService.GetSolarData(current.Date.AddDays(1));
                             segmentEnd = tomorrowsData.solarTimes[0];
                         }
 
@@ -218,24 +268,24 @@ namespace WinDynamicDesktop
 
                 if (data.polarPeriod != PolarPeriod.None)
                 {
-                    segmentStart = DateTime.Today;
-                    segmentEnd = DateTime.Today.AddDays(1);
+                    segmentStart = current.Date;
+                    segmentEnd = current.Date.AddDays(1);
                 }
                 else if (isSunUp)
                 {
                     segmentStart = data.sunriseTime;
                     segmentEnd = data.sunsetTime;
                 }
-                else if (DateTime.Now < data.sunriseTime)
+                else if (current < data.sunriseTime)
                 {
-                    SolarData yesterdaysData = SunriseSunsetService.GetSolarData(DateTime.Today.AddDays(-1));
+                    SolarData yesterdaysData = SunriseSunsetService.GetSolarData(current.Date.AddDays(-1));
                     segmentStart = yesterdaysData.sunsetTime;
                     segmentEnd = data.sunriseTime;
                 }
                 else
                 {
                     segmentStart = data.sunsetTime;
-                    SolarData tomorrowsData = SunriseSunsetService.GetSolarData(DateTime.Today.AddDays(1));
+                    SolarData tomorrowsData = SunriseSunsetService.GetSolarData(current.Date.AddDays(1));
                     segmentEnd = tomorrowsData.sunriseTime;
                 }
             }
@@ -245,10 +295,11 @@ namespace WinDynamicDesktop
                 TimeSpan segmentLength = segmentEnd - segmentStart;
                 TimeSpan timerLength = new TimeSpan(segmentLength.Ticks / imageList.Length);
 
-                int imageNumber = (int)((DateTime.Now - segmentStart).Ticks / timerLength.Ticks);
+                int imageNumber = (int)((current.Ticks - segmentStart.Ticks) / timerLength.Ticks);
                 imageData.imageId = imageList[imageNumber];
                 imageData.imageNumber = imageNumber;
-                imageData.nextUpdateTicks = segmentStart.Ticks + timerLength.Ticks * (imageNumber + 1);
+                imageData.startTick = segmentStart.Ticks + timerLength.Ticks * imageNumber;
+                imageData.endTick = segmentStart.Ticks + timerLength.Ticks * (imageNumber + 1);
             }
 
             return imageData;
@@ -269,6 +320,59 @@ namespace WinDynamicDesktop
             UwpDesktop.GetHelper().SetWallpaper(imageFilename);
 
             lastImagePath = imagePath;
+        }
+
+        private void SetWallpaper(int imageId1, int imageId2, float percent)
+        {
+            string imageFilename1 = ThemeManager.currentTheme.imageFilename.Replace("*", imageId1.ToString());
+            string imageFilename2 = ThemeManager.currentTheme.imageFilename.Replace("*", imageId2.ToString());
+
+            string imagePath1 = Path.Combine(Directory.GetCurrentDirectory(), "themes",
+                ThemeManager.currentTheme.themeId, imageFilename1);
+            string imagePath2 = Path.Combine(Directory.GetCurrentDirectory(), "themes",
+                ThemeManager.currentTheme.themeId, imageFilename2);
+
+            string outputPath = Path.Combine(Directory.GetCurrentDirectory(), "themes",
+                ThemeManager.currentTheme.themeId, "current.jpg");
+
+            CreateInterpolatedImage(imagePath1, imagePath2, outputPath, percent);
+
+            WallpaperApi.EnableTransitions();
+            UwpDesktop.GetHelper().SetWallpaper("current.jpg");
+        }
+
+        private void UpdateInterpolation()
+        {
+            lock (interpolationLock)
+            {
+                if (ThemeManager.currentTheme == null)
+                {
+                    return;
+                }
+
+                long total = interpolation.endTick - interpolation.startTick;
+                long current = DateTime.Now.Ticks - interpolation.startTick;
+                float percent = Interpolation.Calculate((float)current / total, ThemeManager.currentTheme.interpolation);
+
+                if (percent - interpolation.lastPercent < 0.01f)
+                {
+                    return;
+                }
+                else if (percent == 0)
+                {
+                    SetWallpaper(interpolation.imageId1);
+                }
+                else if (percent == 1)
+                {
+                    SetWallpaper(interpolation.imageId2);
+                }
+                else
+                {
+                    SetWallpaper(interpolation.imageId1, interpolation.imageId2, percent);
+                }
+
+                interpolation.lastPercent = percent;
+            }
         }
 
         private void StartTimer(DateTime futureTime)
@@ -309,6 +413,10 @@ namespace WinDynamicDesktop
             {
                 HandleTimerEvent(true);
             }
+            else if (JsonConfig.settings.enableInterpolation)
+            {
+                UpdateInterpolation();
+            }
         }
 
         private void OnSchedulerTimerElapsed(object sender, EventArgs e)
@@ -327,6 +435,31 @@ namespace WinDynamicDesktop
         private void OnTimeChanged(object sender, EventArgs e)
         {
             HandleTimerEvent(false);
+        }
+
+        private static void CreateInterpolatedImage(string imagePath1, string imagePath2, string outputPath, float percent)
+        {
+            using (Bitmap image1 = new Bitmap(imagePath1))
+            using (Bitmap image2 = new Bitmap(imagePath2))
+            using (Bitmap output = new Bitmap(image1.Width, image1.Height))
+            using (Graphics g = Graphics.FromImage(output))
+            {
+                g.PixelOffsetMode = PixelOffsetMode.None;
+                g.SmoothingMode = SmoothingMode.None;
+                g.InterpolationMode = InterpolationMode.NearestNeighbor;
+                g.CompositingQuality = CompositingQuality.GammaCorrected;
+
+                g.CompositingMode = CompositingMode.SourceCopy;
+                g.DrawImageUnscaled(image1, 0, 0);
+
+                ImageAttributes attributes = new ImageAttributes();
+                attributes.SetColorMatrix(new ColorMatrix() { Matrix33 = percent }, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+
+                g.CompositingMode = CompositingMode.SourceOver;
+                g.DrawImage(image2, new Rectangle(0, 0, image2.Width, image2.Height), 0, 0, image2.Width, image2.Height, GraphicsUnit.Pixel, attributes);
+
+                output.Save(outputPath, ImageFormat.Jpeg);
+            }
         }
     }
 }

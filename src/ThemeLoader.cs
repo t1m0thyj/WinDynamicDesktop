@@ -11,6 +11,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Windows.Forms;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace WinDynamicDesktop
 {
@@ -20,6 +21,8 @@ namespace WinDynamicDesktop
         public string displayName { get; set; }
         public string imageFilename { get; set; }
         public string imageCredits { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
+        public InterpolationMethod interpolation { get; set; }
         public int? dayHighlight { get; set; }
         public int? nightHighlight { get; set; }
         public int[] sunriseImageList { get; set; }
