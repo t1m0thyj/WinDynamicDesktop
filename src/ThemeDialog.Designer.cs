@@ -37,7 +37,7 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.themeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.downloadButton = new System.Windows.Forms.Button();
-            this.chromiumWebBrowser1 = new CefSharp.WinForms.ChromiumWebBrowser();
+            this.previewerHost = new System.Windows.Forms.Integration.ElementHost();
             this.listView1 = new System.Windows.Forms.ListView();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -123,16 +123,16 @@
             this.downloadButton.UseVisualStyleBackColor = true;
             this.downloadButton.Click += new System.EventHandler(this.downloadButton_Click);
             // 
-            // chromiumWebBrowser1
+            // previewerHost
             // 
-            this.chromiumWebBrowser1.ActivateBrowserOnCreation = false;
-            this.chromiumWebBrowser1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.previewerHost.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.chromiumWebBrowser1.Location = new System.Drawing.Point(219, 10);
-            this.chromiumWebBrowser1.Name = "chromiumWebBrowser1";
-            this.chromiumWebBrowser1.Size = new System.Drawing.Size(555, 400);
-            this.chromiumWebBrowser1.TabIndex = 24;
+            this.previewerHost.Location = new System.Drawing.Point(219, 10);
+            this.previewerHost.Name = "previewerHost";
+            this.previewerHost.Size = new System.Drawing.Size(555, 400);
+            this.previewerHost.TabIndex = 24;
+            this.previewerHost.Child = null;
             // 
             // listView1
             // 
@@ -160,8 +160,9 @@
             this.Controls.Add(this.themeLinkLabel);
             this.Controls.Add(this.applyButton);
             this.Controls.Add(this.closeButton);
-            this.Controls.Add(this.chromiumWebBrowser1);
+            this.Controls.Add(this.previewerHost);
             this.Icon = global::WinDynamicDesktop.Properties.Resources.AppIcon;
+            this.MinimumSize = new System.Drawing.Size(740, 350);
             this.Name = "ThemeDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Select Theme";
@@ -181,7 +182,7 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem themeToolStripMenuItem;
         private System.Windows.Forms.Button downloadButton;
-        private CefSharp.WinForms.ChromiumWebBrowser chromiumWebBrowser1;
+        private System.Windows.Forms.Integration.ElementHost previewerHost;
         private System.Windows.Forms.ListView listView1;
     }
 }
