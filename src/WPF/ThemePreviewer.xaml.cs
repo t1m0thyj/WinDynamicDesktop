@@ -11,7 +11,6 @@ namespace WinDynamicDesktop.WPF
 
         private readonly Storyboard fadeAnimation;
         private readonly DispatcherTimer triggerTimer;
-        private readonly ManualResetEvent animationActive = new ManualResetEvent(false);
 
         public ThemePreviewer()
         {
@@ -21,11 +20,7 @@ namespace WinDynamicDesktop.WPF
             InitializeComponent();
 
             fadeAnimation = FindResource("FadeAnimation") as Storyboard;
-            fadeAnimation.Completed += (s, e) =>
-            {
-                animationActive.Reset();
-                ViewModel.OnAnimationComplete();
-            };
+            fadeAnimation.Completed += (s, e) => ViewModel.OnAnimationComplete();
 
             triggerTimer = new DispatcherTimer
             {
@@ -40,19 +35,12 @@ namespace WinDynamicDesktop.WPF
 
         private void StartAnimation()
         {
-            if (!animationActive.WaitOne(0))
-            {
-                animationActive.Set();
-                triggerTimer.Start();
-            }
+            triggerTimer.Start();
         }
 
         private void StopAnimation()
         {
-            if (animationActive.WaitOne(0))
-            {
-                fadeAnimation.Stop(FrontImage);
-            }
+            fadeAnimation.Stop(FrontImage);
         }
     }
 }

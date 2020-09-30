@@ -7,12 +7,32 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 namespace WinDynamicDesktop.WPF
 {
+    public class ThemePreviewItem
+    {
+        public string PreviewText { get; set; }
+        public MemoryStream Data { get; set; }
+
+        public ThemePreviewItem() { }
+
+        public ThemePreviewItem(string previewText, string path)
+        {
+            PreviewText = previewText;
+
+            Data = new MemoryStream();
+            using (var file = File.OpenRead(path))
+            {
+                file.CopyTo(Data);
+            }
+        }
+    }
+
     public class ThemePreviewerViewModel : INotifyPropertyChanged
     {
         #region Properties
@@ -91,7 +111,7 @@ namespace WinDynamicDesktop.WPF
             }
         }
 
-        public ObservableCollection<(string preview, Uri uri)> Items { get; } = new ObservableCollection<(string, Uri)>();
+        public ObservableCollection<ThemePreviewItem> Items { get; } = new ObservableCollection<ThemePreviewItem>();
 
         #endregion
 
@@ -121,6 +141,8 @@ namespace WinDynamicDesktop.WPF
         private readonly SemaphoreSlim fadeSemaphore = new SemaphoreSlim(1, 1);
         private readonly Action startAnimation;
         private readonly Action stopAnimation;
+        private readonly int maxWidth;
+        private readonly int maxHeight;
 
         public ThemePreviewerViewModel(Action startAnimation, Action stopAnimation)
         {
@@ -134,22 +156,40 @@ namespace WinDynamicDesktop.WPF
             transitionTimer.Tick += (s, e) => Next();
 
             IsPlaying = true;
+
+            int maxArea = 0;
+            foreach (Screen screen in Screen.AllScreens)
+            {
+                int area = screen.Bounds.Width * screen.Bounds.Height;
+                if (area > maxArea)
+                {
+                    maxArea = area;
+                    maxWidth = screen.Bounds.Width;
+                    maxHeight = screen.Bounds.Height;
+                }
+            }
         }
 
         public void OnAnimationComplete()
         {   
             BackImage = FrontImage;
             FrontImage = null;
-            GC.Collect();
 
-            if (fadeQueue.TryDequeue(out int index))
+            int nextIndex = -1;
+            while (fadeQueue.TryDequeue(out int index))
             {
-                FrontImage = CreateImage(Items[index].uri);
+                nextIndex = index;
+            }
+
+            if (nextIndex != -1)
+            {
+                FrontImage = CreateImage(Items[nextIndex].Data);
                 startAnimation();
             }
             else
             {
-                fadeSemaphore.Release();
+                TryRelease(fadeSemaphore);
+
                 if (IsPlaying)
                 {
                     transitionTimer.Start();
@@ -225,7 +265,7 @@ namespace WinDynamicDesktop.WPF
             else
             {
                 Author = "Microsoft";
-                Items.Add((string.Empty, new Uri(ThemeThumbLoader.GetWindowsWallpaper())));
+                Items.Add(new ThemePreviewItem(string.Empty, ThemeThumbLoader.GetWindowsWallpaper()));
             }
 
             AddItems(string.Format(_L("Previewing {0}"), _L("Sunrise")), sunrise);
@@ -281,26 +321,23 @@ namespace WinDynamicDesktop.WPF
 
             if (fadeSemaphore.Wait(0))
             {
-                FrontImage = CreateImage(Items[index].uri);
+                FrontImage = CreateImage(Items[index].Data);
+                startAnimation();
             }
             else
             {
                 fadeQueue.Enqueue(index);
             }
-            startAnimation();
 
-            PreviewText = Items[index].preview;
+            PreviewText = Items[index].PreviewText;
         }
 
-        private void Stop()
+        public void Stop()
         {
             stopAnimation();
-            if (fadeQueue.Count > 0)
-            {
-                while (fadeQueue.TryDequeue(out _)) ;
-                fadeSemaphore.Release();
-            }
-            
+            while (fadeQueue.TryDequeue(out _)) ;
+            TryRelease(fadeSemaphore);
+
             transitionTimer.Stop();
 
             Title = null;
@@ -311,6 +348,11 @@ namespace WinDynamicDesktop.WPF
             FrontImage = null;
             SelectedIndex = -1;
 
+            foreach (var v in Items)
+            {
+                v.Data.Dispose();
+            }
+
             Items.Clear();
         }
 
@@ -320,28 +362,16 @@ namespace WinDynamicDesktop.WPF
 
             for (int i = 0; i < items.Length; i++)
             {
-                Items.Add(($"{preview} ({i + 1}/{items.Length})", new Uri(items[i], UriKind.Relative)));
+                Items.Add(new ThemePreviewItem($"{preview} ({i + 1}/{items.Length})", items[i]));
             }
-        }
-
-        private BitmapImage CreateImage(Uri uri)
-        {
-            BitmapImage img = new BitmapImage();
-            img.BeginInit();
-            img.CacheOption = BitmapCacheOption.OnDemand;
-            img.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-            img.UriSource = uri;
-            img.EndInit();
-            img.Freeze();
-            return img;
         }
 
         private void Start(int index)
         {
-            var (preview, uri) = Items[index];
+            var item = Items[index];
 
-            PreviewText = preview;
-            BackImage = CreateImage(uri);
+            PreviewText = item.PreviewText;
+            BackImage = CreateImage(item.Data);
 
             selectedIndex = index;
             OnPropertyChanged(nameof(SelectedIndex));
@@ -352,10 +382,43 @@ namespace WinDynamicDesktop.WPF
             }
         }
 
+        private BitmapImage CreateImage(MemoryStream memory)
+        {
+            memory.Position = 0;
+
+            BitmapImage img = new BitmapImage();
+            img.BeginInit();
+            img.CacheOption = BitmapCacheOption.None;
+            img.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
+            img.StreamSource = memory;
+
+            if (maxWidth >= maxHeight)
+            {
+                img.DecodePixelWidth = maxWidth;
+            }
+            else
+            {
+                img.DecodePixelHeight = maxHeight;
+            }
+
+            img.EndInit();
+            img.Freeze();
+            return img;
+        }
+
         private static string[] ImagePaths(ThemeConfig theme, int[] imageList)
         {
             return imageList.Select(id =>
                 Path.Combine("themes", theme.themeId, theme.imageFilename.Replace("*", id.ToString()))).ToArray();
+        }
+
+        private static void TryRelease(SemaphoreSlim semaphore)
+        {
+            try
+            {
+                semaphore.Release();
+            }
+            catch (SemaphoreFullException) { }
         }
 
         #region INotifyPropertyChanged

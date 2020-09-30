@@ -3,8 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" Foreground="White" Background="LightGray"
-             d:DesignHeight="720" d:DesignWidth="1280">
+             mc:Ignorable="d" d:DesignHeight="720" d:DesignWidth="1280"
+             SnapsToDevicePixels="True" UseLayoutRounding="True"
+             Foreground="White" Background="Gray" BorderBrush="#828790" BorderThickness="1">
     <UserControl.Resources>
         <FontFamily x:Key="FontAwesome">../assets/fonts/fontawesome-webfont.ttf#FontAwesome</FontFamily>
         <Style x:Key="CarouselButton" TargetType="{x:Type Button}">
@@ -45,9 +46,9 @@
     </UserControl.InputBindings>
     <Grid>
         <Image Source="{Binding BackImage}" Stretch="UniformToFill" StretchDirection="Both" Focusable="False"
-               RenderOptions.BitmapScalingMode="HighQuality" />
+               RenderOptions.BitmapScalingMode="Fant" />
         <Image x:Name="FrontImage" Source="{Binding FrontImage}" Stretch="UniformToFill" StretchDirection="Both" Focusable="False"
-               RenderOptions.BitmapScalingMode="HighQuality" Opacity="0" />
+               RenderOptions.BitmapScalingMode="Fant" Opacity="0" />
 
         <Grid Visibility="{Binding ControlsVisible}">
             <Button HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="80" Command="{Binding PreviousCommand}"

@@ -34,6 +34,7 @@ namespace WinDynamicDesktop
 
             this.Font = SystemFonts.MessageBoxFont;
             this.FormClosing += OnFormClosing;
+            this.FormClosed += OnFormClosed;
 
             Rectangle bounds = Screen.FromControl(this).Bounds;
             Size thumbnailSize = ThemeThumbLoader.GetThumbnailSize(this);
@@ -404,6 +405,12 @@ namespace WinDynamicDesktop
                     return;
                 }
             }
+        }
+
+        private void OnFormClosed(object sender, FormClosedEventArgs e)
+        {
+            previewer.ViewModel.Stop();
+            GC.Collect();
         }
     }
 
