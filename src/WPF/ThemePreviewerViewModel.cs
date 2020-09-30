@@ -5,9 +5,10 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 namespace WinDynamicDesktop.WPF
@@ -55,25 +56,18 @@ namespace WinDynamicDesktop.WPF
             }
         }
 
-        private ImageSource backImage;
-        public ImageSource BackImage
+        private BitmapImage backImage;
+        public BitmapImage BackImage
         {
             get => backImage;
             set => SetProperty(ref backImage, value);
         }
 
-        private ImageSource frontImage;
-        public ImageSource FrontImage
+        private BitmapImage frontImage;
+        public BitmapImage FrontImage
         {
             get => frontImage;
             set => SetProperty(ref frontImage, value);
-        }
-
-        private double frontOpacity;
-        public double FrontOpacity
-        {
-            get => frontOpacity;
-            set => SetProperty(ref frontOpacity, value);
         }
 
         private bool isPlaying;
@@ -97,7 +91,7 @@ namespace WinDynamicDesktop.WPF
             }
         }
 
-        public ObservableCollection<(string preview, string path)> Items { get; } = new ObservableCollection<(string, string)>();
+        public ObservableCollection<(string preview, Uri uri)> Items { get; } = new ObservableCollection<(string, Uri)>();
 
         #endregion
 
@@ -106,7 +100,7 @@ namespace WinDynamicDesktop.WPF
         public ICommand PlayCommand => new RelayCommand(() =>
         {
             IsPlaying = !IsPlaying;
-            if (IsPlaying && indexQueue.IsEmpty)
+            if (IsPlaying && fadeQueue.IsEmpty)
             {
                 transitionTimer.Start();
             }
@@ -121,22 +115,17 @@ namespace WinDynamicDesktop.WPF
         private static readonly Func<string, string> _L = Localization.GetTranslation;
 
         private const int TRANSITION_TIME = 5;
-        private const int FRAME_RATE = 60;
-        private const float FADE_RATE = (1.0f / FRAME_RATE) / 0.5f;
 
-        private readonly DispatcherTimer fadeTimer;
         private readonly DispatcherTimer transitionTimer;
-        private readonly ConcurrentQueue<int> indexQueue = new ConcurrentQueue<int>();
+        private readonly ConcurrentQueue<int> fadeQueue = new ConcurrentQueue<int>();
+        private readonly SemaphoreSlim fadeSemaphore = new SemaphoreSlim(1, 1);
+        private readonly Action startAnimation;
+        private readonly Action stopAnimation;
 
-        private bool fading;
-
-        public ThemePreviewerViewModel()
+        public ThemePreviewerViewModel(Action startAnimation, Action stopAnimation)
         {
-            fadeTimer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromSeconds(1.0 / FRAME_RATE)
-            };
-            fadeTimer.Tick += Fade_Tick;
+            this.startAnimation = startAnimation;
+            this.stopAnimation = stopAnimation;
 
             transitionTimer = new DispatcherTimer
             {
@@ -145,6 +134,27 @@ namespace WinDynamicDesktop.WPF
             transitionTimer.Tick += (s, e) => Next();
 
             IsPlaying = true;
+        }
+
+        public void OnAnimationComplete()
+        {   
+            BackImage = FrontImage;
+            FrontImage = null;
+            GC.Collect();
+
+            if (fadeQueue.TryDequeue(out int index))
+            {
+                FrontImage = CreateImage(Items[index].uri);
+                startAnimation();
+            }
+            else
+            {
+                fadeSemaphore.Release();
+                if (IsPlaying)
+                {
+                    transitionTimer.Start();
+                }
+            }
         }
 
         public void PreviewTheme(ThemeConfig theme)
@@ -185,42 +195,37 @@ namespace WinDynamicDesktop.WPF
                 {
                     Message = _L("Theme is not downloaded. Click Download button to enable full preview.");
 
-                    int imageCount = 0;
                     string path = Path.Combine("assets", "images", theme.themeId + "_{0}.jpg");
 
                     string file = string.Format(path, "sunrise");
                     if (File.Exists(file))
                     {
                         sunrise = new[] { file };
-                        imageCount++;
                     }
 
                     file = string.Format(path, "day");
                     if (File.Exists(file))
                     {
                         day = new[] { file };
-                        imageCount++;
                     }
 
                     file = string.Format(path, "sunset");
                     if (File.Exists(file))
                     {
                         sunset = new[] { file };
-                        imageCount++;
                     }
 
                     file = string.Format(path, "night");
                     if (File.Exists(file))
                     {
                         night = new[] { file };
-                        imageCount++;
                     }
                 }
             }
             else
             {
                 Author = "Microsoft";
-                Items.Add((string.Empty, new Uri(ThemeThumbLoader.GetWindowsWallpaper()).AbsoluteUri));
+                Items.Add((string.Empty, new Uri(ThemeThumbLoader.GetWindowsWallpaper())));
             }
 
             AddItems(string.Format(_L("Previewing {0}"), _L("Sunrise")), sunrise);
@@ -242,34 +247,6 @@ namespace WinDynamicDesktop.WPF
             }
 
             Start(activeImage);
-        }
-
-        private void Fade_Tick(object sender, EventArgs e)
-        {
-            if (fading)
-            {
-                FrontOpacity += FADE_RATE * (indexQueue.Count + 1);
-                if (FrontOpacity >= 1)
-                { 
-                    BackImage = FrontImage;
-                    FrontOpacity = 0;
-                    FrontImage = null;
-                    fading = false;
-                }
-            }
-            else if (indexQueue.TryDequeue(out int index))
-            {
-                FrontImage = new ImageSourceConverter().ConvertFromString(Items[index].path) as ImageSource;
-                fading = true;
-            }
-            else
-            {
-                fadeTimer.Stop();
-                if (IsPlaying)
-                {
-                    transitionTimer.Start();
-                }
-            }
         }
 
         private void Previous()
@@ -301,16 +278,30 @@ namespace WinDynamicDesktop.WPF
             if (index < 0 || index >= Items.Count) return;
 
             transitionTimer.Stop();
-            indexQueue.Enqueue(index);
-            fadeTimer.Start();
+
+            if (fadeSemaphore.Wait(0))
+            {
+                FrontImage = CreateImage(Items[index].uri);
+            }
+            else
+            {
+                fadeQueue.Enqueue(index);
+            }
+            startAnimation();
+
             PreviewText = Items[index].preview;
         }
 
         private void Stop()
         {
-            fadeTimer.Stop();
+            stopAnimation();
+            if (fadeQueue.Count > 0)
+            {
+                while (fadeQueue.TryDequeue(out _)) ;
+                fadeSemaphore.Release();
+            }
+            
             transitionTimer.Stop();
-            while (indexQueue.TryDequeue(out _)) ;
 
             Title = null;
             Author = null;
@@ -318,28 +309,39 @@ namespace WinDynamicDesktop.WPF
             Message = null;
             BackImage = null;
             FrontImage = null;
-            FrontOpacity = 0;
             SelectedIndex = -1;
 
             Items.Clear();
-
-            fading = false;
         }
 
         private void AddItems(string preview, string[] items)
         {
             if (items == null) return;
+
             for (int i = 0; i < items.Length; i++)
             {
-                Items.Add(($"{preview} ({i + 1}/{items.Length})", items[i]));
+                Items.Add(($"{preview} ({i + 1}/{items.Length})", new Uri(items[i], UriKind.Relative)));
             }
+        }
+
+        private BitmapImage CreateImage(Uri uri)
+        {
+            BitmapImage img = new BitmapImage();
+            img.BeginInit();
+            img.CacheOption = BitmapCacheOption.OnDemand;
+            img.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+            img.UriSource = uri;
+            img.EndInit();
+            img.Freeze();
+            return img;
         }
 
         private void Start(int index)
         {
-            var (preview, path) = Items[index];
+            var (preview, uri) = Items[index];
+
             PreviewText = preview;
-            BackImage = new ImageSourceConverter().ConvertFromString(path) as ImageSource;
+            BackImage = CreateImage(uri);
 
             selectedIndex = index;
             OnPropertyChanged(nameof(SelectedIndex));
