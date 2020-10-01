@@ -97,6 +97,24 @@ namespace WinDynamicDesktop.WPF
             set => SetProperty(ref isPlaying, value);
         }
 
+        private bool isMouseOver;
+        public bool IsMouseOver
+        {
+            get => isMouseOver;
+            set
+            {
+                SetProperty(ref isMouseOver, value);
+                if (value)
+                {
+                    transitionTimer.Stop();
+                }
+                else if (IsPlaying && fadeQueue.IsEmpty)
+                {
+                    transitionTimer.Start();
+                }
+            }
+        }
+
         private int selectedIndex;
         public int SelectedIndex
         {
@@ -190,7 +208,7 @@ namespace WinDynamicDesktop.WPF
             {
                 TryRelease(fadeSemaphore);
 
-                if (IsPlaying)
+                if (IsPlaying && !IsMouseOver)
                 {
                     transitionTimer.Start();
                 }
@@ -376,7 +394,7 @@ namespace WinDynamicDesktop.WPF
             selectedIndex = index;
             OnPropertyChanged(nameof(SelectedIndex));
 
-            if (IsPlaying)
+            if (IsPlaying && !IsMouseOver)
             {
                 transitionTimer.Start();
             }

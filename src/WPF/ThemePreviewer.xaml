@@ -31,11 +31,16 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.5" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
         <Storyboard x:Key="FadeAnimation">
-            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.5" FillBehavior="Stop">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.6" FillBehavior="Stop">
                 <DoubleAnimation.EasingFunction>
-                    <QuadraticEase EasingMode="EaseInOut" />
+                    <SineEase EasingMode="EaseInOut" />
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
         </Storyboard>
@@ -45,7 +50,7 @@
         <KeyBinding Gesture="Right" Command="{Binding NextCommand}" />
     </UserControl.InputBindings>
     <Grid>
-        <Image Source="{Binding BackImage}" Stretch="UniformToFill" StretchDirection="Both" Focusable="False"
+        <Image x:Name="BackImage" Source="{Binding BackImage}" Stretch="UniformToFill" StretchDirection="Both" Focusable="False"
                RenderOptions.BitmapScalingMode="Fant" />
         <Image x:Name="FrontImage" Source="{Binding FrontImage}" Stretch="UniformToFill" StretchDirection="Both" Focusable="False"
                RenderOptions.BitmapScalingMode="Fant" Opacity="0" />
@@ -92,24 +97,36 @@
                 <TextBlock Text="{Binding Message}" FontSize="14" VerticalAlignment="Center" Margin="8,4,11,9"  />
             </Grid>
 
-            <ListBox HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="24" Background="Transparent" BorderThickness="0"
+            <ListBox HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="24"
                      ItemsSource="{Binding Items}" SelectedIndex="{Binding SelectedIndex}" IsSynchronizedWithCurrentItem="True">
-                <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" IsItemsHost="True">
-                            <StackPanel.Effect>
-                                <DropShadowEffect ShadowDepth="2" />
-                            </StackPanel.Effect>
-                        </StackPanel>
-                    </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
+                <ListBox.Style>
+                    <Style TargetType="{x:Type ListBox}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate>
+                                    <StackPanel Orientation="Horizontal" IsItemsHost="True">
+                                        <StackPanel.Effect>
+                                            <DropShadowEffect ShadowDepth="2" />
+                                        </StackPanel.Effect>
+                                    </StackPanel>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.Style>
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="OverridesDefaultStyle" Value="true" />
                         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                    <Grid Height="24" Background="Transparent" Cursor="Hand">
+                                    <Grid Height="32" Background="Transparent" Cursor="Hand">
                                         <Rectangle x:Name="Indicator" Fill="White" Height="3" Width="30" Margin="3,0" Opacity="0.5" />
                                     </Grid>
                                     <ControlTemplate.Triggers>

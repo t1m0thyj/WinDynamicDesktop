@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Threading;
+using System.ComponentModel;
+using System.Windows;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
@@ -31,6 +32,9 @@ namespace WinDynamicDesktop.WPF
                 triggerTimer.Stop();
                 fadeAnimation.Begin(FrontImage, true);
             };
+
+            DependencyPropertyDescriptor descriptor = DependencyPropertyDescriptor.FromProperty(IsMouseOverProperty, typeof(UIElement));
+            descriptor.AddValueChanged(this, (s, e) => ViewModel.IsMouseOver = IsMouseOver);
         }
 
         private void StartAnimation()
