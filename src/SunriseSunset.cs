@@ -26,11 +26,11 @@ namespace WinDynamicDesktop
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
 
-        private static SolarData GetUserProvidedSolarData()
+        private static SolarData GetUserProvidedSolarData(DateTime date)
         {
             SolarData data = new SolarData();
-            data.sunriseTime = UpdateHandler.SafeParse(JsonConfig.settings.sunriseTime);
-            data.sunsetTime = UpdateHandler.SafeParse(JsonConfig.settings.sunsetTime);
+            data.sunriseTime = date.Date + UpdateHandler.SafeParse(JsonConfig.settings.sunriseTime).TimeOfDay;
+            data.sunsetTime = date.Date + UpdateHandler.SafeParse(JsonConfig.settings.sunsetTime).TimeOfDay;
 
             int halfSunriseSunsetDuration = JsonConfig.settings.sunriseSunsetDuration * 30;
             data.solarTimes = new DateTime[4]
@@ -58,7 +58,7 @@ namespace WinDynamicDesktop
         {
             if (JsonConfig.settings.dontUseLocation)
             {
-                return GetUserProvidedSolarData();
+                return GetUserProvidedSolarData(date);
             }
 
             double latitude = double.Parse(JsonConfig.settings.latitude, CultureInfo.InvariantCulture);

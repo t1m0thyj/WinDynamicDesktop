@@ -14,7 +14,6 @@ using System.Windows.Forms;
 using System.Collections;
 using System.IO;
 using System.Runtime.InteropServices;
-using CefSharp;
 
 namespace WinDynamicDesktop
 {
@@ -26,38 +25,29 @@ namespace WinDynamicDesktop
         private const string themeLink = "https://windd.info/themes/";
         private readonly string windowsWallpaper = ThemeThumbLoader.GetWindowsWallpaper();
 
+        private WPF.ThemePreviewer previewer;
+
         public ThemeDialog()
         {
-            if (!Cef.IsInitialized)
-            {
-                var settings = new CefSharp.WinForms.CefSettings();
-                settings.BrowserSubprocessPath = Path.Combine(Environment.CurrentDirectory,
-                    @"cef\CefSharp.BrowserSubprocess.exe");
-                settings.Locale = Localization.GetCefLocale();
-#if !DEBUG
-                settings.LogSeverity = LogSeverity.Fatal;
-#endif
-                Cef.Initialize(settings);
-            }
-
             InitializeComponent();
             Localization.TranslateForm(this);
 
             this.Font = SystemFonts.MessageBoxFont;
             this.FormClosing += OnFormClosing;
+            this.FormClosed += OnFormClosed;
 
             Rectangle bounds = Screen.FromControl(this).Bounds;
             Size thumbnailSize = ThemeThumbLoader.GetThumbnailSize(this);
             int newWidth = thumbnailSize.Width + SystemInformation.VerticalScrollBarWidth + 46;
             int oldWidth = this.listView1.Size.Width;
 
-            this.chromiumWebBrowser1.Anchor &= ~AnchorStyles.Left;
+            this.previewerHost.Anchor &= ~AnchorStyles.Left;
             this.listView1.Width = newWidth;
             this.downloadButton.Left += (newWidth - oldWidth) / 2;
             this.applyButton.Left += (newWidth - oldWidth) / 2;
             this.closeButton.Left += (newWidth - oldWidth) / 2;
             this.Width += (newWidth - oldWidth);
-            this.chromiumWebBrowser1.Anchor |= AnchorStyles.Left;
+            this.previewerHost.Anchor |= AnchorStyles.Left;
             this.Size = new Size(bounds.Width * 5 / 8, bounds.Height * 5 / 8);
             this.CenterToScreen();
         }
@@ -211,26 +201,20 @@ namespace WinDynamicDesktop
 
             selectedIndex = listView1.SelectedIndices[0];
             bool themeDownloaded = true;
-            string previewHtml = null;
+            ThemeConfig theme = null;
 
             if (selectedIndex > 0)
             {
                 string themeId = (string)listView1.Items[selectedIndex].Tag;
                 selectedIndex = ThemeManager.themeSettings.FindIndex(t => t.themeId == themeId) + 1;
-                ThemeConfig theme = ThemeManager.themeSettings[selectedIndex - 1];
-
+                theme = ThemeManager.themeSettings[selectedIndex - 1];
                 themeDownloaded = ThemeManager.IsThemeDownloaded(theme);
-                previewHtml = ThemePreviewer.GeneratePreviewHtml(theme);
-            }
-            else
-            {
-                previewHtml = ThemePreviewer.GeneratePreviewHtml(null);
             }
 
             downloadButton.Enabled = !themeDownloaded;
             applyButton.Enabled = true;
 
-            chromiumWebBrowser1.LoadHtml(previewHtml, "file://");
+            previewer.ViewModel.PreviewTheme(theme);
         }
 
         // Code to change ListView appearance from https://stackoverflow.com/a/4463114/5504760
@@ -239,6 +223,9 @@ namespace WinDynamicDesktop
 
         private void ThemeDialog_Load(object sender, EventArgs e)
         {
+            previewer = new WPF.ThemePreviewer();
+            previewerHost.Child = previewer;
+
             listView1.ContextMenuStrip = contextMenuStrip1;
             listView1.ListViewItemSorter = new CompareByItemText(listView1);
             SetWindowTheme(listView1.Handle, "Explorer", null);
@@ -418,6 +405,12 @@ namespace WinDynamicDesktop
                     return;
                 }
             }
+        }
+
+        private void OnFormClosed(object sender, FormClosedEventArgs e)
+        {
+            previewer.ViewModel.Stop();
+            GC.Collect();
         }
     }
 
