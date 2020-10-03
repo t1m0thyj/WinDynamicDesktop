@@ -110,7 +110,7 @@ namespace WinDynamicDesktop
                 }
                 else if (ThemeManager.defaultThemes.Contains(theme.themeId))
                 {
-                    string resourceName = "WinDynamicDesktop.resources." + theme.themeId + "_thumbnail.jpg";
+                    string resourceName = "WinDynamicDesktop.resources.images." + theme.themeId + "_thumbnail.jpg";
 
                     using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
                     {

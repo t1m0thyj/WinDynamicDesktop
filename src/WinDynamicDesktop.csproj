@@ -81,6 +81,7 @@
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="AppContext.cs" />
+    <Compile Include="DpiHelper.cs" />
     <Compile Include="HttpEnvironmentProxy.cs" />
     <Compile Include="IpcManager.cs" />
     <Compile Include="ProxyWrapper.cs" />
@@ -180,18 +181,12 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="assets\fonts\*" />
-    <None Include="assets\images\*">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="locale\*.mo" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="resources\*.jpg" />
+    <Resource Include="resources\fonts\fontawesome-webfont.ttf" />
+    <EmbeddedResource Include="resources\images\*.jpg" />
     <None Include="resources\default_themes.yaml" />
-    <None Include="resources\preview.html" />
     <None Include="resources\WinDynamicDesktop.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -202,7 +197,7 @@
       <Version>1.2.2</Version>
     </PackageReference>
     <PackageReference Include="Fody">
-      <Version>6.2.5</Version>
+      <Version>6.2.6</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -219,7 +214,7 @@
       <Version>3.2.9</Version>
     </PackageReference>
     <PackageReference Include="RestSharp">
-      <Version>106.11.4</Version>
+      <Version>106.11.7</Version>
     </PackageReference>
     <PackageReference Include="SunCalcNet">
       <Version>1.1.4</Version>

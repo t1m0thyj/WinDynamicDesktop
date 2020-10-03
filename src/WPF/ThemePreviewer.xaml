@@ -7,7 +7,7 @@
              SnapsToDevicePixels="True" UseLayoutRounding="True"
              Foreground="White" Background="Gray" BorderBrush="#828790" BorderThickness="1">
     <UserControl.Resources>
-        <FontFamily x:Key="FontAwesome">../assets/fonts/fontawesome-webfont.ttf#FontAwesome</FontFamily>
+        <FontFamily x:Key="FontAwesome">pack://application:,,,/resources/fonts/fontawesome-webfont.ttf#FontAwesome</FontFamily>
         <Style x:Key="CarouselButton" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="Black" />
             <Setter Property="Foreground" Value="White" />
@@ -92,13 +92,13 @@
                 </Button.Style>
             </Button>
 
-            <Grid HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,-3" Opacity="0.5" Visibility="{Binding MessageVisible}">
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,26" Opacity="0.5" Visibility="{Binding MessageVisible}">
                 <Rectangle RadiusX="5" RadiusY="5" Fill="Black" />
-                <TextBlock Text="{Binding Message}" FontSize="14" VerticalAlignment="Center" Margin="8,4,11,9"  />
+                <TextBlock Text="{Binding Message}" FontSize="14" VerticalAlignment="Center" Margin="8,4,8,4"  />
             </Grid>
 
             <ListBox HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="24"
-                     ItemsSource="{Binding Items}" SelectedIndex="{Binding SelectedIndex}" IsSynchronizedWithCurrentItem="True">
+                     ItemsSource="{Binding Items}" SelectedIndex="{Binding SelectedIndex}" IsSynchronizedWithCurrentItem="True" Visibility="{Binding CarouselIndicatorsVisible}">
                 <ListBox.Style>
                     <Style TargetType="{x:Type ListBox}">
                         <Setter Property="Template">

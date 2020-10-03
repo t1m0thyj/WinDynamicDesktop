@@ -103,7 +103,7 @@ Name: "startonboot"; Description: "&Start {#MyAppName} with Windows"; GroupDescr
 Name: "registerddw"; Description: "&Associate .ddw extension with {#MyAppName}"; GroupDescription: "Other tasks:"
 
 [Files]
-Source: "..\src\bin\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
+Source: "..\src\bin\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

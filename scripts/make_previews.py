@@ -13,7 +13,7 @@ img_height = int(img_width * 9 / 16)
 jpeg_quality = int(sys.argv[2]) if len(sys.argv) > 2 else 75
 
 input_dir = "..\\themes"
-output_dir = f"../src/assets/images"
+output_dir = f"../src/resources/images"
 
 for theme_dir in glob.glob(f"{input_dir}/**"):
     print(f"<- {theme_dir}")

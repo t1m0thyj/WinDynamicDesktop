@@ -48,7 +48,7 @@
             this.applyButton.Location = new System.Drawing.Point(459, 423);
             this.applyButton.Name = "applyButton";
             this.applyButton.Size = new System.Drawing.Size(75, 23);
-            this.applyButton.TabIndex = 0;
+            this.applyButton.TabIndex = 5;
             this.applyButton.Text = "Apply";
             this.applyButton.UseVisualStyleBackColor = true;
             this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
@@ -118,7 +118,7 @@
             this.downloadButton.Location = new System.Drawing.Point(359, 423);
             this.downloadButton.Name = "downloadButton";
             this.downloadButton.Size = new System.Drawing.Size(75, 23);
-            this.downloadButton.TabIndex = 23;
+            this.downloadButton.TabIndex = 4;
             this.downloadButton.Text = "Download";
             this.downloadButton.UseVisualStyleBackColor = true;
             this.downloadButton.Click += new System.EventHandler(this.downloadButton_Click);
@@ -131,7 +131,7 @@
             this.previewerHost.Location = new System.Drawing.Point(219, 10);
             this.previewerHost.Name = "previewerHost";
             this.previewerHost.Size = new System.Drawing.Size(555, 400);
-            this.previewerHost.TabIndex = 24;
+            this.previewerHost.TabIndex = 1;
             this.previewerHost.Child = null;
             // 
             // listView1
@@ -143,7 +143,7 @@
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(200, 400);
-            this.listView1.TabIndex = 25;
+            this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
             // 

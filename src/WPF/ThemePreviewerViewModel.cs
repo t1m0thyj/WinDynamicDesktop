@@ -1,4 +1,8 @@
-﻿using System;
+﻿// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+using System;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -11,6 +15,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using System.Reflection;
 
 namespace WinDynamicDesktop.WPF
 {
@@ -26,9 +31,19 @@ namespace WinDynamicDesktop.WPF
             PreviewText = previewText;
 
             Data = new MemoryStream();
-            using (var file = File.OpenRead(path))
+            if (!File.Exists(path))
             {
-                file.CopyTo(Data);
+                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(path))
+                {
+                    stream.CopyTo(Data);
+                }
+            }
+            else
+            {
+                using (var file = File.OpenRead(path))
+                {
+                    file.CopyTo(Data);
+                }
             }
         }
     }
@@ -39,6 +54,7 @@ namespace WinDynamicDesktop.WPF
 
         public Visibility ControlsVisible => string.IsNullOrEmpty(Title) ? Visibility.Hidden : Visibility.Visible;
         public Visibility MessageVisible => string.IsNullOrEmpty(Message) ? Visibility.Hidden : Visibility.Visible;
+        public Visibility CarouselIndicatorsVisible => string.IsNullOrEmpty(Message) ? Visibility.Visible : Visibility.Hidden;
 
         private string title;
         public string Title
@@ -73,6 +89,7 @@ namespace WinDynamicDesktop.WPF
             {
                 SetProperty(ref message, value);
                 OnPropertyChanged(nameof(MessageVisible));
+                OnPropertyChanged(nameof(CarouselIndicatorsVisible));
             }
         }
 
@@ -150,7 +167,7 @@ namespace WinDynamicDesktop.WPF
 
         #endregion
 
-        private static readonly Func<string, string> _L = Localization.GetTranslation;
+        private static readonly Func<string, string> _ = Localization.GetTranslation;
 
         private const int TRANSITION_TIME = 5;
 
@@ -232,8 +249,9 @@ namespace WinDynamicDesktop.WPF
             {
                 Title = ThemeManager.GetThemeName(theme);
                 Author = ThemeManager.GetThemeAuthor(theme);
+                bool isDownloaded = ThemeManager.IsThemeDownloaded(theme);
 
-                if (ThemeManager.IsThemeDownloaded(theme))
+                if (isDownloaded)
                 {
                     if (!theme.sunriseImageList.SequenceEqual(theme.dayImageList))
                     {
@@ -251,45 +269,46 @@ namespace WinDynamicDesktop.WPF
                 }
                 else
                 {
-                    Message = _L("Theme is not downloaded. Click Download button to enable full preview.");
+                    Message = _("Theme is not downloaded. Click Download button to enable full preview.");
 
-                    string path = Path.Combine("assets", "images", theme.themeId + "_{0}.jpg");
+                    string[] resourceNames = Assembly.GetExecutingAssembly().GetManifestResourceNames();
+                    string path = "WinDynamicDesktop.resources.images." + theme.themeId + "_{0}.jpg";
 
-                    string file = string.Format(path, "sunrise");
-                    if (File.Exists(file))
+                    string rsrcName = string.Format(path, "sunrise");
+                    if (resourceNames.Contains(rsrcName))
                     {
-                        sunrise = new[] { file };
+                        sunrise = new[] { rsrcName };
                     }
 
-                    file = string.Format(path, "day");
-                    if (File.Exists(file))
+                    rsrcName = string.Format(path, "day");
+                    if (resourceNames.Contains(rsrcName))
                     {
-                        day = new[] { file };
+                        day = new[] { rsrcName };
                     }
 
-                    file = string.Format(path, "sunset");
-                    if (File.Exists(file))
+                    rsrcName = string.Format(path, "sunset");
+                    if (resourceNames.Contains(rsrcName))
                     {
-                        sunset = new[] { file };
+                        sunset = new[] { rsrcName };
                     }
 
-                    file = string.Format(path, "night");
-                    if (File.Exists(file))
+                    rsrcName = string.Format(path, "night");
+                    if (resourceNames.Contains(rsrcName))
                     {
-                        night = new[] { file };
+                        night = new[] { rsrcName };
                     }
                 }
+
+                AddItems(string.Format(_("Previewing {0}"), _("Sunrise")), sunrise, isDownloaded);
+                AddItems(string.Format(_("Previewing {0}"), _("Day")), day, isDownloaded);
+                AddItems(string.Format(_("Previewing {0}"), _("Sunset")), sunset, isDownloaded);
+                AddItems(string.Format(_("Previewing {0}"), _("Night")), night, isDownloaded);
             }
             else
             {
                 Author = "Microsoft";
                 Items.Add(new ThemePreviewItem(string.Empty, ThemeThumbLoader.GetWindowsWallpaper()));
             }
-
-            AddItems(string.Format(_L("Previewing {0}"), _L("Sunrise")), sunrise);
-            AddItems(string.Format(_L("Previewing {0}"), _L("Day")), day);
-            AddItems(string.Format(_L("Previewing {0}"), _L("Sunset")), sunset);
-            AddItems(string.Format(_L("Previewing {0}"), _L("Night")), night);
 
             if (wpState.daySegment4 >= 1)
             {
@@ -353,7 +372,7 @@ namespace WinDynamicDesktop.WPF
         public void Stop()
         {
             stopAnimation();
-            while (fadeQueue.TryDequeue(out _)) ;
+            while (fadeQueue.TryDequeue(out int temp)) ;
             TryRelease(fadeSemaphore);
 
             transitionTimer.Stop();
@@ -374,13 +393,18 @@ namespace WinDynamicDesktop.WPF
             Items.Clear();
         }
 
-        private void AddItems(string preview, string[] items)
+        private void AddItems(string previewText, string[] items, bool isDownloaded)
         {
             if (items == null) return;
 
             for (int i = 0; i < items.Length; i++)
             {
-                Items.Add(new ThemePreviewItem($"{preview} ({i + 1}/{items.Length})", items[i]));
+                if (isDownloaded)
+                {
+                    previewText += $" ({i + 1}/{items.Length})";
+                }
+
+                Items.Add(new ThemePreviewItem(previewText, items[i]));
             }
         }
 
