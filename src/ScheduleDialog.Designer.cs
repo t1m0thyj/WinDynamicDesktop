@@ -46,6 +46,10 @@
             this.checkPermissionButton = new System.Windows.Forms.Button();
             this.timezoneLabel = new System.Windows.Forms.Label();
             this.timezoneBox = new System.Windows.Forms.ComboBox();
+            this.longitudeTextBox = new System.Windows.Forms.TextBox();
+            this.latitudeTextBox = new System.Windows.Forms.TextBox();
+            this.longitudeLabel = new System.Windows.Forms.Label();
+            this.latitudeLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.sunriseSunsetDurationBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -70,10 +74,10 @@
             // 
             this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.okButton.Location = new System.Drawing.Point(166, 348);
+            this.okButton.Location = new System.Drawing.Point(166, 365);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 23);
-            this.okButton.TabIndex = 9;
+            this.okButton.TabIndex = 12;
             this.okButton.Text = "OK";
             this.okButton.UseVisualStyleBackColor = true;
             this.okButton.Click += new System.EventHandler(this.okButton_Click);
@@ -82,10 +86,10 @@
             // 
             this.cancelButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(248, 348);
+            this.cancelButton.Location = new System.Drawing.Point(248, 365);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
-            this.cancelButton.TabIndex = 10;
+            this.cancelButton.TabIndex = 13;
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
@@ -184,7 +188,7 @@
             // 
             this.sunriseSunsetDurationLabel.AutoSize = true;
             this.sunriseSunsetDurationLabel.Enabled = false;
-            this.sunriseSunsetDurationLabel.Location = new System.Drawing.Point(27, 228);
+            this.sunriseSunsetDurationLabel.Location = new System.Drawing.Point(26, 253);
             this.sunriseSunsetDurationLabel.Name = "sunriseSunsetDurationLabel";
             this.sunriseSunsetDurationLabel.Size = new System.Drawing.Size(176, 13);
             this.sunriseSunsetDurationLabel.TabIndex = 15;
@@ -208,7 +212,7 @@
             0,
             0,
             0});
-            this.sunriseSunsetDurationBox.Location = new System.Drawing.Point(209, 225);
+            this.sunriseSunsetDurationBox.Location = new System.Drawing.Point(208, 250);
             this.sunriseSunsetDurationBox.Maximum = new decimal(new int[] {
             1800,
             0,
@@ -221,7 +225,7 @@
             0});
             this.sunriseSunsetDurationBox.Name = "sunriseSunsetDurationBox";
             this.sunriseSunsetDurationBox.Size = new System.Drawing.Size(94, 20);
-            this.sunriseSunsetDurationBox.TabIndex = 8;
+            this.sunriseSunsetDurationBox.TabIndex = 10;
             this.sunriseSunsetDurationBox.Value = new decimal(new int[] {
             120,
             0,
@@ -241,8 +245,9 @@
             // 
             // timezoneLabel
             // 
+            this.timezoneLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.timezoneLabel.AutoSize = true;
-            this.timezoneLabel.Location = new System.Drawing.Point(27, 284);
+            this.timezoneLabel.Location = new System.Drawing.Point(27, 298);
             this.timezoneLabel.Name = "timezoneLabel";
             this.timezoneLabel.Size = new System.Drawing.Size(136, 13);
             this.timezoneLabel.TabIndex = 20;
@@ -250,11 +255,45 @@
             // 
             // timezoneBox
             // 
+            this.timezoneBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.timezoneBox.FormattingEnabled = true;
-            this.timezoneBox.Location = new System.Drawing.Point(30, 300);
+            this.timezoneBox.Location = new System.Drawing.Point(30, 314);
             this.timezoneBox.Name = "timezoneBox";
             this.timezoneBox.Size = new System.Drawing.Size(293, 21);
-            this.timezoneBox.TabIndex = 21;
+            this.timezoneBox.TabIndex = 11;
+            // 
+            // longitudeTextBox
+            // 
+            this.longitudeTextBox.Location = new System.Drawing.Point(247, 224);
+            this.longitudeTextBox.Name = "longitudeTextBox";
+            this.longitudeTextBox.Size = new System.Drawing.Size(89, 20);
+            this.longitudeTextBox.TabIndex = 9;
+            // 
+            // latitudeTextBox
+            // 
+            this.latitudeTextBox.Location = new System.Drawing.Point(77, 224);
+            this.latitudeTextBox.Name = "latitudeTextBox";
+            this.latitudeTextBox.Size = new System.Drawing.Size(107, 20);
+            this.latitudeTextBox.TabIndex = 8;
+            // 
+            // longitudeLabel
+            // 
+            this.longitudeLabel.AutoSize = true;
+            this.longitudeLabel.Location = new System.Drawing.Point(192, 227);
+            this.longitudeLabel.Name = "longitudeLabel";
+            this.longitudeLabel.Size = new System.Drawing.Size(54, 13);
+            this.longitudeLabel.TabIndex = 27;
+            this.longitudeLabel.Text = "Longitude";
+            // 
+            // latitudeLabel
+            // 
+            this.latitudeLabel.AutoSize = true;
+            this.latitudeLabel.Location = new System.Drawing.Point(27, 227);
+            this.latitudeLabel.Name = "latitudeLabel";
+            this.latitudeLabel.Size = new System.Drawing.Size(45, 13);
+            this.latitudeLabel.TabIndex = 26;
+            this.latitudeLabel.Text = "Latitude";
             // 
             // ScheduleDialog
             // 
@@ -262,7 +301,11 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(354, 389);
+            this.ClientSize = new System.Drawing.Size(354, 406);
+            this.Controls.Add(this.longitudeTextBox);
+            this.Controls.Add(this.latitudeTextBox);
+            this.Controls.Add(this.longitudeLabel);
+            this.Controls.Add(this.latitudeLabel);
             this.Controls.Add(this.timezoneBox);
             this.Controls.Add(this.timezoneLabel);
             this.Controls.Add(this.checkPermissionButton);
@@ -314,6 +357,10 @@
         private System.Windows.Forms.Button checkPermissionButton;
         private System.Windows.Forms.Label timezoneLabel;
         private System.Windows.Forms.ComboBox timezoneBox;
+        private System.Windows.Forms.TextBox longitudeTextBox;
+        private System.Windows.Forms.TextBox latitudeTextBox;
+        private System.Windows.Forms.Label longitudeLabel;
+        private System.Windows.Forms.Label latitudeLabel;
     }
 }
 

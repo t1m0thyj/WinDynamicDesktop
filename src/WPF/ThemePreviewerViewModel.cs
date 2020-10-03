@@ -242,8 +242,8 @@ namespace WinDynamicDesktop.WPF
             string[] sunset = null;
             string[] night = null;
 
-            SolarData solarData = SunriseSunsetService.GetSolarData(DateTime.Today);
-            SchedulerState wpState = AppContext.wpEngine.GetImageData(solarData, theme, DateTime.Now);
+            SolarData solarData = SunriseSunsetService.GetSolarData(DateTimeTZ.Local.Today.ConvertTime(JsonConfig.settings.timezone));
+            SchedulerState wpState = AppContext.wpEngine.GetImageData(solarData, theme, DateTimeTZ.Local.Now.ConvertTime(JsonConfig.settings.timezone));
 
             if (theme != null)
             {

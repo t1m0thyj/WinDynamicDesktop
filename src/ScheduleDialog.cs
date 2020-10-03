@@ -44,6 +44,10 @@ namespace WinDynamicDesktop
             sunsetTimePicker.Enabled = radioButton3.Checked;
             sunriseSunsetDurationLabel.Enabled = radioButton3.Checked;
             sunriseSunsetDurationBox.Enabled = radioButton3.Checked;
+            latitudeLabel.Enabled = radioButton3.Checked;
+            latitudeTextBox.Enabled = radioButton3.Checked;
+            longitudeLabel.Enabled = radioButton3.Checked;
+            longitudeTextBox.Enabled = radioButton3.Checked;
 
             if (radioButton2.Enabled)
             {
@@ -139,6 +143,17 @@ namespace WinDynamicDesktop
                 timezoneBox.Text = TimeZoneInfo.Local.Id;
             }
 
+            if (JsonConfig.settings.latitude != null)
+            {
+                latitudeTextBox.Text = JsonConfig.settings.latitude;
+            }
+
+            if (JsonConfig.settings.longitude != null)
+            {
+                longitudeTextBox.Text = JsonConfig.settings.longitude;
+            }
+
+
             UpdateGuiState();
             isLoaded = true;
         }
@@ -194,7 +209,13 @@ namespace WinDynamicDesktop
                 JsonConfig.settings.sunriseTime = sunriseTimePicker.Value.ToLongTimeString();
                 JsonConfig.settings.sunsetTime = sunsetTimePicker.Value.ToLongTimeString();
                 JsonConfig.settings.sunriseSunsetDuration = (int)sunriseSunsetDurationBox.Value;
+                JsonConfig.settings.latitude = latitudeTextBox.Text;
+                JsonConfig.settings.longitude = longitudeTextBox.Text;
                 this.Close();
+            }
+            else {
+                latitudeTextBox.Text = JsonConfig.settings.latitude;
+                longitudeTextBox.Text = JsonConfig.settings.longitude;
             }
 
             okButton.Enabled = true;

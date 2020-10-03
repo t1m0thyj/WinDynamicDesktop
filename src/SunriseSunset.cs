@@ -27,24 +27,6 @@ namespace WinDynamicDesktop
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
 
-        private static SolarData GetUserProvidedSolarData(DateTime date)
-        {
-            SolarData data = new SolarData();
-            data.sunriseTime = date.Date + UpdateHandler.SafeParse(JsonConfig.settings.sunriseTime).TimeOfDay;
-            data.sunsetTime = date.Date + UpdateHandler.SafeParse(JsonConfig.settings.sunsetTime).TimeOfDay;
-
-            int halfSunriseSunsetDuration = JsonConfig.settings.sunriseSunsetDuration * 30;
-            data.solarTimes = new DateTimeTZ[4]
-            {
-                data.sunriseTime.AddSeconds(-halfSunriseSunsetDuration),
-                data.sunriseTime.AddSeconds(halfSunriseSunsetDuration),
-                data.sunsetTime.AddSeconds(-halfSunriseSunsetDuration),
-                data.sunsetTime.AddSeconds(halfSunriseSunsetDuration)
-            };
-
-            return data;
-        }
-
         private static List<SunPhase> GetSunPhases(DateTimeTZ date, double latitude, double longitude)
         {
             return SunCalcNet.SunCalc.GetSunPhases(date.AddHours(12).ToUniversalTime(), latitude, longitude).ToList();
@@ -57,15 +39,16 @@ namespace WinDynamicDesktop
 
         public static SolarData GetSolarData(DateTimeTZ date)
         {
-            if (JsonConfig.settings.dontUseLocation)
-            {
-                return GetUserProvidedSolarData(date);
-            }
-
             double latitude = double.Parse(JsonConfig.settings.latitude, CultureInfo.InvariantCulture);
             double longitude = double.Parse(JsonConfig.settings.longitude, CultureInfo.InvariantCulture);
             var sunPhases = GetSunPhases(date, latitude, longitude);
             SolarData data = new SolarData();
+
+            if (JsonConfig.settings.dontUseLocation)
+            {
+                data.sunriseTime = UpdateHandler.SafeParse(JsonConfig.settings.sunriseTime, TimeZoneInfo.FindSystemTimeZoneById(JsonConfig.settings.timezone));
+                data.sunsetTime = UpdateHandler.SafeParse(JsonConfig.settings.sunsetTime, TimeZoneInfo.FindSystemTimeZoneById(JsonConfig.settings.timezone));
+            }
 
             try
             {

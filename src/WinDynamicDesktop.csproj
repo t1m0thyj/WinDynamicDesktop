@@ -81,6 +81,7 @@
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="AppContext.cs" />
+    <Compile Include="DateTimeTZ.cs" />
     <Compile Include="DpiHelper.cs" />
     <Compile Include="HttpEnvironmentProxy.cs" />
     <Compile Include="IpcManager.cs" />
