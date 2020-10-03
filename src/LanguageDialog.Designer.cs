@@ -51,14 +51,14 @@
             this.comboBox1.Location = new System.Drawing.Point(13, 31);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(258, 21);
-            this.comboBox1.TabIndex = 2;
+            this.comboBox1.TabIndex = 0;
             // 
             // okButton
             // 
             this.okButton.Location = new System.Drawing.Point(114, 69);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 23);
-            this.okButton.TabIndex = 3;
+            this.okButton.TabIndex = 1;
             this.okButton.Text = "OK";
             this.okButton.UseVisualStyleBackColor = true;
             this.okButton.Click += new System.EventHandler(this.okButton_Click);
@@ -69,7 +69,7 @@
             this.cancelButton.Location = new System.Drawing.Point(196, 69);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
-            this.cancelButton.TabIndex = 4;
+            this.cancelButton.TabIndex = 2;
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);

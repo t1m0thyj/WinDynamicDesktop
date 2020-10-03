@@ -1,10 +1,10 @@
 Set-Location (Split-Path $MyInvocation.MyCommand.Path)
 
 $buildDir = "..\src\bin\Release"
-$appVersion = (Get-Item -path "$buildDir\WinDynamicDesktop.exe").VersionInfo.ProductVersion
+$distDir = "..\dist"
+$appVersion = (Get-Item -Path "$buildDir\WinDynamicDesktop.exe").VersionInfo.ProductVersion
 
-python .\clean_release.py "$buildDir"
-
-7z a "..\dist\WinDynamicDesktop_$appVersion`_Portable.zip" "$buildDir\*"
+New-Item -Path $distDir -ItemType Directory -Force
+Copy-Item -Path "$buildDir\WinDynamicDesktop.exe" -Destination "$distDir\WinDynamicDesktop_$appVersion`_Portable.exe"
 
 iscc .\installer.iss

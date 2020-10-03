@@ -87,25 +87,5 @@ namespace WinDynamicDesktop.Properties {
                 return ResourceManager.GetString("default_themes_yaml", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
-        ///&lt;html lang=&quot;en&quot;&gt;
-        ///&lt;head&gt;
-        ///  &lt;meta charset=&quot;UTF-8&quot;&gt;
-        ///  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
-        ///  &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;ie=edge&quot;&gt;
-        ///  &lt;title&gt;{{themeName}} | WinDynamicDesktop Themes&lt;/title&gt;
-        ///  &lt;base href=&quot;{{basePath}}/&quot;&gt;
-        ///  &lt;link rel=&quot;stylesheet&quot; href=&quot;assets/css/font-awesome.min.css&quot;&gt;
-        ///  &lt;link rel=&quot;stylesheet&quot; href=&quot;assets/css/bootstrap.min.css&quot;&gt;
-        ///  &lt;script src=&quot;assets/js/jquery.slim.min.js&quot;&gt;&lt;/script&gt;
-        ///  &lt;script src=&quot;assets/js/bootstrap.mi [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string preview_html {
-            get {
-                return ResourceManager.GetString("preview_html", resourceCulture);
-            }
-        }
     }
 }
