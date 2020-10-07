@@ -123,24 +123,25 @@ namespace WinDynamicDesktop
         private static void LoadLanguages()
         {
             AddLanguage("Bahasa Indonesia", "id");  // Indonesian
-            AddLanguage("Čeština", "cs");  // Czech
             AddLanguage("Deutsch", "de");  // German
             AddLanguage("English", "en");  // English
             AddLanguage("Español", "es");  // Spanish
             AddLanguage("Français", "fr");  // French
-            AddLanguage("Eλληνικά", "el");  // Greek
             AddLanguage("Italiano", "it");  // Italian
-            AddLanguage("Македонски", "mk");  // Macedonian
+            AddLanguage("Nederlands", "nl");  // Dutch
             AddLanguage("Polski", "pl");  // Polish
             AddLanguage("Português (do Brasil)", "pt-br");  // Portuguese (BR)
-            AddLanguage("Română", "ro");  // Romanian
             AddLanguage("Pусский", "ru");  // Russian
+            AddLanguage("Română", "ro");  // Romanian
             AddLanguage("Türkçe", "tr");  // Turkish
+            AddLanguage("Čeština", "cs");  // Czech
             AddLanguage("Български", "bg");  // Bulgarian
+            AddLanguage("Македонски", "mk");  // Macedonian
             AddLanguage("हिन्दी", "hi");  // Hindi
             AddLanguage("বাংলা", "bn");  // Bengali
             AddLanguage("中文 (简体)", "zh-Hans");  // Chinese (Simplified)
             AddLanguage("日本語", "ja");  // Japanese
+            AddLanguage("한국어", "ko");  // Korean
         }
 
         private static void AddLanguage(string languageName, string languageCode)

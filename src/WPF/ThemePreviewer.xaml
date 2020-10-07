@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" d:DesignHeight="720" d:DesignWidth="1280"
              SnapsToDevicePixels="True" UseLayoutRounding="True"
-             Foreground="White" Background="Gray" BorderBrush="#828790" BorderThickness="1">
+             Foreground="White" Background="Gray">
     <UserControl.Resources>
         <FontFamily x:Key="FontAwesome">pack://application:,,,/resources/fonts/fontawesome-webfont.ttf#FontAwesome</FontFamily>
         <Style x:Key="CarouselButton" TargetType="{x:Type Button}">
@@ -50,36 +50,30 @@
         <KeyBinding Gesture="Right" Command="{Binding NextCommand}" />
     </UserControl.InputBindings>
     <Grid>
-        <Image x:Name="BackImage" Source="{Binding BackImage}" Stretch="UniformToFill" StretchDirection="Both" Focusable="False"
+        <Image x:Name="BackImage" Source="{Binding BackImage}" Stretch="Fill" StretchDirection="Both" Focusable="False"
                RenderOptions.BitmapScalingMode="Fant" />
-        <Image x:Name="FrontImage" Source="{Binding FrontImage}" Stretch="UniformToFill" StretchDirection="Both" Focusable="False"
+        <Image x:Name="FrontImage" Source="{Binding FrontImage}" Stretch="Fill" StretchDirection="Both" Focusable="False"
                RenderOptions.BitmapScalingMode="Fant" Opacity="0" />
 
         <Grid Visibility="{Binding ControlsVisible}">
             <Button HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="80" Command="{Binding PreviousCommand}"
                     Style="{StaticResource CarouselButton}" Background="Transparent" 
-                    Content="&#xf053;" FontSize="20">
-                <Button.Effect>
-                    <DropShadowEffect ShadowDepth="2" />
-                </Button.Effect>
+                    Content="&#xf053;" FontSize="20" Cursor="Hand" FocusVisualStyle="{x:Null}">
             </Button>
             <Button HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="80" Command="{Binding NextCommand}"
                     Style="{StaticResource CarouselButton}" Background="Transparent"
-                    Content="&#xf054;" FontSize="20">
-                <Button.Effect>
-                    <DropShadowEffect ShadowDepth="2" />
-                </Button.Effect>
+                    Content="&#xf054;" FontSize="20" Cursor="Hand" FocusVisualStyle="{x:Null}">
             </Button>
 
-            <Grid Margin="18" HorizontalAlignment="Left" VerticalAlignment="Top" MinWidth="200" MinHeight="72">
+            <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20">
                 <Rectangle RadiusX="5" RadiusY="5" Fill="Black" Opacity="0.5"/>
-                <StackPanel Margin="12">
-                    <TextBlock Text="{Binding Title, FallbackValue='Title'}" FontWeight="Bold" FontSize="20"/>
+                <StackPanel Margin="10">
+                    <TextBlock Text="{Binding Title, FallbackValue='Title'}" FontWeight="Bold" FontSize="19"/>
                     <TextBlock Text="{Binding PreviewText, FallbackValue='Preview Text'}" FontSize="16" Margin="0,4,0,0" />
                 </StackPanel>
             </Grid>
 
-            <Button HorizontalAlignment="Right" VerticalAlignment="Top" MinWidth="40" MinHeight="40" Margin="18" FontSize="16" Command="{Binding PlayCommand}">
+            <Button HorizontalAlignment="Right" VerticalAlignment="Top" MinWidth="40" MinHeight="40" Margin="20" FontSize="16" Command="{Binding PlayCommand}">
                 <Button.Style>
                     <Style TargetType="{x:Type Button}" BasedOn="{StaticResource CarouselButton}">
                         <Setter Property="Content" Value="&#xf04b;" />
@@ -92,23 +86,19 @@
                 </Button.Style>
             </Button>
 
-            <Grid HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,26" Opacity="0.5" Visibility="{Binding MessageVisible}">
-                <Rectangle RadiusX="5" RadiusY="5" Fill="Black" />
-                <TextBlock Text="{Binding Message}" FontSize="14" VerticalAlignment="Center" Margin="8,4,8,4"  />
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,15" Visibility="{Binding MessageVisible}">
+                <Rectangle RadiusX="5" RadiusY="5" Fill="Black" Opacity="0.5" />
+                <TextBlock Text="{Binding Message}" FontSize="16" VerticalAlignment="Center" Margin="8,6,8,6"  />
             </Grid>
 
-            <ListBox HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="24"
+            <ListBox HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="16"
                      ItemsSource="{Binding Items}" SelectedIndex="{Binding SelectedIndex}" IsSynchronizedWithCurrentItem="True" Visibility="{Binding CarouselIndicatorsVisible}">
                 <ListBox.Style>
                     <Style TargetType="{x:Type ListBox}">
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate>
-                                    <StackPanel Orientation="Horizontal" IsItemsHost="True">
-                                        <StackPanel.Effect>
-                                            <DropShadowEffect ShadowDepth="2" />
-                                        </StackPanel.Effect>
-                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" IsItemsHost="True" />
                                 </ControlTemplate>
                             </Setter.Value>
                         </Setter>

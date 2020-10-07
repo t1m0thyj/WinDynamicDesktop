@@ -38,8 +38,13 @@ namespace WinDynamicDesktop
 
             Rectangle bounds = Screen.FromControl(this).Bounds;
             Size thumbnailSize = ThemeThumbLoader.GetThumbnailSize(this);
-            int newWidth = thumbnailSize.Width + SystemInformation.VerticalScrollBarWidth + 46;
+            int newWidth = thumbnailSize.Width + SystemInformation.VerticalScrollBarWidth;
             int oldWidth = this.listView1.Size.Width;
+
+            using (Graphics g = this.CreateGraphics())
+            {
+                newWidth += (int)Math.Ceiling(46 * g.DpiX / 96);
+            }
 
             this.previewerHost.Anchor &= ~AnchorStyles.Left;
             this.listView1.Width = newWidth;
@@ -48,7 +53,12 @@ namespace WinDynamicDesktop
             this.closeButton.Left += (newWidth - oldWidth) / 2;
             this.Width += (newWidth - oldWidth);
             this.previewerHost.Anchor |= AnchorStyles.Left;
-            this.Size = new Size(bounds.Width * 5 / 8, bounds.Height * 5 / 8);
+
+            int heightDiff = this.Height - this.previewerHost.Height;
+            int widthDiff = this.Width - this.previewerHost.Width;
+            int bestHeight = bounds.Height * 5 / 8;
+            int bestWidth = (bestHeight - heightDiff) * bounds.Width / bounds.Height + widthDiff;
+            this.Size = new Size(bestWidth, bestHeight);
             this.CenterToScreen();
         }
 

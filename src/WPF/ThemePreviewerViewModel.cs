@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -19,6 +20,8 @@ using System.Reflection;
 
 namespace WinDynamicDesktop.WPF
 {
+    using ThemeImageData = List<Tuple<int, int>>;
+
     public class ThemePreviewItem
     {
         public string PreviewText { get; set; }
@@ -184,7 +187,7 @@ namespace WinDynamicDesktop.WPF
             this.startAnimation = startAnimation;
             this.stopAnimation = stopAnimation;
 
-            transitionTimer = new DispatcherTimer
+            transitionTimer = new DispatcherTimer(DispatcherPriority.Send)
             {
                 Interval = TimeSpan.FromSeconds(TRANSITION_TIME)
             };
@@ -299,31 +302,63 @@ namespace WinDynamicDesktop.WPF
                     }
                 }
 
-                AddItems(string.Format(_("Previewing {0}"), _("Sunrise")), sunrise, isDownloaded);
-                AddItems(string.Format(_("Previewing {0}"), _("Day")), day, isDownloaded);
-                AddItems(string.Format(_("Previewing {0}"), _("Sunset")), sunset, isDownloaded);
-                AddItems(string.Format(_("Previewing {0}"), _("Night")), night, isDownloaded);
+                AddItems(_("Sunrise"), sunrise, isDownloaded);
+                AddItems(_("Day"), day, isDownloaded);
+                AddItems(_("Sunset"), sunset, isDownloaded);
+                AddItems(_("Night"), night, isDownloaded);
+
+                if (isDownloaded)
+                {
+                    ThemeImageData imageData = GetThemeImageData(theme);
+                    activeImage = imageData.FindIndex(entry => entry.Item2 == wpState.daySegment4) +
+                        wpState.imageNumber;
+                }
+                else
+                {
+                    activeImage = (Items.Count == 2) ? wpState.daySegment2 : wpState.daySegment4;
+                }
             }
             else
             {
                 Author = "Microsoft";
                 Items.Add(new ThemePreviewItem(string.Empty, ThemeThumbLoader.GetWindowsWallpaper()));
-            }
-
-            if (wpState.daySegment4 >= 1)
-            {
-                activeImage += sunrise?.Length ?? 0;
-            }
-            if (wpState.daySegment4 >= 2)
-            {
-                activeImage += day?.Length ?? 0;
-            }
-            if (wpState.daySegment4 == 3)
-            {
-                activeImage += sunset?.Length ?? 0;
+                activeImage = 0;
             }
 
             Start(activeImage);
+        }
+
+        private ThemeImageData GetThemeImageData(ThemeConfig theme)
+        {
+            ThemeImageData imageData = new ThemeImageData();
+
+            if (!theme.sunriseImageList.SequenceEqual(theme.dayImageList))
+            {
+                foreach (int imageId in theme.sunriseImageList)
+                {
+                    imageData.Add(Tuple.Create(imageId, 0));
+                }
+            }
+
+            foreach (int imageId in theme.dayImageList)
+            {
+                imageData.Add(Tuple.Create(imageId, 1));
+            }
+
+            if (!theme.sunsetImageList.SequenceEqual(theme.dayImageList))
+            {
+                foreach (int imageId in theme.sunsetImageList)
+                {
+                    imageData.Add(Tuple.Create(imageId, 2));
+                }
+            }
+
+            foreach (int imageId in theme.nightImageList)
+            {
+                imageData.Add(Tuple.Create(imageId, 3));
+            }
+
+            return imageData;
         }
 
         private void Previous()
@@ -393,15 +428,21 @@ namespace WinDynamicDesktop.WPF
             Items.Clear();
         }
 
-        private void AddItems(string previewText, string[] items, bool isDownloaded)
+        private void AddItems(string previewName, string[] items, bool isDownloaded)
         {
             if (items == null) return;
 
             for (int i = 0; i < items.Length; i++)
             {
+                string previewText = previewName;
+
                 if (isDownloaded)
                 {
-                    previewText += $" ({i + 1}/{items.Length})";
+                    previewText = string.Format(_("Previewing {0} ({1}/{2})"), previewName, i + 1, items.Length);
+                }
+                else
+                {
+                    previewText = string.Format(_("Previewing {0}"), previewName);
                 }
 
                 Items.Add(new ThemePreviewItem(previewText, items[i]));
