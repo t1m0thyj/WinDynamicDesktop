@@ -2,13 +2,13 @@
 
 ## `4.3.0`
 
-* Redesign theme selector dialog to show carousel that autocycles through images (thanks @cjvaughter)
-* Add Indonesian translation (thanks @ChrisG661)
-* Fix error when Windows 10 default wallpaper missing
+* Redesigned theme selector dialog to show carousel that autocycles through images (thanks @cjvaughter)
+* Added Dutch, Korean, and Indonesian translations (thanks Samuel, jihwan_bong, and @ChrisG661)
+* Fixed error when Windows 10 default wallpaper missing
 
 ## `4.2.0`
 
-* Add Big Sur and Big Sur Abstract themes
-* Add Bulgarian and Japanese translations (thanks Marin and Syoyusensation)
-* Improve error checking for theme JSON when new themes are installed
-* Fix check for updates failing on Windows 7
+* Added Big Sur and Big Sur Abstract themes
+* Added Bulgarian and Japanese translations (thanks Marin and Syoyusensation)
+* Improved error checking for theme JSON when new themes are installed
+* Fixed check for updates failing on Windows 7

@@ -21,7 +21,7 @@ def add_to_pot_data(msgid, filename, lineno):
         pot_data[msgid].append((filename, lineno))
 
 
-for filename in glob.glob("../src/*.cs"):
+for filename in glob.glob("../src/**/*.cs", recursive=True):
     with open(filename, 'r', encoding="utf8") as cs_file:
         if not filename.endswith(".Designer.cs"):
             msg_history = []
