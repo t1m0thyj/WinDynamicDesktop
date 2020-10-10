@@ -33,6 +33,7 @@ WinDynamicDesktop is developed primarily for Windows 10, but should run on any v
 * [Documentation](https://github.com/t1m0thyj/WinDynamicDesktop/wiki)
 * [Themes](https://windd.info/themes/)
 * [Scripts](https://windd.info/scripts/)
+* [.ddw Theme Creator](https://ddw-theme-creator.vercel.app/) (thanks @gdstewart)
 
 ## Known Issues
 

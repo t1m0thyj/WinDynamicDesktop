@@ -76,6 +76,12 @@ namespace WinDynamicDesktop
             return IsThemeDownloaded(theme) ? theme.imageCredits : "Apple";
         }
 
+        public static bool IsTheme4Segment(ThemeConfig theme)
+        {
+            return (!ThemeJsonValidator.IsNullOrEmpty(theme.sunriseImageList) &&
+                !ThemeJsonValidator.IsNullOrEmpty(theme.sunsetImageList));
+        }
+
         public static bool IsThemeDownloaded(ThemeConfig theme)
         {
             string themePath = Path.Combine("themes", theme.themeId);

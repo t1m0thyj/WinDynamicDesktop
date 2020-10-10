@@ -20,8 +20,6 @@ using System.Reflection;
 
 namespace WinDynamicDesktop.WPF
 {
-    using ThemeImageData = List<Tuple<int, int>>;
-
     public class ThemePreviewItem
     {
         public string PreviewText { get; set; }
@@ -256,14 +254,14 @@ namespace WinDynamicDesktop.WPF
 
                 if (isDownloaded)
                 {
-                    if (!theme.sunriseImageList.SequenceEqual(theme.dayImageList))
+                    if (theme.sunriseImageList != null && !theme.sunriseImageList.SequenceEqual(theme.dayImageList))
                     {
                         sunrise = ImagePaths(theme, theme.sunriseImageList);
                     }
 
                     day = ImagePaths(theme, theme.dayImageList);
 
-                    if (!theme.sunsetImageList.SequenceEqual(theme.dayImageList))
+                    if (theme.sunsetImageList != null && !theme.sunsetImageList.SequenceEqual(theme.dayImageList))
                     {
                         sunset = ImagePaths(theme, theme.sunsetImageList);
                     }
@@ -309,9 +307,21 @@ namespace WinDynamicDesktop.WPF
 
                 if (isDownloaded)
                 {
-                    ThemeImageData imageData = GetThemeImageData(theme);
-                    activeImage = imageData.FindIndex(entry => entry.Item2 == wpState.daySegment4) +
-                        wpState.imageNumber;
+                    activeImage = wpState.imageNumber;
+                    bool is4Segment = ThemeManager.IsTheme4Segment(theme);
+
+                    if (is4Segment && wpState.daySegment4 >= 1)
+                    {
+                        activeImage += sunrise?.Length ?? 0;
+                    }
+                    if ((is4Segment && wpState.daySegment4 >= 2) || (!is4Segment && wpState.daySegment2 == 1))
+                    {
+                        activeImage += day?.Length ?? 0;
+                    }
+                    if (is4Segment && wpState.daySegment4 == 3)
+                    {
+                        activeImage += sunset?.Length ?? 0;
+                    }
                 }
                 else
                 {
@@ -326,39 +336,6 @@ namespace WinDynamicDesktop.WPF
             }
 
             Start(activeImage);
-        }
-
-        private ThemeImageData GetThemeImageData(ThemeConfig theme)
-        {
-            ThemeImageData imageData = new ThemeImageData();
-
-            if (!theme.sunriseImageList.SequenceEqual(theme.dayImageList))
-            {
-                foreach (int imageId in theme.sunriseImageList)
-                {
-                    imageData.Add(Tuple.Create(imageId, 0));
-                }
-            }
-
-            foreach (int imageId in theme.dayImageList)
-            {
-                imageData.Add(Tuple.Create(imageId, 1));
-            }
-
-            if (!theme.sunsetImageList.SequenceEqual(theme.dayImageList))
-            {
-                foreach (int imageId in theme.sunsetImageList)
-                {
-                    imageData.Add(Tuple.Create(imageId, 2));
-                }
-            }
-
-            foreach (int imageId in theme.nightImageList)
-            {
-                imageData.Add(Tuple.Create(imageId, 3));
-            }
-
-            return imageData;
         }
 
         private void Previous()
