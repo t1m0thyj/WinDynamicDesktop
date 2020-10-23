@@ -4,7 +4,6 @@ Port of macOS Mojave Dynamic Desktop feature to Windows 10. Available on GitHub 
 [![GitHub releases](https://img.shields.io/github/downloads/t1m0thyj/WinDynamicDesktop/total)](https://github.com/t1m0thyj/WinDynamicDesktop/releases)
 [![Chocolatey package](https://img.shields.io/chocolatey/v/windynamicdesktop?color=brightgreen)](https://chocolatey.org/packages/windynamicdesktop)
 [![Build status](https://img.shields.io/appveyor/build/t1m0thyj/WinDynamicDesktop)](https://ci.appveyor.com/project/t1m0thyj/WinDynamicDesktop)
-[![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=t1m0thyj_WinDynamicDesktop&metric=alert_status)](https://sonarcloud.io/dashboard?id=t1m0thyj_WinDynamicDesktop)
 
 [![Gitter chat](https://img.shields.io/gitter/room/t1m0thyj/WinDynamicDesktop)](https://gitter.im/t1m0thyj/WinDynamicDesktop)
 [![Donate](https://img.shields.io/badge/donate-paypal-brightgreen.svg)](https://paypal.me/t1m0thyj)
