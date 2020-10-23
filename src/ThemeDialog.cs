@@ -106,7 +106,8 @@ namespace WinDynamicDesktop
             {
                 using (Image thumbnailImage = ThemeThumbLoader.GetThumbnailImage(theme, thumbnailSize, true))
                 {
-                    this.Invoke(new Action(() => {
+                    this.Invoke(new Action(() =>
+                    {
                         listView1.LargeImageList.Images.Add(thumbnailImage);
                         ListViewItem newItem = listView1.Items.Add(ThemeManager.GetThemeName(theme),
                             listView1.LargeImageList.Images.Count - 1);
@@ -359,7 +360,8 @@ namespace WinDynamicDesktop
                     listView1.LargeImageList.Images[imageIndex].Dispose();
                 }
 
-                Task.Run(() => {
+                Task.Run(() =>
+                {
                     ThemeManager.RemoveTheme(theme);
 
                     if (ThemeManager.defaultThemes.Contains(theme.themeId))

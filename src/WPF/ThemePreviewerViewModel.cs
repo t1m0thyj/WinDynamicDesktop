@@ -207,7 +207,7 @@ namespace WinDynamicDesktop.WPF
         }
 
         public void OnAnimationComplete()
-        {   
+        {
             BackImage = FrontImage;
             FrontImage = null;
 
@@ -485,13 +485,13 @@ namespace WinDynamicDesktop.WPF
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void SetProperty<T>(ref T field, T value, [CallerMemberName]string propertyName = "")
+        private void SetProperty<T>(ref T field, T value, [CallerMemberName] string propertyName = "")
         {
             field = value;
             OnPropertyChanged(propertyName);
         }
 
-        private void OnPropertyChanged([CallerMemberName]string propertyName = "")
+        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

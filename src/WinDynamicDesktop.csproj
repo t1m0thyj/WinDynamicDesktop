@@ -192,6 +192,7 @@
   <ItemGroup>
     <PackageReference Include="Costura.Fody">
       <Version>4.1.0</Version>
+      <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="DesktopBridge.Helpers">
       <Version>1.2.2</Version>
@@ -212,6 +213,7 @@
     </PackageReference>
     <PackageReference Include="PropertyChanged.Fody">
       <Version>3.2.10</Version>
+      <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="RestSharp">
       <Version>106.11.7</Version>

@@ -39,7 +39,7 @@ namespace WinDynamicDesktop
         public WallpaperChangeScheduler()
         {
             fullScreenChecker = new FullScreenApi(this);
-            
+
             backgroundTimer.AutoReset = true;
             backgroundTimer.Interval = 60e3;
             backgroundTimer.Elapsed += OnBackgroundTimerElapsed;
