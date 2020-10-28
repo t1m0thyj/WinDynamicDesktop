@@ -35,7 +35,7 @@ def write_file(filename, contents):
 
 r = requests.get("https://api.github.com/repos/t1m0thyj/WinDynamicDesktop/releases/latest")
 response = r.json()
-installer_url = response["assets"][1]["browser_download_url"]
+installer_url = response["assets"][0]["browser_download_url"]
 package_version = response["tag_name"][1:]
 replacers = {
     "installerChecksum": sha256_checksum("../dist/" + os.path.basename(installer_url)),

@@ -71,8 +71,7 @@ pot_lines = [
 
 for msgid, locs in pot_data.items():
     pot_lines.append("")
-    pot_lines.append("#: {}".format(" ".join(["{}:{}".format(filename, lineno)
-        for filename, lineno in locs])))
+    pot_lines.append("#: {}".format(" ".join(["{}:{}".format(filename, lineno) for filename, lineno in locs])))
 
     if "\\n" in msgid:
         msgid_lines = msgid.split("\\n")

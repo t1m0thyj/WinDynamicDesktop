@@ -18,9 +18,9 @@ if not os.path.isdir(po_dir):
 
 client = POEditorAPI(os.getenv("POEDITOR_TOKEN"))
 projects = client.list_projects()
-project_id = [p for p in projects if p["name"] == "WinDynamicDesktop"][0]["id"]
+project_id = [proj for proj in projects if proj["name"] == "WinDynamicDesktop"][0]["id"]
 languages = client.list_project_languages(project_id)
-language_codes = [l["code"] for l in languages if l["percentage"] >= 50]
+language_codes = [lang["code"] for lang in languages if lang["percentage"] >= 50]
 
 for lc in language_codes:
     print(f"Downloading translation for {lc}")

@@ -4,10 +4,8 @@ image: Visual Studio 2019
 configuration: Release
 environment:
   UseTemporarySignCert: true
-  SonarQubeToken:
-    secure: 2aNov8Lbsmce/BShnhVa2ZeD6Og9kSQC2vO/6SegYlWx84TSQb2wI3Iu9fG1JYA3
 install:
-- ps: choco install innosetup sonarscanner-msbuild-net46 -y
+- ps: choco install innosetup -y -r
 before_build:
 - ps: >-
     if ($env:APPVEYOR_REPO_TAG -eq "true") {
@@ -18,21 +16,10 @@ before_build:
 
 
     nuget restore src\WinDynamicDesktop.sln
-
-
-    if (-Not $env:APPVEYOR_PULL_REQUEST_NUMBER -And $env:APPVEYOR_REPO_BRANCH -eq "master") {
-        SonarScanner.MSBuild.exe begin /k:"t1m0thyj_WinDynamicDesktop" /d:"sonar.host.url=https://sonarcloud.io" /o:"t1m0thyj" /d:"sonar.login=$env:SonarQubeToken"
-    }
 build:
   verbosity: minimal
 after_build:
-- ps: >-
-    if (-Not $env:APPVEYOR_PULL_REQUEST_NUMBER -And $env:APPVEYOR_REPO_BRANCH -eq "master") {
-        SonarScanner.MSBuild.exe end /d:"sonar.login=$env:SonarQubeToken"
-    }
-
-
-    powershell scripts\package.ps1
+- ps: powershell scripts\package.ps1
 artifacts:
 - path: dist\WinDynamicDesktop_*_Portable.exe
   name: Portable EXE

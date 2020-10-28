@@ -19,7 +19,7 @@ namespace WinDynamicDesktop
 {
     class Localization
     {
-        public static List<string> languageCodes = new List<string>(); 
+        public static List<string> languageCodes = new List<string>();
         public static List<string> languageNames = new List<string>();
 
         public static string currentLocale;

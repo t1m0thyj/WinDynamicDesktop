@@ -1,5 +1,9 @@
 # Changelog
 
+## `4.3.1`
+
+* Fixed error when 2-image themes (e.g., Big Sur Abstract) are selected in theme dialog
+
 ## `4.3.0`
 
 * Redesigned theme selector dialog to show carousel that autocycles through images (thanks @cjvaughter)

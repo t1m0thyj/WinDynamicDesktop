@@ -47,7 +47,7 @@ namespace WinDynamicDesktop
             {
                 AppContext.ShowPopup(_("In Windows 10 location settings, grant location access to WinDynamicDesktop. " +
                     "Then return to the app and click \"Check for Permission\"."));
-                
+
                 await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings:privacy-location"));
             }
 

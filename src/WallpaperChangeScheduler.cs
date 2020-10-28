@@ -164,7 +164,8 @@ namespace WinDynamicDesktop
             DateTimeTZ segmentEnd;
             SchedulerState imageData = new SchedulerState() { daySegment2 = isSunUp ? 0 : 1 };
 
-            if (!JsonConfig.settings.darkMode)
+            // Use 4-segment mode if sunrise and sunset image lists are defined, and dark mode is not enabled
+            if (theme != null && ThemeManager.IsTheme4Segment(theme) && !JsonConfig.settings.darkMode)
             {
                 switch (GetDaySegment(data, current))
                 {
@@ -226,6 +227,11 @@ namespace WinDynamicDesktop
             else
             {
                 imageList = theme?.nightImageList;
+
+                if (!JsonConfig.settings.darkMode && (isSunUp || data.polarPeriod == PolarPeriod.PolarDay))
+                {
+                    imageList = theme?.dayImageList;
+                }
 
                 if (data.polarPeriod != PolarPeriod.None)
                 {

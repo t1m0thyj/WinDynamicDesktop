@@ -22,7 +22,7 @@ namespace WinDynamicDesktop
             {
                 ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
             }
-            
+
             if (webProxy == null)
             {
                 // Uses HttpEnvironmentProxy class to mimic .NET Core behavior
@@ -35,7 +35,7 @@ namespace WinDynamicDesktop
         public static void ApplyProxyToClient(RestSharp.RestClient client)
         {
             IWebProxy proxy = GetProxy();
-            
+
             if (proxy != null)
             {
                 client.Proxy = proxy;

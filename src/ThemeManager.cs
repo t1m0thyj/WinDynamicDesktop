@@ -29,7 +29,7 @@ namespace WinDynamicDesktop
         {
             Directory.CreateDirectory("themes");
             UpdateHandler.CompatibilizeThemes();
-            
+
             defaultThemes = DefaultThemes.GetDefaultThemes();
             List<string> themeIds = new List<string>();
 
@@ -76,6 +76,12 @@ namespace WinDynamicDesktop
             return IsThemeDownloaded(theme) ? theme.imageCredits : "Apple";
         }
 
+        public static bool IsTheme4Segment(ThemeConfig theme)
+        {
+            return (!ThemeJsonValidator.IsNullOrEmpty(theme.sunriseImageList) &&
+                !ThemeJsonValidator.IsNullOrEmpty(theme.sunsetImageList));
+        }
+
         public static bool IsThemeDownloaded(ThemeConfig theme)
         {
             string themePath = Path.Combine("themes", theme.themeId);
@@ -113,7 +119,8 @@ namespace WinDynamicDesktop
                 result = ThemeLoader.CopyLocalTheme(importPath, themeId);
             }
 
-            return result.Match(e => new ThemeResult(e), theme => {
+            return result.Match(e => new ThemeResult(e), theme =>
+            {
                 if (themeIndex == -1)
                 {
                     themeSettings.Add(theme);
@@ -151,7 +158,8 @@ namespace WinDynamicDesktop
         {
             foreach (string themeId in themeIds)
             {
-                ThemeLoader.TryLoad(themeId).Match(ThemeLoader.HandleError, theme => {
+                ThemeLoader.TryLoad(themeId).Match(ThemeLoader.HandleError, theme =>
+                {
                     themeSettings.Add(theme);
 
                     if (theme.themeId == JsonConfig.settings.themeName)

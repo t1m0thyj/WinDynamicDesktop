@@ -9,10 +9,14 @@ namespace WinDynamicDesktop
 {
     class ThemeJsonValidator
     {
+        public static bool IsNullOrEmpty(Array array)
+        {
+            return (array == null || array.Length == 0);
+        }
+
         public static ThemeResult ValidateQuick(ThemeConfig theme)
         {
-            if (string.IsNullOrEmpty(theme.imageFilename) || IsNullOrEmpty(theme.sunriseImageList) ||
-                IsNullOrEmpty(theme.dayImageList) || IsNullOrEmpty(theme.sunsetImageList) ||
+            if (string.IsNullOrEmpty(theme.imageFilename) || IsNullOrEmpty(theme.dayImageList) ||
                 IsNullOrEmpty(theme.nightImageList))
             {
                 return new ThemeResult(new MissingFieldsInThemeJSON(theme.themeId));
@@ -46,25 +50,20 @@ namespace WinDynamicDesktop
         {
             List<int> imageList = new List<int>();
 
-            if (!theme.sunriseImageList.SequenceEqual(theme.dayImageList))
+            if (theme.sunriseImageList != null && !theme.sunriseImageList.SequenceEqual(theme.dayImageList))
             {
                 imageList.AddRange(theme.sunriseImageList);
             }
 
             imageList.AddRange(theme.dayImageList);
 
-            if (!theme.sunsetImageList.SequenceEqual(theme.dayImageList))
+            if (theme.sunsetImageList != null && !theme.sunsetImageList.SequenceEqual(theme.dayImageList))
             {
                 imageList.AddRange(theme.sunsetImageList);
             }
 
             imageList.AddRange(theme.nightImageList);
             return imageList;
-        }
-
-        private static bool IsNullOrEmpty(Array array)
-        {
-            return (array == null || array.Length == 0);
         }
     }
 }
