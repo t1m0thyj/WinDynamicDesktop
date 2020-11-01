@@ -1,6 +1,6 @@
 # Changelog
 
-## `4.3.2`
+## `4.4.0`
 
 * Added 8 new themes from Big Sur 11.0.1
 * Added Greek and Vietnamese translations (thanks masterjunior24 and Truong Huynh)
