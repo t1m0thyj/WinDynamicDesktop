@@ -163,8 +163,8 @@ namespace WinDynamicDesktop
             DateTime segmentEnd;
             SchedulerState imageData = new SchedulerState() { daySegment2 = isSunUp ? 0 : 1 };
 
-            // Use 4-segment mode if sunrise and sunset image lists are defined, and dark mode is not enabled
-            if (theme != null && ThemeManager.IsTheme4Segment(theme) && !JsonConfig.settings.darkMode)
+            // Use 4-segment mode if theme is not downloaded, or has sunrise/sunset images and dark mode not enabled
+            if (theme?.imageFilename == null || (ThemeManager.IsTheme4Segment(theme) && !JsonConfig.settings.darkMode))
             {
                 switch (GetDaySegment(data, current))
                 {

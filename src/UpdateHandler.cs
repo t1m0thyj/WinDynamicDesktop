@@ -182,11 +182,20 @@ namespace WinDynamicDesktop
 
         public static void UpdateToVersion4()  // Added 2020-01-01
         {
-            if (!File.Exists("settings.conf"))
+            if (!File.Exists("settings.json"))
             {
-                return;
+                // Updated 2020-10-25 for settings.conf -> settings.json
+                if (File.Exists("settings.conf"))
+                {
+                    File.Move("settings.conf", "settings.json");
+                    JsonConfig.firstRun = false;
+                }
+                else
+                {
+                    return;
+                }
             }
-            string jsonText = File.ReadAllText("settings.conf");
+            string jsonText = File.ReadAllText("settings.json");
             LegacyConfig settings = JsonConvert.DeserializeObject<LegacyConfig>(jsonText);
             bool legacySettingsEnabled = (settings.changeSystemTheme || settings.changeAppTheme ||
                 settings.changeLockScreen || settings.useAutoBrightness || settings.useCustomAutoBrightness);
@@ -194,7 +203,7 @@ namespace WinDynamicDesktop
             {
                 jsonText = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<AppConfig>(jsonText),
                     Formatting.Indented);
-                File.WriteAllText("settings.conf", jsonText);
+                File.WriteAllText("settings.json", jsonText);
                 MessageDialog.ShowInfo("Updated to WinDynamicDesktop 4.0 successfully. Some features you were using " +
                     "have been disabled because they were removed from the core app. You were using one or more of " +
                     "the following features:\n\n* Change Windows 10 app/system theme\n* Change screen brightness\n* " +

@@ -44,7 +44,7 @@ namespace WinDynamicDesktop
             {
                 new ToolStripMenuItem("WinDynamicDesktop"),
                 new ToolStripSeparator(),
-                new ToolStripMenuItem(_("&Configure Timing..."), null, OnScheduleItemClick),
+                new ToolStripMenuItem(_("&Configure Schedule..."), null, OnScheduleItemClick),
                 themeItem
             });
             items[0].Enabled = false;
@@ -160,7 +160,7 @@ namespace WinDynamicDesktop
 
         private static void OnEditConfigFileClick(object sender, EventArgs e)
         {
-            Process.Start("explorer", "settings.conf");
+            Process.Start("explorer", "settings.json");
         }
 
         private static void OnReloadConfigFileClick(object sender, EventArgs e)

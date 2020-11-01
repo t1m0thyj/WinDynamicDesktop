@@ -263,7 +263,7 @@
             this.MaximizeBox = false;
             this.Name = "ScheduleDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Configure Timing";
+            this.Text = "Configure Schedule";
             this.Load += new System.EventHandler(this.InputDialog_Load);
             ((System.ComponentModel.ISupportInitialize)(this.sunriseSunsetDurationBox)).EndInit();
             this.ResumeLayout(false);

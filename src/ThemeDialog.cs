@@ -238,7 +238,7 @@ namespace WinDynamicDesktop
             previewerHost.Child = previewer;
 
             listView1.ContextMenuStrip = contextMenuStrip1;
-            listView1.ListViewItemSorter = new CompareByItemText(listView1);
+            listView1.ListViewItemSorter = new CompareByItemText();
             SetWindowTheme(listView1.Handle, "Explorer", null);
 
             ImageList imageList = new ImageList();
@@ -426,17 +426,10 @@ namespace WinDynamicDesktop
         }
     }
 
-    // Class to force ListView control to sort correctly
+    // Comparer class to make ListView sort by theme name
     // Code from https://stackoverflow.com/a/30536933/5504760
     public class CompareByItemText : IComparer
     {
-        private readonly ListView _listView;
-
-        public CompareByItemText(ListView listView)
-        {
-            this._listView = listView;
-        }
-
         public int Compare(object x, object y)
         {
             ListViewItem item1 = (ListViewItem)x;

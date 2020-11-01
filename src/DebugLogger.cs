@@ -25,7 +25,7 @@ namespace WinDynamicDesktop
 
             try
             {
-                string jsonText = File.ReadAllText("settings.conf");
+                string jsonText = File.ReadAllText("settings.json");
                 settings = JsonConvert.DeserializeObject<AppConfig>(jsonText);
             }
             catch { /* Do nothing */ }
@@ -37,7 +37,7 @@ namespace WinDynamicDesktop
                     settings.location = "redacted";
                     settings.latitude = "0";
                     settings.longitude = "0";
-                    debugLog.WriteLine("./settings.conf");
+                    debugLog.WriteLine("./settings.json");
                     debugLog.WriteLine(JsonConvert.SerializeObject(settings, Formatting.Indented));
                 }
                 else

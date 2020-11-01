@@ -50,7 +50,7 @@ namespace WinDynamicDesktop
         private static bool unsavedChanges;
 
         public static AppConfig settings = new AppConfig();
-        public static bool firstRun = !File.Exists("settings.conf");
+        public static bool firstRun = !File.Exists("settings.json");
 
         public static void LoadConfig()
         {
@@ -65,7 +65,7 @@ namespace WinDynamicDesktop
             {
                 try
                 {
-                    string jsonText = File.ReadAllText("settings.conf");
+                    string jsonText = File.ReadAllText("settings.json");
                     settings = JsonConvert.DeserializeObject<AppConfig>(jsonText);
                 }
                 catch (JsonReaderException)
@@ -110,7 +110,7 @@ namespace WinDynamicDesktop
             await Task.Run(() =>
             {
                 string jsonText = JsonConvert.SerializeObject(settings, Formatting.Indented);
-                File.WriteAllText("settings.conf", jsonText);
+                File.WriteAllText("settings.json", jsonText);
             });
 
             if (restartPending)
