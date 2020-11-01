@@ -133,8 +133,10 @@ namespace WinDynamicDesktop
             AddLanguage("Português (do Brasil)", "pt-br");  // Portuguese (BR)
             AddLanguage("Pусский", "ru");  // Russian
             AddLanguage("Română", "ro");  // Romanian
+            AddLanguage("Tiếng Việt", "vi");  // Vietnamese
             AddLanguage("Türkçe", "tr");  // Turkish
             AddLanguage("Čeština", "cs");  // Czech
+            AddLanguage("Ελληνικά", "el");  // Greek
             AddLanguage("Български", "bg");  // Bulgarian
             AddLanguage("Македонски", "mk");  // Macedonian
             AddLanguage("हिन्दी", "hi");  // Hindi

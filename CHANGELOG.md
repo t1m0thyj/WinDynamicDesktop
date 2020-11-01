@@ -1,5 +1,11 @@
 # Changelog
 
+## `4.3.2`
+
+* Added 8 new themes from Big Sur 11.0.1
+* Added Greek and Vietnamese translations (thanks masterjunior24 and Truong Huynh)
+* Fixed issue where wrong preview image was shown for time of day in theme dialog
+
 ## `4.3.1`
 
 * Fixed error when 2-image themes (e.g., Big Sur Abstract) are selected in theme dialog
