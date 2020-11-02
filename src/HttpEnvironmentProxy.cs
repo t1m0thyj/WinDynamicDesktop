@@ -4,9 +4,8 @@
 // https://github.com/dotnet/runtime/blob/master/LICENSE.TXT
 
 using System;
-using System.Net.Http;
-using System.Net;
 using System.Collections.Generic;
+using System.Net;
 
 namespace WinDynamicDesktop
 {

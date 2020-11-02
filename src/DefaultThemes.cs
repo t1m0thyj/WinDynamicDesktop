@@ -5,8 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WinDynamicDesktop
 {
@@ -22,17 +20,17 @@ namespace WinDynamicDesktop
                 .Where((line) => !line.StartsWith("#")).ToArray();
 
             return yamlLines.Where((line) => !line.StartsWith("-"))
-                .Select((line) => line.Substring(0, line.Length - 1)).ToArray();
+                .Select((line) => line.TrimEnd(':')).ToArray();
         }
 
         public static Uri[] GetThemeUriList(string themeId)
         {
-            int startIndex = yamlLines.ToList().FindIndex((line) => line == themeId + ":") + 1;
+            int startIndex = Array.FindIndex(yamlLines, (line) => line == themeId + ":") + 1;
             List<Uri> uriList = new List<Uri>();
 
-            while ((startIndex < yamlLines.Length) && yamlLines[startIndex].StartsWith("-"))
+            while ((startIndex < yamlLines.Length) && yamlLines[startIndex].StartsWith("- "))
             {
-                uriList.Add(new Uri(yamlLines[startIndex].Substring(yamlLines[startIndex].LastIndexOf(" ") + 1)));
+                uriList.Add(new Uri(yamlLines[startIndex].Substring(2)));
                 startIndex++;
             }
 

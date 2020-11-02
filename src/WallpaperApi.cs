@@ -3,13 +3,8 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.Threading;
-using Microsoft.Win32;
 
 namespace WinDynamicDesktop
 {
