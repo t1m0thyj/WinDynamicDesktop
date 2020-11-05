@@ -11,8 +11,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -22,28 +20,20 @@ namespace WinDynamicDesktop.WPF
     public class ThemePreviewItem
     {
         public string PreviewText { get; set; }
-        public MemoryStream Data { get; set; }
-
-        public ThemePreviewItem() { }
+        public Uri Uri { get; set; }
 
         public ThemePreviewItem(string previewText, string path)
         {
             PreviewText = previewText;
 
-            Data = new MemoryStream();
-            if (!File.Exists(path))
+            string fullPath = Path.GetFullPath(path);
+            if (File.Exists(fullPath))
             {
-                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(path))
-                {
-                    stream.CopyTo(Data);
-                }
+                Uri = new Uri(fullPath, UriKind.Absolute);
             }
             else
             {
-                using (var file = File.OpenRead(path))
-                {
-                    file.CopyTo(Data);
-                }
+                Uri = new Uri(path, UriKind.Relative);
             }
         }
     }
@@ -52,9 +42,9 @@ namespace WinDynamicDesktop.WPF
     {
         #region Properties
 
-        public Visibility ControlsVisible => string.IsNullOrEmpty(Title) ? Visibility.Hidden : Visibility.Visible;
-        public Visibility MessageVisible => string.IsNullOrEmpty(Message) ? Visibility.Hidden : Visibility.Visible;
-        public Visibility CarouselIndicatorsVisible => string.IsNullOrEmpty(Message) ? Visibility.Visible : Visibility.Hidden;
+        public bool ControlsVisible => !string.IsNullOrEmpty(Title);
+        public bool MessageVisible => !string.IsNullOrEmpty(Message);
+        public bool CarouselIndicatorsVisible => string.IsNullOrEmpty(Message);
 
         private string title;
         public string Title
@@ -171,13 +161,12 @@ namespace WinDynamicDesktop.WPF
 
         private const int TRANSITION_TIME = 5;
 
+        private readonly BitmapCache cache = new BitmapCache();
         private readonly DispatcherTimer transitionTimer;
         private readonly ConcurrentQueue<int> fadeQueue = new ConcurrentQueue<int>();
         private readonly SemaphoreSlim fadeSemaphore = new SemaphoreSlim(1, 1);
         private readonly Action startAnimation;
         private readonly Action stopAnimation;
-        private readonly int maxWidth;
-        private readonly int maxHeight;
 
         public ThemePreviewerViewModel(Action startAnimation, Action stopAnimation)
         {
@@ -191,18 +180,6 @@ namespace WinDynamicDesktop.WPF
             transitionTimer.Tick += (s, e) => Next();
 
             IsPlaying = true;
-
-            int maxArea = 0;
-            foreach (Screen screen in Screen.AllScreens)
-            {
-                int area = screen.Bounds.Width * screen.Bounds.Height;
-                if (area > maxArea)
-                {
-                    maxArea = area;
-                    maxWidth = screen.Bounds.Width;
-                    maxHeight = screen.Bounds.Height;
-                }
-            }
         }
 
         public void OnAnimationComplete()
@@ -218,7 +195,7 @@ namespace WinDynamicDesktop.WPF
 
             if (nextIndex != -1)
             {
-                FrontImage = CreateImage(Items[nextIndex].Data);
+                FrontImage = cache[Items[nextIndex].Uri];
                 startAnimation();
             }
             else
@@ -369,7 +346,7 @@ namespace WinDynamicDesktop.WPF
 
             if (fadeSemaphore.Wait(0))
             {
-                FrontImage = CreateImage(Items[index].Data);
+                FrontImage = cache[Items[index].Uri];
                 startAnimation();
             }
             else
@@ -396,12 +373,8 @@ namespace WinDynamicDesktop.WPF
             FrontImage = null;
             SelectedIndex = -1;
 
-            foreach (var v in Items)
-            {
-                v.Data.Dispose();
-            }
-
             Items.Clear();
+            cache.Clear();
         }
 
         private void AddItems(string previewName, string[] items, bool isDownloaded)
@@ -430,7 +403,7 @@ namespace WinDynamicDesktop.WPF
             var item = Items[index];
 
             PreviewText = item.PreviewText;
-            BackImage = CreateImage(item.Data);
+            BackImage = cache[item.Uri];
 
             selectedIndex = index;
             OnPropertyChanged(nameof(SelectedIndex));
@@ -439,30 +412,6 @@ namespace WinDynamicDesktop.WPF
             {
                 transitionTimer.Start();
             }
-        }
-
-        private BitmapImage CreateImage(MemoryStream memory)
-        {
-            memory.Position = 0;
-
-            BitmapImage img = new BitmapImage();
-            img.BeginInit();
-            img.CacheOption = BitmapCacheOption.None;
-            img.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
-            img.StreamSource = memory;
-
-            if (maxWidth >= maxHeight)
-            {
-                img.DecodePixelWidth = maxWidth;
-            }
-            else
-            {
-                img.DecodePixelHeight = maxHeight;
-            }
-
-            img.EndInit();
-            img.Freeze();
-            return img;
         }
 
         private static string[] ImagePaths(ThemeConfig theme, int[] imageList)
