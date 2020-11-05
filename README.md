@@ -1,5 +1,5 @@
 # WinDynamicDesktop
-Port of macOS Mojave Dynamic Desktop feature to Windows 10. Available on GitHub and the Microsoft Store.
+Port of macOS Dynamic Desktop feature since macOS Mojave to Windows 10. Available on GitHub and the Microsoft Store.
 
 [![GitHub releases](https://img.shields.io/github/downloads/t1m0thyj/WinDynamicDesktop/total)](https://github.com/t1m0thyj/WinDynamicDesktop/releases)
 [![Chocolatey package](https://img.shields.io/chocolatey/v/windynamicdesktop?color=brightgreen)](https://chocolatey.org/packages/windynamicdesktop)
@@ -13,7 +13,7 @@ Port of macOS Mojave Dynamic Desktop feature to Windows 10. Available on GitHub 
 
 ## Themes
 
-Pick from the 3 themes bundled with macOS, or many more themes available for download [here](https://windd.info/themes/)
+Pick from the various themes bundled with macOS, or many more themes available for download [here](https://windd.info/themes/)
 
 ![Screenshot of Select Theme window](images/select_theme.png)
 
