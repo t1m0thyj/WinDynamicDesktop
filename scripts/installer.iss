@@ -29,6 +29,7 @@ Compression=lzma
 SolidCompression=yes
 ChangesAssociations=yes
 CloseApplications=force
+RestartApplications=no
 WizardStyle=modern
 
 [Code]

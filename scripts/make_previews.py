@@ -8,12 +8,12 @@ from PIL import Image
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
-img_width = int(sys.argv[1])
+img_width = int(sys.argv[1]) if len(sys.argv) > 1 else 256
 img_height = int(img_width * 9 / 16)
 jpeg_quality = int(sys.argv[2]) if len(sys.argv) > 2 else 75
 
 input_dir = "..\\themes"
-output_dir = "../src/resources/images"
+output_dir = sys.argv[3] if len(sys.argv) > 3 else "../src/resources/images"
 
 get_middle_item = lambda image_list: image_list[len(image_list) // 2] if image_list else -1
 

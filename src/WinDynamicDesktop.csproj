@@ -81,7 +81,7 @@
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="AppContext.cs" />
-    <Compile Include="DpiHelper.cs" />
+    <Compile Include="Win32Utils.cs" />
     <Compile Include="HttpEnvironmentProxy.cs" />
     <Compile Include="IpcManager.cs" />
     <Compile Include="ProxyWrapper.cs" />
@@ -212,7 +212,7 @@
       <Version>0.6.6</Version>
     </PackageReference>
     <PackageReference Include="PropertyChanged.Fody">
-      <Version>3.2.10</Version>
+      <Version>3.3.1</Version>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="RestSharp">

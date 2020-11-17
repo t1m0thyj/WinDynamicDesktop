@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace WinDynamicDesktop
 {
-    class DpiHelper
+    class Win32Utils
     {
         // Code based on https://github.com/modern-forms/Modern.Forms/tree/master/src/Modern.Forms/Avalonia/Avalonia.Win32
         private enum ProcessDpiAwareness
@@ -65,6 +65,24 @@ namespace WinDynamicDesktop
             }
 
             SetProcessDPIAware();
+        }
+
+        [Flags]
+        private enum RestartFlags
+        {
+            None = 0,
+            RestartNoCrash = 1,
+            RestartNoHang = 2,
+            RestartNoPatch = 4,
+            RestartNoReboot = 8
+        }
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+        private static extern uint RegisterApplicationRestart(string pwsCommandLine, RestartFlags dwFlags);
+
+        public static bool RegisterForRestart()
+        {
+            return RegisterApplicationRestart(null, RestartFlags.None) == 0;
         }
     }
 }

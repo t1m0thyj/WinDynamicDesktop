@@ -29,7 +29,8 @@ namespace WinDynamicDesktop
             }
             Directory.SetCurrentDirectory(cwd);
 
-            DpiHelper.SetDpiAwareness();
+            Win32Utils.SetDpiAwareness();
+            Win32Utils.RegisterForRestart();
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

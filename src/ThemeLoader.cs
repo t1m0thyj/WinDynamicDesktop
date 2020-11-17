@@ -51,6 +51,11 @@ namespace WinDynamicDesktop
                 return new ThemeResult(new InvalidThemeJSON(themeId, e.Message));
             }
 
+            if (theme == null)
+            {
+                return new ThemeResult(new InvalidThemeJSON(themeId, _("Empty JSON file")));
+            }
+
             theme.themeId = themeId;
             return ThemeJsonValidator.ValidateQuick(theme);
         }
