@@ -3,7 +3,7 @@
 
 $assemblyFile = "$env:APPVEYOR_BUILD_FOLDER\src\Properties\AssemblyInfo.cs"
 
-$regex = new-object System.Text.RegularExpressions.Regex ('(AssemblyVersion(Attribute)?\s*\(\s*\")(.*)(\"\s*\))',
+$regex = new-object System.Text.RegularExpressions.Regex ('(AssemblyVersion\(\")(\d+\.\d+\.\d+)(\"\))',
          [System.Text.RegularExpressions.RegexOptions]::MultiLine)
 
 $content = [IO.File]::ReadAllText($assemblyFile)
