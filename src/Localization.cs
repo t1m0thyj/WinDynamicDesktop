@@ -167,7 +167,7 @@ namespace WinDynamicDesktop
 
             using (WebClient wc = new WebClient())
             {
-                ProxyWrapper.ApplyProxyToClient(client);
+                ProxyWrapper.ApplyProxyToClient(wc);
                 byte[] moBinary = wc.DownloadData(response.Data.result.url);
 
                 using (Stream stream = new MemoryStream(moBinary))

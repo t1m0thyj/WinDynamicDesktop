@@ -67,22 +67,8 @@ namespace WinDynamicDesktop
             SetProcessDPIAware();
         }
 
-        [Flags]
-        private enum RestartFlags
-        {
-            None = 0,
-            RestartNoCrash = 1,
-            RestartNoHang = 2,
-            RestartNoPatch = 4,
-            RestartNoReboot = 8
-        }
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
-        private static extern uint RegisterApplicationRestart(string pwsCommandLine, RestartFlags dwFlags);
-
-        public static bool RegisterForRestart()
-        {
-            return RegisterApplicationRestart(null, RestartFlags.None) == 0;
-        }
+        // Code to change ListView appearance from https://stackoverflow.com/a/4463114/5504760
+        [DllImport("uxtheme.dll", ExactSpelling = true, CharSet = CharSet.Unicode)]
+        internal static extern int SetWindowTheme(IntPtr hwnd, string pszSubAppName, string pszSubIdList);
     }
 }

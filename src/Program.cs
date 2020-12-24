@@ -3,9 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using System;
-using System.Globalization;
 using System.IO;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace WinDynamicDesktop
@@ -19,52 +17,27 @@ namespace WinDynamicDesktop
         static void Main(string[] args)
         {
             string localFolder = UwpDesktop.GetHelper().GetLocalFolder();
-            Application.ThreadException += (sender, e) => OnThreadException(sender, e, localFolder);
-            AppDomain.CurrentDomain.UnhandledException += (sender, e) => OnUnhandledException(sender, e, localFolder);
+            Application.ThreadException += (sender, e) => ErrorHandler.LogError(localFolder, e.Exception);
+            AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
+                ErrorHandler.LogError(localFolder, e.ExceptionObject as Exception);
 
             string cwd = localFolder;
             if (File.Exists(Path.Combine(localFolder, "WinDynamicDesktop.pth")))
             {
-                cwd = File.ReadAllText(Path.Combine(localFolder, "WinDynamicDesktop.pth")).Trim();
+                cwd = Environment.ExpandEnvironmentVariables(
+                    File.ReadAllText(Path.Combine(localFolder, "WinDynamicDesktop.pth")).Trim());
+                if (!Directory.Exists(cwd))
+                {
+                    Directory.CreateDirectory(cwd);
+                }
             }
             Directory.SetCurrentDirectory(cwd);
 
             Win32Utils.SetDpiAwareness();
-            Win32Utils.RegisterForRestart();
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new AppContext(args));
-        }
-
-        static void OnThreadException(object sender, ThreadExceptionEventArgs e, string cwd)
-        {
-            LogError(cwd, e.Exception);
-        }
-
-        static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e, string cwd)
-        {
-            LogError(cwd, e.ExceptionObject as Exception);
-        }
-
-        static void LogError(string cwd, Exception exc)
-        {
-            string errorMessage = exc.ToString();
-            string logFilename = Path.Combine(cwd, Path.GetFileName(Environment.GetCommandLineArgs()[0]) + ".log");
-
-            try
-            {
-                string timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
-                File.AppendAllText(logFilename, string.Format("[{0}] {1}\n\n", timestamp, errorMessage));
-
-                MessageDialog.ShowError(string.Format("See the logfile '{0}' for details", logFilename),
-                    "Errors occurred");
-            }
-            catch
-            {
-                MessageDialog.ShowError(string.Format("The logfile '{0}' could not be opened:\n {1}", logFilename,
-                    errorMessage), "Errors occurred");
-            }
         }
     }
 }

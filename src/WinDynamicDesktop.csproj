@@ -87,7 +87,7 @@
     <Compile Include="ProxyWrapper.cs" />
     <Compile Include="ThemeJsonValidator.cs" />
     <Compile Include="UpdateHandler.cs" />
-    <Compile Include="DebugLogger.cs" />
+    <Compile Include="ErrorHandler.cs" />
     <Compile Include="DefaultThemes.cs" />
     <Compile Include="DesktopHelper.cs" />
     <Compile Include="FullScreenApi.cs" />
