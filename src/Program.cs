@@ -21,23 +21,30 @@ namespace WinDynamicDesktop
             AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
                 ErrorHandler.LogError(localFolder, e.ExceptionObject as Exception);
 
-            string cwd = localFolder;
-            if (File.Exists(Path.Combine(localFolder, "WinDynamicDesktop.pth")))
-            {
-                cwd = Environment.ExpandEnvironmentVariables(
-                    File.ReadAllText(Path.Combine(localFolder, "WinDynamicDesktop.pth")).Trim());
-                if (!Directory.Exists(cwd))
-                {
-                    Directory.CreateDirectory(cwd);
-                }
-            }
-            Directory.SetCurrentDirectory(cwd);
-
+            Directory.SetCurrentDirectory(FindCwd(localFolder));
             Win32Utils.SetDpiAwareness();
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new AppContext(args));
+        }
+
+        static string FindCwd(string localFolder)
+        {
+            string cwd = localFolder;
+            string pathFile = Path.Combine(localFolder, "WinDynamicDesktop.pth");
+
+            if (File.Exists(pathFile))
+            {
+                cwd = Environment.ExpandEnvironmentVariables(File.ReadAllText(pathFile).Trim());
+
+                if (!Directory.Exists(cwd))
+                {
+                    Directory.CreateDirectory(cwd);
+                }
+            }
+
+            return cwd;
         }
     }
 }

@@ -11,6 +11,7 @@ namespace WinDynamicDesktop
     public partial class LanguageDialog : Form
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
+        private const string translateLink = "https://poeditor.com/join/project/DEgfVpyuiK";
 
         public LanguageDialog()
         {
@@ -30,6 +31,11 @@ namespace WinDynamicDesktop
             {
                 comboBox1.SelectedIndex = langIndex;
             }
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(translateLink);
         }
 
         private void okButton_Click(object sender, EventArgs e)
