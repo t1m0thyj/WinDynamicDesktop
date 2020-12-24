@@ -2,14 +2,15 @@ version: 1.0.{build}
 skip_branch_with_pr: true
 image: Visual Studio 2019
 configuration: Release
-init:
-- ps: "$assemblyFile = \"$env:APPVEYOR_BUILD_FOLDER\\src\\Properties\\AssemblyInfo.cs\"\n\n$regex = new-object System.Text.RegularExpressions.Regex ('(AssemblyVersion(Attribute)?\\s*\\(\\s*\\\")(.*)(\\\"\\s*\\))', \n         [System.Text.RegularExpressions.RegexOptions]::MultiLine)\n\n$content = [IO.File]::ReadAllText($assemblyFile)\n\n$version = $null\n$match = $regex.Match($content)\nif($match.Success) {\n    $version = $match.groups[3].value\n}\n\n# new version\n$version = \"$version.$env:APPVEYOR_BUILD_NUMBER\"\n\n# update assembly info\n$content = $regex.Replace($content, '${1}' + $version + '${4}')\n[IO.File]::WriteAllText($assemblyFile, $content)\n\n# update AppVeyor build\nUpdate-AppveyorBuild -Version $version"
 environment:
   UseTemporarySignCert: true
 install:
 - ps: choco install innosetup -y -r
 before_build:
-- ps: nuget restore src\WinDynamicDesktop.sln
+- ps: >-
+    powershell scripts\prebuild_appveyor.ps1
+
+    nuget restore src\WinDynamicDesktop.sln
 build:
   verbosity: minimal
 after_build:
