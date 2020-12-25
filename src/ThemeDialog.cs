@@ -416,7 +416,6 @@ namespace WinDynamicDesktop
         private void OnFormClosed(object sender, FormClosedEventArgs e)
         {
             previewer.ViewModel.Stop();
-            GC.Collect();
         }
     }
 

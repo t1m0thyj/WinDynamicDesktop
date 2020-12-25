@@ -8,8 +8,9 @@
              Foreground="White" Background="Gray">
     <UserControl.Resources>
         <FontFamily x:Key="FontAwesome">pack://application:,,,/resources/fonts/fontawesome-webfont.ttf#FontAwesome</FontFamily>
+        <BooleanToVisibilityConverter x:Key="BoolVis" />
         <Style x:Key="CarouselButton" TargetType="{x:Type Button}">
-            <Setter Property="Background" Value="Black" />
+            <Setter Property="Background" Value="#7F000000" />
             <Setter Property="Foreground" Value="White" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -17,12 +18,11 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <Grid>
-                            <Rectangle RadiusX="5" RadiusY="5" Fill="{TemplateBinding Background}" Opacity="0.5"/>
+                        <Border Background="{TemplateBinding Background}" CornerRadius="5">
                             <ContentControl x:Name="Content" Content="{TemplateBinding Content}" Opacity="0.5"
                                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-                        </Grid>
+                        </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="Content" Property="Opacity" Value="1" />
@@ -50,12 +50,21 @@
         <KeyBinding Gesture="Right" Command="{Binding NextCommand}" />
     </UserControl.InputBindings>
     <Grid>
-        <Image x:Name="BackImage" Source="{Binding BackImage}" Stretch="Fill" StretchDirection="Both" Focusable="False"
+        <Grid.Resources>
+            <Style x:Key="{x:Type Border}" TargetType="{x:Type Border}">
+                <Setter Property="Background" Value="#7F000000" />
+                <Setter Property="CornerRadius" Value="5" />
+            </Style>
+        </Grid.Resources>
+
+        <Image x:Name="BackImage" Source="{Binding BackImage, Mode=OneWay}"
+               Stretch="Fill" StretchDirection="Both" Focusable="False"
                RenderOptions.BitmapScalingMode="Fant" />
-        <Image x:Name="FrontImage" Source="{Binding FrontImage}" Stretch="Fill" StretchDirection="Both" Focusable="False"
+        <Image x:Name="FrontImage" Source="{Binding FrontImage, Mode=OneWay}"
+               Stretch="Fill" StretchDirection="Both" Focusable="False"
                RenderOptions.BitmapScalingMode="Fant" Opacity="0" />
 
-        <Grid Visibility="{Binding ControlsVisible}">
+        <Grid Visibility="{Binding ControlsVisible, Converter={StaticResource BoolVis}}">
             <Button HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="80" Command="{Binding PreviousCommand}"
                     Style="{StaticResource CarouselButton}" Background="Transparent" 
                     Content="&#xf053;" FontSize="20" Cursor="Hand" FocusVisualStyle="{x:Null}">
@@ -65,13 +74,12 @@
                     Content="&#xf054;" FontSize="20" Cursor="Hand" FocusVisualStyle="{x:Null}">
             </Button>
 
-            <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20">
-                <Rectangle RadiusX="5" RadiusY="5" Fill="Black" Opacity="0.5"/>
+            <Border HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20">
                 <StackPanel Margin="10">
                     <TextBlock Text="{Binding Title, FallbackValue='Title'}" FontWeight="Bold" FontSize="19"/>
                     <TextBlock Text="{Binding PreviewText, FallbackValue='Preview Text'}" FontSize="16" Margin="0,4,0,0" />
                 </StackPanel>
-            </Grid>
+            </Border>
 
             <Button HorizontalAlignment="Right" VerticalAlignment="Top" MinWidth="40" MinHeight="40" Margin="20" FontSize="16" Command="{Binding PlayCommand}">
                 <Button.Style>
@@ -86,13 +94,14 @@
                 </Button.Style>
             </Button>
 
-            <Grid HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,15" Visibility="{Binding MessageVisible}">
-                <Rectangle RadiusX="5" RadiusY="5" Fill="Black" Opacity="0.5" />
+            <Border HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,15"
+                    Visibility="{Binding MessageVisible, Converter={StaticResource BoolVis}}">
                 <TextBlock Text="{Binding Message}" FontSize="16" VerticalAlignment="Center" Margin="8,6,8,6"  />
-            </Grid>
+            </Border>
 
-            <ListBox HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="16"
-                     ItemsSource="{Binding Items}" SelectedIndex="{Binding SelectedIndex}" IsSynchronizedWithCurrentItem="True" Visibility="{Binding CarouselIndicatorsVisible}">
+            <ListBox HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="16" Focusable="False"
+                     ItemsSource="{Binding Items}" SelectedIndex="{Binding SelectedIndex}" IsSynchronizedWithCurrentItem="True"
+                     Visibility="{Binding CarouselIndicatorsVisible, Converter={StaticResource BoolVis}}">
                 <ListBox.Style>
                     <Style TargetType="{x:Type ListBox}">
                         <Setter Property="Template">
@@ -132,9 +141,9 @@
             </ListBox>
         </Grid>
 
-        <Grid HorizontalAlignment="Right" VerticalAlignment="Bottom"  Margin="0,0,-3,-3" Opacity="0.5">
-            <Rectangle RadiusX="5" RadiusY="5" Fill="Black" />
-            <TextBlock Text="{Binding Author, FallbackValue='Author'}" FontSize="16" VerticalAlignment="Center" Margin="8,4,11,9"  />
-        </Grid>
+        <Border HorizontalAlignment="Right" VerticalAlignment="Bottom"  Margin="0,0,-3,-3">
+            <TextBlock Text="{Binding Author, FallbackValue='Author'}" FontSize="16"
+                       VerticalAlignment="Center" Margin="8,4,11,9" Opacity="0.5" />
+        </Border>
     </Grid>
 </UserControl>

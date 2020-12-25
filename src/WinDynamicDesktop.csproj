@@ -151,6 +151,7 @@
     <Compile Include="WallpaperApi.cs" />
     <Compile Include="WallpaperChangeScheduler.cs" />
     <Compile Include="WallpaperShuffler.cs" />
+    <Compile Include="WPF\BitmapCache.cs" />
     <Compile Include="WPF\RelayCommand.cs" />
     <Page Include="WPF\ThemePreviewer.xaml">
       <Generator>MSBuild:Compile</Generator>
