@@ -21,7 +21,7 @@ namespace WinDynamicDesktop
 
     class WallpaperChangeScheduler
     {
-        private enum DaySegment { Sunrise, Day, Sunset, Night, AllDay, AllNight };
+        private enum DaySegment { Sunrise, Day, Sunset, Night, AlwaysDay, AlwaysNight };
 
         private string lastImagePath;
         private DateTime? nextUpdateTime;
@@ -124,11 +124,11 @@ namespace WinDynamicDesktop
         {
             if (data.polarPeriod == PolarPeriod.PolarDay)
             {
-                return DaySegment.AllDay;
+                return DaySegment.AlwaysDay;
             }
             else if (data.polarPeriod == PolarPeriod.PolarNight)
             {
-                return DaySegment.AllNight;
+                return DaySegment.AlwaysNight;
             }
             else if (data.solarTimes[0] <= time && time < data.solarTimes[1])
             {
@@ -160,13 +160,13 @@ namespace WinDynamicDesktop
             {
                 switch (GetDaySegment(data, dateNow))
                 {
-                    case DaySegment.AllDay:
+                    case DaySegment.AlwaysDay:
                         imageList = theme?.dayImageList;
                         segmentStart = dateNow.Date;
                         segmentEnd = dateNow.Date.AddDays(1);
                         imageData.daySegment4 = 1;
                         break;
-                    case DaySegment.AllNight:
+                    case DaySegment.AlwaysNight:
                         imageList = theme?.nightImageList;
                         segmentStart = dateNow.Date;
                         segmentEnd = dateNow.Date.AddDays(1);
