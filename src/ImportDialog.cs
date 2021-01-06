@@ -4,13 +4,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace WinDynamicDesktop
 {
@@ -60,7 +57,7 @@ namespace WinDynamicDesktop
                 string themePath = importQueue.Peek();
                 this.Invoke(new Action(() =>
                     label1.Text = string.Format(_("Importing theme from {0}..."), Path.GetFileName(themePath))));
-                
+
                 ThemeResult result = ThemeManager.ImportTheme(themePath);
                 result.Match(e => this.Invoke(new Action(() => ThemeLoader.HandleError(e))),
                     theme => ThemeManager.importedThemes.Add(theme));
@@ -70,7 +67,6 @@ namespace WinDynamicDesktop
             }
             else
             {
-                ThemeManager.importMode = false;
                 this.Invoke(new Action(() =>
                 {
                     label1.Text = _("Generating thumbnails, please wait...");
@@ -94,6 +90,7 @@ namespace WinDynamicDesktop
         private void OnFormClosing(object sender, FormClosingEventArgs e)
         {
             ThemeLoader.taskbarHandle = IntPtr.Zero;
+            ThemeManager.importMode = false;
         }
     }
 }

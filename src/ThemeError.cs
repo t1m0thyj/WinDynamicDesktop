@@ -3,10 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WinDynamicDesktop
 {
@@ -72,8 +69,7 @@ namespace WinDynamicDesktop
 
     class MissingFieldsInThemeJSON : ThemeError
     {
-        private string[] requiredFields = new string[] { "dayImageList", "imageFilename", "nightImageList",
-            "sunriseImageList", "sunsetImageList" };
+        private string[] requiredFields = new string[] { "dayImageList", "imageFilename", "nightImageList" };
 
         public MissingFieldsInThemeJSON(string themeId) : base(themeId)
         {

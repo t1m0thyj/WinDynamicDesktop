@@ -47,12 +47,14 @@
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+    <FilterSatelliteAssembliesForMakePri>false</FilterSatelliteAssembliesForMakePri>
+    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
   </PropertyGroup>
   <PropertyGroup Condition="('$(Configuration)' == 'Debug') Or ('$(UseTemporarySignCert)' == 'true')">
     <PackageCertificateKeyFile>WinDynamicDesktop.Package_TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="('$(Configuration)' == 'Release') And ('$(UseTemporarySignCert)' != 'true')">
-    <PackageCertificateThumbprint>E2A95D90D5AE98A61D3FB5BB7EB1B4CD95D054DD</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>cb1a6283a6fd16ef9026ab059f94176d5f0a54c0</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <AppxBundle>Always</AppxBundle>

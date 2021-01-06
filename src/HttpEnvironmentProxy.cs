@@ -4,9 +4,8 @@
 // https://github.com/dotnet/runtime/blob/master/LICENSE.TXT
 
 using System;
-using System.Net.Http;
-using System.Net;
 using System.Collections.Generic;
+using System.Net;
 
 namespace WinDynamicDesktop
 {
@@ -213,7 +212,7 @@ namespace WinDynamicDesktop
                 {
                     auth = Uri.UnescapeDataString(auth);
                 }
-                catch { };
+                catch { /* Do nothing */ };
 
                 value = value.Substring(separatorIndex + 1);
                 separatorIndex = auth.IndexOf(':');
@@ -270,7 +269,7 @@ namespace WinDynamicDesktop
 
                 return ub.Uri;
             }
-            catch { };
+            catch { /* Do nothing */ };
             return null;
         }
 

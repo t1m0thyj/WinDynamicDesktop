@@ -2,13 +2,10 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Win32;
+using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Timers;
 
 namespace WinDynamicDesktop
@@ -16,6 +13,7 @@ namespace WinDynamicDesktop
     public class SchedulerState
     {
         public int imageId;
+        public int imageNumber;
         public long nextUpdateTicks;
         public int daySegment2;
         public int daySegment4;
@@ -23,7 +21,7 @@ namespace WinDynamicDesktop
 
     class WallpaperChangeScheduler
     {
-        private enum DaySegment { Sunrise, Day, Sunset, Night, AllDay, AllNight };
+        private enum DaySegment { Sunrise, Day, Sunset, Night, AlwaysDay, AlwaysNight };
 
         private string lastImagePath;
         private DateTime? nextUpdateTime;
@@ -38,7 +36,7 @@ namespace WinDynamicDesktop
         public WallpaperChangeScheduler()
         {
             fullScreenChecker = new FullScreenApi(this);
-            
+
             backgroundTimer.AutoReset = true;
             backgroundTimer.Interval = 60e3;
             backgroundTimer.Elapsed += OnBackgroundTimerElapsed;
@@ -72,7 +70,7 @@ namespace WinDynamicDesktop
                 WallpaperShuffler.MaybeShuffleWallpaper();
             }
 
-            SchedulerState imageData = GetImageData(data, ThemeManager.currentTheme);
+            SchedulerState imageData = GetImageData(data, ThemeManager.currentTheme, DateTime.Now);
 
             if (ThemeManager.currentTheme != null)
             {
@@ -122,25 +120,25 @@ namespace WinDynamicDesktop
             RunScheduler();
         }
 
-        private DaySegment GetCurrentDaySegment(SolarData data)
+        private static DaySegment GetDaySegment(SolarData data, DateTime time)
         {
             if (data.polarPeriod == PolarPeriod.PolarDay)
             {
-                return DaySegment.AllDay;
+                return DaySegment.AlwaysDay;
             }
             else if (data.polarPeriod == PolarPeriod.PolarNight)
             {
-                return DaySegment.AllNight;
+                return DaySegment.AlwaysNight;
             }
-            else if (data.solarTimes[0] <= DateTime.Now && DateTime.Now < data.solarTimes[1])
+            else if (data.solarTimes[0] <= time && time < data.solarTimes[1])
             {
                 return DaySegment.Sunrise;
             }
-            else if (data.solarTimes[1] <= DateTime.Now && DateTime.Now < data.solarTimes[2])
+            else if (data.solarTimes[1] <= time && time < data.solarTimes[2])
             {
                 return DaySegment.Day;
             }
-            else if (data.solarTimes[2] <= DateTime.Now && DateTime.Now < data.solarTimes[3])
+            else if (data.solarTimes[2] <= time && time < data.solarTimes[3])
             {
                 return DaySegment.Sunset;
             }
@@ -150,27 +148,28 @@ namespace WinDynamicDesktop
             }
         }
 
-        public SchedulerState GetImageData(SolarData data, ThemeConfig theme)
+        public SchedulerState GetImageData(SolarData data, ThemeConfig theme, DateTime dateNow)
         {
             int[] imageList = null;
             DateTime segmentStart;
             DateTime segmentEnd;
             SchedulerState imageData = new SchedulerState() { daySegment2 = isSunUp ? 0 : 1 };
 
-            if (!JsonConfig.settings.darkMode)
+            // Use 4-segment mode if theme is not downloaded, or has sunrise/sunset images and dark mode not enabled
+            if (theme?.imageFilename == null || (ThemeManager.IsTheme4Segment(theme) && !JsonConfig.settings.darkMode))
             {
-                switch (GetCurrentDaySegment(data))
+                switch (GetDaySegment(data, dateNow))
                 {
-                    case DaySegment.AllDay:
+                    case DaySegment.AlwaysDay:
                         imageList = theme?.dayImageList;
-                        segmentStart = DateTime.Today;
-                        segmentEnd = DateTime.Today.AddDays(1);
+                        segmentStart = dateNow.Date;
+                        segmentEnd = dateNow.Date.AddDays(1);
                         imageData.daySegment4 = 1;
                         break;
-                    case DaySegment.AllNight:
+                    case DaySegment.AlwaysNight:
                         imageList = theme?.nightImageList;
-                        segmentStart = DateTime.Today;
-                        segmentEnd = DateTime.Today.AddDays(1);
+                        segmentStart = dateNow.Date;
+                        segmentEnd = dateNow.Date.AddDays(1);
                         imageData.daySegment4 = 3;
                         break;
                     case DaySegment.Sunrise:
@@ -195,16 +194,16 @@ namespace WinDynamicDesktop
                         imageList = theme?.nightImageList;
                         imageData.daySegment4 = 3;
 
-                        if (DateTime.Now < data.solarTimes[0])
+                        if (dateNow < data.solarTimes[0])
                         {
-                            SolarData yesterdaysData = SunriseSunsetService.GetSolarData(DateTime.Today.AddDays(-1));
+                            SolarData yesterdaysData = SunriseSunsetService.GetSolarData(dateNow.Date.AddDays(-1));
                             segmentStart = yesterdaysData.solarTimes[3];
                             segmentEnd = data.solarTimes[0];
                         }
                         else
                         {
                             segmentStart = data.solarTimes[3];
-                            SolarData tomorrowsData = SunriseSunsetService.GetSolarData(DateTime.Today.AddDays(1));
+                            SolarData tomorrowsData = SunriseSunsetService.GetSolarData(dateNow.Date.AddDays(1));
                             segmentEnd = tomorrowsData.solarTimes[0];
                         }
 
@@ -215,26 +214,31 @@ namespace WinDynamicDesktop
             {
                 imageList = theme?.nightImageList;
 
+                if (!JsonConfig.settings.darkMode && (isSunUp || data.polarPeriod == PolarPeriod.PolarDay))
+                {
+                    imageList = theme?.dayImageList;
+                }
+
                 if (data.polarPeriod != PolarPeriod.None)
                 {
-                    segmentStart = DateTime.Today;
-                    segmentEnd = DateTime.Today.AddDays(1);
+                    segmentStart = dateNow.Date;
+                    segmentEnd = dateNow.Date.AddDays(1);
                 }
                 else if (isSunUp)
                 {
                     segmentStart = data.sunriseTime;
                     segmentEnd = data.sunsetTime;
                 }
-                else if (DateTime.Now < data.sunriseTime)
+                else if (dateNow < data.sunriseTime)
                 {
-                    SolarData yesterdaysData = SunriseSunsetService.GetSolarData(DateTime.Today.AddDays(-1));
+                    SolarData yesterdaysData = SunriseSunsetService.GetSolarData(dateNow.Date.AddDays(-1));
                     segmentStart = yesterdaysData.sunsetTime;
                     segmentEnd = data.sunriseTime;
                 }
                 else
                 {
                     segmentStart = data.sunsetTime;
-                    SolarData tomorrowsData = SunriseSunsetService.GetSolarData(DateTime.Today.AddDays(1));
+                    SolarData tomorrowsData = SunriseSunsetService.GetSolarData(dateNow.Date.AddDays(1));
                     segmentEnd = tomorrowsData.sunriseTime;
                 }
             }
@@ -244,8 +248,9 @@ namespace WinDynamicDesktop
                 TimeSpan segmentLength = segmentEnd - segmentStart;
                 TimeSpan timerLength = new TimeSpan(segmentLength.Ticks / imageList.Length);
 
-                int imageNumber = (int)((DateTime.Now - segmentStart).Ticks / timerLength.Ticks);
+                int imageNumber = (int)((dateNow.Ticks - segmentStart.Ticks) / timerLength.Ticks);
                 imageData.imageId = imageList[imageNumber];
+                imageData.imageNumber = imageNumber;
                 imageData.nextUpdateTicks = segmentStart.Ticks + timerLength.Ticks * (imageNumber + 1);
             }
 

@@ -3,12 +3,8 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Globalization;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace WinDynamicDesktop
 {
@@ -47,7 +43,7 @@ namespace WinDynamicDesktop
             {
                 AppContext.ShowPopup(_("In Windows 10 location settings, grant location access to WinDynamicDesktop. " +
                     "Then return to the app and click \"Check for Permission\"."));
-                
+
                 await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings:privacy-location"));
             }
 
@@ -74,7 +70,7 @@ namespace WinDynamicDesktop
 
                 return true;
             }
-            catch { }
+            catch { /* Do nothing */ }
 
             return false;
         }

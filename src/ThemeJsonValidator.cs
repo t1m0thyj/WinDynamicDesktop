@@ -1,23 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
+using System.Linq;
 
 namespace WinDynamicDesktop
 {
     class ThemeJsonValidator
     {
-        private static bool IsNullOrEmpty(Array array)
+        public static bool IsNullOrEmpty(Array array)
         {
             return (array == null || array.Length == 0);
         }
 
         public static ThemeResult ValidateQuick(ThemeConfig theme)
         {
-            if (string.IsNullOrEmpty(theme.imageFilename) || IsNullOrEmpty(theme.sunriseImageList) ||
-                IsNullOrEmpty(theme.dayImageList) || IsNullOrEmpty(theme.sunsetImageList) ||
+            if (string.IsNullOrEmpty(theme.imageFilename) || IsNullOrEmpty(theme.dayImageList) ||
                 IsNullOrEmpty(theme.nightImageList))
             {
                 return new ThemeResult(new MissingFieldsInThemeJSON(theme.themeId));
@@ -35,7 +32,7 @@ namespace WinDynamicDesktop
                 return new ThemeResult(new NoImagesMatchingPattern(theme.themeId, theme.imageFilename));
             }
 
-            foreach (int imageId in ThemeManager.GetThemeImageList(theme))
+            foreach (int imageId in GetThemeImageList(theme))
             {
                 string imageFilename = theme.imageFilename.Replace("*", imageId.ToString());
                 if (!File.Exists(Path.Combine(themePath, imageFilename)))
@@ -45,6 +42,26 @@ namespace WinDynamicDesktop
             }
 
             return new ThemeResult(theme);
+        }
+
+        private static List<int> GetThemeImageList(ThemeConfig theme)
+        {
+            List<int> imageList = new List<int>();
+
+            if (theme.sunriseImageList != null && !theme.sunriseImageList.SequenceEqual(theme.dayImageList))
+            {
+                imageList.AddRange(theme.sunriseImageList);
+            }
+
+            imageList.AddRange(theme.dayImageList);
+
+            if (theme.sunsetImageList != null && !theme.sunsetImageList.SequenceEqual(theme.dayImageList))
+            {
+                imageList.AddRange(theme.sunsetImageList);
+            }
+
+            imageList.AddRange(theme.nightImageList);
+            return imageList;
         }
     }
 }

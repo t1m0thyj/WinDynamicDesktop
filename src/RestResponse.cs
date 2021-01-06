@@ -4,13 +4,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WinDynamicDesktop
 {
-#nullable disable
     public class GitHubApiData
     {
         public string url { get; set; }
@@ -56,5 +52,4 @@ namespace WinDynamicDesktop
     {
         public PoEditorApiResult result { get; set; }
     }
-#nullable restore
 }

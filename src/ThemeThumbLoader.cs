@@ -4,18 +4,20 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace WinDynamicDesktop
 {
     class ThemeThumbLoader
     {
         private static List<string> outdatedThemeIds = new List<string>();
+        private static string windowsWallpaperFolder = Environment.ExpandEnvironmentVariables(
+            @"%SystemRoot%\Web\Wallpaper\Windows");
 
         public static Size GetThumbnailSize(System.Windows.Forms.Control control)
         {
@@ -26,7 +28,37 @@ namespace WinDynamicDesktop
                 scaledWidth = (int)(192 * g.DpiX / 96);
             }
 
+            if (scaledWidth > 256)
+            {
+                scaledWidth = 256;
+            }
+
             return new Size(scaledWidth, scaledWidth * 9 / 16);
+        }
+
+        public static string GetWindowsWallpaper()
+        {
+            string wallpaperPath = null;
+
+            if (Directory.Exists(windowsWallpaperFolder))
+            {
+                string[] wallpaperFiles = Directory.GetFiles(windowsWallpaperFolder);
+                if (wallpaperFiles.Length > 0)
+                {
+                    wallpaperPath = wallpaperFiles[0];
+                }
+            }
+
+            if (wallpaperPath == null)
+            {
+                wallpaperPath = Path.Combine(Environment.CurrentDirectory, "wallpaper_blank.jpg");
+                if (!File.Exists(wallpaperPath))
+                {
+                    (new Bitmap(1, 1)).Save(wallpaperPath, ImageFormat.Jpeg);
+                }
+            }
+
+            return wallpaperPath;
         }
 
         public static Image ScaleImage(Image tempImage, Size size)
@@ -77,9 +109,12 @@ namespace WinDynamicDesktop
                 }
                 else if (ThemeManager.defaultThemes.Contains(theme.themeId))
                 {
-                    Image cachedImage = (Image)Properties.Resources.ResourceManager.GetObject(
-                        theme.themeId + "_thumbnail");
-                    return ScaleImage(cachedImage, size);
+                    string resourceName = "WinDynamicDesktop.resources.images." + theme.themeId + "_thumbnail.jpg";
+
+                    using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+                    {
+                        return ScaleImage(Image.FromStream(stream), size);
+                    }
                 }
             }
 
@@ -102,18 +137,24 @@ namespace WinDynamicDesktop
             }
         }
 
-        public static void CacheThumbnails(Manina.Windows.Forms.ImageListView.ImageListViewItemCollection items)
+        public static void CacheThumbnails(System.Windows.Forms.ListView listView)
         {
-            foreach (Manina.Windows.Forms.ImageListViewItem item in items.Skip(1))
+            foreach (System.Windows.Forms.ListViewItem item in listView.Items)
             {
+                if (item.Index == 0)
+                {
+                    continue;
+                }
+
                 string themeId = (string)item.Tag;
 
                 if (outdatedThemeIds.Contains(themeId))
                 {
                     ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
+                    Image thumbnailImage = listView.LargeImageList.Images[item.ImageIndex];
                     string thumbnailPath = Path.Combine("themes", themeId, "thumbnail.png");
 
-                    item.ThumbnailImage.Save(thumbnailPath, ImageFormat.Png);
+                    Task.Run(new Action(() => thumbnailImage.Save(thumbnailPath, ImageFormat.Png)));
                     outdatedThemeIds.Remove(themeId);
                 }
             }

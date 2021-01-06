@@ -41,10 +41,9 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(15, 15);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Location = new System.Drawing.Point(11, 12);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(228, 17);
+            this.label1.Size = new System.Drawing.Size(173, 13);
             this.label1.TabIndex = 2;
             this.label1.Text = "Downloading images, please wait...";
             // 
@@ -52,29 +51,26 @@
             // 
             this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar1.Location = new System.Drawing.Point(15, 40);
-            this.progressBar1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.progressBar1.Location = new System.Drawing.Point(11, 32);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(399, 16);
+            this.progressBar1.Size = new System.Drawing.Size(299, 13);
             this.progressBar1.TabIndex = 0;
             // 
             // fileSizeProgressLabel
             // 
             this.fileSizeProgressLabel.AutoSize = true;
-            this.fileSizeProgressLabel.Location = new System.Drawing.Point(15, 65);
-            this.fileSizeProgressLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.fileSizeProgressLabel.Location = new System.Drawing.Point(11, 53);
             this.fileSizeProgressLabel.Name = "fileSizeProgressLabel";
             this.fileSizeProgressLabel.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.fileSizeProgressLabel.Size = new System.Drawing.Size(92, 17);
+            this.fileSizeProgressLabel.Size = new System.Drawing.Size(72, 13);
             this.fileSizeProgressLabel.TabIndex = 3;
             this.fileSizeProgressLabel.Text = "0 MB of 0 MB";
             // 
             // fileTransferSpeedLabel
             // 
-            this.fileTransferSpeedLabel.Location = new System.Drawing.Point(264, 65);
-            this.fileTransferSpeedLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.fileTransferSpeedLabel.Location = new System.Drawing.Point(198, 53);
             this.fileTransferSpeedLabel.Name = "fileTransferSpeedLabel";
-            this.fileTransferSpeedLabel.Size = new System.Drawing.Size(150, 17);
+            this.fileTransferSpeedLabel.Size = new System.Drawing.Size(112, 14);
             this.fileTransferSpeedLabel.TabIndex = 4;
             this.fileTransferSpeedLabel.Text = "0 MB/s";
             this.fileTransferSpeedLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -84,11 +80,10 @@
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(314, 105);
-            this.cancelButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cancelButton.Location = new System.Drawing.Point(236, 85);
             this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(100, 28);
-            this.cancelButton.TabIndex = 5;
+            this.cancelButton.Size = new System.Drawing.Size(75, 23);
+            this.cancelButton.TabIndex = 0;
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
@@ -104,32 +99,31 @@
             this.panel1.Controls.Add(this.progressBar1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(432, 148);
+            this.panel1.Size = new System.Drawing.Size(324, 120);
             this.panel1.TabIndex = 6;
             // 
             // label2
             // 
             this.label2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label2.Location = new System.Drawing.Point(13, 90);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Location = new System.Drawing.Point(10, 73);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(402, 2);
+            this.label2.Size = new System.Drawing.Size(302, 2);
             this.label2.TabIndex = 6;
             this.label2.Text = "label2";
             // 
             // DownloadDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(432, 148);
+            this.ClientSize = new System.Drawing.Size(324, 120);
             this.ControlBox = false;
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = global::WinDynamicDesktop.Properties.Resources.AppIcon;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "DownloadDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "WinDynamicDesktop";

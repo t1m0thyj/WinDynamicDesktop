@@ -2,19 +2,16 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-using System;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using System.IO;
-using System.Timers;
 using Newtonsoft.Json;
 using PropertyChanged;
+using System;
+using System.ComponentModel;
+using System.IO;
+using System.Threading.Tasks;
+using System.Timers;
 
 namespace WinDynamicDesktop
 {
-#nullable disable
     [AddINotifyPropertyChangedInterface]
     public class AppConfig : INotifyPropertyChanged
     {
@@ -43,7 +40,6 @@ namespace WinDynamicDesktop
         public bool fullScreenPause { get; set; }
         public bool enableScripts { get; set; }
     }
-#nullable restore
 
     class JsonConfig
     {
@@ -52,7 +48,7 @@ namespace WinDynamicDesktop
         private static bool unsavedChanges;
 
         public static AppConfig settings = new AppConfig();
-        public static bool firstRun = !File.Exists("settings.conf");
+        public static bool firstRun = !File.Exists("settings.json");
 
         public static void LoadConfig()
         {
@@ -67,7 +63,7 @@ namespace WinDynamicDesktop
             {
                 try
                 {
-                    string jsonText = File.ReadAllText("settings.conf");
+                    string jsonText = File.ReadAllText("settings.json");
                     settings = JsonConvert.DeserializeObject<AppConfig>(jsonText);
                 }
                 catch (JsonReaderException)
@@ -112,7 +108,7 @@ namespace WinDynamicDesktop
             await Task.Run(() =>
             {
                 string jsonText = JsonConvert.SerializeObject(settings, Formatting.Indented);
-                File.WriteAllText("settings.conf", jsonText);
+                File.WriteAllText("settings.json", jsonText);
             });
 
             if (restartPending)

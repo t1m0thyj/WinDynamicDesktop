@@ -4,10 +4,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
+using System.Linq;
 
 namespace WinDynamicDesktop
 {
@@ -29,7 +27,7 @@ namespace WinDynamicDesktop
         {
             Directory.CreateDirectory("themes");
             UpdateHandler.CompatibilizeThemes();
-            
+
             defaultThemes = DefaultThemes.GetDefaultThemes();
             List<string> themeIds = new List<string>();
 
@@ -71,30 +69,21 @@ namespace WinDynamicDesktop
             return theme.displayName ?? theme.themeId.Replace('_', ' ');
         }
 
+        public static string GetThemeAuthor(ThemeConfig theme)
+        {
+            return IsThemeDownloaded(theme) ? theme.imageCredits : "Apple";
+        }
+
+        public static bool IsTheme4Segment(ThemeConfig theme)
+        {
+            return (!ThemeJsonValidator.IsNullOrEmpty(theme.sunriseImageList) &&
+                !ThemeJsonValidator.IsNullOrEmpty(theme.sunsetImageList));
+        }
+
         public static bool IsThemeDownloaded(ThemeConfig theme)
         {
             string themePath = Path.Combine("themes", theme.themeId);
             return (Directory.Exists(themePath) && (Directory.GetFiles(themePath, theme.imageFilename).Length > 0));
-        }
-
-        public static List<int> GetThemeImageList(ThemeConfig theme)
-        {
-            List<int> imageList = new List<int>();
-
-            if (!theme.sunriseImageList.SequenceEqual(theme.dayImageList))
-            {
-                imageList.AddRange(theme.sunriseImageList);
-            }
-
-            imageList.AddRange(theme.dayImageList);
-
-            if (!theme.sunsetImageList.SequenceEqual(theme.dayImageList))
-            {
-                imageList.AddRange(theme.sunsetImageList);
-            }
-
-            imageList.AddRange(theme.nightImageList);
-            return imageList;
         }
 
         public static void DisableTheme(string themeId, bool permanent)
@@ -128,7 +117,8 @@ namespace WinDynamicDesktop
                 result = ThemeLoader.CopyLocalTheme(importPath, themeId);
             }
 
-            return result.Match(e => new ThemeResult(e), theme => {
+            return result.Match(e => new ThemeResult(e), theme =>
+            {
                 if (themeIndex == -1)
                 {
                     themeSettings.Add(theme);
@@ -159,14 +149,15 @@ namespace WinDynamicDesktop
             {
                 Directory.Delete(Path.Combine("themes", theme.themeId), true);
             }
-            catch { }
+            catch { /* Do nothing */ }
         }
 
         private static void LoadInstalledThemes(List<string> themeIds)
         {
             foreach (string themeId in themeIds)
             {
-                ThemeLoader.TryLoad(themeId).Match(ThemeLoader.HandleError, theme => {
+                ThemeLoader.TryLoad(themeId).Match(ThemeLoader.HandleError, theme =>
+                {
                     themeSettings.Add(theme);
 
                     if (theme.themeId == JsonConfig.settings.themeName)

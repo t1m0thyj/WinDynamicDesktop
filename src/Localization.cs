@@ -2,23 +2,20 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-using System;
+using NGettext;
+using RestSharp;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Globalization;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Windows.Forms;
-using NGettext;
-using RestSharp;
 
 namespace WinDynamicDesktop
 {
     class Localization
     {
-        public static List<string> languageCodes = new List<string>(); 
+        public static List<string> languageCodes = new List<string>();
         public static List<string> languageNames = new List<string>();
 
         public static string currentLocale;
@@ -52,35 +49,6 @@ namespace WinDynamicDesktop
             }
         }
 
-        private static void LoadLanguages()
-        {
-            AddLanguage("Bahasa Indonesia", "id");  // Indonesian
-            AddLanguage("Čeština", "cs");  // Czech
-            AddLanguage("Deutsch", "de");  // German
-            AddLanguage("English", "en");  // English
-            AddLanguage("Español", "es");  // Spanish
-            AddLanguage("Français", "fr");  // French
-            AddLanguage("Eλληνικά", "el");  // Greek
-            AddLanguage("Italiano", "it");  // Italian
-            AddLanguage("Македонски", "mk");  // Macedonian
-            AddLanguage("Polski", "pl");  // Polish
-            AddLanguage("Português (do Brasil)", "pt-br");  // Portuguese (BR)
-            AddLanguage("Română", "ro");  // Romanian
-            AddLanguage("Pусский", "ru");  // Russian
-            AddLanguage("Türkçe", "tr");  // Turkish
-            AddLanguage("Български", "bg");  // Bulgarian
-            AddLanguage("हिन्दी", "hi");  // Hindi
-            AddLanguage("বাংলা", "bn");  // Bengali
-            AddLanguage("中文 (简体)", "zh-Hans");  // Chinese (Simplified)
-            AddLanguage("日本語", "ja");  // Japanese
-        }
-
-        private static void AddLanguage(string languageName, string languageCode)
-        {
-            languageNames.Add(languageName);
-            languageCodes.Add(languageCode);
-        }
-
         public static void LoadLocaleFromFile()
         {
             string moFile = currentLocale + ".mo";
@@ -94,19 +62,90 @@ namespace WinDynamicDesktop
             }
             else
             {
-                byte[] embeddedMo = (byte[])Properties.Resources.ResourceManager.GetObject(
-                    "locale_" + currentLocale.Replace('-', '_'));
+                string resourceName = "WinDynamicDesktop.locale." + moFile;
 
-                if (embeddedMo == null)
+                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
                 {
-                    return;
-                }
+                    if (stream == null)
+                    {
+                        return;
+                    }
 
-                using (Stream stream = new MemoryStream(embeddedMo))
-                {
                     catalog = new Catalog(stream, new CultureInfo(currentLocale));
                 }
             }
+        }
+
+        public static void SelectLanguage()
+        {
+            LanguageDialog langDialog = new LanguageDialog();
+            langDialog.ShowDialog();
+        }
+
+        public static string GetCefLocale()
+        {
+            string cefLocale = (currentLocale == "zh-Hans") ? "zh-CN" : currentLocale;
+
+            if (File.Exists(Path.Combine("cef", "locales", cefLocale.ToLower() + ".pak")))
+            {
+                return cefLocale;
+            }
+
+            return "en-US";
+        }
+
+        public static string GetTranslation(string msg)
+        {
+            return (catalog != null) ? catalog.GetString(msg) : msg;
+        }
+
+        public static void TranslateForm(Form form)
+        {
+            if (form.Text != null)
+            {
+                form.Text = GetTranslation(form.Text);
+            }
+
+            foreach (Control childControl in GetControls(form))
+            {
+                if (childControl.GetType().GetProperty("Text") != null
+                    && childControl.Text != null)
+                {
+                    childControl.Text = GetTranslation(childControl.Text);
+                }
+            }
+        }
+
+        private static void LoadLanguages()
+        {
+            AddLanguage("Bahasa Indonesia", "id");  // Indonesian
+            AddLanguage("Deutsch", "de");  // German
+            AddLanguage("English", "en");  // English
+            AddLanguage("Español", "es");  // Spanish
+            AddLanguage("Français", "fr");  // French
+            AddLanguage("Italiano", "it");  // Italian
+            AddLanguage("Nederlands", "nl");  // Dutch
+            AddLanguage("Polski", "pl");  // Polish
+            AddLanguage("Português (do Brasil)", "pt-br");  // Portuguese (BR)
+            AddLanguage("Pусский", "ru");  // Russian
+            AddLanguage("Română", "ro");  // Romanian
+            AddLanguage("Tiếng Việt", "vi");  // Vietnamese
+            AddLanguage("Türkçe", "tr");  // Turkish
+            AddLanguage("Čeština", "cs");  // Czech
+            AddLanguage("Ελληνικά", "el");  // Greek
+            AddLanguage("Български", "bg");  // Bulgarian
+            AddLanguage("Македонски", "mk");  // Macedonian
+            AddLanguage("हिन्दी", "hi");  // Hindi
+            AddLanguage("বাংলা", "bn");  // Bengali
+            AddLanguage("中文 (简体)", "zh-Hans");  // Chinese (Simplified)
+            AddLanguage("日本語", "ja");  // Japanese
+            AddLanguage("한국어", "ko");  // Korean
+        }
+
+        private static void AddLanguage(string languageName, string languageCode)
+        {
+            languageNames.Add(languageName);
+            languageCodes.Add(languageCode);
         }
 
         private static void LoadLocaleFromWeb()
@@ -128,7 +167,7 @@ namespace WinDynamicDesktop
 
             using (WebClient wc = new WebClient())
             {
-                ProxyWrapper.ApplyProxyToClient(client);
+                ProxyWrapper.ApplyProxyToClient(wc);
                 byte[] moBinary = wc.DownloadData(response.Data.result.url);
 
                 using (Stream stream = new MemoryStream(moBinary))
@@ -136,17 +175,6 @@ namespace WinDynamicDesktop
                     catalog = new Catalog(stream, new CultureInfo(currentLocale));
                 }
             }
-        }
-
-        public static void SelectLanguage()
-        {
-            LanguageDialog langDialog = new LanguageDialog();
-            langDialog.ShowDialog();
-        }
-
-        public static string GetTranslation(string msg)
-        {
-            return (catalog != null) ? catalog.GetString(msg) : msg;
         }
 
         // Code from https://stackoverflow.com/a/664083/5504760
@@ -160,23 +188,6 @@ namespace WinDynamicDesktop
                 }
 
                 yield return childControl;
-            }
-        }
-
-        public static void TranslateForm(Form form)
-        {
-            if (form.Text != null)
-            {
-                form.Text = GetTranslation(form.Text);
-            }
-
-            foreach (Control childControl in GetControls(form))
-            {
-                if (childControl.GetType().GetProperty("Text") != null
-                    && childControl.Text != null)
-                {
-                    childControl.Text = GetTranslation(childControl.Text);
-                }
             }
         }
     }

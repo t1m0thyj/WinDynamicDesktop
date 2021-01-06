@@ -61,7 +61,7 @@
             this.locationBox.Location = new System.Drawing.Point(30, 56);
             this.locationBox.Name = "locationBox";
             this.locationBox.Size = new System.Drawing.Size(293, 20);
-            this.locationBox.TabIndex = 0;
+            this.locationBox.TabIndex = 1;
             this.locationBox.TextChanged += new System.EventHandler(this.OnInputValueChanged);
             // 
             // okButton
@@ -70,7 +70,7 @@
             this.okButton.Location = new System.Drawing.Point(166, 260);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 23);
-            this.okButton.TabIndex = 2;
+            this.okButton.TabIndex = 9;
             this.okButton.Text = "OK";
             this.okButton.UseVisualStyleBackColor = true;
             this.okButton.Click += new System.EventHandler(this.okButton_Click);
@@ -81,7 +81,7 @@
             this.cancelButton.Location = new System.Drawing.Point(248, 260);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
-            this.cancelButton.TabIndex = 3;
+            this.cancelButton.TabIndex = 10;
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
@@ -93,7 +93,7 @@
             this.radioButton1.Location = new System.Drawing.Point(12, 14);
             this.radioButton1.Name = "radioButton1";
             this.radioButton1.Size = new System.Drawing.Size(263, 17);
-            this.radioButton1.TabIndex = 4;
+            this.radioButton1.TabIndex = 0;
             this.radioButton1.TabStop = true;
             this.radioButton1.Text = "Use location to determine sunrise and sunset times";
             this.radioButton1.UseVisualStyleBackColor = true;
@@ -106,7 +106,7 @@
             this.radioButton2.Location = new System.Drawing.Point(12, 92);
             this.radioButton2.Name = "radioButton2";
             this.radioButton2.Size = new System.Drawing.Size(256, 17);
-            this.radioButton2.TabIndex = 5;
+            this.radioButton2.TabIndex = 2;
             this.radioButton2.Text = "Use Windows location service to determine times";
             this.radioButton2.UseVisualStyleBackColor = true;
             this.radioButton2.CheckedChanged += new System.EventHandler(this.OnInputValueChanged);
@@ -117,7 +117,7 @@
             this.radioButton3.Location = new System.Drawing.Point(12, 175);
             this.radioButton3.Name = "radioButton3";
             this.radioButton3.Size = new System.Drawing.Size(201, 17);
-            this.radioButton3.TabIndex = 6;
+            this.radioButton3.TabIndex = 5;
             this.radioButton3.Text = "Use specific sunrise and sunset times";
             this.radioButton3.UseVisualStyleBackColor = true;
             this.radioButton3.CheckedChanged += new System.EventHandler(this.OnInputValueChanged);
@@ -160,7 +160,7 @@
             this.sunriseTimePicker.Name = "sunriseTimePicker";
             this.sunriseTimePicker.ShowUpDown = true;
             this.sunriseTimePicker.Size = new System.Drawing.Size(94, 20);
-            this.sunriseTimePicker.TabIndex = 12;
+            this.sunriseTimePicker.TabIndex = 6;
             this.sunriseTimePicker.Value = new System.DateTime(1970, 1, 1, 6, 0, 0, 0);
             this.sunriseTimePicker.ValueChanged += new System.EventHandler(this.OnInputValueChanged);
             // 
@@ -172,7 +172,7 @@
             this.sunsetTimePicker.Name = "sunsetTimePicker";
             this.sunsetTimePicker.ShowUpDown = true;
             this.sunsetTimePicker.Size = new System.Drawing.Size(94, 20);
-            this.sunsetTimePicker.TabIndex = 13;
+            this.sunsetTimePicker.TabIndex = 7;
             this.sunsetTimePicker.Value = new System.DateTime(1970, 1, 1, 18, 0, 0, 0);
             this.sunsetTimePicker.ValueChanged += new System.EventHandler(this.OnInputValueChanged);
             // 
@@ -192,7 +192,7 @@
             this.grantPermissionButton.Location = new System.Drawing.Point(31, 139);
             this.grantPermissionButton.Name = "grantPermissionButton";
             this.grantPermissionButton.Size = new System.Drawing.Size(141, 23);
-            this.grantPermissionButton.TabIndex = 16;
+            this.grantPermissionButton.TabIndex = 3;
             this.grantPermissionButton.Text = "Grant Permission";
             this.grantPermissionButton.UseVisualStyleBackColor = true;
             this.grantPermissionButton.Click += new System.EventHandler(this.grantPermissionButton_Click);
@@ -217,7 +217,7 @@
             0});
             this.sunriseSunsetDurationBox.Name = "sunriseSunsetDurationBox";
             this.sunriseSunsetDurationBox.Size = new System.Drawing.Size(94, 20);
-            this.sunriseSunsetDurationBox.TabIndex = 17;
+            this.sunriseSunsetDurationBox.TabIndex = 8;
             this.sunriseSunsetDurationBox.Value = new decimal(new int[] {
             120,
             0,
@@ -230,7 +230,7 @@
             this.checkPermissionButton.Location = new System.Drawing.Point(182, 139);
             this.checkPermissionButton.Name = "checkPermissionButton";
             this.checkPermissionButton.Size = new System.Drawing.Size(141, 23);
-            this.checkPermissionButton.TabIndex = 18;
+            this.checkPermissionButton.TabIndex = 4;
             this.checkPermissionButton.Text = "Check for Permission";
             this.checkPermissionButton.UseVisualStyleBackColor = true;
             this.checkPermissionButton.Click += new System.EventHandler(this.checkPermissionButton_Click);
@@ -263,7 +263,7 @@
             this.MaximizeBox = false;
             this.Name = "ScheduleDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Configure Timing";
+            this.Text = "Configure Schedule";
             this.Load += new System.EventHandler(this.InputDialog_Load);
             ((System.ComponentModel.ISupportInitialize)(this.sunriseSunsetDurationBox)).EndInit();
             this.ResumeLayout(false);

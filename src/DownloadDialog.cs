@@ -5,19 +5,20 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Net;
-using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace WinDynamicDesktop
 {
     public partial class DownloadDialog : Form
     {
+        public bool applyPending;
+
         private static readonly Func<string, string> _ = Localization.GetTranslation;
         private List<Uri> themeUris;
         private int themeUriIndex;
@@ -158,7 +159,7 @@ namespace WinDynamicDesktop
                     System.Threading.Thread.Sleep(100);  // Wait for file to free up
                     File.Delete(themeZipDest);
                 }
-                catch { }
+                catch { /* Do nothing */ }
             });
         }
     }

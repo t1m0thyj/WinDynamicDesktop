@@ -2,19 +2,16 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using Newtonsoft.Json;
 
 namespace WinDynamicDesktop
 {
-#nullable disable
     public class ThemeConfig
     {
         public string themeId { get; set; }
@@ -28,7 +25,6 @@ namespace WinDynamicDesktop
         public int[] sunsetImageList { get; set; }
         public int[] nightImageList { get; set; }
     }
-#nullable restore
 
     class ThemeLoader
     {
@@ -53,6 +49,11 @@ namespace WinDynamicDesktop
             catch (JsonException e)
             {
                 return new ThemeResult(new InvalidThemeJSON(themeId, e.Message));
+            }
+
+            if (theme == null)
+            {
+                return new ThemeResult(new InvalidThemeJSON(themeId, _("Empty JSON file")));
             }
 
             theme.themeId = themeId;
@@ -145,7 +146,7 @@ namespace WinDynamicDesktop
                         }
 
                         return ThemeJsonValidator.ValidateFull(theme).Match(RollbackInstall,
-                            theme => new ThemeResult(theme));
+                            theme2 => new ThemeResult(theme2));
                     });
                 }
             }
@@ -188,7 +189,7 @@ namespace WinDynamicDesktop
                     }
                 }
 
-                return ThemeJsonValidator.ValidateFull(theme).Match(RollbackInstall, theme => new ThemeResult(theme));
+                return ThemeJsonValidator.ValidateFull(theme).Match(RollbackInstall, theme2 => new ThemeResult(theme2));
             });
         }
 
@@ -201,7 +202,7 @@ namespace WinDynamicDesktop
                     System.Threading.Thread.Sleep(100);  // Wait for folder to free up
                     Directory.Delete(Path.Combine("themes", error.themeId), true);
                 }
-                catch { }
+                catch { /* Do nothing */ }
             });
 
             return new ThemeResult(error);

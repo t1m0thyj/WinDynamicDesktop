@@ -2,18 +2,13 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Globalization;
 using System.IO;
-using Newtonsoft.Json;
 
 namespace WinDynamicDesktop
 {
-#nullable disable
     public class LegacyConfig
     {
         public bool changeSystemTheme { get; set; }
@@ -22,7 +17,6 @@ namespace WinDynamicDesktop
         public bool useAutoBrightness { get; set; }
         public bool useCustomAutoBrightness { get; set; }
     }
-#nullable restore
 
     class UpdateHandler
     {
@@ -184,11 +178,20 @@ namespace WinDynamicDesktop
 
         public static void UpdateToVersion4()  // Added 2020-01-01
         {
-            if (!File.Exists("settings.conf"))
+            if (!File.Exists("settings.json"))
             {
-                return;
+                // Updated 2020-10-25 for settings.conf -> settings.json
+                if (File.Exists("settings.conf"))
+                {
+                    File.Move("settings.conf", "settings.json");
+                    JsonConfig.firstRun = false;
+                }
+                else
+                {
+                    return;
+                }
             }
-            string jsonText = File.ReadAllText("settings.conf");
+            string jsonText = File.ReadAllText("settings.json");
             LegacyConfig settings = JsonConvert.DeserializeObject<LegacyConfig>(jsonText);
             bool legacySettingsEnabled = (settings.changeSystemTheme || settings.changeAppTheme ||
                 settings.changeLockScreen || settings.useAutoBrightness || settings.useCustomAutoBrightness);
@@ -196,7 +199,7 @@ namespace WinDynamicDesktop
             {
                 jsonText = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<AppConfig>(jsonText),
                     Formatting.Indented);
-                File.WriteAllText("settings.conf", jsonText);
+                File.WriteAllText("settings.json", jsonText);
                 MessageDialog.ShowInfo("Updated to WinDynamicDesktop 4.0 successfully. Some features you were using " +
                     "have been disabled because they were removed from the core app. You were using one or more of " +
                     "the following features:\n\n* Change Windows 10 app/system theme\n* Change screen brightness\n* " +
