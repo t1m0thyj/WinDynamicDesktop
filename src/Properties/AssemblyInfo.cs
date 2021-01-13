@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("WinDynamicDesktop")]
-[assembly: AssemblyCopyright("Copyright © 2020 Timothy Johnson")]
+[assembly: AssemblyCopyright("Copyright © 2021 Timothy Johnson")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

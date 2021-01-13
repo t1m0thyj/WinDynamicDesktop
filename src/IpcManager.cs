@@ -4,20 +4,37 @@
 
 using NamedPipeWrapper;
 using System;
+using System.Threading;
 
 namespace WinDynamicDesktop
 {
-    class IpcManager
+    class IpcManager : IDisposable
     {
-        public static NamedPipeServer<string[]> StartServer()
+        public bool isFirstInstance;
+
+        private Mutex _mutex;
+        private NamedPipeServer<string[]> namedPipeServer;
+
+        public IpcManager()
         {
-            var namedPipeServer = new NamedPipeServer<string[]>("WinDynamicDesktop");
-            namedPipeServer.ClientMessage += OnNamedPipeClientMessage;
-            namedPipeServer.Start();
-            return namedPipeServer;
+            _mutex = new Mutex(true, @"Global\WinDynamicDesktop", out isFirstInstance);
+            GC.KeepAlive(_mutex);
         }
 
-        public static void SendArgsToServer(string[] args)
+        public void Dispose()
+        {
+            _mutex?.Dispose();
+            namedPipeServer?.Stop();
+        }
+
+        public void ListenForArgs(Action<string[]> listener)
+        {
+            namedPipeServer = new NamedPipeServer<string[]>("WinDynamicDesktop");
+            namedPipeServer.ClientMessage += (conn, args) => listener(args);
+            namedPipeServer.Start();
+        }
+
+        public void SendArgsToFirstInstance(string[] args)
         {
             var namedPipeClient = new NamedPipeClient<string[]>("WinDynamicDesktop");
             namedPipeClient.Start();
@@ -25,16 +42,6 @@ namespace WinDynamicDesktop
             namedPipeClient.PushMessage(args);
             namedPipeClient.WaitForDisconnection();
             namedPipeClient.Stop();
-        }
-
-        private static void OnNamedPipeClientMessage(NamedPipeConnection<string[], string[]> conn, string[] message)
-        {
-            ThemeManager.importPaths.AddRange(message);
-
-            if (!ThemeManager.importMode)
-            {
-                AppContext.notifyIcon.ContextMenuStrip.BeginInvoke(new Action(() => ThemeManager.SelectTheme()));
-            }
         }
     }
 }

@@ -5,7 +5,6 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace WinDynamicDesktop
@@ -13,8 +12,7 @@ namespace WinDynamicDesktop
     class AppContext : ApplicationContext
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
-        private Mutex _mutex;
-        private NamedPipeWrapper.NamedPipeServer<string[]> ipcServer;
+        private IpcManager ipcManager;
 
         public static NotifyIcon notifyIcon;
         public static WallpaperChangeScheduler wpEngine = new WallpaperChangeScheduler();
@@ -40,19 +38,17 @@ namespace WinDynamicDesktop
 
         private void HandleMultiInstance()
         {
-            _mutex = new Mutex(true, @"Global\WinDynamicDesktop", out bool isFirstInstance);
-            GC.KeepAlive(_mutex);
+            ipcManager = new IpcManager();
 
-            if (isFirstInstance)
+            if (ipcManager.isFirstInstance)
             {
-                ipcServer = IpcManager.StartServer();
+                ipcManager.ListenForArgs(OnArgumentsReceived);
             }
             else
             {
                 if (ThemeManager.importPaths.Count > 0)
                 {
-                    // TODO Test passing string[] through named pipe
-                    IpcManager.SendArgsToServer(ThemeManager.importPaths.ToArray());
+                    ipcManager.SendArgsToFirstInstance(ThemeManager.importPaths.ToArray());
                 }
                 else
                 {
@@ -85,6 +81,16 @@ namespace WinDynamicDesktop
             notifyIcon.ShowBalloonTip(10000);
         }
 
+        private void OnArgumentsReceived(string[] args)
+        {
+            ThemeManager.importPaths.AddRange(args);
+
+            if (!ThemeManager.importMode)
+            {
+                notifyIcon.ContextMenuStrip.BeginInvoke(new Action(() => ThemeManager.SelectTheme()));
+            }
+        }
+
         private void OnNotifyIconMouseUp(object sender, MouseEventArgs e)
         {
             // Show context menu when taskbar icon is left clicked
@@ -109,8 +115,7 @@ namespace WinDynamicDesktop
                 notifyIcon.Visible = false;
             }
 
-            ipcServer?.Stop();
-            _mutex?.Dispose();
+            ipcManager?.Dispose();
         }
     }
 }

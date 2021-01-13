@@ -39,7 +39,7 @@ This is a nuspec. It mostly adheres to https://docs.nuget.org/create/Nuspec-Refe
     <!-- projectUrl is required for the community feed -->
     <projectUrl>https://github.com/t1m0thyj/WinDynamicDesktop</projectUrl>
     <iconUrl>https://cdn.statically.io/gh/t1m0thyj/WinDynamicDesktop/189f4bb0/imgs/choco_icon.png</iconUrl>
-    <copyright>2020 Timothy Johnson</copyright>
+    <copyright>2021 Timothy Johnson</copyright>
     <!-- If there is a license Url available, it is required for the community feed -->
     <licenseUrl>https://www.mozilla.org/en-US/MPL/2.0/</licenseUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
