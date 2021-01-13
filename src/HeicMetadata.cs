@@ -10,11 +10,10 @@ using PListNet;
 
 namespace WinDynamicDesktop
 {
-    class ImageInfo
+    class H24Info
     {
-        public int imageId;
-        public double confidence;
-        public double azimuth;
+        public double time;
+        public int index;
     }
 
     class SolarInfo
@@ -28,24 +27,26 @@ namespace WinDynamicDesktop
     {
         public static ThemeResult CreateThemeForHeic(string heicFile)
         {
-            using StreamReader file = new StreamReader(heicFile);
             string line;
             string metadataType = null;
             string metadataRaw = null;
 
-            while ((line = file.ReadLine()) != null)
+            using (StreamReader file = new StreamReader(heicFile))
             {
-                int startIndex = line.IndexOf("apple_desktop:");
-
-                if (startIndex != -1)
+                while ((line = file.ReadLine()) != null)
                 {
-                    Match match = Regex.Match(line.Substring(startIndex), "^apple_desktop:(\\w+)=\"(.+?)\"");
+                    int startIndex = line.IndexOf("apple_desktop:");
 
-                    if (match.Success)
+                    if (startIndex != -1)
                     {
-                        metadataType = match.Groups[1].Value;
-                        metadataRaw = match.Groups[2].Value;
-                        break;
+                        Match match = Regex.Match(line.Substring(startIndex), "^apple_desktop:(\\w+)=\"(.+?)\"");
+
+                        if (match.Success)
+                        {
+                            metadataType = match.Groups[1].Value;
+                            metadataRaw = match.Groups[2].Value;
+                            break;
+                        }
                     }
                 }
             }
@@ -65,8 +66,7 @@ namespace WinDynamicDesktop
             {
                 case "h24":
                     // TODO Throw error
-                    return new ThemeResult(new NoThemeJSON(""));
-                    // return new ThemeResult(ParseH24Metadata(metadataStream));
+                    return new ThemeResult(ParseH24Metadata(metadataStream));
                 case "solar":
                     //try
                     //{
@@ -84,111 +84,50 @@ namespace WinDynamicDesktop
             }
         }
 
-        private static ImageInfo FindImageSolar(List<SolarInfo> solarInfo, int desiredAltitude, int desiredAzimuth)
-        {
-            bool wrapAround = desiredAzimuth < 45 || desiredAzimuth > 315;
-            double minVariance = double.MaxValue;
-            int bestIndex = 0;
-
-            for (int i = 0; i < solarInfo.Count; i++)
-            {
-                SolarInfo si = solarInfo[i];
-
-                double azimuthVariance = Math.Pow(si.azimuth - desiredAzimuth, 2);
-                if (wrapAround)
-                {
-                    azimuthVariance = Math.Min(azimuthVariance, Math.Pow(360 - si.azimuth - desiredAzimuth, 2));
-                }
-
-                double variance = Math.Sqrt(Math.Pow(si.altitude - desiredAltitude, 2) + azimuthVariance);
-                if (variance < minVariance)
-                {
-                    minVariance = variance;
-                    bestIndex = i;
-                }
-            }
-
-            return new ImageInfo
-            {
-                imageId = solarInfo[bestIndex].index + 1,
-                confidence = (minVariance != 0) ? (1 / minVariance) : double.MaxValue,
-                azimuth = desiredAzimuth
-            };
-        }
-
-        private static List<int> GetImageListFromInfo(List<ImageInfo> imageInfo, int startAzimuth, int endAzimuth)
+        private static List<int> GetImageListFromAngles(List<double> hourAngles, int startAngle, int endAngle)
         {
             List<int> imageList = new List<int>();
-            foreach (ImageInfo info in imageInfo)
+            for (int i = 0; i < hourAngles.Count; i++)
             {
-                if (startAzimuth <= info.azimuth && info.azimuth < endAzimuth)
+                if (startAngle <= hourAngles[i] && hourAngles[i] < endAngle)
                 {
-                    Console.WriteLine(info.confidence);
-                    imageList.Add(info.imageId);
+                    imageList.Add(i + 1);
                 }
             }
+            imageList.Sort((a, b) => hourAngles[a - 1].CompareTo(hourAngles[b - 1]));
             return imageList;
         }
 
-        private static ThemeConfig ParseSolarMetadata(Stream metadataStream)
+        private static ThemeConfig ParseH24Metadata(Stream metadataStream)
         {
             XmlDocument doc = new XmlDocument();
             doc.Load(metadataStream);
-            List<SolarInfo> solarInfo = new List<SolarInfo>();
-            // metadataStream.Position = 0;
-            // System.Windows.Forms.MessageBox.Show(new StreamReader(metadataStream).ReadToEnd());
+            List<H24Info> h24Info = new List<H24Info>();
 
             foreach (XmlNode node in doc.DocumentElement.SelectNodes("/plist/dict/array/dict"))
             {
-                solarInfo.Add(new SolarInfo
+                h24Info.Add(new H24Info
                 {
-                    altitude = double.Parse(node.SelectSingleNode(".//key[.=\"a\"]").NextSibling.InnerText),
-                    azimuth = double.Parse(node.SelectSingleNode(".//key[.=\"z\"]").NextSibling.InnerText),
+                    time = double.Parse(node.SelectSingleNode(".//key[.=\"t\"]").NextSibling.InnerText),
                     index = int.Parse(node.SelectSingleNode(".//key[.=\"i\"]").NextSibling.InnerText)
                 });
             }
 
-            List<ImageInfo> imageInfo = new List<ImageInfo>();
-            int lastImageId = 0;
-            // -90 -> 0, 0 -> 90
-            // 0 -> 90, 90 -> 180
-            // 90 -> 0, 180 -> 270
-            // 0 -> -90, 270 -> 360
-            int altitude = -90;
-            int azimuth = 0;
+            h24Info.Sort((a, b) => a.index.CompareTo(b.index));
+            List<double> hourAngles = new List<double>();
 
-            while (azimuth < 360)
+            foreach (H24Info info in h24Info)
             {
-                ImageInfo info = FindImageSolar(solarInfo, altitude, azimuth);
-                if (info.imageId != lastImageId)
-                {
-                    int prevInfoIdx = imageInfo.FindIndex(info2 => info.imageId == info2.imageId);
-                    if (prevInfoIdx == -1 || info.confidence > imageInfo[prevInfoIdx].confidence)
-                    {
-                        imageInfo.Add(info);
-                        lastImageId = info.imageId;
-                        if (prevInfoIdx != -1)
-                        {
-                            imageInfo.RemoveAt(prevInfoIdx);
-                        }
-                    }
-                }
-                else if (imageInfo.Count > 0 && info.confidence > imageInfo.Last().confidence)
-                {
-                    imageInfo.Last().confidence = info.confidence;
-                    imageInfo.Last().azimuth = azimuth;
-                }
-                altitude += (azimuth < 180) ? 1 : -1;
-                azimuth++;
+                double hourAngle = (info.time - 0.5) * 360;
+                hourAngles.Add(hourAngle);
+                Console.WriteLine(string.Format("{0}\t{1}", info.index + 1, hourAngle));
             }
 
-            System.Windows.Forms.MessageBox.Show(string.Join("\n", imageInfo.Select(info => info.imageId.ToString() + " " + info.azimuth.ToString() + " " + info.confidence.ToString())));
-
-            List<int> dayImageList = GetImageListFromInfo(imageInfo, 92, 268);
-            List<int> nightImageList = GetImageListFromInfo(imageInfo, 282, 360);
-            nightImageList.AddRange(GetImageListFromInfo(imageInfo, 0, 78));
-            List<int> sunriseImageList = GetImageListFromInfo(imageInfo, 78, 92);
-            List<int> sunsetImageList = GetImageListFromInfo(imageInfo, 268, 282);
+            List<int> dayImageList = GetImageListFromAngles(hourAngles, -84, 84);
+            List<int> nightImageList = GetImageListFromAngles(hourAngles, 106, 180);
+            nightImageList.AddRange(GetImageListFromAngles(hourAngles, -180, -106));
+            List<int> sunriseImageList = GetImageListFromAngles(hourAngles, -106, -84);
+            List<int> sunsetImageList = GetImageListFromAngles(hourAngles, 84, 106);
 
             ThemeConfig theme = new ThemeConfig
             {
@@ -200,6 +139,62 @@ namespace WinDynamicDesktop
 
             System.Windows.Forms.MessageBox.Show(Newtonsoft.Json.JsonConvert.SerializeObject(theme,
                 Newtonsoft.Json.Formatting.Indented));
+
+            return new ThemeConfig();
+        }
+
+        private static ThemeConfig ParseSolarMetadata(Stream metadataStream)
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.Load(metadataStream);
+            List<SolarInfo> solarInfo = new List<SolarInfo>();
+
+            foreach (XmlNode node in doc.DocumentElement.SelectNodes("/plist/dict/array/dict"))
+            {
+                solarInfo.Add(new SolarInfo
+                {
+                    altitude = double.Parse(node.SelectSingleNode(".//key[.=\"a\"]").NextSibling.InnerText),
+                    azimuth = double.Parse(node.SelectSingleNode(".//key[.=\"z\"]").NextSibling.InnerText),
+                    index = int.Parse(node.SelectSingleNode(".//key[.=\"i\"]").NextSibling.InnerText)
+                });
+            }
+
+            solarInfo.Sort((a, b) => a.index.CompareTo(b.index));
+            List<double> hourAngles = new List<double>();
+
+            foreach (SolarInfo info in solarInfo)
+            {
+                double hourAngle = Math.Asin(-Math.Cos(info.altitude * (Math.PI / 180d)) *
+                    Math.Sin(info.azimuth * (Math.PI / 180d))) * (180d / Math.PI);
+                if (info.altitude < 0)
+                {
+                    hourAngle = 180 - hourAngle;
+                }
+                if (hourAngle > 180)
+                {
+                    hourAngle -= 360;
+                }
+                hourAngles.Add(hourAngle);
+                Console.WriteLine(string.Format("{0}\t{1}", info.index + 1, hourAngle));
+            }
+
+            List<int> dayImageList = GetImageListFromAngles(hourAngles, -84, 84);
+            List<int> nightImageList = GetImageListFromAngles(hourAngles, 106, 180);
+            nightImageList.AddRange(GetImageListFromAngles(hourAngles, -180, -106));
+            List<int> sunriseImageList = GetImageListFromAngles(hourAngles, -106, -84);
+            List<int> sunsetImageList = GetImageListFromAngles(hourAngles, 84, 106);
+
+            ThemeConfig theme = new ThemeConfig
+            {
+                dayImageList = dayImageList.ToArray(),
+                nightImageList = nightImageList.ToArray(),
+                sunriseImageList = sunriseImageList.ToArray(),
+                sunsetImageList = sunsetImageList.ToArray()
+            };
+
+            System.Windows.Forms.MessageBox.Show(Newtonsoft.Json.JsonConvert.SerializeObject(theme,
+                Newtonsoft.Json.Formatting.Indented));
+
             return new ThemeConfig();
         }
     }
