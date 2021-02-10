@@ -1,12 +1,13 @@
-﻿using System;
+﻿// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+using PListNet;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Xml;
-using PListNet;
 
 namespace WinDynamicDesktop
 {
@@ -123,11 +124,11 @@ namespace WinDynamicDesktop
                 Console.WriteLine(string.Format("{0}\t{1}", info.index + 1, hourAngle));
             }
 
-            List<int> dayImageList = GetImageListFromAngles(hourAngles, -84, 84);
-            List<int> nightImageList = GetImageListFromAngles(hourAngles, 106, 180);
-            nightImageList.AddRange(GetImageListFromAngles(hourAngles, -180, -106));
-            List<int> sunriseImageList = GetImageListFromAngles(hourAngles, -106, -84);
-            List<int> sunsetImageList = GetImageListFromAngles(hourAngles, 84, 106);
+            List<int> dayImageList = GetImageListFromAngles(hourAngles, -75, 75);
+            List<int> nightImageList = GetImageListFromAngles(hourAngles, 105, 180);
+            nightImageList.AddRange(GetImageListFromAngles(hourAngles, -180, -105));
+            List<int> sunriseImageList = GetImageListFromAngles(hourAngles, -105, -75);
+            List<int> sunsetImageList = GetImageListFromAngles(hourAngles, 75, 105);
 
             ThemeConfig theme = new ThemeConfig
             {
