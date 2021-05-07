@@ -45,7 +45,7 @@ This is a nuspec. It mostly adheres to https://docs.nuget.org/create/Nuspec-Refe
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <!--<projectSourceUrl>https://github.com/t1m0thyj/WinDynamicDesktop</projectSourceUrl>-->
     <docsUrl>https://github.com/t1m0thyj/WinDynamicDesktop/wiki</docsUrl>
-    <mailingListUrl>https://gitter.im/t1m0thyj/WinDynamicDesktop</mailingListUrl>
+    <mailingListUrl>https://github.com/t1m0thyj/WinDynamicDesktop/discussions</mailingListUrl>
     <bugTrackerUrl>https://github.com/t1m0thyj/WinDynamicDesktop/issues</bugTrackerUrl>
     <tags>windynamicdesktop windows10 dynamic-desktop wallpaper</tags>
     <summary>Port of macOS Mojave Dynamic Desktop feature to Windows 10</summary>

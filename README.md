@@ -4,9 +4,6 @@
 <a href="https://github.com/t1m0thyj/WinDynamicDesktop/releases"><img src="https://img.shields.io/github/downloads/t1m0thyj/WinDynamicDesktop/total.svg?style=flat-square" alt="GitHub releases"></a>
 <a href="https://chocolatey.org/packages/windynamicdesktop"><img src="https://img.shields.io/chocolatey/v/windynamicdesktop?style=flat-square" alt="Chocolatey package"></a>
 <a href="https://ci.appveyor.com/project/t1m0thyj/WinDynamicDesktop?branch=master"><img src="https://img.shields.io/appveyor/build/t1m0thyj/WinDynamicDesktop/master?logo=appveyor&style=flat-square" alt="Build status"></a>
-<br/>
-<a href="https://gitter.im/t1m0thyj/WinDynamicDesktop"><img src="https://img.shields.io/gitter/room/t1m0thyj/WinDynamicDesktop?style=flat-square" alt="Chat on Gitter"></a>
-<a href="https://paypal.me/t1m0thyj"><img src="https://img.shields.io/badge/donate-paypal-brightgreen.svg?logo=paypal&style=flat-square" alt="Donate on PayPal"></a>
 </p>
 
 # WinDynamicDesktop
@@ -43,6 +40,12 @@ WinDynamicDesktop is developed primarily for Windows 10, but should run on any v
 
 * [Wallpaper fit not remembered in Microsoft Store app](https://github.com/t1m0thyj/WinDynamicDesktop/wiki/Known-issues#wallpaper-fit-not-saved-with-multiple-monitors)
 * [Wallpaper gets stuck and won't update](https://github.com/t1m0thyj/WinDynamicDesktop/wiki/Known-issues#wallpaper-gets-stuck-and-wont-update)
+
+## Limitations
+
+* [Can't change lock screen background](https://github.com/t1m0thyj/WinDynamicDesktop/issues/31)
+* [Can't show separate images on multiple monitors](https://github.com/t1m0thyj/WinDynamicDesktop/issues/117)
+* [Can't show separate images on multiple virtual desktops](https://github.com/t1m0thyj/WinDynamicDesktop/issues/299)
 
 ## Disclaimers
 
