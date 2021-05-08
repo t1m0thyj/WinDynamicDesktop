@@ -28,7 +28,9 @@ namespace WinDynamicDesktop
         public ThemeDialog()
         {
             InitializeComponent();
+            int oldButtonWidth = this.importButton.Width;
             Localization.TranslateForm(this);
+            this.themeLinkLabel.Left += (this.importButton.Width - oldButtonWidth);
 
             this.Font = SystemFonts.MessageBoxFont;
             this.FormClosing += OnFormClosing;

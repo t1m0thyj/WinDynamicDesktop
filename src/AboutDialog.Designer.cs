@@ -61,7 +61,7 @@
             this.iconBox.Name = "iconBox";
             this.iconBox.Size = new System.Drawing.Size(72, 64);
             this.iconBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.iconBox.TabIndex = 2;
+            this.iconBox.TabIndex = 0;
             this.iconBox.TabStop = false;
             // 
             // AboutDialog

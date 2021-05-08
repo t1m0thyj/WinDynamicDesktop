@@ -19,7 +19,6 @@ namespace WinDynamicDesktop
 
         public AppContext(string[] args)
         {
-            // TODO Check tab order on all dialogs
             JsonConfig.LoadConfig();
             Localization.Initialize();
 

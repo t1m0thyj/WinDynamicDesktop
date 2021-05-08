@@ -17,7 +17,9 @@ namespace WinDynamicDesktop
         public ScheduleDialog()
         {
             InitializeComponent();
+            int oldLabelWidth = sunriseSunsetDurationLabel.Width;
             Localization.TranslateForm(this);
+            this.sunriseSunsetDurationBox.Left += (sunriseSunsetDurationLabel.Width - oldLabelWidth);
 
             this.Font = SystemFonts.MessageBoxFont;
             this.FormClosing += OnFormClosing;
@@ -102,8 +104,8 @@ namespace WinDynamicDesktop
 
             if (JsonConfig.settings.sunriseTime != null && JsonConfig.settings.sunsetTime != null)
             {
-                sunriseTimePicker.Value = UpdateHandler.SafeParse(JsonConfig.settings.sunriseTime);
-                sunsetTimePicker.Value = UpdateHandler.SafeParse(JsonConfig.settings.sunsetTime);
+                sunriseTimePicker.Value = ConfigMigrator.SafeParse(JsonConfig.settings.sunriseTime);
+                sunsetTimePicker.Value = ConfigMigrator.SafeParse(JsonConfig.settings.sunsetTime);
             }
             else
             {

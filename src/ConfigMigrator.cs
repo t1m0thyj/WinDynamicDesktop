@@ -18,7 +18,7 @@ namespace WinDynamicDesktop
         public bool useCustomAutoBrightness { get; set; }
     }
 
-    class UpdateHandler
+    class ConfigMigrator
     {
         private static readonly string Catalina_JSON = @"{
   'imageUrls': [

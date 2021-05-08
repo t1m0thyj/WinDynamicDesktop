@@ -53,7 +53,7 @@
             this.locationLabel.Location = new System.Drawing.Point(27, 40);
             this.locationLabel.Name = "locationLabel";
             this.locationLabel.Size = new System.Drawing.Size(196, 13);
-            this.locationLabel.TabIndex = 2;
+            this.locationLabel.TabIndex = 13;
             this.locationLabel.Text = "Enter your location (e.g., New York NY):";
             // 
             // locationBox
@@ -129,7 +129,7 @@
             this.locationPermissionLabel.Location = new System.Drawing.Point(28, 118);
             this.locationPermissionLabel.Name = "locationPermissionLabel";
             this.locationPermissionLabel.Size = new System.Drawing.Size(146, 13);
-            this.locationPermissionLabel.TabIndex = 7;
+            this.locationPermissionLabel.TabIndex = 8;
             this.locationPermissionLabel.Text = "Only available in Windows 10";
             // 
             // sunriseTimeLabel
@@ -139,7 +139,7 @@
             this.sunriseTimeLabel.Location = new System.Drawing.Point(27, 202);
             this.sunriseTimeLabel.Name = "sunriseTimeLabel";
             this.sunriseTimeLabel.Size = new System.Drawing.Size(45, 13);
-            this.sunriseTimeLabel.TabIndex = 8;
+            this.sunriseTimeLabel.TabIndex = 7;
             this.sunriseTimeLabel.Text = "Sunrise:";
             // 
             // sunsetTimeLabel
@@ -149,7 +149,7 @@
             this.sunsetTimeLabel.Location = new System.Drawing.Point(193, 201);
             this.sunsetTimeLabel.Name = "sunsetTimeLabel";
             this.sunsetTimeLabel.Size = new System.Drawing.Size(43, 13);
-            this.sunsetTimeLabel.TabIndex = 10;
+            this.sunsetTimeLabel.TabIndex = 6;
             this.sunsetTimeLabel.Text = "Sunset:";
             // 
             // sunriseTimePicker
@@ -183,7 +183,7 @@
             this.sunriseSunsetDurationLabel.Location = new System.Drawing.Point(27, 228);
             this.sunriseSunsetDurationLabel.Name = "sunriseSunsetDurationLabel";
             this.sunriseSunsetDurationLabel.Size = new System.Drawing.Size(176, 13);
-            this.sunriseSunsetDurationLabel.TabIndex = 15;
+            this.sunriseSunsetDurationLabel.TabIndex = 3;
             this.sunriseSunsetDurationLabel.Text = "Sunrise/Sunset Duration in minutes:";
             // 
             // grantPermissionButton

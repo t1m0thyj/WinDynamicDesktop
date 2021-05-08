@@ -23,7 +23,7 @@ namespace WinDynamicDesktop
 
         public static void Initialize()
         {
-            UpdateHandler.CompatibilizeLocale();
+            ConfigMigrator.CompatibilizeLocale();
             currentLocale = JsonConfig.settings.language;
             LoadLanguages();
 

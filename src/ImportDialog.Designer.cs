@@ -41,7 +41,6 @@
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(206, 17);
-            this.label1.TabIndex = 2;
             this.label1.Text = "Importing themes, please wait...";
             // 
             // progressBar1
@@ -52,7 +51,6 @@
             this.progressBar1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(399, 16);
-            this.progressBar1.TabIndex = 0;
             // 
             // panel1
             // 
@@ -63,7 +61,6 @@
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(432, 82);
-            this.panel1.TabIndex = 3;
             // 
             // ImportDialog
             // 
