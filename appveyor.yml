@@ -9,6 +9,7 @@ install:
 before_build:
 - ps: >-
     powershell scripts\prebuild_appveyor.ps1
+
     nuget restore src\WinDynamicDesktop.sln
 build:
   verbosity: minimal
