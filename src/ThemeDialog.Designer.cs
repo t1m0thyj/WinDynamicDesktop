@@ -35,7 +35,8 @@
             this.importButton = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.themeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.favoriteThemeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteThemeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.downloadButton = new System.Windows.Forms.Button();
             this.previewerHost = new System.Windows.Forms.Integration.ElementHost();
             this.listView1 = new System.Windows.Forms.ListView();
@@ -100,17 +101,25 @@
             // 
             this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.themeToolStripMenuItem});
+            this.favoriteThemeMenuItem,
+            this.deleteThemeMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 26);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 70);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
-            // themeToolStripMenuItem
+            // favoriteThemeMenuItem
             // 
-            this.themeToolStripMenuItem.Name = "themeToolStripMenuItem";
-            this.themeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.themeToolStripMenuItem.Text = "toolStripMenuItem1";
-            this.themeToolStripMenuItem.Click += new System.EventHandler(this.themeToolStripMenuItem_Click);
+            this.favoriteThemeMenuItem.Name = "favoriteThemeMenuItem";
+            this.favoriteThemeMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.favoriteThemeMenuItem.Text = "toolStripMenuItem1";
+            this.favoriteThemeMenuItem.Click += new System.EventHandler(this.favoriteThemeMenuItem_Click);
+            // 
+            // deleteThemeMenuItem
+            // 
+            this.deleteThemeMenuItem.Name = "deleteThemeMenuItem";
+            this.deleteThemeMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.deleteThemeMenuItem.Text = "toolStripMenuItem1";
+            this.deleteThemeMenuItem.Click += new System.EventHandler(this.deleteThemeMenuItem_Click);
             // 
             // downloadButton
             // 
@@ -180,9 +189,10 @@
         private System.Windows.Forms.Button importButton;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem themeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem favoriteThemeMenuItem;
         private System.Windows.Forms.Button downloadButton;
         private System.Windows.Forms.Integration.ElementHost previewerHost;
         private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.ToolStripMenuItem deleteThemeMenuItem;
     }
 }

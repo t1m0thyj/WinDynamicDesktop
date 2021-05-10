@@ -109,8 +109,13 @@ namespace WinDynamicDesktop
                     this.Invoke(new Action(() =>
                     {
                         listView1.LargeImageList.Images.Add(thumbnailImage);
-                        ListViewItem newItem = listView1.Items.Add(ThemeManager.GetThemeName(theme),
-                            listView1.LargeImageList.Images.Count - 1);
+                        string itemText = ThemeManager.GetThemeName(theme);
+                        if (JsonConfig.settings.favoriteThemes != null &&
+                            JsonConfig.settings.favoriteThemes.Contains(theme.themeId))
+                        {
+                            itemText = "★ " + itemText;
+                        }
+                        ListViewItem newItem = listView1.Items.Add(itemText, listView1.LargeImageList.Images.Count - 1);
                         newItem.Tag = theme.themeId;
 
                         if (activeTheme == null || activeTheme == theme.themeId)
@@ -325,19 +330,50 @@ namespace WinDynamicDesktop
 
             string themeId = (string)listView1.Items[itemIndex].Tag;
             ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
-            contextMenuStrip1.Items[0].Enabled = ThemeManager.IsThemeDownloaded(theme);
+            contextMenuStrip1.Items[1].Enabled = ThemeManager.IsThemeDownloaded(theme);
 
-            if (ThemeManager.defaultThemes.Contains(themeId))
+            if (JsonConfig.settings.favoriteThemes == null ||
+                !JsonConfig.settings.favoriteThemes.Contains(themeId))
             {
-                contextMenuStrip1.Items[0].Text = _("Delete");
+                contextMenuStrip1.Items[0].Text = _("Add to favorites");
             }
             else
             {
-                contextMenuStrip1.Items[0].Text = _("Delete permanently");
+                contextMenuStrip1.Items[0].Text = _("Remove from favorites");
+            }
+
+            if (ThemeManager.defaultThemes.Contains(themeId))
+            {
+                contextMenuStrip1.Items[1].Text = _("Delete");
+            }
+            else
+            {
+                contextMenuStrip1.Items[1].Text = _("Delete permanently");
             }
         }
 
-        private void themeToolStripMenuItem_Click(object sender, EventArgs e)
+        private void favoriteThemeMenuItem_Click(object sender, EventArgs e)
+        {
+            int itemIndex = listView1.FocusedItem.Index;
+            string themeId = (string)listView1.Items[itemIndex].Tag;
+            List<string> favoriteThemes = JsonConfig.settings.favoriteThemes?.ToList() ?? new List<string>();
+
+            if (favoriteThemes.Contains(themeId))
+            {
+                listView1.Items[itemIndex].Text = listView1.Items[itemIndex].Text.Substring(2);
+                favoriteThemes.Remove(themeId);
+            }
+            else
+            {
+                listView1.Items[itemIndex].Text = "★ " + listView1.Items[itemIndex].Text;
+                favoriteThemes.Add(themeId);
+            }
+
+            listView1.Sort();
+            JsonConfig.settings.favoriteThemes = favoriteThemes.ToArray();
+        }
+
+        private void deleteThemeMenuItem_Click(object sender, EventArgs e)
         {
             int itemIndex = listView1.FocusedItem.Index;
             string themeId = (string)listView1.Items[itemIndex].Tag;

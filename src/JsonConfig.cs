@@ -39,6 +39,7 @@ namespace WinDynamicDesktop
         public int sunriseSunsetDuration { get; set; }
         public bool fullScreenPause { get; set; }
         public bool enableScripts { get; set; }
+        public string[] favoriteThemes { get; set; }
     }
 
     class JsonConfig
