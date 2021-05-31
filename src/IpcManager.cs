@@ -17,7 +17,7 @@ namespace WinDynamicDesktop
 
         public IpcManager()
         {
-            _mutex = new Mutex(true, @"Global\WinDynamicDesktop", out isFirstInstance);
+            _mutex = new Mutex(true, "WinDynamicDesktop", out isFirstInstance);
             GC.KeepAlive(_mutex);
         }
 
