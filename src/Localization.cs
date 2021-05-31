@@ -4,17 +4,22 @@
 
 using NGettext;
 using RestSharp;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
 
 namespace WinDynamicDesktop
 {
     class Localization
     {
+        private static readonly string poeditorApiToken = Encoding.UTF8.GetString(Convert.FromBase64String(
+            "ODdlMGM3ZjRmMjE1YjRiMjkwNTE4NDUyMWE4Y2FkNTE="));
+
         public static List<string> languageCodes = new List<string>();
         public static List<string> languageNames = new List<string>();
 
@@ -33,7 +38,7 @@ namespace WinDynamicDesktop
                 currentLocale = languageCodes.Contains(systemLocale) ? systemLocale : "en";
                 JsonConfig.settings.language = currentLocale;
             }
-            else if (JsonConfig.settings.poeditorApiToken == null)
+            else if (!JsonConfig.settings.usePoeditorLanguage)
             {
                 LoadLocaleFromFile();
             }
@@ -82,18 +87,6 @@ namespace WinDynamicDesktop
             langDialog.ShowDialog();
         }
 
-        public static string GetCefLocale()
-        {
-            string cefLocale = (currentLocale == "zh-Hans") ? "zh-CN" : currentLocale;
-
-            if (File.Exists(Path.Combine("cef", "locales", cefLocale.ToLower() + ".pak")))
-            {
-                return cefLocale;
-            }
-
-            return "en-US";
-        }
-
         public static string GetTranslation(string msg)
         {
             return (catalog != null) ? catalog.GetString(msg) : msg;
@@ -113,6 +106,15 @@ namespace WinDynamicDesktop
                 {
                     childControl.Text = GetTranslation(childControl.Text);
                 }
+            }
+        }
+
+        public static void NotifyIfTestMode()
+        {
+            if (JsonConfig.settings.usePoeditorLanguage && catalog != null)
+            {
+                AppContext.ShowPopup(string.Format(
+                    Localization.GetTranslation("Downloaded '{0}' translation from POEditor"), currentLocale));
             }
         }
 
@@ -154,7 +156,7 @@ namespace WinDynamicDesktop
             ProxyWrapper.ApplyProxyToClient(client);
 
             var request = new RestRequest("/v2/projects/export", Method.POST);
-            request.AddParameter("api_token", JsonConfig.settings.poeditorApiToken);
+            request.AddParameter("api_token", poeditorApiToken);
             request.AddParameter("id", "293081");
             request.AddParameter("language", currentLocale);
             request.AddParameter("type", "mo");

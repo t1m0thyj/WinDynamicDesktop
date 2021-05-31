@@ -29,7 +29,7 @@ namespace WinDynamicDesktop
         public string themeName { get; set; }
         public bool useWindowsLocation { get; set; }
         public string language { get; set; }
-        public string poeditorApiToken { get; set; }
+        public bool usePoeditorLanguage { get; set; }
         public bool enableShuffle { get; set; }
         public string lastShuffleDate { get; set; }
         public string[] shuffleHistory { get; set; }

@@ -71,6 +71,8 @@ namespace WinDynamicDesktop
             };
             notifyIcon.ContextMenuStrip = MainMenu.GetMenu();
             notifyIcon.MouseUp += OnNotifyIconMouseUp;
+
+            Localization.NotifyIfTestMode();
         }
 
         public static void ShowPopup(string message, string title = null)

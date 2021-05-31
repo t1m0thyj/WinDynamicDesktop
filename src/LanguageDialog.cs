@@ -53,7 +53,7 @@ namespace WinDynamicDesktop
                 }
 
                 JsonConfig.settings.language = languageCode;
-                JsonConfig.settings.poeditorApiToken = null;
+                JsonConfig.settings.usePoeditorLanguage = false;
 
                 if (AppContext.notifyIcon != null)
                 {
