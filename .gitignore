@@ -8,6 +8,7 @@ dist
 obj
 
 .env
+/uwp/*.assets.cache
 /uwp/*.wapproj.user
 /uwp/Package.StoreAssociation.xml
 /uwp/_pkginfo.txt

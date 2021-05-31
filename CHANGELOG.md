@@ -1,5 +1,17 @@
 # Changelog
 
+## `4.5.0`
+
+* Added installer option to install for all users
+* Added ability to favorite themes to move them to top of list
+* Added Croatian, Danish, Finnish, Swedish, and Traditional Chinese translations (thanks Denis Bogdan, Anders Ferdinandus, Klokki, Christian, and Williamrob104)
+* Reduced memory usage of theme previewer (thanks @cjvaughter)
+* Fixed error when location has different timezone that may be a day ahead of or behind the system clock
+* Fixed error when multiple users run the app simultaneously on the same machine
+* Fixed hang when invalid images cause thumbnail generation to fail
+* Fixed missing data that was not being supplied to PowerShell scripts
+* Fixed error when downloading new translations from POEditor
+
 ## `4.4.0`
 
 * Added 8 new themes from Big Sur 11.0.1

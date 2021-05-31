@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+import shutil
 
 from dotenv import load_dotenv
 from poeditor import POEditorAPI
@@ -10,11 +11,13 @@ load_dotenv()
 mo_dir = "../i18n/mo"
 po_dir = "../i18n/po"
 
-if not os.path.isdir(mo_dir):
-    os.mkdir(mo_dir)
+if os.path.isdir(mo_dir):
+    shutil.rmtree(mo_dir)
+os.mkdir(mo_dir)
 
-if not os.path.isdir(po_dir):
-    os.mkdir(po_dir)
+if os.path.isdir(po_dir):
+    shutil.rmtree(po_dir)
+os.mkdir(po_dir)
 
 client = POEditorAPI(os.getenv("POEDITOR_TOKEN"))
 projects = client.list_projects()
