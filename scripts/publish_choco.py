@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import hashlib
 import os
 import subprocess
 
@@ -13,6 +12,14 @@ chocolatey_repo = "https://push.chocolatey.org/"
 nuspec_filename = "windynamicdesktop.nuspec"
 script_filename = "tools/chocolateyInstall.ps1"
 
+def installer_checksum(filename):
+    checksums = {}
+    with open("../dist/checksums.txt", 'r') as fileobj:
+        for line in fileobj:
+            fst, snd = line.split()
+            checksums[snd] = fst
+    return checksums[filename]
+
 def render_template(filename, replacers):
     with open(filename, 'r', encoding="utf8") as fileobj:
         old_text = fileobj.read()
@@ -21,13 +28,6 @@ def render_template(filename, replacers):
         new_text = new_text.replace("{{" + key + "}}", value)
     write_file(filename, new_text)
     return old_text
-
-def sha256_checksum(filename, block_size=65536):
-    sha256 = hashlib.sha256()
-    with open(filename, 'rb') as f:
-        for block in iter(lambda: f.read(block_size), b''):
-            sha256.update(block)
-    return sha256.hexdigest()
 
 def write_file(filename, contents):
     with open(filename, 'w', encoding="utf8") as fileobj:
@@ -38,7 +38,7 @@ response = r.json()
 installer_url = next(a for a in response["assets"] if a["name"].endswith("Setup.exe"))["browser_download_url"]
 package_version = response["tag_name"][1:]
 replacers = {
-    "installerChecksum": sha256_checksum("../dist/" + os.path.basename(installer_url)),
+    "installerChecksum": installer_checksum(os.path.basename(installer_url)),
     "installerUrl": installer_url,
     "packageVersion": package_version,
     "releaseNotes": "\n".join(response["body"].splitlines())
