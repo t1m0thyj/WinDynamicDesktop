@@ -16,7 +16,7 @@ namespace WinDynamicDesktop
         public int imageNumber;
         public long nextUpdateTicks;
         public int daySegment2;
-        public int daySegment4;
+        public int? daySegment4;
     }
 
     class WallpaperChangeScheduler

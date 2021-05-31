@@ -13,7 +13,7 @@ namespace WinDynamicDesktop
     class ScriptArgs
     {
         public int daySegment2;
-        public int daySegment4;
+        public int? daySegment4;
         public string imagePath;
     }
 
@@ -64,8 +64,9 @@ namespace WinDynamicDesktop
                 ps.AddScript("Set-ExecutionPolicy Bypass -Scope Process -Force");
                 ps.AddScript(File.ReadAllText(path));
                 ps.AddParameter("daySegment2", args.daySegment2);
-                ps.AddParameter("daySegment4", args.daySegment4);
+                ps.AddParameter("daySegment4", args.daySegment4 ?? -1);
                 ps.AddParameter("imagePath", args.imagePath);
+                ps.AddParameter("nightMode", JsonConfig.settings.darkMode);
                 ps.Invoke();
 
                 if (ps.Streams.Error.Count > 0)

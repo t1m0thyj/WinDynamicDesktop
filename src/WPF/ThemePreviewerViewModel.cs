@@ -301,7 +301,7 @@ namespace WinDynamicDesktop.WPF
                 }
                 else
                 {
-                    activeImage = (Items.Count == 2) ? wpState.daySegment2 : wpState.daySegment4;
+                    activeImage = (Items.Count == 2) ? wpState.daySegment2 : wpState.daySegment4.Value;
                 }
             }
             else
