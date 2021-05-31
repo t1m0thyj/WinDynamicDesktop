@@ -102,27 +102,34 @@ namespace WinDynamicDesktop
             Size thumbnailSize = ThemeThumbLoader.GetThumbnailSize(this);
             ListViewItem focusedItem = null;
 
-            foreach (ThemeConfig theme in themes)
+            foreach (ThemeConfig theme in themes.ToList())
             {
-                using (Image thumbnailImage = ThemeThumbLoader.GetThumbnailImage(theme, thumbnailSize, true))
+                try
                 {
-                    this.Invoke(new Action(() =>
+                    using (Image thumbnailImage = ThemeThumbLoader.GetThumbnailImage(theme, thumbnailSize, true))
                     {
-                        listView1.LargeImageList.Images.Add(thumbnailImage);
-                        string itemText = ThemeManager.GetThemeName(theme);
-                        if (JsonConfig.settings.favoriteThemes != null &&
-                            JsonConfig.settings.favoriteThemes.Contains(theme.themeId))
+                        this.Invoke(new Action(() =>
                         {
-                            itemText = "★ " + itemText;
-                        }
-                        ListViewItem newItem = listView1.Items.Add(itemText, listView1.LargeImageList.Images.Count - 1);
-                        newItem.Tag = theme.themeId;
+                            listView1.LargeImageList.Images.Add(thumbnailImage);
+                            string itemText = ThemeManager.GetThemeName(theme);
+                            if (JsonConfig.settings.favoriteThemes != null &&
+                                JsonConfig.settings.favoriteThemes.Contains(theme.themeId))
+                            {
+                                itemText = "★ " + itemText;
+                            }
+                            ListViewItem newItem = listView1.Items.Add(itemText, listView1.LargeImageList.Images.Count - 1);
+                            newItem.Tag = theme.themeId;
 
-                        if (activeTheme == null || activeTheme == theme.themeId)
-                        {
-                            focusedItem = newItem;
-                        }
-                    }));
+                            if (activeTheme == null || activeTheme == theme.themeId)
+                            {
+                                focusedItem = newItem;
+                            }
+                        }));
+                    }
+                }
+                catch (OutOfMemoryException)
+                {
+                    ThemeLoader.HandleError(new FailedToCreateThumbnail(theme.themeId));
                 }
             }
 
@@ -192,7 +199,7 @@ namespace WinDynamicDesktop
             else
             {
                 WallpaperShuffler.AddThemeToHistory(ThemeManager.currentTheme.themeId);
-                AppContext.wpEngine.RunScheduler();
+                AppContext.wpEngine.RunScheduler(true);
                 AppContext.ShowPopup(string.Format(_("New theme applied: {0}"),
                     ThemeManager.GetThemeName(ThemeManager.currentTheme)));
             }

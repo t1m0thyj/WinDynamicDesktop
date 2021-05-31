@@ -27,6 +27,14 @@ namespace WinDynamicDesktop
         }
     }
 
+    class FailedToCreateThumbnail : ThemeError
+    {
+        public FailedToCreateThumbnail(string themeId) : base(themeId)
+        {
+            errorMsg = _("Failed to generate thumbnail: The image could not be loaded");
+        }
+    }
+
     class FailedToDownloadImages : ThemeError
     {
         public FailedToDownloadImages(string themeId) : base(themeId)
