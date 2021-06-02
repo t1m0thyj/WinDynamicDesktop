@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import subprocess
+import sys
 
 import requests
 from dotenv import load_dotenv
@@ -36,7 +37,7 @@ def write_file(filename, contents):
 r = requests.get("https://api.github.com/repos/t1m0thyj/WinDynamicDesktop/releases/latest")
 response = r.json()
 installer_url = next(a for a in response["assets"] if a["name"].endswith("Setup.exe"))["browser_download_url"]
-package_version = response["tag_name"][1:]
+package_version = sys.argv[1] if len(sys.argv) > 1 else response["tag_name"][1:]
 replacers = {
     "installerChecksum": installer_checksum(os.path.basename(installer_url)),
     "installerUrl": installer_url,

@@ -102,7 +102,7 @@ end;
 
 procedure CurStepChanged(CurStep : TSetupStep);
 begin
-  if (CurStep = ssPostInstall) and IsAdmin() then
+  if (CurStep = ssPostInstall) and IsAdminInstallMode() then
     SaveStringToFile(ExpandConstant('{app}\{#MyAppName}.pth'), ExpandConstant('%LocalAppData%\{#MyAppName}'), false);
 end;
 
