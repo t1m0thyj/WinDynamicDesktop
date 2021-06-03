@@ -42,17 +42,18 @@ replacers = {
     "installerChecksum": installer_checksum(os.path.basename(installer_url)),
     "installerUrl": installer_url,
     "packageVersion": package_version,
-    "releaseNotes": "\n".join(response["body"].splitlines())
+    "releaseNotes": "\n".join(response["body"].splitlines()),
+    "releaseTagName": response["tag_name"]
 }
 
 old_nuspec = render_template(nuspec_filename, replacers)
 old_script = render_template(script_filename, replacers)
 
-subprocess.call(["choco", "pack", "--out", "../dist"])
+subprocess.run(["choco", "pack", "--out", "../dist"])
 
 write_file(nuspec_filename, old_nuspec)
 write_file(script_filename, old_script)
 
 nupkg_filename = f"../dist/windynamicdesktop.{package_version}.nupkg"
 if input(f"Push {nupkg_filename}? (y/N) ").lower() == "y":
-    subprocess.call(["choco", "push", nupkg_filename, "-s", chocolatey_repo, "-k", os.getenv("CHOCO_APIKEY")])
+    subprocess.run(["choco", "push", nupkg_filename, "-s", chocolatey_repo, "-k", os.getenv("CHOCO_APIKEY")])
