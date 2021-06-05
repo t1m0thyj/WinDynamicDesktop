@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using System;
+using System.Windows.Forms;
 
 namespace WinDynamicDesktop
 {
@@ -37,10 +38,13 @@ namespace WinDynamicDesktop
             locationDialog.BringToFront();
         }
 
-        private static void OnLocationDialogClosed(object sender, EventArgs e)
+        private static void OnLocationDialogClosed(object sender, FormClosedEventArgs e)
         {
-            locationDialog = null;
-            LaunchSequence.NextStep();
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                locationDialog = null;
+                LaunchSequence.NextStep();
+            }
         }
     }
 }

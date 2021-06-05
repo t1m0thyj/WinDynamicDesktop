@@ -106,11 +106,6 @@ namespace WinDynamicDesktop
 
         private void OnApplicationExit(object sender, EventArgs e)
         {
-            foreach (Form form in Application.OpenForms)
-            {
-                form.Close();
-            }
-
             if (notifyIcon != null)
             {
                 notifyIcon.Visible = false;

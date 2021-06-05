@@ -413,7 +413,8 @@ namespace WinDynamicDesktop
 
         private void OnDownloadDialogClosed(object sender, FormClosedEventArgs e)
         {
-            if (ThemeManager.IsThemeDownloaded(ThemeManager.themeSettings[selectedIndex - 1]))
+            if (e.CloseReason == CloseReason.UserClosing &&
+                ThemeManager.IsThemeDownloaded(ThemeManager.themeSettings[selectedIndex - 1]))
             {
                 if (((DownloadDialog)sender).applyPending)
                 {
