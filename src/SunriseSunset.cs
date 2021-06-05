@@ -47,20 +47,10 @@ namespace WinDynamicDesktop
         private static List<SunPhase> GetSunPhases(DateTime date, double latitude, double longitude)
         {
             string tzName = TimeZoneLookup.GetTimeZone(latitude, longitude).Result;
-            TimeZoneInfo tzInfo = TZConvert.GetTimeZoneInfo(tzName);
-            TimeSpan deltaOffset = tzInfo.BaseUtcOffset - TimeZoneInfo.Local.BaseUtcOffset;
-
-            if (deltaOffset < TimeSpan.Zero && DateTime.Now < (DateTime.Today - deltaOffset))
-            {
-                date = date.AddDays(-1);  // California = NY - 3 @ <3am
-            }
-            else if (deltaOffset > TimeSpan.Zero && DateTime.Now > (DateTime.Today.AddDays(1) - deltaOffset))
-            {
-                date = date.AddDays(1);   // Azerbaijan = NY + 9 @ >3pm
-            }
-
-            // Add 12 hours minus timezone offset because of https://github.com/mourner/suncalc/issues/107
-            DateTime utcDate = date.AddHours(12) - tzInfo.GetUtcOffset(date);
+            TimeSpan deltaOffset = TZConvert.GetTimeZoneInfo(tzName).BaseUtcOffset - TimeZoneInfo.Local.BaseUtcOffset;
+            DateTime localDate = date + deltaOffset;
+            // Set time to noon because of https://github.com/mourner/suncalc/issues/107
+            DateTime utcDate = new DateTime(localDate.Year, localDate.Month, localDate.Day, 12, 0, 0).ToUniversalTime();
             return SunCalcNet.SunCalc.GetSunPhases(utcDate, latitude, longitude).ToList();
         }
 
