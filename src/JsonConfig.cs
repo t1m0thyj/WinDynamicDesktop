@@ -98,28 +98,33 @@ namespace WinDynamicDesktop
 
         private static async void OnAutoSaveTimerElapsed(object sender, EventArgs e)
         {
-            if (!unsavedChanges && !restartPending)
+            if (!restartPending && !unsavedChanges)
             {
                 return;
             }
 
-            unsavedChanges = false;
-            autoSaveTimer.Elapsed -= OnAutoSaveTimerElapsed;
-
-            await Task.Run(() =>
+            if (unsavedChanges)
             {
-                string jsonText = JsonConvert.SerializeObject(settings, Formatting.Indented);
-                File.WriteAllText("settings.json", jsonText);
-            });
+                unsavedChanges = false;
+                autoSaveTimer.Elapsed -= OnAutoSaveTimerElapsed;
+
+                await Task.Run(() =>
+                {
+                    string jsonText = JsonConvert.SerializeObject(settings, Formatting.Indented);
+                    File.WriteAllText("settings.json", jsonText);
+                });
+            }
 
             if (restartPending)
             {
                 restartPending = false;
                 System.Windows.Forms.Application.Restart();
             }
-
-            autoSaveTimer.Elapsed += OnAutoSaveTimerElapsed;
-            autoSaveTimer.Start();
+            else
+            {
+                autoSaveTimer.Elapsed += OnAutoSaveTimerElapsed;
+                autoSaveTimer.Start();
+            }
         }
     }
 }
