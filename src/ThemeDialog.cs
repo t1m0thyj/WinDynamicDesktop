@@ -431,7 +431,7 @@ namespace WinDynamicDesktop
         {
             ImportDialog importDialog = (ImportDialog)sender;
 
-            if (!importDialog.thumbnailsLoaded)
+            if (e.CloseReason == CloseReason.UserClosing && !importDialog.thumbnailsLoaded)
             {
                 e.Cancel = true;
                 LoadImportedThemes(ThemeManager.importedThemes, importDialog);
@@ -445,7 +445,7 @@ namespace WinDynamicDesktop
 
         private void OnFormClosing(object sender, FormClosingEventArgs e)
         {
-            if (JsonConfig.firstRun && ThemeManager.currentTheme == null)
+            if (e.CloseReason == CloseReason.UserClosing && JsonConfig.firstRun && ThemeManager.currentTheme == null)
             {
                 DialogResult result = MessageDialog.ShowQuestion(_("WinDynamicDesktop cannot dynamically update your " +
                     "wallpaper until you have selected a theme. Are you sure you want to continue without a theme " +

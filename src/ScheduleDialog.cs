@@ -194,7 +194,7 @@ namespace WinDynamicDesktop
 
         private void OnFormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!LaunchSequence.IsLocationReady())
+            if (e.CloseReason == CloseReason.UserClosing && !LaunchSequence.IsLocationReady())
             {
                 DialogResult result = MessageDialog.ShowQuestion(_("WinDynamicDesktop cannot display wallpapers " +
                     "until you have entered a valid location, so that it can calculate sunrise and sunset times for " +
@@ -202,7 +202,7 @@ namespace WinDynamicDesktop
 
                 if (result == DialogResult.Yes)
                 {
-                    Environment.Exit(0);
+                    Application.Exit();
                 }
                 else
                 {
