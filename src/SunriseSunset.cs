@@ -47,10 +47,11 @@ namespace WinDynamicDesktop
         private static List<SunPhase> GetSunPhases(DateTime date, double latitude, double longitude)
         {
             string tzName = TimeZoneLookup.GetTimeZone(latitude, longitude).Result;
-            TimeSpan deltaOffset = TZConvert.GetTimeZoneInfo(tzName).BaseUtcOffset - TimeZoneInfo.Local.BaseUtcOffset;
-            DateTime localDate = date + deltaOffset;
+            TimeZoneInfo tzInfo = TZConvert.GetTimeZoneInfo(tzName);
+            DateTime localDate = date + (tzInfo.BaseUtcOffset - TimeZoneInfo.Local.BaseUtcOffset);
             // Set time to noon because of https://github.com/mourner/suncalc/issues/107
-            DateTime utcDate = new DateTime(localDate.Year, localDate.Month, localDate.Day, 12, 0, 0).ToUniversalTime();
+            DateTime utcDate = new DateTimeOffset(
+                localDate.Year, localDate.Month, localDate.Day, 12, 0, 0, tzInfo.BaseUtcOffset).UtcDateTime;
             return SunCalcNet.SunCalc.GetSunPhases(utcDate, latitude, longitude).ToList();
         }
 
