@@ -1,5 +1,14 @@
 # Changelog
 
+## `4.6.0`
+
+* Added Monterey Abstract theme
+* Added estimate of disk space usage in theme previewer
+* Added Arabic and Ukrainian translations (thanks Abdul Rahim and Віталій)
+* Fixed timezone calculations failing in Oceania
+* Fixed config reload overwriting changes on disk
+* Fixed open dialogs preventing app from exiting
+
 ## `4.5.0`
 
 * Added installer option to install for all users

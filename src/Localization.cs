@@ -145,6 +145,8 @@ namespace WinDynamicDesktop
             AddLanguage("Ελληνικά", "el");  // Greek
             AddLanguage("Български", "bg");  // Bulgarian
             AddLanguage("Македонски", "mk");  // Macedonian
+            AddLanguage("Українська", "uk");  // Ukrainian
+            AddLanguage("عربي", "ar");  // Arabic
             AddLanguage("हिन्दी", "hi");  // Hindi
             AddLanguage("বাংলা", "bn");  // Bengali
             AddLanguage("中文 (简体)", "zh-Hans");  // Chinese (simplified)

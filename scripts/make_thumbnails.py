@@ -8,7 +8,7 @@ from PIL import Image
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
-img_width = int(sys.argv[1]) if len(sys.argv) > 1 else 1080
+img_width = int(sys.argv[1]) if len(sys.argv) > 1 else 256
 img_height = int(img_width * 9 / 16)
 jpeg_quality = int(sys.argv[2]) if len(sys.argv) > 2 else 95
 
@@ -34,6 +34,9 @@ for theme_dir in glob.glob(f"{input_dir}/**"):
 
     img2.paste(img1.crop((0, 0, img1.width // 2, img1.height)))
     img2.thumbnail((img_width, img_height))
-    img2.save(f"{output_dir}/{theme_name}_thumbnail.jpg", quality=jpeg_quality)
+    if jpeg_quality >= 0:
+        img2.save(f"{output_dir}/{theme_name}_thumbnail.jpg", quality=jpeg_quality)
+    else:
+        img2.save(f"{output_dir}/{theme_name}_thumbnail.png")
 
 print(f"-> {output_dir}")

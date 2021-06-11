@@ -238,10 +238,7 @@ namespace WinDynamicDesktop.WPF
 
                 if (isDownloaded)
                 {
-                    ThemeManager.CalcThemeInstallSize(theme, (size) =>
-                    {
-                        DownloadSize = size;
-                    });
+                    ThemeManager.CalcThemeInstallSize(theme, size => { DownloadSize = size; });
 
                     if (theme.sunriseImageList != null && !theme.sunriseImageList.SequenceEqual(theme.dayImageList))
                     {
@@ -260,10 +257,7 @@ namespace WinDynamicDesktop.WPF
                 else
                 {
                     Message = _("Theme is not downloaded. Click Download button to enable full preview.");
-                    ThemeManager.CalcThemeDownloadSize(theme, (size) =>
-                    {
-                        DownloadSize = size;
-                    });
+                    ThemeManager.CalcThemeDownloadSize(theme, size => { DownloadSize = size; });
 
                     string[] resourceNames = Assembly.GetExecutingAssembly().GetManifestResourceNames();
                     string path = "WinDynamicDesktop.resources.images." + theme.themeId + "_{0}.jpg";
@@ -324,7 +318,6 @@ namespace WinDynamicDesktop.WPF
             else
             {
                 Author = "Microsoft";
-                DownloadSize = null;
                 Items.Add(new ThemePreviewItem(string.Empty, ThemeThumbLoader.GetWindowsWallpaper()));
                 activeImage = 0;
             }

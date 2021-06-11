@@ -8,7 +8,7 @@ from PIL import Image
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
-img_width = int(sys.argv[1]) if len(sys.argv) > 1 else 256
+img_width = int(sys.argv[1]) if len(sys.argv) > 1 else 1920
 img_height = int(img_width * 9 / 16)
 jpeg_quality = int(sys.argv[2]) if len(sys.argv) > 2 else 75
 
@@ -41,6 +41,9 @@ for theme_dir in glob.glob(f"{input_dir}/**"):
     for phase, filename in image_filenames.items():
         img = Image.open(f"{theme_dir}/{filename}")
         img.thumbnail((img_width, img_height))
-        img.save(f"{output_dir}/{theme_name}_{phase}.jpg", quality=jpeg_quality)
+        if jpeg_quality >= 0:
+            img.save(f"{output_dir}/{theme_name}_{phase}.jpg", quality=jpeg_quality)
+        else:
+            img.save(f"{output_dir}/{theme_name}_{phase}.png")
 
 print(f"-> {output_dir}")
