@@ -141,6 +141,12 @@
             </ListBox>
         </Grid>
 
+        <Border HorizontalAlignment="Left" VerticalAlignment="Bottom"  Margin="-3,0,0,-3"
+                Visibility="{Binding DownloadSizeVisible, Converter={StaticResource BoolVis}}">
+            <TextBlock Text="{Binding DownloadSize, FallbackValue='Size'}" FontSize="16"
+                       VerticalAlignment="Center" Margin="11,4,8,9" Opacity="0.5" />
+        </Border>
+
         <Border HorizontalAlignment="Right" VerticalAlignment="Bottom"  Margin="0,0,-3,-3">
             <TextBlock Text="{Binding Author, FallbackValue='Author'}" FontSize="16"
                        VerticalAlignment="Center" Margin="8,4,11,9" Opacity="0.5" />

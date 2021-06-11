@@ -6,6 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using RestSharp;
 
 namespace WinDynamicDesktop
 {
@@ -72,6 +75,41 @@ namespace WinDynamicDesktop
         public static string GetThemeAuthor(ThemeConfig theme)
         {
             return IsThemeDownloaded(theme) ? theme.imageCredits : "Apple";
+        }
+
+        public static void CalcThemeDownloadSize(ThemeConfig theme, Action<string> setSize)
+        {
+            Task.Run(() =>
+            {
+                foreach (Uri themeUri in DefaultThemes.GetThemeUriList(theme.themeId))
+                {
+                    var client = new RestClient(themeUri);
+                    ProxyWrapper.ApplyProxyToClient(client);
+                    var response = client.Head(new RestRequest());
+
+                    if (response.IsSuccessful)
+                    {
+                        long sizeBytes = Convert.ToInt64(response.Headers.ToList()
+                            .Find(x => x.Name == "Content-Length").Value);
+                        setSize(string.Format(_("{0} MB"), (sizeBytes / 1024d / 1024d).ToString("0.#")));
+                        break;
+                    }
+                }
+            });
+        }
+
+        public static void CalcThemeInstallSize(ThemeConfig theme, Action<string> setSize)
+        {
+            Task.Run(() =>
+            {
+                DirectoryInfo dirInfo = new DirectoryInfo(Path.Combine("themes", theme.themeId));
+                long sizeBytes = 0;
+                foreach (FileInfo fileInfo in dirInfo.EnumerateFiles())
+                {
+                    sizeBytes += fileInfo.Length;
+                }
+                setSize(string.Format(_("{0} MB"), (sizeBytes / 1024d / 1024d).ToString("0.#")));
+            });
         }
 
         public static bool IsTheme4Segment(ThemeConfig theme)
@@ -176,10 +214,13 @@ namespace WinDynamicDesktop
             }
         }
 
-        private static void OnThemeDialogClosed(object sender, EventArgs e)
+        private static void OnThemeDialogClosed(object sender, FormClosedEventArgs e)
         {
-            themeDialog = null;
-            LaunchSequence.NextStep(true);
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                themeDialog = null;
+                LaunchSequence.NextStep(true);
+            }
         }
     }
 }

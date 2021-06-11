@@ -45,6 +45,7 @@ namespace WinDynamicDesktop.WPF
         public bool ControlsVisible => !string.IsNullOrEmpty(Title);
         public bool MessageVisible => !string.IsNullOrEmpty(Message);
         public bool CarouselIndicatorsVisible => string.IsNullOrEmpty(Message);
+        public bool DownloadSizeVisible => !string.IsNullOrEmpty(DownloadSize);
 
         private string title;
         public string Title
@@ -81,6 +82,13 @@ namespace WinDynamicDesktop.WPF
                 OnPropertyChanged(nameof(MessageVisible));
                 OnPropertyChanged(nameof(CarouselIndicatorsVisible));
             }
+        }
+
+        private string downloadSize;
+        public string DownloadSize
+        {
+            get => downloadSize;
+            set => SetProperty(ref downloadSize, value);
         }
 
         private BitmapImage backImage;
@@ -230,6 +238,11 @@ namespace WinDynamicDesktop.WPF
 
                 if (isDownloaded)
                 {
+                    ThemeManager.CalcThemeInstallSize(theme, (size) =>
+                    {
+                        DownloadSize = size;
+                    });
+
                     if (theme.sunriseImageList != null && !theme.sunriseImageList.SequenceEqual(theme.dayImageList))
                     {
                         sunrise = ImagePaths(theme, theme.sunriseImageList);
@@ -247,6 +260,10 @@ namespace WinDynamicDesktop.WPF
                 else
                 {
                     Message = _("Theme is not downloaded. Click Download button to enable full preview.");
+                    ThemeManager.CalcThemeDownloadSize(theme, (size) =>
+                    {
+                        DownloadSize = size;
+                    });
 
                     string[] resourceNames = Assembly.GetExecutingAssembly().GetManifestResourceNames();
                     string path = "WinDynamicDesktop.resources.images." + theme.themeId + "_{0}.jpg";
@@ -307,6 +324,7 @@ namespace WinDynamicDesktop.WPF
             else
             {
                 Author = "Microsoft";
+                DownloadSize = null;
                 Items.Add(new ThemePreviewItem(string.Empty, ThemeThumbLoader.GetWindowsWallpaper()));
                 activeImage = 0;
             }
@@ -369,6 +387,7 @@ namespace WinDynamicDesktop.WPF
             Author = null;
             PreviewText = null;
             Message = null;
+            DownloadSize = null;
             BackImage = null;
             FrontImage = null;
             SelectedIndex = -1;
