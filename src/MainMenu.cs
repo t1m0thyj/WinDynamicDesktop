@@ -142,7 +142,7 @@ namespace WinDynamicDesktop
 
         private static void OnLanguageItemClick(object sender, EventArgs e)
         {
-            Localization.SelectLanguage();
+            Localization.SelectLanguage(false);
         }
 
         private static void OnShuffleItemClick(object sender, EventArgs e)

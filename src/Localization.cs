@@ -50,7 +50,7 @@ namespace WinDynamicDesktop
 
             if (JsonConfig.firstRun)
             {
-                SelectLanguage();
+                SelectLanguage(true);
             }
         }
 
@@ -81,10 +81,14 @@ namespace WinDynamicDesktop
             }
         }
 
-        public static void SelectLanguage()
+        public static void SelectLanguage(bool exitOnCancel)
         {
             LanguageDialog langDialog = new LanguageDialog();
-            langDialog.ShowDialog();
+            DialogResult result = langDialog.ShowDialog();
+            if (result != DialogResult.OK && exitOnCancel)
+            {
+                Environment.Exit(0);
+            }
         }
 
         public static string GetTranslation(string msg)
