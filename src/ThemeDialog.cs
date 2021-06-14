@@ -240,6 +240,10 @@ namespace WinDynamicDesktop
             previewer.ViewModel.PreviewTheme(theme);
         }
 
+        // Code to change ListView appearance from https://stackoverflow.com/a/4463114/5504760
+        [DllImport("uxtheme.dll", ExactSpelling = true, CharSet = CharSet.Unicode)]
+        internal static extern int SetWindowTheme(IntPtr hwnd, string pszSubAppName, string pszSubIdList);
+
         private void ThemeDialog_Load(object sender, EventArgs e)
         {
             previewer = new WPF.ThemePreviewer();
@@ -247,7 +251,7 @@ namespace WinDynamicDesktop
 
             listView1.ContextMenuStrip = contextMenuStrip1;
             listView1.ListViewItemSorter = new CompareByItemText();
-            Win32Utils.SetWindowTheme(listView1.Handle, "Explorer", null);
+            SetWindowTheme(listView1.Handle, "Explorer", null);
 
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;

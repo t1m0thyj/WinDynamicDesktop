@@ -79,7 +79,7 @@
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="AppContext.cs" />
-    <Compile Include="Win32Utils.cs" />
+    <Compile Include="DpiHelper.cs" />
     <Compile Include="HttpEnvironmentProxy.cs" />
     <Compile Include="IpcManager.cs" />
     <Compile Include="ProxyWrapper.cs" />

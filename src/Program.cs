@@ -22,7 +22,7 @@ namespace WinDynamicDesktop
                 ErrorHandler.LogError(localFolder, e.ExceptionObject as Exception);
 
             Directory.SetCurrentDirectory(FindCwd(localFolder));
-            Win32Utils.SetDpiAwareness();
+            DpiHelper.SetupDpiAwareness();
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

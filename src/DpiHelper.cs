@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace WinDynamicDesktop
 {
-    class Win32Utils
+    class DpiHelper
     {
         // Code based on https://github.com/modern-forms/Modern.Forms/tree/master/src/Modern.Forms/Avalonia/Avalonia.Win32
         private enum ProcessDpiAwareness
@@ -34,13 +34,13 @@ namespace WinDynamicDesktop
         [DllImport("user32.dll")]
         private static extern bool SetProcessDPIAware();
 
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        [DllImport("kernel32.dll", SetLastError = true)]
         internal static extern IntPtr LoadLibrary(string fileName);
 
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Ansi)]
         internal static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
 
-        public static void SetDpiAwareness()
+        public static void SetupDpiAwareness()
         {
             var user32 = LoadLibrary("user32.dll");
             var method = GetProcAddress(user32, nameof(SetProcessDpiAwarenessContext));
@@ -65,9 +65,5 @@ namespace WinDynamicDesktop
 
             SetProcessDPIAware();
         }
-
-        // Code to change ListView appearance from https://stackoverflow.com/a/4463114/5504760
-        [DllImport("uxtheme.dll", ExactSpelling = true, CharSet = CharSet.Unicode)]
-        internal static extern int SetWindowTheme(IntPtr hwnd, string pszSubAppName, string pszSubIdList);
     }
 }
