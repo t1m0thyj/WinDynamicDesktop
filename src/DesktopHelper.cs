@@ -49,7 +49,7 @@ namespace WinDynamicDesktop
 
         public override void OpenUpdateLink()
         {
-            System.Diagnostics.Process.Start(updateLink);
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(updateLink) { UseShellExecute = true });
         }
 
         public override void SetWallpaper(string imageFilename)

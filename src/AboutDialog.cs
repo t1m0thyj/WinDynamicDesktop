@@ -79,7 +79,7 @@ namespace WinDynamicDesktop
 
         private void richTextBox1_LinkClicked(object sender, LinkClickedEventArgs e)
         {
-            System.Diagnostics.Process.Start(e.LinkText);
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(e.LinkText) { UseShellExecute = true });
         }
 
         private void closeButton_Click(object sender, EventArgs e)
