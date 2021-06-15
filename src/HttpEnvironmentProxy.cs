@@ -11,14 +11,14 @@ namespace WinDynamicDesktop
 {
     internal sealed class HttpEnvironmentProxyCredentials : ICredentials
     {
-        // Wrapper class for cases when http and https has different authentication.
+        // Wrapper class for cases when http and https have different authentication.
         private readonly NetworkCredential _httpCred;
         private readonly NetworkCredential _httpsCred;
         private readonly Uri _httpProxy;
         private readonly Uri _httpsProxy;
 
         public HttpEnvironmentProxyCredentials(Uri httpProxy, NetworkCredential httpCred,
-                                                Uri httpsProxy, NetworkCredential httpsCred)
+                                               Uri httpsProxy, NetworkCredential httpsCred)
         {
             _httpCred = httpCred;
             _httpsCred = httpsCred;
@@ -57,7 +57,7 @@ namespace WinDynamicDesktop
         }
 
         /// <summary>
-        /// Converts string containing user:password to NetworkCredential object
+        /// Converts string containing user:password to NetworkCredential object.
         /// </summary>
         private static NetworkCredential GetCredentialsFromString(string value)
         {
@@ -88,7 +88,7 @@ namespace WinDynamicDesktop
         }
     }
 
-    internal sealed class HttpEnvironmentProxy : IWebProxy
+    internal sealed partial class HttpEnvironmentProxy : IWebProxy
     {
         private const string EnvAllProxyUC = "ALL_PROXY";
         private const string EnvAllProxyLC = "all_proxy";
@@ -100,14 +100,14 @@ namespace WinDynamicDesktop
         private const string EnvNoProxyUC = "NO_PROXY";
         private const string EnvCGI = "GATEWAY_INTERFACE"; // Running in a CGI environment.
 
-        private Uri _httpProxyUri;      // String URI for HTTP requests
-        private Uri _httpsProxyUri;     // String URI for HTTPS requests
-        private string[] _bypass = null;// list of domains not to proxy
-        private ICredentials _credentials;
+        private readonly Uri _httpProxyUri;      // String URI for HTTP requests
+        private readonly Uri _httpsProxyUri;     // String URI for HTTPS requests
+        private readonly string[] _bypass;// list of domains not to proxy
+        private readonly ICredentials _credentials;
 
         public static bool TryCreate(out IWebProxy proxy)
         {
-            // Get environmental variables. Protocol specific take precedence over
+            // Get environment variables. Protocol specific take precedence over
             // general all_*, lower case variable has precedence over upper case.
             // Note that curl uses HTTPS_PROXY but not HTTP_PROXY.
 
@@ -123,12 +123,13 @@ namespace WinDynamicDesktop
             if (httpProxy == null || httpsProxy == null)
             {
                 Uri allProxy = GetUriFromString(Environment.GetEnvironmentVariable(EnvAllProxyLC)) ??
-                                GetUriFromString(Environment.GetEnvironmentVariable(EnvAllProxyUC));
+                               GetUriFromString(Environment.GetEnvironmentVariable(EnvAllProxyUC));
 
                 if (httpProxy == null)
                 {
                     httpProxy = allProxy;
                 }
+
                 if (httpsProxy == null)
                 {
                     httpsProxy = allProxy;
@@ -144,7 +145,7 @@ namespace WinDynamicDesktop
             }
 
             string noProxy = Environment.GetEnvironmentVariable(EnvNoProxyLC) ??
-                Environment.GetEnvironmentVariable(EnvNoProxyUC);
+                             Environment.GetEnvironmentVariable(EnvNoProxyUC);
             proxy = new HttpEnvironmentProxy(httpProxy, httpsProxy, noProxy);
 
             return true;
@@ -196,7 +197,6 @@ namespace WinDynamicDesktop
             string user = null;
             string password = null;
             ushort port = 80;
-            string host = null;
 
             // Check if there is authentication part with user and possibly password.
             // Curl accepts raw text and that may break URI parser.
@@ -212,7 +212,7 @@ namespace WinDynamicDesktop
                 {
                     auth = Uri.UnescapeDataString(auth);
                 }
-                catch { /* Do nothing */ };
+                catch { };
 
                 value = value.Substring(separatorIndex + 1);
                 separatorIndex = auth.IndexOf(':');
@@ -229,6 +229,7 @@ namespace WinDynamicDesktop
 
             int ipV6AddressEnd = value.IndexOf(']');
             separatorIndex = value.LastIndexOf(':');
+            string host;
             // No ':' or it is part of IPv6 address.
             if (separatorIndex == -1 || (ipV6AddressEnd != -1 && separatorIndex < ipV6AddressEnd))
             {
@@ -269,7 +270,7 @@ namespace WinDynamicDesktop
 
                 return ub.Uri;
             }
-            catch { /* Do nothing */ };
+            catch { };
             return null;
         }
 
@@ -296,7 +297,6 @@ namespace WinDynamicDesktop
                         {
                             return true;
                         }
-
                     }
                     else
                     {
@@ -311,7 +311,7 @@ namespace WinDynamicDesktop
         }
 
         /// <summary>
-        /// Gets the proxy URI. (iWebProxy interface)
+        /// Gets the proxy URI. (iWebProxy interface).
         /// </summary>
         public Uri GetProxy(Uri uri)
         {
