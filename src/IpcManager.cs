@@ -36,7 +36,7 @@ namespace WinDynamicDesktop
             {
                 namedPipeServer = new NamedPipeServerStream("WinDynamicDesktop", PipeDirection.In);
                 using StreamReader reader = new StreamReader(namedPipeServer);
-                
+
                 while (true)
                 {
                     if (!namedPipeServer.IsConnected)
