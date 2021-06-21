@@ -11,6 +11,7 @@ before_build:
 - ps: powershell scripts\prebuild_appveyor.ps1
 - nuget restore src\WinDynamicDesktop.sln
 build:
+  project: src\WinDynamicDesktop.sln
   verbosity: minimal
 after_build:
 - ps: powershell scripts\package.ps1
