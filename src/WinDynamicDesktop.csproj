@@ -226,5 +226,11 @@
       <Version>3.5.0</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\lib\VirtualDesktop\source\VirtualDesktop\VirtualDesktop.csproj">
+      <Project>{3d347ebd-eef8-4163-8d89-64290283b783}</Project>
+      <Name>VirtualDesktop</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
