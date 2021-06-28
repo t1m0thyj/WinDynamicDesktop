@@ -1,4 +1,0 @@
-[submodule "lib/VirtualDesktop"]
-	path = lib/VirtualDesktop
-	url = https://github.com/t1m0thyj/VirtualDesktop.git
-	branch = windynamicdesktop

@@ -5,7 +5,6 @@ configuration: Release
 environment:
   UseTemporarySignCert: true
 install:
-- git submodule update --init
 - choco install -y --no-progress innosetup
 before_build:
 - ps: powershell scripts\prebuild_appveyor.ps1

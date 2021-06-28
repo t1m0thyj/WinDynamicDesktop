@@ -7,7 +7,6 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Timers;
-using WindowsDesktop;
 
 namespace WinDynamicDesktop
 {
@@ -26,7 +25,6 @@ namespace WinDynamicDesktop
 
         private string lastImagePath;
         private DateTime? nextUpdateTime;
-        private Task virtualDesktopInit;
 
         public static bool isSunUp;
         public FullScreenApi fullScreenChecker;
@@ -38,12 +36,6 @@ namespace WinDynamicDesktop
         public WallpaperChangeScheduler()
         {
             fullScreenChecker = new FullScreenApi(this);
-
-            if (Environment.OSVersion.Version.Build >= 21337)
-            {
-                VirtualDesktopProvider.Default.ComInterfaceAssemblyPath = Path.Combine(Environment.CurrentDirectory, "assemblies");
-                virtualDesktopInit = VirtualDesktopProvider.Default.Initialize();
-            }
 
             backgroundTimer.AutoReset = true;
             backgroundTimer.Interval = 60e3;
@@ -158,7 +150,7 @@ namespace WinDynamicDesktop
 
         public SchedulerState GetImageData(SolarData data, ThemeConfig theme, DateTime dateNow)
         {
-            int[] imageList = null;
+            int[] imageList;
             DateTime segmentStart;
             DateTime segmentEnd;
             SchedulerState imageData = new SchedulerState() { daySegment2 = isSunUp ? 0 : 1 };
@@ -279,20 +271,10 @@ namespace WinDynamicDesktop
             WallpaperApi.EnableTransitions();
             UwpDesktop.GetHelper().SetWallpaper(imageFilename);
 
-            if (Environment.OSVersion.Version.Build >= 21337)
+            if (UwpDesktop.IsVirtualDesktopSupported())
             {
-                if (!virtualDesktopInit.IsCompleted)
-                {
-                    virtualDesktopInit.Wait();
-                }
-
-                foreach (VirtualDesktop desktop in VirtualDesktop.GetDesktops())
-                {
-                    if (desktop.Id != VirtualDesktop.Current.Id)
-                    {
-                        desktop.WallpaperPath = imagePath;
-                    }
-                }
+                // TODO Do this for Windows wallpaper too
+                VirtualDesktopApi.SetWallpaper(imagePath);
             }
 
             lastImagePath = imagePath;

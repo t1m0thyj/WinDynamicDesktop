@@ -145,6 +145,7 @@
     <Compile Include="UwpDesktop.cs" />
     <Compile Include="UwpHelper.cs" />
     <Compile Include="UwpLocation.cs" />
+    <Compile Include="VirtualDesktopApi.cs" />
     <Compile Include="WallpaperApi.cs" />
     <Compile Include="WallpaperChangeScheduler.cs" />
     <Compile Include="WallpaperShuffler.cs" />
@@ -164,6 +165,7 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include=".editorconfig" />
     <None Include="app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -225,12 +227,6 @@
     <PackageReference Include="TimeZoneConverter">
       <Version>3.5.0</Version>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\lib\VirtualDesktop\source\VirtualDesktop\VirtualDesktop.csproj">
-      <Project>{3d347ebd-eef8-4163-8d89-64290283b783}</Project>
-      <Name>VirtualDesktop</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinDynamicDesktop", "WinDyn
 EndProject
 Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "WinDynamicDesktop.Package", "..\uwp\WinDynamicDesktop.Package.wapproj", "{D10BBBDF-EFCF-4051-9BFD-9B0AFCD30EE4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtualDesktop", "..\lib\VirtualDesktop\source\VirtualDesktop\VirtualDesktop.csproj", "{3D347EBD-EEF8-4163-8D89-64290283B783}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,18 +47,6 @@ Global
 		{D10BBBDF-EFCF-4051-9BFD-9B0AFCD30EE4}.Release|x86.ActiveCfg = Release|x86
 		{D10BBBDF-EFCF-4051-9BFD-9B0AFCD30EE4}.Release|x86.Build.0 = Release|x86
 		{D10BBBDF-EFCF-4051-9BFD-9B0AFCD30EE4}.Release|x86.Deploy.0 = Release|x86
-		{3D347EBD-EEF8-4163-8D89-64290283B783}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3D347EBD-EEF8-4163-8D89-64290283B783}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3D347EBD-EEF8-4163-8D89-64290283B783}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{3D347EBD-EEF8-4163-8D89-64290283B783}.Debug|x64.Build.0 = Debug|Any CPU
-		{3D347EBD-EEF8-4163-8D89-64290283B783}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{3D347EBD-EEF8-4163-8D89-64290283B783}.Debug|x86.Build.0 = Debug|Any CPU
-		{3D347EBD-EEF8-4163-8D89-64290283B783}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3D347EBD-EEF8-4163-8D89-64290283B783}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3D347EBD-EEF8-4163-8D89-64290283B783}.Release|x64.ActiveCfg = Release|Any CPU
-		{3D347EBD-EEF8-4163-8D89-64290283B783}.Release|x64.Build.0 = Release|Any CPU
-		{3D347EBD-EEF8-4163-8D89-64290283B783}.Release|x86.ActiveCfg = Release|Any CPU
-		{3D347EBD-EEF8-4163-8D89-64290283B783}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
