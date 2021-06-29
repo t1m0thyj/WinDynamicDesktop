@@ -1,7 +1,16 @@
+# To learn more about .editorconfig see https://aka.ms/editorconfigdocs
+root = true
+
 # All files
 [*]
+indent_style = space
 guidelines = 80
 
 # C# files
 [*.cs]
+file_header_template = This Source Code Form is subject to the terms of the Mozilla Public\nLicense, v. 2.0. If a copy of the MPL was not distributed with this\nfile, You can obtain one at http://mozilla.org/MPL/2.0/.
 guidelines = 80, 120
+
+# Xml files
+[*.xml]
+indent_size = 2
