@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using System;
+using System.IO;
 
 namespace WinDynamicDesktop
 {
@@ -68,13 +69,18 @@ namespace WinDynamicDesktop
             await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-windows-store://downloadsandupdates"));
         }
 
-        public override async void SetWallpaper(string imageFilename)
+        public override async void SetWallpaper(string imagePath)
         {
-            var uri = new Uri("ms-appdata:///local/themes/" + ThemeManager.currentTheme.themeId + "/" + imageFilename);
+            WallpaperApi.EnableTransitions();
+
+            var uri = new Uri("ms-appdata:///local/themes/" + ThemeManager.currentTheme.themeId + "/" +
+                Path.GetFileName(imagePath));
             var file = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri);
 
             var profileSettings = Windows.System.UserProfile.UserProfilePersonalizationSettings.Current;
             await profileSettings.TrySetWallpaperImageAsync(file);
+
+            WallpaperApi.SyncVirtualDesktops(imagePath);
         }
     }
 }

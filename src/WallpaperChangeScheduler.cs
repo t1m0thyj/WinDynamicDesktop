@@ -268,15 +268,7 @@ namespace WinDynamicDesktop
                 return;
             }
 
-            WallpaperApi.EnableTransitions();
             UwpDesktop.GetHelper().SetWallpaper(imageFilename);
-
-            if (UwpDesktop.IsVirtualDesktopSupported())
-            {
-                // TODO Do this for Windows wallpaper too
-                VirtualDesktopApi.SetWallpaper(imagePath);
-            }
-
             lastImagePath = imagePath;
         }
 

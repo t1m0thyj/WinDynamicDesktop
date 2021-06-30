@@ -194,7 +194,6 @@ namespace WinDynamicDesktop
 
             if (selectedIndex == 0)
             {
-                // TODO Enable transitions here
                 WallpaperApi.SetWallpaper(windowsWallpaper);
             }
             else

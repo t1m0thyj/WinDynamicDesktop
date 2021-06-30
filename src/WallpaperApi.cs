@@ -239,8 +239,18 @@ namespace WinDynamicDesktop
             SendMessageTimeout(FindWindow("Progman", null), 0x52c, IntPtr.Zero, IntPtr.Zero, 0, 500, out result);
         }
 
+        public static void SyncVirtualDesktops(string imagePath)
+        {
+            if (UwpDesktop.IsVirtualDesktopSupported())
+            {
+                VirtualDesktopApi.SetWallpaper(imagePath);
+            }
+        }
+
         public static void SetWallpaper(string imagePath)
         {
+            EnableTransitions();
+
             ThreadStart threadStarter = () =>
             {
                 IActiveDesktop _activeDesktop = ActiveDesktopWrapper.GetActiveDesktop();
@@ -248,6 +258,7 @@ namespace WinDynamicDesktop
                 _activeDesktop.ApplyChanges(AD_Apply.ALL | AD_Apply.FORCE);
 
                 Marshal.ReleaseComObject(_activeDesktop);
+                SyncVirtualDesktops(imagePath);
             };
             Thread thread = new Thread(threadStarter);
             thread.SetApartmentState(ApartmentState.STA);  // Set the thread to STA (required!)
