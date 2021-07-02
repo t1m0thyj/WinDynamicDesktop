@@ -268,7 +268,7 @@ namespace WinDynamicDesktop
                 return;
             }
 
-            UwpDesktop.GetHelper().SetWallpaper(imageFilename);
+            UwpDesktop.GetHelper().SetWallpaper(imagePath);
             lastImagePath = imagePath;
         }
 
