@@ -88,11 +88,27 @@ namespace WinDynamicDesktop
 
         public static void SetWallpaper(string imagePath)
         {
-            if (manager == null)
+            for (int attempts = 0; attempts < 2; attempts++)
             {
-                manager = ImmersiveShellWrapper.GetVirtualDesktopManager();
-            }
+                if (manager == null || attempts > 0)
+                {
+                    manager = ImmersiveShellWrapper.GetVirtualDesktopManager();
+                }
 
+                try
+                {
+                    UnsafeSetWallpaper(imagePath);
+                    break;
+                }
+                catch (COMException)
+                {
+                    continue;
+                }
+            }
+        }
+
+        private static void UnsafeSetWallpaper(string imagePath)
+        {
             Guid currentDesktopId = manager.GetCurrentDesktop(IntPtr.Zero).GetId();
             IObjectArray objectArray = manager.GetDesktops(IntPtr.Zero);
 

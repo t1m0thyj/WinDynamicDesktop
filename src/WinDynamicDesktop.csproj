@@ -198,7 +198,7 @@
       <Version>1.2.2</Version>
     </PackageReference>
     <PackageReference Include="Fody">
-      <Version>6.5.1</Version>
+      <Version>6.5.2</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
