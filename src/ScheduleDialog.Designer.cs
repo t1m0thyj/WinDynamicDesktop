@@ -44,6 +44,7 @@
             this.grantPermissionButton = new System.Windows.Forms.Button();
             this.sunriseSunsetDurationBox = new System.Windows.Forms.NumericUpDown();
             this.checkPermissionButton = new System.Windows.Forms.Button();
+            this.sunriseSunsetDurationUnitLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.sunriseSunsetDurationBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -107,6 +108,7 @@
             this.radioButton2.Name = "radioButton2";
             this.radioButton2.Size = new System.Drawing.Size(256, 17);
             this.radioButton2.TabIndex = 2;
+            this.radioButton2.TabStop = true;
             this.radioButton2.Text = "Use Windows location service to determine times";
             this.radioButton2.UseVisualStyleBackColor = true;
             this.radioButton2.CheckedChanged += new System.EventHandler(this.OnInputValueChanged);
@@ -118,6 +120,7 @@
             this.radioButton3.Name = "radioButton3";
             this.radioButton3.Size = new System.Drawing.Size(201, 17);
             this.radioButton3.TabIndex = 5;
+            this.radioButton3.TabStop = true;
             this.radioButton3.Text = "Use specific sunrise and sunset times";
             this.radioButton3.UseVisualStyleBackColor = true;
             this.radioButton3.CheckedChanged += new System.EventHandler(this.OnInputValueChanged);
@@ -146,7 +149,7 @@
             // 
             this.sunsetTimeLabel.AutoSize = true;
             this.sunsetTimeLabel.Enabled = false;
-            this.sunsetTimeLabel.Location = new System.Drawing.Point(193, 201);
+            this.sunsetTimeLabel.Location = new System.Drawing.Point(29, 228);
             this.sunsetTimeLabel.Name = "sunsetTimeLabel";
             this.sunsetTimeLabel.Size = new System.Drawing.Size(43, 13);
             this.sunsetTimeLabel.TabIndex = 6;
@@ -168,7 +171,7 @@
             // 
             this.sunsetTimePicker.Enabled = false;
             this.sunsetTimePicker.Format = System.Windows.Forms.DateTimePickerFormat.Time;
-            this.sunsetTimePicker.Location = new System.Drawing.Point(242, 198);
+            this.sunsetTimePicker.Location = new System.Drawing.Point(78, 225);
             this.sunsetTimePicker.Name = "sunsetTimePicker";
             this.sunsetTimePicker.ShowUpDown = true;
             this.sunsetTimePicker.Size = new System.Drawing.Size(94, 20);
@@ -180,11 +183,11 @@
             // 
             this.sunriseSunsetDurationLabel.AutoSize = true;
             this.sunriseSunsetDurationLabel.Enabled = false;
-            this.sunriseSunsetDurationLabel.Location = new System.Drawing.Point(27, 228);
+            this.sunriseSunsetDurationLabel.Location = new System.Drawing.Point(194, 202);
             this.sunriseSunsetDurationLabel.Name = "sunriseSunsetDurationLabel";
-            this.sunriseSunsetDurationLabel.Size = new System.Drawing.Size(176, 13);
+            this.sunriseSunsetDurationLabel.Size = new System.Drawing.Size(126, 13);
             this.sunriseSunsetDurationLabel.TabIndex = 3;
-            this.sunriseSunsetDurationLabel.Text = "Sunrise/Sunset Duration in minutes:";
+            this.sunriseSunsetDurationLabel.Text = "Sunrise/Sunset Duration:";
             // 
             // grantPermissionButton
             // 
@@ -204,7 +207,7 @@
             0,
             0,
             0});
-            this.sunriseSunsetDurationBox.Location = new System.Drawing.Point(209, 225);
+            this.sunriseSunsetDurationBox.Location = new System.Drawing.Point(197, 221);
             this.sunriseSunsetDurationBox.Maximum = new decimal(new int[] {
             1800,
             0,
@@ -216,7 +219,7 @@
             0,
             0});
             this.sunriseSunsetDurationBox.Name = "sunriseSunsetDurationBox";
-            this.sunriseSunsetDurationBox.Size = new System.Drawing.Size(94, 20);
+            this.sunriseSunsetDurationBox.Size = new System.Drawing.Size(64, 20);
             this.sunriseSunsetDurationBox.TabIndex = 8;
             this.sunriseSunsetDurationBox.Value = new decimal(new int[] {
             120,
@@ -235,6 +238,15 @@
             this.checkPermissionButton.UseVisualStyleBackColor = true;
             this.checkPermissionButton.Click += new System.EventHandler(this.checkPermissionButton_Click);
             // 
+            // sunriseSunsetDurationUnitLabel
+            // 
+            this.sunriseSunsetDurationUnitLabel.AutoSize = true;
+            this.sunriseSunsetDurationUnitLabel.Location = new System.Drawing.Point(265, 224);
+            this.sunriseSunsetDurationUnitLabel.Name = "sunriseSunsetDurationUnitLabel";
+            this.sunriseSunsetDurationUnitLabel.Size = new System.Drawing.Size(43, 13);
+            this.sunriseSunsetDurationUnitLabel.TabIndex = 14;
+            this.sunriseSunsetDurationUnitLabel.Text = "minutes";
+            // 
             // ScheduleDialog
             // 
             this.AcceptButton = this.okButton;
@@ -242,6 +254,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
             this.ClientSize = new System.Drawing.Size(354, 301);
+            this.Controls.Add(this.sunriseSunsetDurationUnitLabel);
             this.Controls.Add(this.checkPermissionButton);
             this.Controls.Add(this.sunriseSunsetDurationBox);
             this.Controls.Add(this.grantPermissionButton);
@@ -289,6 +302,7 @@
         private System.Windows.Forms.Button grantPermissionButton;
         private System.Windows.Forms.NumericUpDown sunriseSunsetDurationBox;
         private System.Windows.Forms.Button checkPermissionButton;
+        private System.Windows.Forms.Label sunriseSunsetDurationUnitLabel;
     }
 }
 
