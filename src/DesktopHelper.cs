@@ -52,11 +52,8 @@ namespace WinDynamicDesktop
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(updateLink) { UseShellExecute = true });
         }
 
-        public override void SetWallpaper(string imageFilename)
+        public override void SetWallpaper(string imagePath)
         {
-            string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "themes",
-                ThemeManager.currentTheme.themeId, imageFilename);
-
             WallpaperApi.SetWallpaper(imagePath);
         }
     }

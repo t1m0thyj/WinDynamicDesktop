@@ -150,7 +150,7 @@ namespace WinDynamicDesktop
 
         public SchedulerState GetImageData(SolarData data, ThemeConfig theme, DateTime dateNow)
         {
-            int[] imageList = null;
+            int[] imageList;
             DateTime segmentStart;
             DateTime segmentEnd;
             SchedulerState imageData = new SchedulerState() { daySegment2 = isSunUp ? 0 : 1 };
@@ -268,9 +268,7 @@ namespace WinDynamicDesktop
                 return;
             }
 
-            WallpaperApi.EnableTransitions();
-            UwpDesktop.GetHelper().SetWallpaper(imageFilename);
-
+            UwpDesktop.GetHelper().SetWallpaper(imagePath);
             lastImagePath = imagePath;
         }
 

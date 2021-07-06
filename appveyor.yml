@@ -5,13 +5,12 @@ configuration: Release
 environment:
   UseTemporarySignCert: true
 install:
-- ps: choco install -y --no-progress innosetup
+- choco install -y --no-progress innosetup
 before_build:
-- ps: >-
-    powershell scripts\prebuild_appveyor.ps1
-
-    nuget restore src\WinDynamicDesktop.sln
+- ps: powershell scripts\prebuild_appveyor.ps1
+- nuget restore src\WinDynamicDesktop.sln
 build:
+  project: src\WinDynamicDesktop.sln
   verbosity: minimal
 after_build:
 - ps: powershell scripts\package.ps1

@@ -17,7 +17,7 @@ namespace WinDynamicDesktop
 
         public abstract void OpenUpdateLink();
 
-        public abstract void SetWallpaper(string imageFilename);
+        public abstract void SetWallpaper(string imagePath);
     }
 
     class UwpDesktop
@@ -39,6 +39,11 @@ namespace WinDynamicDesktop
         public static bool IsUwpSupported()
         {
             return Environment.OSVersion.Version.Major >= 10;
+        }
+
+        public static bool IsVirtualDesktopSupported()
+        {
+            return Environment.OSVersion.Version.Build >= 21337;
         }
 
         public static PlatformHelper GetHelper()

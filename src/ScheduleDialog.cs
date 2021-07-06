@@ -46,6 +46,7 @@ namespace WinDynamicDesktop
             sunsetTimePicker.Enabled = radioButton3.Checked;
             sunriseSunsetDurationLabel.Enabled = radioButton3.Checked;
             sunriseSunsetDurationBox.Enabled = radioButton3.Checked;
+            sunriseSunsetDurationUnitLabel.Enabled = radioButton3.Checked;
 
             if (radioButton2.Enabled)
             {
