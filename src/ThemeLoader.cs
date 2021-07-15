@@ -9,6 +9,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WinDynamicDesktop.COM;
 
 namespace WinDynamicDesktop
 {

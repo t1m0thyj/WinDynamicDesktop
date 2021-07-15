@@ -79,6 +79,10 @@
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="AppContext.cs" />
+    <Compile Include="COM\ActiveDesktop.cs" />
+    <Compile Include="COM\DesktopWallpaper.cs" />
+    <Compile Include="COM\DisplayDevices.cs" />
+    <Compile Include="COM\VirtualDesktopManager.cs" />
     <Compile Include="HttpEnvironmentProxy.cs" />
     <Compile Include="IpcManager.cs" />
     <Compile Include="ProxyWrapper.cs" />
@@ -130,7 +134,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SunriseSunset.cs" />
-    <Compile Include="TaskbarProgress.cs" />
+    <Compile Include="COM\TaskbarProgress.cs" />
     <Compile Include="ThemeDialog.cs">
       <SubType>Form</SubType>
     </Compile>

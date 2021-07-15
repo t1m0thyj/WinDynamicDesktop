@@ -40,6 +40,7 @@
             this.downloadButton = new System.Windows.Forms.Button();
             this.previewerHost = new System.Windows.Forms.Integration.ElementHost();
             this.listView1 = new System.Windows.Forms.ListView();
+            this.displayComboBox = new System.Windows.Forms.ComboBox();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -104,7 +105,7 @@
             this.favoriteThemeMenuItem,
             this.deleteThemeMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 70);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 48);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // favoriteThemeMenuItem
@@ -148,13 +149,24 @@
             this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(10, 10);
+            this.listView1.Location = new System.Drawing.Point(10, 40);
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(200, 400);
+            this.listView1.Size = new System.Drawing.Size(200, 370);
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
+            // 
+            // displayComboBox
+            // 
+            this.displayComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.displayComboBox.FormattingEnabled = true;
+            this.displayComboBox.Items.AddRange(new object[] {
+            "All Displays"});
+            this.displayComboBox.Location = new System.Drawing.Point(10, 10);
+            this.displayComboBox.Name = "displayComboBox";
+            this.displayComboBox.Size = new System.Drawing.Size(200, 21);
+            this.displayComboBox.TabIndex = 7;
             // 
             // ThemeDialog
             // 
@@ -163,6 +175,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.closeButton;
             this.ClientSize = new System.Drawing.Size(784, 461);
+            this.Controls.Add(this.displayComboBox);
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.downloadButton);
             this.Controls.Add(this.importButton);
@@ -194,5 +207,6 @@
         private System.Windows.Forms.Integration.ElementHost previewerHost;
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ToolStripMenuItem deleteThemeMenuItem;
+        private System.Windows.Forms.ComboBox displayComboBox;
     }
 }
