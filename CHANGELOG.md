@@ -1,5 +1,11 @@
 # Changelog
 
+## `4.7.0`
+
+* Added support for syncing wallpaper across virtual desktops in Windows 11
+* Added Arabic U.A.E., Hungarian, and Icelandic translations (thanks mustafa, DJ Phoenix, and Anonymous)
+* Fixed startup task being created for all users in installer instead of current user
+
 ## `4.6.0`
 
 * Added Monterey Abstract theme

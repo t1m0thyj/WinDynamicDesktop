@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10" IgnorableNamespaces="uap uap3 mp rescap desktop">
-  <Identity Name="38719TimothyJohnson.WinDynamicDesktop" Publisher="CN=3C822DA5-D64C-40A9-A84A-5502C3EDD8CD" Version="4.6.0.0" />
+  <Identity Name="38719TimothyJohnson.WinDynamicDesktop" Publisher="CN=3C822DA5-D64C-40A9-A84A-5502C3EDD8CD" Version="4.7.0.0" />
   <Properties>
     <DisplayName>WinDynamicDesktop</DisplayName>
     <PublisherDisplayName>Timothy Johnson</PublisherDisplayName>

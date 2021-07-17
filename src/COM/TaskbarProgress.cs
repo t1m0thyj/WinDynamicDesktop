@@ -5,7 +5,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace WinDynamicDesktop
+namespace WinDynamicDesktop.COM
 {
     // Code from https://stackoverflow.com/a/24187171/5504760
     public static class TaskbarProgress

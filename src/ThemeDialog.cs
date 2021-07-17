@@ -12,6 +12,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WinDynamicDesktop.COM;
 
 namespace WinDynamicDesktop
 {
@@ -47,6 +48,7 @@ namespace WinDynamicDesktop
             }
 
             this.previewerHost.Anchor &= ~AnchorStyles.Left;
+            this.displayComboBox.Width = newWidth;
             this.listView1.Width = newWidth;
             this.downloadButton.Left += (newWidth - oldWidth) / 2;
             this.applyButton.Left += (newWidth - oldWidth) / 2;
@@ -261,6 +263,13 @@ namespace WinDynamicDesktop
 
             imageList.Images.Add(ThemeThumbLoader.ScaleImage(windowsWallpaper, thumbnailSize));
             listView1.Items.Add(_("None"), 0);
+
+            string[] displayNames = DisplayDevices.GetAllMonitorsFriendlyNames().ToArray();
+            for (int i = 0; i < displayNames.Length; i++)
+            {
+                displayComboBox.Items.Add(string.Format(_("Display {0} - {1}"), i + 1, displayNames[i]));
+            }
+            displayComboBox.SelectedIndex = 0;
 
             string activeTheme = ThemeManager.currentTheme?.themeId;
 

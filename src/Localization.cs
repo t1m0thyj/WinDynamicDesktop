@@ -140,13 +140,16 @@ namespace WinDynamicDesktop
             AddLanguage("Svenska", "sv");  // Swedish
             AddLanguage("Tiếng Việt", "vi");  // Vietnamese
             AddLanguage("Türkçe", "tr");  // Turkish
+            AddLanguage("magyar", "hu");  // Hungarian
             AddLanguage("suomi", "fi");  // Finnish
+            AddLanguage("íslenska", "is");  // Icelandic
             AddLanguage("Čeština", "cs");  // Czech
             AddLanguage("Ελληνικά", "el");  // Greek
             AddLanguage("Български", "bg");  // Bulgarian
             AddLanguage("Македонски", "mk");  // Macedonian
             AddLanguage("Українська", "uk");  // Ukrainian
             AddLanguage("عربي", "ar");  // Arabic
+            AddLanguage("عربي (متحده عرب امارات)", "ar-ae");  // Arabic (U.A.E.)
             AddLanguage("हिन्दी", "hi");  // Hindi
             AddLanguage("বাংলা", "bn");  // Bengali
             AddLanguage("中文 (简体)", "zh-Hans");  // Chinese (simplified)
