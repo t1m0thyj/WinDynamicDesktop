@@ -35,7 +35,7 @@ namespace WinDynamicDesktop
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            System.Diagnostics.Process.Start(translateLink);
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(translateLink) { UseShellExecute = true });
         }
 
         private void okButton_Click(object sender, EventArgs e)

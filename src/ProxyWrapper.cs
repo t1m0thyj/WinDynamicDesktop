@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using System.Net;
+using System.Net.Http;
 
 namespace WinDynamicDesktop
 {
@@ -20,8 +21,7 @@ namespace WinDynamicDesktop
 
             if (webProxy == null)
             {
-                // Uses HttpEnvironmentProxy class to mimic .NET Core behavior
-                HttpEnvironmentProxy.TryCreate(out webProxy);
+                webProxy = HttpClient.DefaultProxy;
             }
 
             return webProxy;
