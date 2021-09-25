@@ -200,7 +200,7 @@ namespace WinDynamicDesktop
             }
             else
             {
-                WallpaperShuffler.AddThemeToHistory(ThemeManager.currentTheme.themeId);
+                ThemeShuffler.AddThemeToHistory(ThemeManager.currentTheme.themeId);
                 AppContext.wpEngine.RunScheduler(true);
                 AppContext.ShowPopup(string.Format(_("New theme applied: {0}"),
                     ThemeManager.GetThemeName(ThemeManager.currentTheme)));
@@ -269,17 +269,28 @@ namespace WinDynamicDesktop
             {
                 displayComboBox.Items.Add(string.Format(_("Display {0} - {1}"), i + 1, displayNames[i]));
             }
+            displayComboBox.Enabled = UwpDesktop.IsMultiDisplaySupported();
             displayComboBox.SelectedIndex = 0;
 
             string activeTheme = ThemeManager.currentTheme?.themeId;
 
-            if (activeTheme == null && (JsonConfig.firstRun || JsonConfig.settings.themeName != null))
+            if (!JsonConfig.IsNullOrEmpty(JsonConfig.settings.multiDisplayThemes))
+            {
+                displayComboBox.SelectedIndex = 1;
+                activeTheme = JsonConfig.settings.multiDisplayThemes[0];
+            }
+            else if (activeTheme == null && (JsonConfig.firstRun || JsonConfig.settings.themeName != null))
             {
                 activeTheme = "Mojave_Desert";
             }
 
             Task.Run(new Action(() =>
                 LoadThemes(ThemeManager.themeSettings, (activeTheme != null) ? activeTheme : "")));
+        }
+
+        private void displayComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // TODO
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)

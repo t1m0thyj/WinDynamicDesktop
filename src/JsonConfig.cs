@@ -40,6 +40,7 @@ namespace WinDynamicDesktop
         public bool fullScreenPause { get; set; }
         public bool enableScripts { get; set; }
         public string[] favoriteThemes { get; set; }
+        public string[] multiDisplayThemes { get; set; }
     }
 
     class JsonConfig
@@ -88,6 +89,11 @@ namespace WinDynamicDesktop
         {
             restartPending = true;
             autoSaveTimer.Start();
+        }
+
+        public static bool IsNullOrEmpty(Array array)
+        {
+            return (array == null || array.Length == 0);
         }
 
         private static void OnSettingsPropertyChanged(object sender, EventArgs e)

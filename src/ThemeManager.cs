@@ -114,8 +114,8 @@ namespace WinDynamicDesktop
 
         public static bool IsTheme4Segment(ThemeConfig theme)
         {
-            return (!ThemeJsonValidator.IsNullOrEmpty(theme.sunriseImageList) &&
-                !ThemeJsonValidator.IsNullOrEmpty(theme.sunsetImageList));
+            return (!JsonConfig.IsNullOrEmpty(theme.sunriseImageList) &&
+                !JsonConfig.IsNullOrEmpty(theme.sunsetImageList));
         }
 
         public static bool IsThemeDownloaded(ThemeConfig theme)

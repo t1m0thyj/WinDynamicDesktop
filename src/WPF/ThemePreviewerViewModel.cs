@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -227,9 +228,6 @@ namespace WinDynamicDesktop.WPF
             string[] sunset = null;
             string[] night = null;
 
-            SolarData solarData = SunriseSunsetService.GetSolarData(DateTime.Today);
-            SchedulerState wpState = AppContext.wpEngine.GetImageData(solarData, theme, DateTime.Now);
-
             if (theme != null)
             {
                 Title = ThemeManager.GetThemeName(theme);
@@ -240,19 +238,32 @@ namespace WinDynamicDesktop.WPF
                 {
                     ThemeManager.CalcThemeInstallSize(theme, size => { DownloadSize = size; });
 
+                    // TODO Fix image times being wrong if SequenceEqual is true above
+                    // TODO Should image times be different when dark mode enabled
+                    List<DateTime> imageTimes = SolarScheduler.GetAllImageTimes(theme);
+                    activeImage = imageTimes.FindLastIndex((time) => time <= DateTime.Now);
+
                     if (theme.sunriseImageList != null && !theme.sunriseImageList.SequenceEqual(theme.dayImageList))
                     {
                         sunrise = ImagePaths(theme, theme.sunriseImageList);
+                        AddItems(_("Sunrise"), sunrise, imageTimes.Take(theme.sunriseImageList.Length).ToArray());
+                        imageTimes.RemoveRange(0, theme.sunriseImageList.Length);
                     }
 
                     day = ImagePaths(theme, theme.dayImageList);
+                    AddItems(_("Day"), day, imageTimes.Take(theme.dayImageList.Length).ToArray());
+                    imageTimes.RemoveRange(0, theme.dayImageList.Length);
 
                     if (theme.sunsetImageList != null && !theme.sunsetImageList.SequenceEqual(theme.dayImageList))
                     {
                         sunset = ImagePaths(theme, theme.sunsetImageList);
+                        AddItems(_("Sunset"), sunset, imageTimes.Take(theme.sunsetImageList.Length).ToArray());
+                        imageTimes.RemoveRange(0, theme.sunsetImageList.Length);
                     }
 
                     night = ImagePaths(theme, theme.nightImageList);
+                    AddItems(_("Night"), night, imageTimes.Take(theme.nightImageList.Length).ToArray());
+                    imageTimes.RemoveRange(0, theme.nightImageList.Length);
                 }
                 else
                 {
@@ -285,34 +296,21 @@ namespace WinDynamicDesktop.WPF
                     {
                         night = new[] { rsrcName };
                     }
-                }
 
-                AddItems(_("Sunrise"), sunrise, isDownloaded);
-                AddItems(_("Day"), day, isDownloaded);
-                AddItems(_("Sunset"), sunset, isDownloaded);
-                AddItems(_("Night"), night, isDownloaded);
+                    AddItems(_("Sunrise"), sunrise, null);
+                    AddItems(_("Day"), day, null);
+                    AddItems(_("Sunset"), sunset, null);
+                    AddItems(_("Night"), night, null);
 
-                if (isDownloaded)
-                {
-                    activeImage = wpState.imageNumber;
-                    bool is4Segment = ThemeManager.IsTheme4Segment(theme);
-
-                    if (is4Segment && wpState.daySegment4 >= 1)
+                    SolarData solarData = SunriseSunsetService.GetSolarData(DateTime.Today);
+                    if (sunrise != null && sunset != null)
                     {
-                        activeImage += sunrise?.Length ?? 0;
+                        activeImage = (int)SolarScheduler.GetDaySegment(solarData, DateTime.Now);
                     }
-                    if ((is4Segment && wpState.daySegment4 >= 2) || (!is4Segment && wpState.daySegment2 == 1))
+                    else
                     {
-                        activeImage += day?.Length ?? 0;
+                        activeImage = (solarData.sunriseTime < DateTime.Now && DateTime.Now <= solarData.sunsetTime) ? 0 : 1;
                     }
-                    if (is4Segment && wpState.daySegment4 == 3)
-                    {
-                        activeImage += sunset?.Length ?? 0;
-                    }
-                }
-                else
-                {
-                    activeImage = (Items.Count == 2) ? wpState.daySegment2 : wpState.daySegment4.Value;
                 }
             }
             else
@@ -389,7 +387,7 @@ namespace WinDynamicDesktop.WPF
             cache.Clear();
         }
 
-        private void AddItems(string previewName, string[] items, bool isDownloaded)
+        private void AddItems(string previewName, string[] items, DateTime[] imageTimes)
         {
             if (items == null) return;
 
@@ -397,13 +395,17 @@ namespace WinDynamicDesktop.WPF
             {
                 string previewText = previewName;
 
-                if (isDownloaded)
+                if (imageTimes == null)  // Theme not downloaded
+                {
+                    previewText = string.Format(_("Previewing {0}"), previewName);
+                }
+                else if (imageTimes[i] == DateTime.MinValue)  // Image not active
                 {
                     previewText = string.Format(_("Previewing {0} ({1}/{2})"), previewName, i + 1, items.Length);
                 }
                 else
                 {
-                    previewText = string.Format(_("Previewing {0}"), previewName);
+                    previewText = string.Format(_("Previewing {0} at {1}"), previewName, imageTimes[i].ToShortTimeString());
                 }
 
                 Items.Add(new ThemePreviewItem(previewText, items[i]));

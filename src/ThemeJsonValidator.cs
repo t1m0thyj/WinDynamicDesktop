@@ -11,15 +11,10 @@ namespace WinDynamicDesktop
 {
     class ThemeJsonValidator
     {
-        public static bool IsNullOrEmpty(Array array)
-        {
-            return (array == null || array.Length == 0);
-        }
-
         public static ThemeResult ValidateQuick(ThemeConfig theme)
         {
-            if (string.IsNullOrEmpty(theme.imageFilename) || IsNullOrEmpty(theme.dayImageList) ||
-                IsNullOrEmpty(theme.nightImageList))
+            if (string.IsNullOrEmpty(theme.imageFilename) || JsonConfig.IsNullOrEmpty(theme.dayImageList) ||
+                JsonConfig.IsNullOrEmpty(theme.nightImageList))
             {
                 return new ThemeResult(new MissingFieldsInThemeJSON(theme.themeId));
             }

@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace WinDynamicDesktop
 {
-    class WallpaperShuffler
+    class ThemeShuffler
     {
         private static Random rng = new Random();
 

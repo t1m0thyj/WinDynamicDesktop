@@ -19,13 +19,12 @@ namespace WinDynamicDesktop
         public int? daySegment4;
     }
 
-    class WallpaperChangeScheduler
+    class WallpaperEngine
     {
-        private enum DaySegment { Sunrise, Day, Sunset, Night, AlwaysDay, AlwaysNight };
-
         private string lastImagePath;
         private DateTime? nextUpdateTime;
 
+        //public List<DisplayInfo> displayInfos = new List<DisplayInfo>();
         public static bool isSunUp;
         public FullScreenApi fullScreenChecker;
 
@@ -33,7 +32,7 @@ namespace WinDynamicDesktop
         private Timer schedulerTimer = new Timer();
         private const long timerError = (long)(TimeSpan.TicksPerMillisecond * 15.6);
 
-        public WallpaperChangeScheduler()
+        public WallpaperEngine()
         {
             fullScreenChecker = new FullScreenApi(this);
 
@@ -60,6 +59,7 @@ namespace WinDynamicDesktop
             isSunUp = (data.sunriseTime <= DateTime.Now && DateTime.Now < data.sunsetTime);
             DateTime? nextImageUpdateTime = null;
 
+            //for (int i = 0; i < DisplayDevices.GetAllMonitorsFriendlyNames().Count(); i++)
             if (ThemeManager.currentTheme != null)
             {
                 if (forceImageUpdate)
@@ -67,7 +67,7 @@ namespace WinDynamicDesktop
                     lastImagePath = null;
                 }
 
-                WallpaperShuffler.MaybeShuffleWallpaper();
+                ThemeShuffler.MaybeShuffleWallpaper();
             }
 
             SchedulerState imageData = GetImageData(data, ThemeManager.currentTheme, DateTime.Now);
@@ -120,34 +120,6 @@ namespace WinDynamicDesktop
             RunScheduler();
         }
 
-        private static DaySegment GetDaySegment(SolarData data, DateTime time)
-        {
-            if (data.polarPeriod == PolarPeriod.PolarDay)
-            {
-                return DaySegment.AlwaysDay;
-            }
-            else if (data.polarPeriod == PolarPeriod.PolarNight)
-            {
-                return DaySegment.AlwaysNight;
-            }
-            else if (data.solarTimes[0] <= time && time < data.solarTimes[1])
-            {
-                return DaySegment.Sunrise;
-            }
-            else if (data.solarTimes[1] <= time && time < data.solarTimes[2])
-            {
-                return DaySegment.Day;
-            }
-            else if (data.solarTimes[2] <= time && time < data.solarTimes[3])
-            {
-                return DaySegment.Sunset;
-            }
-            else
-            {
-                return DaySegment.Night;
-            }
-        }
-
         public SchedulerState GetImageData(SolarData data, ThemeConfig theme, DateTime dateNow)
         {
             int[] imageList;
@@ -158,7 +130,7 @@ namespace WinDynamicDesktop
             // Use 4-segment mode if theme is not downloaded, or has sunrise/sunset images and dark mode not enabled
             if (theme?.imageFilename == null || (ThemeManager.IsTheme4Segment(theme) && !JsonConfig.settings.darkMode))
             {
-                switch (GetDaySegment(data, dateNow))
+                switch (SolarScheduler.GetDaySegment(data, dateNow))
                 {
                     case DaySegment.AlwaysDay:
                         imageList = theme?.dayImageList;

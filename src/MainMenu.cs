@@ -147,7 +147,7 @@ namespace WinDynamicDesktop
 
         private static void OnShuffleItemClick(object sender, EventArgs e)
         {
-            WallpaperShuffler.ToggleShuffle();
+            ThemeShuffler.ToggleShuffle();
         }
 
         private static void OnFullScreenItemClick(object sender, EventArgs e)

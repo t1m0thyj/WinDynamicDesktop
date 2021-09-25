@@ -167,6 +167,7 @@
             this.displayComboBox.Name = "displayComboBox";
             this.displayComboBox.Size = new System.Drawing.Size(200, 21);
             this.displayComboBox.TabIndex = 7;
+            this.displayComboBox.SelectedIndexChanged += new System.EventHandler(this.displayComboBox_SelectedIndexChanged);
             // 
             // ThemeDialog
             // 

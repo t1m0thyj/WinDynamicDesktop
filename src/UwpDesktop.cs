@@ -36,6 +36,11 @@ namespace WinDynamicDesktop
             return _isRunningAsUwp.Value;
         }
 
+        public static bool IsMultiDisplaySupported()
+        {
+            return Environment.OSVersion.Version.Major >= 8;
+        }
+
         public static bool IsUwpSupported()
         {
             return Environment.OSVersion.Version.Major >= 10;
