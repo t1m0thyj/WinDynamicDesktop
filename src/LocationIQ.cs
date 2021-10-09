@@ -5,6 +5,7 @@
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.Windows.Forms;
 
@@ -18,8 +19,8 @@ namespace WinDynamicDesktop
 
         private static void HandleLocationSuccess(LocationIQData data, ScheduleDialog dialog)
         {
-            JsonConfig.settings.latitude = data.lat;
-            JsonConfig.settings.longitude = data.lon;
+            JsonConfig.settings.latitude = double.Parse(data.lat, CultureInfo.InvariantCulture);
+            JsonConfig.settings.longitude = double.Parse(data.lon, CultureInfo.InvariantCulture);
             SolarData solarData = SunriseSunsetService.GetSolarData(DateTime.Today);
 
             DialogResult result = MessageDialog.ShowQuestion(string.Format(_("Is this location correct?\n\n{0}\n{1}"),

@@ -53,15 +53,13 @@ namespace WinDynamicDesktop
                     {
                         settings.location = "XXX";
                     }
-                    if (settings.latitude != null)
+                    if (settings.latitude.HasValue)
                     {
-                        settings.latitude = Math.Round(double.Parse(settings.latitude,
-                            CultureInfo.InvariantCulture), MidpointRounding.AwayFromZero).ToString();
+                        settings.latitude = Math.Round(settings.latitude.Value, MidpointRounding.AwayFromZero);
                     }
-                    if (settings.longitude != null)
+                    if (settings.longitude.HasValue)
                     {
-                        settings.longitude = Math.Round(double.Parse(settings.longitude,
-                            CultureInfo.InvariantCulture), MidpointRounding.AwayFromZero).ToString();
+                        settings.longitude = Math.Round(settings.longitude.Value, MidpointRounding.AwayFromZero);
                     }
 
                     debugLog.WriteLine("./settings.json");

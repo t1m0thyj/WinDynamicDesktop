@@ -22,7 +22,6 @@ namespace WinDynamicDesktop
         public static List<string> importPaths;
         public static List<ThemeConfig> importedThemes = new List<ThemeConfig>();
 
-        public static ThemeConfig currentTheme;
         public static string[] defaultThemes;
         private static ThemeDialog themeDialog;
 
@@ -128,9 +127,12 @@ namespace WinDynamicDesktop
         {
             themeSettings.RemoveAll(t => t.themeId == themeId);
 
-            if (currentTheme != null && (currentTheme.themeId == themeId))
+            for (int i = 0; i < (JsonConfig.settings.activeThemes?.Length ?? 0); i++)
             {
-                currentTheme = null;
+                if (JsonConfig.settings.activeThemes[i] == themeId)
+                {
+                    JsonConfig.settings.activeThemes[i] = null;
+                }
             }
 
             if (permanent)
@@ -173,9 +175,12 @@ namespace WinDynamicDesktop
 
         public static void RemoveTheme(ThemeConfig theme)
         {
-            if (currentTheme == theme)
+            for (int i = 0; i < (JsonConfig.settings.activeThemes?.Length ?? 0); i++)
             {
-                currentTheme = null;
+                if (JsonConfig.settings.activeThemes[i] == theme.themeId)
+                {
+                    JsonConfig.settings.activeThemes[i] = null;
+                }
             }
 
             if (themeSettings.Contains(theme) && !defaultThemes.Contains(theme.themeId))
@@ -194,15 +199,7 @@ namespace WinDynamicDesktop
         {
             foreach (string themeId in themeIds)
             {
-                ThemeLoader.TryLoad(themeId).Match(ThemeLoader.HandleError, theme =>
-                {
-                    themeSettings.Add(theme);
-
-                    if (theme.themeId == JsonConfig.settings.themeName)
-                    {
-                        currentTheme = theme;
-                    }
-                });
+                ThemeLoader.TryLoad(themeId).Match(ThemeLoader.HandleError, themeSettings.Add);
             }
 
             foreach (string themeId in defaultThemes)

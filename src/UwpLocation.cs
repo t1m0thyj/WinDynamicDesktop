@@ -3,7 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using System;
-using System.Globalization;
 using System.Threading.Tasks;
 
 namespace WinDynamicDesktop
@@ -65,8 +64,8 @@ namespace WinDynamicDesktop
             try
             {
                 var pos = await UnsafeUpdateGeoposition();
-                JsonConfig.settings.latitude = pos.Latitude.ToString(CultureInfo.InvariantCulture);
-                JsonConfig.settings.longitude = pos.Longitude.ToString(CultureInfo.InvariantCulture);
+                JsonConfig.settings.latitude = pos.Latitude;
+                JsonConfig.settings.longitude = pos.Longitude;
 
                 return true;
             }

@@ -35,7 +35,7 @@ namespace WinDynamicDesktop
             {
                 menuItem = new ToolStripMenuItem(_("Check for &updates automatically once a week"), null,
                     OnAutoUpdateItemClick);
-                menuItem.Checked = !JsonConfig.settings.disableAutoUpdate;
+                menuItem.Checked = JsonConfig.settings.autoUpdateCheck != false;
 
                 return new List<ToolStripItem>() {
                     new ToolStripSeparator(),
@@ -115,20 +115,19 @@ namespace WinDynamicDesktop
                     latestVersion), _("Update Available"));
             }
 
-            JsonConfig.settings.lastUpdateCheck = DateTime.Now.ToString(
-                CultureInfo.InvariantCulture);
+            JsonConfig.settings.lastUpdateCheckTime = DateTime.Now.ToString(CultureInfo.InvariantCulture);
         }
 
         public static void TryCheckAuto(bool forceIfEnabled = false)
         {
-            if (UwpDesktop.IsRunningAsUwp() || JsonConfig.settings.disableAutoUpdate)
+            if (UwpDesktop.IsRunningAsUwp() || JsonConfig.settings.autoUpdateCheck == false)
             {
                 return;
             }
 
-            if (JsonConfig.settings.lastUpdateCheck != null && !forceIfEnabled)
+            if (JsonConfig.settings.lastUpdateCheckTime != null && !forceIfEnabled)
             {
-                DateTime lastUpdateCheck = ConfigMigrator.SafeParse(JsonConfig.settings.lastUpdateCheck);
+                DateTime lastUpdateCheck = ConfigMigrator.SafeParse(JsonConfig.settings.lastUpdateCheckTime);
                 TimeSpan timeDiff = new TimeSpan(DateTime.Now.Ticks - lastUpdateCheck.Ticks);
 
                 if (timeDiff.Days < 7)
@@ -142,8 +141,8 @@ namespace WinDynamicDesktop
 
         private static void OnAutoUpdateItemClick(object sender, EventArgs e)
         {
-            bool isEnabled = JsonConfig.settings.disableAutoUpdate ^ true;
-            JsonConfig.settings.disableAutoUpdate = isEnabled;
+            bool isEnabled = JsonConfig.settings.autoUpdateCheck ^ true;
+            JsonConfig.settings.autoUpdateCheck = isEnabled;
             menuItem.Checked = isEnabled;
 
             TryCheckAuto(true);

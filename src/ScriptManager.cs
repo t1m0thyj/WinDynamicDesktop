@@ -14,7 +14,7 @@ namespace WinDynamicDesktop
     {
         public int daySegment2;
         public int? daySegment4;
-        public string imagePath;
+        public string[] imagePaths;
     }
 
     class ScriptManager
@@ -64,8 +64,10 @@ namespace WinDynamicDesktop
                 ps.AddScript("Set-ExecutionPolicy Bypass -Scope Process -Force");
                 ps.AddScript(File.ReadAllText(path));
                 ps.AddParameter("daySegment2", args.daySegment2);
+                // TODO Make sure that segment4 is undefined when appropriate
                 ps.AddParameter("daySegment4", args.daySegment4 ?? -1);
-                ps.AddParameter("imagePath", args.imagePath);
+                // TODO Provide all the image paths to scripts, not just first one
+                ps.AddParameter("imagePath", args.imagePaths[0]);
                 ps.AddParameter("nightMode", JsonConfig.settings.darkMode);
                 ps.Invoke();
 

@@ -9,6 +9,20 @@ namespace WinDynamicDesktop
 {
     public enum DaySegment { Sunrise, Day, Sunset, Night, AlwaysDay, AlwaysNight };
 
+    public class DaySegmentData
+    {
+        public DaySegment segmentType;
+        public int segment2;
+        public int segment4;
+
+        public DaySegmentData(DaySegment segmentType, int segment2, int segment4)
+        {
+            this.segmentType = segmentType;
+            this.segment2 = segment2;
+            this.segment4 = segment4;
+        }
+    }
+
     class SolarScheduler
     {
         public static List<DateTime> GetAllImageTimes(ThemeConfig theme)
@@ -90,32 +104,135 @@ namespace WinDynamicDesktop
             return times;
         }
 
-        public static DaySegment GetDaySegment(SolarData data, DateTime time)
+        public static DaySegmentData GetDaySegmentData(SolarData data, DateTime time)
         {
+            int daySegment2 = (data.sunriseTime <= DateTime.Now && DateTime.Now < data.sunsetTime) ? 1 : 0;
+
             if (data.polarPeriod == PolarPeriod.PolarDay)
             {
-                return DaySegment.AlwaysDay;
+                return new DaySegmentData(DaySegment.AlwaysDay, 0, 1);
             }
             else if (data.polarPeriod == PolarPeriod.PolarNight)
             {
-                return DaySegment.AlwaysNight;
+                return new DaySegmentData(DaySegment.AlwaysNight, 1, 3);
             }
             else if (data.solarTimes[0] <= time && time < data.solarTimes[1])
             {
-                return DaySegment.Sunrise;
+                return new DaySegmentData(DaySegment.Sunrise, daySegment2, 0);
             }
             else if (data.solarTimes[1] <= time && time < data.solarTimes[2])
             {
-                return DaySegment.Day;
+                return new DaySegmentData(DaySegment.Day, daySegment2, 1);
             }
             else if (data.solarTimes[2] <= time && time < data.solarTimes[3])
             {
-                return DaySegment.Sunset;
+                return new DaySegmentData(DaySegment.Sunset, daySegment2, 2);
             }
             else
             {
-                return DaySegment.Night;
+                return new DaySegmentData(DaySegment.Night, daySegment2, 3);
             }
+        }
+
+        public static DisplayEvent GetNextUpdateData(SolarData data, ThemeConfig theme, DateTime dateNow)
+        {
+            int[] imageList;
+            DateTime segmentStart;
+            DateTime segmentEnd;
+            DaySegmentData segmentData = GetDaySegmentData(data, dateNow);
+            DisplayEvent imageData = new DisplayEvent() { currentTheme = theme, daySegment2 = segmentData.segment2 };
+
+            if (ThemeManager.IsTheme4Segment(theme) && !JsonConfig.settings.darkMode)
+            {
+                imageData.daySegment4 = segmentData.segment4;
+
+                switch (segmentData.segmentType)
+                {
+                    case DaySegment.AlwaysDay:
+                        imageList = theme.dayImageList;
+                        segmentStart = dateNow.Date;
+                        segmentEnd = dateNow.Date.AddDays(1);
+                        break;
+                    case DaySegment.AlwaysNight:
+                        imageList = theme.nightImageList;
+                        segmentStart = dateNow.Date;
+                        segmentEnd = dateNow.Date.AddDays(1);
+                        break;
+                    case DaySegment.Sunrise:
+                        imageList = theme.sunriseImageList;
+                        segmentStart = data.solarTimes[0];
+                        segmentEnd = data.solarTimes[1];
+                        break;
+                    case DaySegment.Day:
+                        imageList = theme.dayImageList;
+                        segmentStart = data.solarTimes[1];
+                        segmentEnd = data.solarTimes[2];
+                        break;
+                    case DaySegment.Sunset:
+                        imageList = theme.sunsetImageList;
+                        segmentStart = data.solarTimes[2];
+                        segmentEnd = data.solarTimes[3];
+                        break;
+                    default:
+                        imageList = theme.nightImageList;
+
+                        if (dateNow < data.solarTimes[0])
+                        {
+                            SolarData yesterdaysData = SunriseSunsetService.GetSolarData(dateNow.Date.AddDays(-1));
+                            segmentStart = yesterdaysData.solarTimes[3];
+                            segmentEnd = data.solarTimes[0];
+                        }
+                        else
+                        {
+                            segmentStart = data.solarTimes[3];
+                            SolarData tomorrowsData = SunriseSunsetService.GetSolarData(dateNow.Date.AddDays(1));
+                            segmentEnd = tomorrowsData.solarTimes[0];
+                        }
+
+                        break;
+                }
+            }
+            else
+            {
+                imageList = theme.dayImageList;
+
+                if (segmentData.segment2 == 1 || JsonConfig.settings.darkMode)
+                {
+                    imageList = theme.nightImageList;
+                }
+
+                if (data.polarPeriod != PolarPeriod.None)
+                {
+                    segmentStart = dateNow.Date;
+                    segmentEnd = dateNow.Date.AddDays(1);
+                }
+                else if (segmentData.segment2 == 0)
+                {
+                    segmentStart = data.sunriseTime;
+                    segmentEnd = data.sunsetTime;
+                }
+                else if (dateNow < data.sunriseTime)
+                {
+                    SolarData yesterdaysData = SunriseSunsetService.GetSolarData(dateNow.Date.AddDays(-1));
+                    segmentStart = yesterdaysData.sunsetTime;
+                    segmentEnd = data.sunriseTime;
+                }
+                else
+                {
+                    segmentStart = data.sunsetTime;
+                    SolarData tomorrowsData = SunriseSunsetService.GetSolarData(dateNow.Date.AddDays(1));
+                    segmentEnd = tomorrowsData.sunriseTime;
+                }
+            }
+
+            TimeSpan segmentLength = segmentEnd - segmentStart;
+            TimeSpan timerLength = new TimeSpan(segmentLength.Ticks / imageList.Length);
+
+            int imageNumber = (int)((dateNow.Ticks - segmentStart.Ticks) / timerLength.Ticks);
+            imageData.imageId = imageList[imageNumber];
+            imageData.nextUpdateTicks = segmentStart.Ticks + timerLength.Ticks * (imageNumber + 1);
+
+            return imageData;
         }
     }
 }

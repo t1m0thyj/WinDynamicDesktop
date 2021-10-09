@@ -67,37 +67,38 @@ namespace WinDynamicDesktop
 
         private static void ShuffleWallpaper()
         {
-            List<string> shuffleHistory = JsonConfig.settings.shuffleHistory?.ToList() ?? new List<string>();
-            List<ThemeConfig> themeChoices = new List<ThemeConfig>();
-            ThemeConfig nextTheme;
+            // TODO Reimplement to support multiple displays and more advanced shuffle settings
+            //List<string> shuffleHistory = JsonConfig.settings.shuffleHistory?.ToList() ?? new List<string>();
+            //List<ThemeConfig> themeChoices = new List<ThemeConfig>();
+            //ThemeConfig nextTheme;
 
-            foreach (ThemeConfig theme in ThemeManager.themeSettings)
-            {
-                if (!shuffleHistory.Contains(theme.themeId) && (theme.imageFilename != null))
-                {
-                    themeChoices.Add(theme);
-                }
-            }
+            //foreach (ThemeConfig theme in ThemeManager.themeSettings)
+            //{
+            //    if (!shuffleHistory.Contains(theme.themeId) && (theme.imageFilename != null))
+            //    {
+            //        themeChoices.Add(theme);
+            //    }
+            //}
 
-            if (themeChoices.Count > 0)
-            {
-                nextTheme = themeChoices[rng.Next(themeChoices.Count)];
-            }
-            else
-            {
-                themeChoices = ThemeManager.themeSettings.Where((theme) => theme.imageFilename != null).ToList();
-                nextTheme = themeChoices[rng.Next(themeChoices.Count)];
-                string lastThemeId = shuffleHistory.LastOrDefault();
+            //if (themeChoices.Count > 0)
+            //{
+            //    nextTheme = themeChoices[rng.Next(themeChoices.Count)];
+            //}
+            //else
+            //{
+            //    themeChoices = ThemeManager.themeSettings.Where((theme) => theme.imageFilename != null).ToList();
+            //    nextTheme = themeChoices[rng.Next(themeChoices.Count)];
+            //    string lastThemeId = shuffleHistory.LastOrDefault();
 
-                while ((themeChoices.Count > 1) && (nextTheme.themeId == lastThemeId))
-                {
-                    nextTheme = themeChoices[rng.Next(themeChoices.Count)];
-                }
-            }
+            //    while ((themeChoices.Count > 1) && (nextTheme.themeId == lastThemeId))
+            //    {
+            //        nextTheme = themeChoices[rng.Next(themeChoices.Count)];
+            //    }
+            //}
 
-            ThemeManager.currentTheme = nextTheme;
-            JsonConfig.settings.themeName = nextTheme.themeId;
-            AddThemeToHistory(nextTheme.themeId, themeChoices.Count == 0);
+            //ThemeManager.currentTheme = nextTheme;
+            //JsonConfig.settings.themeName = nextTheme.themeId;
+            //AddThemeToHistory(nextTheme.themeId, themeChoices.Count == 0);
         }
     }
 }

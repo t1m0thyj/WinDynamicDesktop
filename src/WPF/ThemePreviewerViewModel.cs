@@ -241,7 +241,7 @@ namespace WinDynamicDesktop.WPF
                     // TODO Fix image times being wrong if SequenceEqual is true above
                     // TODO Should image times be different when dark mode enabled
                     List<DateTime> imageTimes = SolarScheduler.GetAllImageTimes(theme);
-                    activeImage = imageTimes.FindLastIndex((time) => time <= DateTime.Now);
+                    activeImage = imageTimes.FindIndex((time) => time.TimeOfDay > DateTime.Now.TimeOfDay);  // TODO Ensure this works at 2am
 
                     if (theme.sunriseImageList != null && !theme.sunriseImageList.SequenceEqual(theme.dayImageList))
                     {
@@ -303,14 +303,8 @@ namespace WinDynamicDesktop.WPF
                     AddItems(_("Night"), night, null);
 
                     SolarData solarData = SunriseSunsetService.GetSolarData(DateTime.Today);
-                    if (sunrise != null && sunset != null)
-                    {
-                        activeImage = (int)SolarScheduler.GetDaySegment(solarData, DateTime.Now);
-                    }
-                    else
-                    {
-                        activeImage = (solarData.sunriseTime < DateTime.Now && DateTime.Now <= solarData.sunsetTime) ? 0 : 1;
-                    }
+                    DaySegmentData segmentData = SolarScheduler.GetDaySegmentData(solarData, DateTime.Now);
+                    activeImage = (sunrise != null && sunset != null) ? segmentData.segment4 : segmentData.segment2;
                 }
             }
             else

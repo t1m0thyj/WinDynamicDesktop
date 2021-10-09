@@ -119,11 +119,11 @@ namespace WinDynamicDesktop
                 sunriseSunsetDurationBox.Value = JsonConfig.settings.sunriseSunsetDuration;
             }
 
-            if (JsonConfig.settings.useWindowsLocation)
+            if (JsonConfig.settings.locationMode > 0)
             {
                 radioButton2.Checked = true;
             }
-            else if (JsonConfig.settings.dontUseLocation)
+            else if (JsonConfig.settings.locationMode < 0)
             {
                 radioButton3.Checked = true;
             }
@@ -155,8 +155,7 @@ namespace WinDynamicDesktop
         private async void okButton_Click(object sender, EventArgs e)
         {
             okButton.Enabled = false;
-            JsonConfig.settings.useWindowsLocation = radioButton2.Checked;
-            JsonConfig.settings.dontUseLocation = radioButton3.Checked;
+            JsonConfig.settings.locationMode = radioButton2.Checked ? 1 : (radioButton3.Checked ? -1 : 0);
 
             if (radioButton1.Checked)
             {

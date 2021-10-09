@@ -6,7 +6,6 @@ using GeoTimeZone;
 using SunCalcNet.Model;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using TimeZoneConverter;
 
@@ -63,13 +62,13 @@ namespace WinDynamicDesktop
 
         public static SolarData GetSolarData(DateTime date)
         {
-            if (JsonConfig.settings.dontUseLocation)
+            if (JsonConfig.settings.locationMode < 0)
             {
                 return GetUserProvidedSolarData(date);
             }
 
-            double latitude = double.Parse(JsonConfig.settings.latitude, CultureInfo.InvariantCulture);
-            double longitude = double.Parse(JsonConfig.settings.longitude, CultureInfo.InvariantCulture);
+            double latitude = JsonConfig.settings.latitude.Value;
+            double longitude = JsonConfig.settings.longitude.Value;
             var sunPhases = GetSunPhases(date, latitude, longitude);
             SolarData data = new SolarData();
 

@@ -19,28 +19,30 @@ namespace WinDynamicDesktop
         public event PropertyChangedEventHandler PropertyChanged;
 #pragma warning restore 67
 
+        // Schedule settings
+        public int locationMode { get; set; }
         public string location { get; set; }
-        public string latitude { get; set; }
-        public string longitude { get; set; }
-        public bool darkMode { get; set; }
-        public bool hideTrayIcon { get; set; }
-        public bool disableAutoUpdate { get; set; }
-        public string lastUpdateCheck { get; set; }
-        public string themeName { get; set; }
-        public bool useWindowsLocation { get; set; }
-        public string language { get; set; }
-        public bool usePoeditorLanguage { get; set; }
-        public bool enableShuffle { get; set; }
-        public string lastShuffleDate { get; set; }
-        public string[] shuffleHistory { get; set; }
-        public bool dontUseLocation { get; set; }
+        public double? latitude { get; set; }
+        public double? longitude { get; set; }
         public string sunriseTime { get; set; }
         public string sunsetTime { get; set; }
         public int sunriseSunsetDuration { get; set; }
+
+        // Theme settings
+        public string[] activeThemes { get; set; }
+        public bool darkMode { get; set; }
+        public bool enableShuffle { get; set; }
+        public string lastShuffleDate { get; set; }
+        public string[] shuffleHistory { get; set; }
+        public string[] favoriteThemes { get; set; }
+
+        // General settings
+        public string language { get; set; }
+        public bool autoUpdateCheck { get; set; }
+        public string lastUpdateCheckTime { get; set; }
+        public bool hideTrayIcon { get; set; }
         public bool fullScreenPause { get; set; }
         public bool enableScripts { get; set; }
-        public string[] favoriteThemes { get; set; }
-        public string[] multiDisplayThemes { get; set; }
     }
 
     class JsonConfig
