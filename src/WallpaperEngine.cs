@@ -121,7 +121,7 @@ namespace WinDynamicDesktop
             {
                 nextUpdateTime = new DateTime(nextDisplayUpdateTicks);
             }
-            
+
             StartTimer(nextUpdateTime.Value);
         }
 
@@ -173,8 +173,7 @@ namespace WinDynamicDesktop
             {
                 return;
             }
-
-            if (e.displayIndex == null)
+            else if (e.displayIndex == null)
             {
                 UwpDesktop.GetHelper().SetWallpaper(imagePath);
             }

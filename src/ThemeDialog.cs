@@ -124,7 +124,12 @@ namespace WinDynamicDesktop
 
                             if (activeTheme == null || activeTheme == theme.themeId)
                             {
-                                focusedItem = newItem;
+                                focusedItem = newItem; 
+                                
+                                if (activeTheme != null)
+                                {
+                                    newItem.Font = new Font(newItem.Font, FontStyle.Bold);
+                                }
                             }
                         }));
                     }
@@ -220,6 +225,11 @@ namespace WinDynamicDesktop
 
             JsonConfig.settings.activeThemes = activeThemes.ToArray();
 
+            foreach (ListViewItem item in listView1.Items)
+            {
+                item.Font = new Font(item.Font, item.Selected ? FontStyle.Bold : FontStyle.Regular);
+            }
+
             if (selectedIndex == 0)
             {
                 WallpaperApi.SetWallpaper(windowsWallpaper);
@@ -311,20 +321,18 @@ namespace WinDynamicDesktop
         {
             // TODO Handle if displays change while dialog is open
             string activeTheme = JsonConfig.settings.activeThemes?[displayComboBox.SelectedIndex];
-            if (activeTheme == null)
-            {
-                return;
-            }
-            int themeIndex = 0;
+
             foreach (ListViewItem item in listView1.Items)
             {
                 if ((string)item.Tag == activeTheme)
                 {
-                    themeIndex = item.Index;
-                    break;
+                    listView1.Items[item.Index].Selected = true;
+                    listView1.EnsureVisible(item.Index);
                 }
+
+                listView1.Items[item.Index].Font = new Font(listView1.Items[item.Index].Font,
+                    (string)item.Tag == activeTheme ? FontStyle.Bold : FontStyle.Regular);
             }
-            listView1.Items[themeIndex].Selected = true;
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
