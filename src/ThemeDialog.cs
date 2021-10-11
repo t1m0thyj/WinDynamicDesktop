@@ -124,7 +124,7 @@ namespace WinDynamicDesktop
 
                             if (activeTheme == null || activeTheme == theme.themeId)
                             {
-                                focusedItem = newItem; 
+                                focusedItem = newItem;
                                 
                                 if (activeTheme != null)
                                 {

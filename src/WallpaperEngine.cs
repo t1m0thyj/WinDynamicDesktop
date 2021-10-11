@@ -18,7 +18,7 @@ namespace WinDynamicDesktop
         public ThemeConfig currentTheme;
         public int daySegment2;
         public int? daySegment4;
-        public int? displayIndex;
+        public int displayIndex;
         public int imageId;
         public string lastImagePath;
         public long nextUpdateTicks;
@@ -63,29 +63,31 @@ namespace WinDynamicDesktop
 
             schedulerTimer.Stop();
             SolarData data = SunriseSunsetService.GetSolarData(DateTime.Today);
-            long nextDisplayUpdateTicks = 0;
+            long nextDisplayUpdateTicks = long.MaxValue;
 
             for (int i = 0; i < displayEvents.Count; i++)
             {
+                // TODO After Nvidia update, Display 1 became theme 2, Display 2 became None
                 // TODO Call ThemeShuffler
-                string themeId = JsonConfig.settings.activeThemes[0] ?? JsonConfig.settings.activeThemes[i + 1];
-                ThemeConfig currentTheme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
-                string lastImagePath = (!forceImageUpdate) ? displayEvents[i]?.lastImagePath : null;
-
                 if (displayEvents[i] == null || displayEvents[i].nextUpdateTicks <= DateTime.Now.Ticks)
                 {
-                    displayEvents[i] = SolarScheduler.GetNextUpdateData(data, currentTheme, DateTime.Now);
-                    displayEvents[i].lastImagePath = lastImagePath;
-
-                    displayEvents[i].displayIndex = null;
-                    if (JsonConfig.settings.activeThemes[0] == null)
+                    if (displayEvents[i] == null)
                     {
-                        displayEvents[i].displayIndex = i;
+                        displayEvents[i] = new DisplayEvent();
+                    }
+                    else if (forceImageUpdate)
+                    {
+                        displayEvents[i].lastImagePath = null;
                     }
 
+                    string themeId = JsonConfig.settings.activeThemes[0] ?? JsonConfig.settings.activeThemes[i + 1];
+                    displayEvents[i].currentTheme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
+                    displayEvents[i].displayIndex = (JsonConfig.settings.activeThemes[0] == null) ? i : -1;
+
+                    SolarScheduler.CalcNextUpdateTime(data, displayEvents[i]);
                     SetWallpaper(displayEvents[i]);
 
-                    if (displayEvents[i].nextUpdateTicks > nextDisplayUpdateTicks)
+                    if (displayEvents[i].nextUpdateTicks < nextDisplayUpdateTicks)
                     {
                         nextDisplayUpdateTicks = displayEvents[i].nextUpdateTicks;
                     }
@@ -143,8 +145,6 @@ namespace WinDynamicDesktop
 
             int numDisplaysBefore = displayEvents.Count;
             int numDisplaysAfter = Screen.AllScreens.Length;
-            Console.WriteLine(numDisplaysBefore);
-            Console.WriteLine(numDisplaysAfter);
 
             if (numDisplaysAfter > numDisplaysBefore)
             {
@@ -173,7 +173,7 @@ namespace WinDynamicDesktop
             {
                 return;
             }
-            else if (e.displayIndex == null)
+            else if (e.displayIndex == -1)
             {
                 UwpDesktop.GetHelper().SetWallpaper(imagePath);
             }
@@ -183,8 +183,6 @@ namespace WinDynamicDesktop
                 IDesktopWallpaper desktopWallpaper = DesktopWallpaperFactory.Create();
                 string monitorId = desktopWallpaper.GetMonitorDevicePathAt((uint)e.displayIndex);
                 desktopWallpaper.SetWallpaper(monitorId, imagePath);
-                Console.WriteLine(e.displayIndex);
-                Console.WriteLine(imagePath);
             }
 
             e.lastImagePath = imagePath;
