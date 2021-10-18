@@ -125,7 +125,7 @@ namespace WinDynamicDesktop
                             if (activeTheme == null || activeTheme == theme.themeId)
                             {
                                 focusedItem = newItem;
-                                
+
                                 if (activeTheme != null)
                                 {
                                     newItem.Font = new Font(newItem.Font, FontStyle.Bold);

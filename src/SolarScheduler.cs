@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace WinDynamicDesktop
 {
@@ -33,7 +34,7 @@ namespace WinDynamicDesktop
 
             if (data.polarPeriod != PolarPeriod.None)
             {
-                if (theme.sunriseImageList != null)
+                if (theme.sunriseImageList != null && !theme.sunriseImageList.SequenceEqual(theme.dayImageList))
                 {
                     for (int i = 0; i < theme.sunriseImageList.Length; i++)
                     {
@@ -51,7 +52,7 @@ namespace WinDynamicDesktop
                         times.Add(DateTime.MinValue);
                     }
                 }
-                if (theme.sunsetImageList != null)
+                if (theme.sunsetImageList != null && !theme.sunsetImageList.SequenceEqual(theme.dayImageList))
                 {
                     for (int i = 0; i < theme.sunsetImageList.Length; i++)
                     {

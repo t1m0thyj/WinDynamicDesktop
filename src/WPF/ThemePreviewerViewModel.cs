@@ -238,10 +238,8 @@ namespace WinDynamicDesktop.WPF
                 {
                     ThemeManager.CalcThemeInstallSize(theme, size => { DownloadSize = size; });
 
-                    // TODO Fix image times being wrong if SequenceEqual is true above
-                    // TODO Should image times be different when dark mode enabled
                     List<DateTime> imageTimes = SolarScheduler.GetAllImageTimes(theme);
-                    activeImage = imageTimes.FindLastIndex((time) => time <= DateTime.Now);  // TODO Ensure this works at 2am
+                    activeImage = imageTimes.FindLastIndex((time) => time <= DateTime.Now);
                     if (activeImage == -1)
                     {
                         activeImage = imageTimes.FindLastIndex((time) => time.AddDays(-1) <= DateTime.Now);

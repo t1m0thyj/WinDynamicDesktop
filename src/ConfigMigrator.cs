@@ -219,5 +219,7 @@ namespace WinDynamicDesktop
                 return DateTime.Parse(dateTime);
             }
         }
+
+        // TODO Update config for WDD v5
     }
 }
