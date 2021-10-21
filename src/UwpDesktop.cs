@@ -17,7 +17,7 @@ namespace WinDynamicDesktop
 
         public abstract void OpenUpdateLink();
 
-        public abstract void SetWallpaper(string imagePath);
+        public abstract void SetWallpaper(string imagePath, int displayIndex);
     }
 
     class UwpDesktop

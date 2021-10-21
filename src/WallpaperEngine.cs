@@ -65,10 +65,11 @@ namespace WinDynamicDesktop
             SolarData data = SunriseSunsetService.GetSolarData(DateTime.Today);
             long nextDisplayUpdateTicks = long.MaxValue;
 
+            ThemeShuffler.MaybeShuffleWallpaper();
+
             for (int i = 0; i < displayEvents.Count; i++)
             {
                 // TODO After Nvidia update, Display 1 became theme 2, Display 2 became None
-                // TODO Call ThemeShuffler
                 if (displayEvents[i] == null || displayEvents[i].nextUpdateTicks <= DateTime.Now.Ticks)
                 {
                     if (displayEvents[i] == null)
@@ -173,16 +174,9 @@ namespace WinDynamicDesktop
             {
                 return;
             }
-            else if (e.displayIndex == -1)
-            {
-                UwpDesktop.GetHelper().SetWallpaper(imagePath);
-            }
             else
             {
-                // TODO Handle this on multiple virtual desktops and in UwpHelper subclasses
-                IDesktopWallpaper desktopWallpaper = DesktopWallpaperFactory.Create();
-                string monitorId = desktopWallpaper.GetMonitorDevicePathAt((uint)e.displayIndex);
-                desktopWallpaper.SetWallpaper(monitorId, imagePath);
+                UwpDesktop.GetHelper().SetWallpaper(imagePath, e.displayIndex);
             }
 
             e.lastImagePath = imagePath;

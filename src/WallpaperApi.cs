@@ -32,14 +32,16 @@ namespace WinDynamicDesktop
             }
         }
 
-        public static void SetWallpaper(string imagePath)
+        public static void SetWallpaper(string imagePath, int displayIndex = -1)
         {
             EnableTransitions();
 
-            if (Environment.OSVersion.Version.Major >= 8)
+            if (displayIndex != -1)
             {
-                // TODO Support multiple monitors
-                DesktopWallpaperFactory.Create().SetWallpaper(null, imagePath);
+                // TODO Error handling for older Windows versions without this API
+                IDesktopWallpaper desktopWallpaper = DesktopWallpaperFactory.Create();
+                string monitorId = desktopWallpaper.GetMonitorDevicePathAt((uint)displayIndex);
+                desktopWallpaper.SetWallpaper(monitorId, imagePath);
                 SyncVirtualDesktops(imagePath);
             }
             else

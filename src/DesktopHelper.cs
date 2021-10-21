@@ -52,9 +52,9 @@ namespace WinDynamicDesktop
             System.Diagnostics.Process.Start(updateLink);
         }
 
-        public override void SetWallpaper(string imagePath)
+        public override void SetWallpaper(string imagePath, int displayIndex)
         {
-            WallpaperApi.SetWallpaper(imagePath);
+            WallpaperApi.SetWallpaper(imagePath, displayIndex);
         }
     }
 }

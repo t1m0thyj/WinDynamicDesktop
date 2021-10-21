@@ -69,8 +69,14 @@ namespace WinDynamicDesktop
             await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-windows-store://downloadsandupdates"));
         }
 
-        public override async void SetWallpaper(string imagePath)
+        public override async void SetWallpaper(string imagePath, int displayIndex)
         {
+            if (displayIndex != -1)
+            {
+                WallpaperApi.SetWallpaper(imagePath, displayIndex);
+                return;
+            }
+
             WallpaperApi.EnableTransitions();
 
             string[] pathSegments = imagePath.Split(Path.DirectorySeparatorChar);
