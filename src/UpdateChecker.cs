@@ -127,7 +127,8 @@ namespace WinDynamicDesktop
 
             if (JsonConfig.settings.lastUpdateCheckTime != null && !forceIfEnabled)
             {
-                DateTime lastUpdateCheck = ConfigMigrator.SafeParse(JsonConfig.settings.lastUpdateCheckTime);
+                DateTime lastUpdateCheck = DateTime.Parse(JsonConfig.settings.lastUpdateCheckTime,
+                    CultureInfo.InvariantCulture);
                 TimeSpan timeDiff = new TimeSpan(DateTime.Now.Ticks - lastUpdateCheck.Ticks);
 
                 if (timeDiff.Days < 7)

@@ -6,6 +6,7 @@ using GeoTimeZone;
 using SunCalcNet.Model;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using TimeZoneConverter;
 
@@ -28,8 +29,10 @@ namespace WinDynamicDesktop
         private static SolarData GetUserProvidedSolarData(DateTime date)
         {
             SolarData data = new SolarData();
-            data.sunriseTime = date.Date + ConfigMigrator.SafeParse(JsonConfig.settings.sunriseTime).TimeOfDay;
-            data.sunsetTime = date.Date + ConfigMigrator.SafeParse(JsonConfig.settings.sunsetTime).TimeOfDay;
+            data.sunriseTime = date.Date + DateTime.Parse(JsonConfig.settings.sunriseTime,
+                CultureInfo.InvariantCulture).TimeOfDay;
+            data.sunsetTime = date.Date + DateTime.Parse(JsonConfig.settings.sunsetTime,
+                CultureInfo.InvariantCulture).TimeOfDay;
 
             int halfSunriseSunsetDuration = JsonConfig.settings.sunriseSunsetDuration * 30;
             data.solarTimes = new DateTime[4]

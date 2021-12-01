@@ -4,6 +4,7 @@
 
 using System;
 using System.Drawing;
+using System.Globalization;
 using System.Windows.Forms;
 
 namespace WinDynamicDesktop
@@ -105,8 +106,8 @@ namespace WinDynamicDesktop
 
             if (JsonConfig.settings.sunriseTime != null && JsonConfig.settings.sunsetTime != null)
             {
-                sunriseTimePicker.Value = ConfigMigrator.SafeParse(JsonConfig.settings.sunriseTime);
-                sunsetTimePicker.Value = ConfigMigrator.SafeParse(JsonConfig.settings.sunsetTime);
+                sunriseTimePicker.Value = DateTime.Parse(JsonConfig.settings.sunriseTime, CultureInfo.InvariantCulture);
+                sunsetTimePicker.Value = DateTime.Parse(JsonConfig.settings.sunsetTime, CultureInfo.InvariantCulture);
             }
             else
             {

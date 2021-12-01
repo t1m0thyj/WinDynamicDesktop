@@ -9,7 +9,7 @@ using System.IO;
 
 namespace WinDynamicDesktop
 {
-    public class LegacyConfig
+    public class OldAppConfigV3
     {
         public bool changeSystemTheme { get; set; }
         public bool changeAppTheme { get; set; }
@@ -18,165 +18,52 @@ namespace WinDynamicDesktop
         public bool useCustomAutoBrightness { get; set; }
     }
 
+    public class AppConfigV4
+    {
+        public string location { get; set; }
+        public string latitude { get; set; }
+        public string longitude { get; set; }
+        public bool darkMode { get; set; }
+        public bool hideTrayIcon { get; set; }
+        public bool disableAutoUpdate { get; set; }
+        public string lastUpdateCheck { get; set; }
+        public string themeName { get; set; }
+        public bool useWindowsLocation { get; set; }
+        public string language { get; set; }
+        public bool usePoeditorLanguage { get; set; }
+        public bool enableShuffle { get; set; }
+        public string lastShuffleDate { get; set; }
+        public string[] shuffleHistory { get; set; }
+        public bool dontUseLocation { get; set; }
+        public string sunriseTime { get; set; }
+        public string sunsetTime { get; set; }
+        public int sunriseSunsetDuration { get; set; }
+        public bool fullScreenPause { get; set; }
+        public bool enableScripts { get; set; }
+        public string[] favoriteThemes { get; set; }
+    }
+
     class ConfigMigrator
     {
-        private static readonly string Catalina_JSON = @"{
-  'imageUrls': [
-    'https://onedrive.live.com/download?cid=CC2E3BD0360C1775&resid=CC2E3BD0360C1775%216170&authkey=AIMgqOpAsERVe0c',
-    'https://bitbucket.org/t1m0thyj/wdd-themes/downloads/Catalina_images.zip'
-  ],
-  'imageFilename': 'catalina_*.jpg',
-  'imageCredits': 'Apple',
-  'sunriseImageList': [
-    1
-  ],
-  'dayImageList': [
-    1
-  ],
-  'sunsetImageList': [
-    1
-  ],
-  'nightImageList': [
-    2
-  ]
-}";
-
-        private static readonly string Mojave_Desert_JSON = @"{
-  'imageUrls': [
-    'https://onedrive.live.com/download?cid=CC2E3BD0360C1775&resid=CC2E3BD0360C1775%216110&authkey=AOBrcljXRqwNSZo',
-    'https://bitbucket.org/t1m0thyj/wdd-themes/downloads/Mojave_Desert_images.zip'
-  ],
-  'imageFilename': 'mojave_dynamic_*.jpeg',
-  'imageCredits': 'Apple',
-  'sunriseImageList': [
-    1,
-    2,
-    3
-  ],
-  'dayImageList': [
-    4,
-    5,
-    6,
-    7,
-    8,
-    9,
-    10
-  ],
-  'sunsetImageList': [
-    11,
-    12,
-    13
-  ],
-  'nightImageList': [
-    14,
-    15,
-    16
-  ]
-}";
-
-        private static readonly string Solar_Gradients_JSON = @"{
-  'imageUrls': [
-    'https://onedrive.live.com/download?cid=CC2E3BD0360C1775&resid=CC2E3BD0360C1775%21721&authkey=AK4kktXlvN1KJzQ',
-    'https://bitbucket.org/t1m0thyj/wdd-themes/downloads/Solar_Gradients_images.zip'
-  ],
-  'imageFilename': 'solar_gradients_*.jpeg',
-  'imageCredits': 'Apple',
-  'sunriseImageList': [
-    4,
-    5,
-    6
-  ],
-  'dayImageList': [
-    7,
-    8,
-    9,
-    10,
-    11
-  ],
-  'sunsetImageList': [
-    12,
-    13,
-    14
-  ],
-  'nightImageList': [
-    15,
-    16,
-    1,
-    2,
-    3
-  ]
-}";
-
-        public static void CompatibilizeThemes()  // Added 2019-10-10
+        public static void Run()
         {
-            if (Directory.Exists(Path.Combine("themes", "Catalina")) &&
-                !File.Exists(Path.Combine("themes", "Catalina", "theme.json")))
-            {
-                File.WriteAllText(Path.Combine("themes", "Catalina", "theme.json"), Catalina_JSON);
-            }
+            UpdateToVersion4();
+            UpdateToVersion5();
+        }
 
-            if (Directory.Exists(Path.Combine("themes", "Mojave_Desert")) &&
-                !File.Exists(Path.Combine("themes", "Mojave_Desert", "theme.json")))
+        private static DateTime SafeParse(string dateTime)  // Added 2020-05-21
+        {
+            try
             {
-                File.WriteAllText(Path.Combine("themes", "Mojave_Desert", "theme.json"), Mojave_Desert_JSON);
+                return DateTime.Parse(dateTime, CultureInfo.InvariantCulture);
             }
-
-            if (Directory.Exists(Path.Combine("themes", "Solar_Gradients")) &&
-                !File.Exists(Path.Combine("themes", "Solar_Gradients", "theme.json")))
+            catch (FormatException)
             {
-                File.WriteAllText(Path.Combine("themes", "Solar_Gradients", "theme.json"), Solar_Gradients_JSON);
+                return DateTime.Parse(dateTime);
             }
         }
 
-        public static void CompatibilizeLocale()  // Added 2019-10-22
-        {
-            switch (JsonConfig.settings.language)
-            {
-                case "cs_CZ":
-                    JsonConfig.settings.language = "cs";
-                    return;
-                case "de_DE":
-                    JsonConfig.settings.language = "de";
-                    return;
-                case "en_US":
-                    JsonConfig.settings.language = "en";
-                    return;
-                case "es_ES":
-                    JsonConfig.settings.language = "es";
-                    return;
-                case "fr_FR":
-                    JsonConfig.settings.language = "fr";
-                    return;
-                case "el_GR":
-                    JsonConfig.settings.language = "el";
-                    return;
-                case "it_IT":
-                    JsonConfig.settings.language = "it";
-                    return;
-                case "mk_MK":
-                    JsonConfig.settings.language = "mk";
-                    return;
-                case "pl_PL":
-                    JsonConfig.settings.language = "pl";
-                    return;
-                case "ro_RO":
-                    JsonConfig.settings.language = "ro";
-                    return;
-                case "ru_RU":
-                    JsonConfig.settings.language = "ru";
-                    return;
-                case "tr_TR":
-                    JsonConfig.settings.language = "tr";
-                    return;
-                case "zh_CN":
-                    JsonConfig.settings.language = "zh-Hans";
-                    return;
-                default:
-                    return;
-            }
-        }
-
-        public static void UpdateToVersion4()  // Added 2020-01-01
+        private static void UpdateToVersion4()  // Added 2020-01-01
         {
             if (!File.Exists("settings.json"))
             {
@@ -192,7 +79,7 @@ namespace WinDynamicDesktop
                 }
             }
             string jsonText = File.ReadAllText("settings.json");
-            LegacyConfig settings = JsonConvert.DeserializeObject<LegacyConfig>(jsonText);
+            OldAppConfigV3 settings = JsonConvert.DeserializeObject<OldAppConfigV3>(jsonText);
             bool legacySettingsEnabled = (settings.changeSystemTheme || settings.changeAppTheme ||
                 settings.changeLockScreen || settings.useAutoBrightness || settings.useCustomAutoBrightness);
             if (legacySettingsEnabled)
@@ -208,18 +95,66 @@ namespace WinDynamicDesktop
             }
         }
 
-        public static DateTime SafeParse(string dateTime)  // Added 2020-05-21
+        private static void UpdateToVersion5()  // Added 2021-11-30
         {
+            string jsonText = File.ReadAllText("settings.json");
+            if (jsonText.IndexOf("\"themeName\"") == -1)
+            {
+                return;
+            }
+
+            AppConfigV4 oldSettings = null;
             try
             {
-                return DateTime.Parse(dateTime, CultureInfo.InvariantCulture);
+                oldSettings = JsonConvert.DeserializeObject<AppConfigV4>(jsonText);
             }
-            catch (FormatException)
-            {
-                return DateTime.Parse(dateTime);
-            }
-        }
+            catch { /* Do nothing */ }
 
-        // TODO Update config for WDD v5
+            int locationMode = 0;
+            double? newLatitude = null;
+            double? newLongitude = null;
+            if (oldSettings.useWindowsLocation)
+            {
+                locationMode = 1;
+            }
+            else if (oldSettings.dontUseLocation)
+            {
+                locationMode = -1;
+            }
+            if (oldSettings.latitude != null)
+            {
+                newLatitude = double.Parse(oldSettings.latitude, CultureInfo.InvariantCulture);
+            }
+            if (oldSettings.longitude != null)
+            {
+                newLongitude = double.Parse(oldSettings.longitude, CultureInfo.InvariantCulture);
+            }
+
+            AppConfig newSettings = new AppConfig
+            {
+                locationMode = locationMode,
+                location = oldSettings.location,
+                latitude = newLatitude,
+                longitude = newLongitude,
+                sunriseTime = oldSettings.sunriseTime,
+                sunsetTime = oldSettings.sunsetTime,
+                sunriseSunsetDuration = oldSettings.sunriseSunsetDuration,
+                activeThemes = new string[] { oldSettings.themeName },
+                darkMode = oldSettings.darkMode,
+                enableShuffle = oldSettings.enableShuffle,
+                lastShuffleDate = SafeParse(oldSettings.lastShuffleDate).ToString(CultureInfo.InvariantCulture),
+                shuffleHistory = oldSettings.shuffleHistory,
+                favoriteThemes = oldSettings.favoriteThemes,
+                language = oldSettings.language,
+                autoUpdateCheck = !oldSettings.disableAutoUpdate,
+                lastUpdateCheckTime = SafeParse(oldSettings.lastUpdateCheck).ToString(CultureInfo.InvariantCulture),
+                hideTrayIcon = oldSettings.hideTrayIcon,
+                fullScreenPause = oldSettings.fullScreenPause,
+                enableScripts = oldSettings.enableScripts
+            };
+
+            jsonText = JsonConvert.SerializeObject(newSettings, Formatting.Indented);
+            File.WriteAllText("settings.json", jsonText);
+        }
     }
 }

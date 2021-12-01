@@ -56,7 +56,7 @@ namespace WinDynamicDesktop
 
         public static void LoadConfig()
         {
-            ConfigMigrator.UpdateToVersion4();
+            ConfigMigrator.Run();
 
             if (autoSaveTimer != null)
             {
