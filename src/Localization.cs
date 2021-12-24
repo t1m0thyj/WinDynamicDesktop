@@ -28,7 +28,6 @@ namespace WinDynamicDesktop
 
         public static void Initialize()
         {
-            ConfigMigrator.CompatibilizeLocale();
             currentLocale = JsonConfig.settings.language?.Replace("poeditor:", "");
             LoadLanguages();
 
