@@ -360,7 +360,7 @@ namespace WinDynamicDesktop
 
         private void themeLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            System.Diagnostics.Process.Start(themeLink);
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(themeLink) { UseShellExecute = true });
         }
 
         private void applyButton_Click(object sender, EventArgs e)

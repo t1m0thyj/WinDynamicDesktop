@@ -6,6 +6,7 @@
 bin
 dist
 obj
+*.user
 
 .env
 /uwp/*.assets.cache
