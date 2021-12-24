@@ -52,10 +52,10 @@
   </PropertyGroup>
   <PropertyGroup Condition="('$(Configuration)' == 'Debug') Or ('$(UseTemporarySignCert)' == 'true')">
     <PackageCertificateKeyFile>WinDynamicDesktop.Package_TemporaryKey.pfx</PackageCertificateKeyFile>
-    <PackageCertificateThumbprint>b3209c4f4be55334f001bdc75d5a297e97b3de53</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>475F715DCA1ACB8BD627CCEFCBF5CA4B07941713</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="('$(Configuration)' == 'Release') And ('$(UseTemporarySignCert)' != 'true')">
-    <PackageCertificateThumbprint>cb1a6283a6fd16ef9026ab059f94176d5f0a54c0</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>CB1A6283A6FD16EF9026AB059F94176D5F0A54C0</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <AppxBundle>Always</AppxBundle>
