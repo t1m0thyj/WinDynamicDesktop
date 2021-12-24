@@ -28,8 +28,7 @@ namespace WinDynamicDesktop
 
         public static void Initialize()
         {
-            ConfigMigrator.CompatibilizeLocale();
-            currentLocale = JsonConfig.settings.language;
+            currentLocale = JsonConfig.settings.language?.Replace("poeditor:", "");
             LoadLanguages();
 
             if (currentLocale == null)
@@ -38,7 +37,7 @@ namespace WinDynamicDesktop
                 currentLocale = languageCodes.Contains(systemLocale) ? systemLocale : "en";
                 JsonConfig.settings.language = currentLocale;
             }
-            else if (!JsonConfig.settings.usePoeditorLanguage)
+            else if (!JsonConfig.settings.language.StartsWith("poeditor:"))
             {
                 LoadLocaleFromFile();
             }
@@ -115,7 +114,7 @@ namespace WinDynamicDesktop
 
         public static void NotifyIfTestMode()
         {
-            if (JsonConfig.settings.usePoeditorLanguage && catalog != null)
+            if (JsonConfig.settings.language.StartsWith("poeditor:") && catalog != null)
             {
                 AppContext.ShowPopup(string.Format(
                     Localization.GetTranslation("Downloaded '{0}' translation from POEditor"), currentLocale));

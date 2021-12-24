@@ -51,7 +51,7 @@ namespace WinDynamicDesktop
         private delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject,
             int idChild, uint dwEventThread, uint dwmsEventTime);
 
-        public FullScreenApi(WallpaperChangeScheduler wcs)
+        public FullScreenApi(WallpaperEngine wcs)
         {
             timerEventHandler = new Action(() => wcs.HandleTimerEvent(true));
 

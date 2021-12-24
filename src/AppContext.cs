@@ -15,7 +15,7 @@ namespace WinDynamicDesktop
         private IpcManager ipcManager;
 
         public static NotifyIcon notifyIcon;
-        public static WallpaperChangeScheduler wpEngine = new WallpaperChangeScheduler();
+        public static WallpaperEngine wpEngine = new WallpaperEngine();
 
         public AppContext(string[] args)
         {

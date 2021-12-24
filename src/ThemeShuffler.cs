@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace WinDynamicDesktop
 {
-    class WallpaperShuffler
+    class ThemeShuffler
     {
         private static Random rng = new Random();
 
@@ -41,7 +41,8 @@ namespace WinDynamicDesktop
 
             if (JsonConfig.settings.lastShuffleDate != null)
             {
-                DateTime lastShuffleDate = ConfigMigrator.SafeParse(JsonConfig.settings.lastShuffleDate);
+                DateTime lastShuffleDate = DateTime.Parse(JsonConfig.settings.lastShuffleDate,
+                    CultureInfo.InvariantCulture);
 
                 if (lastShuffleDate.Date == DateTime.Now.Date)
                 {
@@ -65,7 +66,7 @@ namespace WinDynamicDesktop
             }
         }
 
-        private static void ShuffleWallpaper()
+        private static ThemeConfig GetNextTheme()
         {
             List<string> shuffleHistory = JsonConfig.settings.shuffleHistory?.ToList() ?? new List<string>();
             List<ThemeConfig> themeChoices = new List<ThemeConfig>();
@@ -95,9 +96,23 @@ namespace WinDynamicDesktop
                 }
             }
 
-            ThemeManager.currentTheme = nextTheme;
-            JsonConfig.settings.themeName = nextTheme.themeId;
             AddThemeToHistory(nextTheme.themeId, themeChoices.Count == 0);
+            return nextTheme;
+        }
+
+        private static void ShuffleWallpaper()
+        {
+            if (JsonConfig.settings.activeThemes[0] != null)
+            {
+                JsonConfig.settings.activeThemes[0] = GetNextTheme().themeId;
+            }
+            else
+            {
+                for (int i = 1; i < JsonConfig.settings.activeThemes.Length; i++)
+                {
+                    JsonConfig.settings.activeThemes[i] = GetNextTheme().themeId;
+                }
+            }
         }
     }
 }

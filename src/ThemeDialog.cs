@@ -125,6 +125,11 @@ namespace WinDynamicDesktop
                             if (activeTheme == null || activeTheme == theme.themeId)
                             {
                                 focusedItem = newItem;
+
+                                if (activeTheme != null)
+                                {
+                                    newItem.Font = new Font(newItem.Font, FontStyle.Bold);
+                                }
                             }
                         }));
                     }
@@ -183,16 +188,47 @@ namespace WinDynamicDesktop
 
         private void ApplySelectedTheme()
         {
-            if (selectedIndex > 0)
+            string activeTheme = (selectedIndex > 0) ? ThemeManager.themeSettings[selectedIndex - 1].themeId : null;
+            List<string> activeThemes = JsonConfig.settings.activeThemes?.ToList() ?? new List<string> { null };
+
+            if (displayComboBox.SelectedIndex == 0)
             {
-                ThemeManager.currentTheme = ThemeManager.themeSettings[selectedIndex - 1];
+                activeThemes[0] = activeTheme;
             }
             else
             {
-                ThemeManager.currentTheme = null;
+                int numNewDisplays = Screen.AllScreens.Length - activeThemes.Count + 1;
+
+                if (numNewDisplays > 0)
+                {
+                    for (int i = 0; i < numNewDisplays; i++)
+                    {
+                        activeThemes.Add(null);
+                    }
+                }
+
+                if (activeThemes[0] != null)
+                {
+                    for (int i = 0; i < activeThemes.Count; i++)
+                    {
+                        if (activeThemes[i] == null)
+                        {
+                            activeThemes[i] = activeThemes[0];
+                        }
+                    }
+
+                    activeThemes[0] = null;
+                }
+
+                activeThemes[displayComboBox.SelectedIndex] = activeTheme;
             }
 
-            JsonConfig.settings.themeName = ThemeManager.currentTheme?.themeId;
+            JsonConfig.settings.activeThemes = activeThemes.ToArray();
+
+            foreach (ListViewItem item in listView1.Items)
+            {
+                item.Font = new Font(item.Font, item.Selected ? FontStyle.Bold : FontStyle.Regular);
+            }
 
             if (selectedIndex == 0)
             {
@@ -200,10 +236,10 @@ namespace WinDynamicDesktop
             }
             else
             {
-                WallpaperShuffler.AddThemeToHistory(ThemeManager.currentTheme.themeId);
+                ThemeShuffler.AddThemeToHistory(activeTheme);
                 AppContext.wpEngine.RunScheduler(true);
                 AppContext.ShowPopup(string.Format(_("New theme applied: {0}"),
-                    ThemeManager.GetThemeName(ThemeManager.currentTheme)));
+                    ThemeManager.GetThemeName(ThemeManager.themeSettings[selectedIndex - 1])));
             }
         }
 
@@ -269,17 +305,34 @@ namespace WinDynamicDesktop
             {
                 displayComboBox.Items.Add(string.Format(_("Display {0} - {1}"), i + 1, displayNames[i]));
             }
-            displayComboBox.SelectedIndex = 0;
+            displayComboBox.Enabled = UwpDesktop.IsMultiDisplaySupported();
+            displayComboBox.SelectedIndex = (JsonConfig.settings.activeThemes?.Length > 1) ? 1 : 0;
 
-            string activeTheme = ThemeManager.currentTheme?.themeId;
-
-            if (activeTheme == null && (JsonConfig.firstRun || JsonConfig.settings.themeName != null))
+            string activeTheme = JsonConfig.settings.activeThemes?[displayComboBox.SelectedIndex];
+            if (activeTheme == null && JsonConfig.firstRun)
             {
                 activeTheme = "Mojave_Desert";
             }
 
-            Task.Run(new Action(() =>
-                LoadThemes(ThemeManager.themeSettings, (activeTheme != null) ? activeTheme : "")));
+            Task.Run(new Action(() => LoadThemes(ThemeManager.themeSettings, activeTheme ?? "")));
+        }
+
+        private void displayComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // TODO Handle if displays change while dialog is open
+            string activeTheme = JsonConfig.settings.activeThemes?[displayComboBox.SelectedIndex];
+
+            foreach (ListViewItem item in listView1.Items)
+            {
+                if ((string)item.Tag == activeTheme)
+                {
+                    listView1.Items[item.Index].Selected = true;
+                    listView1.EnsureVisible(item.Index);
+                }
+
+                listView1.Items[item.Index].Font = new Font(listView1.Items[item.Index].Font,
+                    (string)item.Tag == activeTheme ? FontStyle.Bold : FontStyle.Regular);
+            }
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
@@ -458,7 +511,7 @@ namespace WinDynamicDesktop
 
         private void OnFormClosing(object sender, FormClosingEventArgs e)
         {
-            if (e.CloseReason == CloseReason.UserClosing && JsonConfig.firstRun && ThemeManager.currentTheme == null)
+            if (e.CloseReason == CloseReason.UserClosing && !LaunchSequence.IsThemeReady())
             {
                 DialogResult result = MessageDialog.ShowQuestion(_("WinDynamicDesktop cannot dynamically update your " +
                     "wallpaper until you have selected a theme. Are you sure you want to continue without a theme " +

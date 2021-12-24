@@ -12,9 +12,9 @@ namespace WinDynamicDesktop
 
         public static bool IsLocationReady()
         {
-            if (!JsonConfig.settings.dontUseLocation)
+            if (JsonConfig.settings.locationMode >= 0)
             {
-                return (JsonConfig.settings.latitude != null && JsonConfig.settings.longitude != null);
+                return (JsonConfig.settings.latitude.HasValue && JsonConfig.settings.longitude.HasValue);
             }
             else
             {
@@ -24,8 +24,7 @@ namespace WinDynamicDesktop
 
         public static bool IsThemeReady()
         {
-            return (!(ThemeManager.currentTheme == null && (JsonConfig.firstRun ||
-                JsonConfig.settings.themeName != null)) && ThemeManager.importPaths.Count == 0);
+            return (JsonConfig.settings.activeThemes != null && ThemeManager.importPaths.Count == 0);
         }
 
         public static void NextStep(bool themeReadyOverride = false)

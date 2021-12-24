@@ -69,12 +69,19 @@ namespace WinDynamicDesktop
             await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-windows-store://downloadsandupdates"));
         }
 
-        public override async void SetWallpaper(string imagePath)
+        public override async void SetWallpaper(string imagePath, int displayIndex)
         {
+            if (displayIndex != -1)
+            {
+                WallpaperApi.SetWallpaper(imagePath, displayIndex);
+                return;
+            }
+
             WallpaperApi.EnableTransitions();
 
-            var uri = new Uri("ms-appdata:///local/themes/" + ThemeManager.currentTheme.themeId + "/" +
-                Path.GetFileName(imagePath));
+            string[] pathSegments = imagePath.Split(Path.DirectorySeparatorChar);
+            var uri = new Uri("ms-appdata:///local/themes/" + pathSegments[pathSegments.Length - 2] + "/" +
+                pathSegments[pathSegments.Length - 1]);
             var file = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri);
 
             var profileSettings = Windows.System.UserProfile.UserProfilePersonalizationSettings.Current;

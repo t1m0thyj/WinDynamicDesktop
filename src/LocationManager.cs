@@ -14,13 +14,9 @@ namespace WinDynamicDesktop
 
         public static void Initialize()
         {
-            if (!UwpDesktop.IsUwpSupported())
+            if (JsonConfig.settings.locationMode == 1 && !UwpLocation.HasAccess())
             {
-                JsonConfig.settings.useWindowsLocation = false;
-            }
-            else if (JsonConfig.settings.useWindowsLocation && !UwpLocation.HasAccess())
-            {
-                JsonConfig.settings.useWindowsLocation = false;
+                JsonConfig.settings.locationMode = 0;
                 JsonConfig.settings.latitude = null;
                 JsonConfig.settings.longitude = null;
             }

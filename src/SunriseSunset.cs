@@ -29,8 +29,10 @@ namespace WinDynamicDesktop
         private static SolarData GetUserProvidedSolarData(DateTime date)
         {
             SolarData data = new SolarData();
-            data.sunriseTime = date.Date + ConfigMigrator.SafeParse(JsonConfig.settings.sunriseTime).TimeOfDay;
-            data.sunsetTime = date.Date + ConfigMigrator.SafeParse(JsonConfig.settings.sunsetTime).TimeOfDay;
+            data.sunriseTime = date.Date + DateTime.Parse(JsonConfig.settings.sunriseTime,
+                CultureInfo.InvariantCulture).TimeOfDay;
+            data.sunsetTime = date.Date + DateTime.Parse(JsonConfig.settings.sunsetTime,
+                CultureInfo.InvariantCulture).TimeOfDay;
 
             int halfSunriseSunsetDuration = JsonConfig.settings.sunriseSunsetDuration * 30;
             data.solarTimes = new DateTime[4]
@@ -63,13 +65,13 @@ namespace WinDynamicDesktop
 
         public static SolarData GetSolarData(DateTime date)
         {
-            if (JsonConfig.settings.dontUseLocation)
+            if (JsonConfig.settings.locationMode < 0)
             {
                 return GetUserProvidedSolarData(date);
             }
 
-            double latitude = double.Parse(JsonConfig.settings.latitude, CultureInfo.InvariantCulture);
-            double longitude = double.Parse(JsonConfig.settings.longitude, CultureInfo.InvariantCulture);
+            double latitude = JsonConfig.settings.latitude.Value;
+            double longitude = JsonConfig.settings.longitude.Value;
             var sunPhases = GetSunPhases(date, latitude, longitude);
             SolarData data = new SolarData();
 
