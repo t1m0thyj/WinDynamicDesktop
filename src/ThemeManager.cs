@@ -82,7 +82,7 @@ namespace WinDynamicDesktop
                 foreach (Uri themeUri in DefaultThemes.GetThemeUriList(theme.themeId))
                 {
                     var client = new RestClient(themeUri);
-                    ProxyWrapper.ApplyProxyToClient(client);
+                    //ProxyWrapper.ApplyProxyToClient(client);
                     var response = client.Head(new RestRequest());
 
                     if (response.IsSuccessful)

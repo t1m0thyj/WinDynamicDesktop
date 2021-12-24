@@ -97,6 +97,10 @@ namespace WinDynamicDesktop
 
         private static void UpdateToVersion5()  // Added 2021-11-30
         {
+            if (!File.Exists("settings.json"))
+            {
+                return;
+            }
             string jsonText = File.ReadAllText("settings.json");
             if (jsonText.IndexOf("\"themeName\"") == -1)
             {
