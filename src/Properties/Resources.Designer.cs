@@ -19,7 +19,7 @@ namespace WinDynamicDesktop.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -73,18 +73,19 @@ namespace WinDynamicDesktop.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Big_Sur:
         ///- https://github.com/t1m0thyj/WDD-mac-themes/releases/download/big-sur/Big_Sur.ddw
-        ///- https://onedrive.live.com/download?cid=CC2E3BD0360C1775&amp;resid=CC2E3BD0360C1775%216182&amp;authkey=AA94LmSmEKl9rhM
+        ///- https://bitbucket.org/t1m0thyj/wdd-themes/downloads/Big_Sur.ddw
         ///
         ///Big_Sur_Abstract:
-        ///- https://github.com/t1m0thyj/WDD-mac-themes/releases/download/big-sur/Big_Sur_Abstract.ddw
-        ///- https://bitbucket.org/t1m0thyj/wdd-themes/downloads/Big_Sur_Abstract.ddw
-        ///- https://onedrive.live.com/download?cid=CC2E3BD0360C1775&amp;resid=CC2E3BD0360C1775%216183&amp;authkey=ADevG8ifoBg_74Q
+        ///- https://github.com/t1m0thyj/WDD-mac-themes/releases/download/big-sur/Big_Sur_Abstract_2.ddw
+        ///- https://bitbucket.org/t1m0thyj/wdd-themes/downloads/Big_Sur_Abstract_2.ddw
         ///
-        /// [rest of string was truncated]&quot;;.
+        ///Catalina:
+        ///- https://github.com/t1m0thyj/WDD-mac-themes/releases/download/catalina/Catalina.ddw
+        ///- https://bitbucket.org/t1m0thyj/wdd-themes/downloads/Cata [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string default_themes_yaml {
+        internal static string DefaultThemesYaml {
             get {
-                return ResourceManager.GetString("default_themes_yaml", resourceCulture);
+                return ResourceManager.GetString("DefaultThemesYaml", resourceCulture);
             }
         }
     }

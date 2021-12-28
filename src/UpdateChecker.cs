@@ -6,6 +6,7 @@ using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -50,10 +51,8 @@ namespace WinDynamicDesktop
 
         private static string GetLatestVersion()
         {
-            var client = new RestClient("https://api.github.com");
-            //ProxyWrapper.ApplyProxyToClient(client);
-
-            var request = new RestRequest("/repos/t1m0thyj/WinDynamicDesktop/releases/latest");
+            var client = new RestClient("https://api.github.com") { Proxy = HttpClient.DefaultProxy };
+            var request = new RestRequest("repos/t1m0thyj/WinDynamicDesktop/releases/latest");
             var response = client.Execute<GitHubApiData>(request);
 
             return response.IsSuccessful ? response.Data.tag_name.Substring(1) : null;

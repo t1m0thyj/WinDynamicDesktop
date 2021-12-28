@@ -8,10 +8,10 @@ using System.Windows.Forms;
 
 namespace WinDynamicDesktop
 {
-    static class Program
+    internal static class Program
     {
         /// <summary>
-        /// The main entry point for the application.
+        ///  The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main(string[] args)
@@ -20,11 +20,11 @@ namespace WinDynamicDesktop
             Application.ThreadException += (sender, e) => ErrorHandler.LogError(localFolder, e.Exception);
             AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
                 ErrorHandler.LogError(localFolder, e.ExceptionObject as Exception);
-
             Directory.SetCurrentDirectory(FindCwd(localFolder));
 
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            // To customize application configuration such as set high DPI settings or default font,
+            // see https://aka.ms/applicationconfiguration.
+            ApplicationConfiguration.Initialize();
             Application.Run(new AppContext(args));
         }
 

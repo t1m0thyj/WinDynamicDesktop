@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using RestSharp;
@@ -81,8 +82,7 @@ namespace WinDynamicDesktop
             {
                 foreach (Uri themeUri in DefaultThemes.GetThemeUriList(theme.themeId))
                 {
-                    var client = new RestClient(themeUri);
-                    //ProxyWrapper.ApplyProxyToClient(client);
+                    var client = new RestClient(themeUri) { Proxy = HttpClient.DefaultProxy };
                     var response = client.Head(new RestRequest());
 
                     if (response.IsSuccessful)

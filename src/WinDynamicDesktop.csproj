@@ -9,13 +9,11 @@
     <PackageId>WinDynamicDesktop</PackageId>
     <Product>WinDynamicDesktop</Product>
     <Copyright>Copyright © 2021 Timothy Johnson</Copyright>
-    <Version>4.6.0</Version>
+    <Version>4.7.0</Version>
     <ApplicationIcon>resources\WinDynamicDesktop.ico</ApplicationIcon>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
     <Deterministic>true</Deterministic>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,6 +23,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <AdditionalFiles Remove="app.manifest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="bloomtom.HttpProgress" Version="2.3.2" />
     <PackageReference Include="DesktopBridge.Helpers" Version="1.2.2" />
     <PackageReference Include="Fody" Version="6.6.0" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" PrivateAssets="all" />
     <PackageReference Include="GeoTimeZone" Version="4.1.0" />
@@ -33,7 +36,22 @@
     <PackageReference Include="PropertyChanged.Fody" Version="3.4.0" PrivateAssets="all" />
     <PackageReference Include="RestSharp" Version="106.15.0" />
     <PackageReference Include="SunCalcNet" Version="1.2.0" />
-    <PackageReference Include="System.Management.Automation" Version="7.1.3" />
+    <PackageReference Include="System.Management.Automation" Version="7.2.1" />
     <PackageReference Include="TimeZoneConverter" Version="3.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>
