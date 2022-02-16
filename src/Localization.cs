@@ -165,15 +165,15 @@ namespace WinDynamicDesktop
 
         private static async Task LoadLocaleFromWeb()
         {
-            var client = new RestClient("https://api.poeditor.com") { Proxy = HttpClient.DefaultProxy };
+            var client = new RestClient("https://api.poeditor.com");
 
-            var request = new RestRequest("v2/projects/export", Method.POST);
+            var request = new RestRequest("v2/projects/export", Method.Post);
             request.AddParameter("api_token", poeditorApiToken);
             request.AddParameter("id", "293081");
             request.AddParameter("language", currentLocale);
             request.AddParameter("type", "mo");
 
-            var response = client.Execute<PoEditorApiData>(request);
+            var response = await client.ExecuteAsync<PoEditorApiData>(request);
             if (!response.IsSuccessful)
             {
                 return;

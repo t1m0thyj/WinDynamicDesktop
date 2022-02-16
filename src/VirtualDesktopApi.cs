@@ -4,21 +4,24 @@
 
 using System;
 using System.Runtime.InteropServices;
-using WinDynamicDesktop.COM;
+using WindowsDesktop;
 
 namespace WinDynamicDesktop
 {
     public class VirtualDesktopApi
     {
-        private static IVirtualDesktopManagerInternal manager;
+        // TODO Catch current changed event for VirtualDesktop
+        private static bool isInitialized = false;
 
         public static void SetWallpaper(string imagePath)
         {
             for (int attempts = 0; attempts < 2; attempts++)
             {
-                if (manager == null || attempts > 0)
+                if (!isInitialized || attempts > 0)
                 {
-                    manager = ImmersiveShellWrapper.GetVirtualDesktopManager();
+                    // TODO Should VirtualDesktop init be done earlier?
+                    VirtualDesktop.Configure();
+                    isInitialized = true;
                 }
 
                 try
@@ -35,15 +38,12 @@ namespace WinDynamicDesktop
 
         private static void UnsafeSetWallpaper(string imagePath)
         {
-            Guid currentDesktopId = manager.GetCurrentDesktop(IntPtr.Zero).GetId();
-            IObjectArray objectArray = manager.GetDesktops(IntPtr.Zero);
-
-            for (uint i = 0u; i < objectArray.GetCount(); i++)
+            Guid currentDesktopId = VirtualDesktop.Current.Id;
+            foreach (VirtualDesktop virtualDesktop in VirtualDesktop.GetDesktops())
             {
-                objectArray.GetAt(i, typeof(IVirtualDesktop).GUID, out object virtualDesktop);
-                if ((virtualDesktop as IVirtualDesktop).GetId() != currentDesktopId)
+                if (virtualDesktop.Id != currentDesktopId)
                 {
-                    manager.SetWallpaperPath((IVirtualDesktop)virtualDesktop, imagePath);
+                    virtualDesktop.WallpaperPath = imagePath;
                 }
             }
         }

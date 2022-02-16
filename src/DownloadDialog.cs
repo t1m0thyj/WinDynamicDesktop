@@ -34,7 +34,6 @@ namespace WinDynamicDesktop
             InitializeComponent();
             Localization.TranslateForm(this);
 
-            this.Font = SystemFonts.MessageBoxFont;
             this.FormClosing += OnFormClosing;
             ThemeLoader.taskbarHandle = this.Handle;
 
@@ -82,7 +81,7 @@ namespace WinDynamicDesktop
 
         private void OnDownloadProgressChanged(ICopyProgress e)
         {
-            if (e.TransferTime.TotalMilliseconds < (downloadTime + 100))
+            if (e.TransferTime.TotalMilliseconds < (downloadTime + 200))
             {
                 return;
             }

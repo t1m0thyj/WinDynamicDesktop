@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using RestSharp;
@@ -78,18 +77,17 @@ namespace WinDynamicDesktop
 
         public static void CalcThemeDownloadSize(ThemeConfig theme, Action<string> setSize)
         {
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 foreach (Uri themeUri in DefaultThemes.GetThemeUriList(theme.themeId))
                 {
-                    var client = new RestClient(themeUri) { Proxy = HttpClient.DefaultProxy };
-                    var response = client.Head(new RestRequest());
+                    var client = new RestClient(themeUri);
+                    var response = await client.ExecuteAsync(new RestRequest(), Method.Head);
 
                     if (response.IsSuccessful)
                     {
-                        long sizeBytes = Convert.ToInt64(response.Headers.ToList()
-                            .Find(x => x.Name == "Content-Length").Value);
-                        setSize(string.Format(_("{0} MB"), (sizeBytes / 1024d / 1024d).ToString("0.#")));
+                        setSize(string.Format(_("{0} MB"),
+                            (response.ContentLength.Value / 1024d / 1024d).ToString("0.#")));
                         break;
                     }
                 }

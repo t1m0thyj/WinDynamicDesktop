@@ -33,7 +33,6 @@ namespace WinDynamicDesktop
             Localization.TranslateForm(this);
             this.themeLinkLabel.Left += (this.importButton.Width - oldButtonWidth);
 
-            this.Font = SystemFonts.MessageBoxFont;
             this.FormClosing += OnFormClosing;
             this.FormClosed += OnFormClosed;
 

@@ -125,9 +125,9 @@ namespace WinDynamicDesktop
             UwpDesktop.GetHelper().ToggleStartOnBoot();
         }
 
-        private static void OnUpdateItemClick(object sender, EventArgs e)
+        private static async void OnUpdateItemClick(object sender, EventArgs e)
         {
-            UpdateChecker.CheckManual();
+            await UpdateChecker.CheckManual();
         }
 
         private static void OnAboutItemClick(object sender, EventArgs e)

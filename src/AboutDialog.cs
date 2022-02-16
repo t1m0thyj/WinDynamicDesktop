@@ -21,8 +21,6 @@ namespace WinDynamicDesktop
         {
             InitializeComponent();
             Localization.TranslateForm(this);
-
-            this.Font = SystemFonts.MessageBoxFont;
         }
 
         private void AboutDialog_Load(object sender, EventArgs e)

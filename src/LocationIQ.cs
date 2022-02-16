@@ -6,8 +6,8 @@ using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WinDynamicDesktop
@@ -33,9 +33,9 @@ namespace WinDynamicDesktop
             }
         }
 
-        public static void GetLocationData(string locationStr, ScheduleDialog dialog)
+        public static async Task GetLocationData(string locationStr, ScheduleDialog dialog)
         {
-            var client = new RestClient("https://us1.locationiq.org") { Proxy = HttpClient.DefaultProxy };
+            var client = new RestClient("https://us1.locationiq.org");
 
             var request = new RestRequest("v1/search.php");
             request.AddParameter("key", apiKey);
@@ -43,7 +43,7 @@ namespace WinDynamicDesktop
             request.AddParameter("format", "json");
             request.AddParameter("limit", "1");
 
-            var response = client.Execute<List<LocationIQData>>(request);
+            var response = await client.ExecuteAsync<List<LocationIQData>>(request);
 
             if (response.IsSuccessful)
             {
