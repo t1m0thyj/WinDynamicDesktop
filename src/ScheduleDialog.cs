@@ -119,7 +119,7 @@ namespace WinDynamicDesktop
                 sunriseSunsetDurationBox.Value = JsonConfig.settings.sunriseSunsetDuration;
             }
 
-            if (JsonConfig.settings.locationMode > 0)
+            if (JsonConfig.settings.locationMode > 0 || (JsonConfig.firstRun && hasLocationPermission))
             {
                 radioButton2.Checked = true;
             }

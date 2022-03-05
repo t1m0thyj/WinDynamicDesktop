@@ -56,7 +56,8 @@ namespace WinDynamicDesktop
         {
             this.Invoke(new Action(() => UpdatePercentage(0)));
             downloadTime = 0;
-            Task.Run(async () => {
+            Task.Run(async () =>
+            {
                 using (var downloadStream = File.OpenWrite(themeZipDest))
                 {
                     var response = await httpClient.GetAsync(themeUris[themeUriIndex].ToString(),

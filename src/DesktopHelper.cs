@@ -36,14 +36,13 @@ namespace WinDynamicDesktop
             if (!startOnBoot)
             {
                 startupKey.SetValue("WinDynamicDesktop", Application.ExecutablePath);
-                startOnBoot = true;
             }
             else
             {
                 startupKey.DeleteValue("WinDynamicDesktop");
-                startOnBoot = false;
             }
 
+            startOnBoot = !startOnBoot;
             MainMenu.startOnBootItem.Checked = startOnBoot;
         }
 

@@ -305,7 +305,7 @@ namespace WinDynamicDesktop
                 displayComboBox.Items.Add(string.Format(_("Display {0} - {1}"), i + 1, displayNames[i]));
             }
             displayComboBox.Enabled = UwpDesktop.IsMultiDisplaySupported();
-            displayComboBox.SelectedIndex = (JsonConfig.settings.activeThemes?.Length > 1) ? 1 : 0;
+            displayComboBox.SelectedIndex = (JsonConfig.settings.activeThemes?[0] == null) ? 1 : 0;
 
             string activeTheme = JsonConfig.settings.activeThemes?[displayComboBox.SelectedIndex];
             if (activeTheme == null && JsonConfig.firstRun)
@@ -319,7 +319,12 @@ namespace WinDynamicDesktop
         private void displayComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             // TODO Handle if displays change while dialog is open
-            string activeTheme = JsonConfig.settings.activeThemes?[displayComboBox.SelectedIndex];
+            string activeTheme = null;
+            if (JsonConfig.settings.activeThemes != null &&
+                JsonConfig.settings.activeThemes.Length > displayComboBox.SelectedIndex)
+            {
+                activeTheme = JsonConfig.settings.activeThemes[displayComboBox.SelectedIndex];
+            }
 
             foreach (ListViewItem item in listView1.Items)
             {

@@ -3,41 +3,32 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using System;
-using System.Runtime.InteropServices;
 using WindowsDesktop;
 
 namespace WinDynamicDesktop
 {
-    public class VirtualDesktopApi
+    class VirtualDesktopApi
     {
-        // TODO Catch current changed event for VirtualDesktop
-        private static bool isInitialized = false;
+        private Action timerEventHandler;
 
-        public static void SetWallpaper(string imagePath)
+        public VirtualDesktopApi(WallpaperEngine wcs)
         {
-            for (int attempts = 0; attempts < 2; attempts++)
-            {
-                if (!isInitialized || attempts > 0)
-                {
-                    // TODO Should VirtualDesktop init be done earlier?
-                    VirtualDesktop.Configure();
-                    isInitialized = true;
-                }
+            timerEventHandler = new Action(() => wcs.HandleTimerEvent(false));
 
-                try
-                {
-                    UnsafeSetWallpaper(imagePath);
-                    break;
-                }
-                catch (COMException)
-                {
-                    continue;
-                }
+            if (UwpDesktop.IsVirtualDesktopSupported())
+            {
+                VirtualDesktop.Configure();
+                VirtualDesktop.CurrentChanged += OnVirtualDesktopCurrentChanged;
             }
         }
 
-        private static void UnsafeSetWallpaper(string imagePath)
+        public static void SetWallpaper(string imagePath)
         {
+            if (JsonConfig.settings.activeThemes[0] == null)
+            {
+                return;
+            }
+
             Guid currentDesktopId = VirtualDesktop.Current.Id;
             foreach (VirtualDesktop virtualDesktop in VirtualDesktop.GetDesktops())
             {
@@ -45,6 +36,14 @@ namespace WinDynamicDesktop
                 {
                     virtualDesktop.WallpaperPath = imagePath;
                 }
+            }
+        }
+
+        private void OnVirtualDesktopCurrentChanged(object sender, VirtualDesktopChangedEventArgs e)
+        {
+            if (JsonConfig.settings.activeThemes[0] == null)
+            {
+                timerEventHandler.Invoke();
             }
         }
     }

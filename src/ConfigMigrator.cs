@@ -18,7 +18,7 @@ namespace WinDynamicDesktop
         public bool useCustomAutoBrightness { get; set; }
     }
 
-    public class AppConfigV4
+    public class OldAppConfigV4
     {
         public string location { get; set; }
         public string latitude { get; set; }
@@ -107,10 +107,10 @@ namespace WinDynamicDesktop
                 return;
             }
 
-            AppConfigV4 oldSettings = null;
+            OldAppConfigV4 oldSettings = null;
             try
             {
-                oldSettings = JsonConvert.DeserializeObject<AppConfigV4>(jsonText);
+                oldSettings = JsonConvert.DeserializeObject<OldAppConfigV4>(jsonText);
             }
             catch { /* Do nothing */ }
 
