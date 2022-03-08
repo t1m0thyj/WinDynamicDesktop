@@ -7,10 +7,7 @@ environment:
 install:
 - ps: choco install innosetup -y --no-progress
 before_build:
-- ps: >-
-    powershell scripts\prebuild_appveyor.ps1
-
-    nuget restore src\WinDynamicDesktop.sln
+- ps: dotnet restore src\WinDynamicDesktop.sln /p:VersionSuffix={build}
 build:
   verbosity: minimal
 after_build:

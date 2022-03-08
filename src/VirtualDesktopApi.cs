@@ -9,9 +9,9 @@ namespace WinDynamicDesktop
 {
     class VirtualDesktopApi
     {
-        private Action timerEventHandler;
+        private static Action timerEventHandler;
 
-        public VirtualDesktopApi(WallpaperEngine wcs)
+        public static void Initialize(WallpaperEngine wcs)
         {
             timerEventHandler = new Action(() => wcs.HandleTimerEvent(false));
 
@@ -39,7 +39,7 @@ namespace WinDynamicDesktop
             }
         }
 
-        private void OnVirtualDesktopCurrentChanged(object sender, VirtualDesktopChangedEventArgs e)
+        private static void OnVirtualDesktopCurrentChanged(object sender, VirtualDesktopChangedEventArgs e)
         {
             if (JsonConfig.settings.activeThemes[0] == null)
             {
