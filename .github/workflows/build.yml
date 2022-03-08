@@ -19,7 +19,7 @@ jobs:
 
     - run: dotnet restore src\WinDynamicDesktop.sln
 
-    - run: dotnet build --no-restore
+    - run: dotnet build src\WinDynamicDesktop.sln --no-restore
 
     - run: scripts\package.ps1
 
