@@ -1,6 +1,6 @@
 Set-Location (Split-Path $MyInvocation.MyCommand.Path)
 
-$buildDir = "..\src\bin\Release"
+$buildDir = "..\src\bin\Release\net6.0-windows10.0.19041.0\publish\win-x64"
 $distDir = "..\dist"
 $appVersion = (Get-Item -Path "$buildDir\WinDynamicDesktop.exe").VersionInfo.ProductVersion
 

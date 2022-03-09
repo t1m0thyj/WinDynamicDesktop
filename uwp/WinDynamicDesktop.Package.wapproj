@@ -49,6 +49,7 @@
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     <FilterSatelliteAssembliesForMakePri>false</FilterSatelliteAssembliesForMakePri>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+    <NoWarn>$(NoWarn);NU1702</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="('$(Configuration)' == 'Debug') Or ('$(UseTemporarySignCert)' == 'true')">
     <PackageCertificateKeyFile>WinDynamicDesktop.Package_TemporaryKey.pfx</PackageCertificateKeyFile>
@@ -137,9 +138,4 @@
   <ItemGroup>
     <ProjectReference Include="..\src\WinDynamicDesktop.csproj" />
   </ItemGroup>
-  <!-- this will ensure to delete the wappublish folder -->
-  <!-- otherwise there will be mismatched assemblies for the packaged appx -->
-  <Target Name="CleanBetweenPlatforms" AfterTargets="_GenerateAppxPackage">
-    <RemoveDir Directories="..\src\bin\$(Configuration)" />
-  </Target>
 </Project>
