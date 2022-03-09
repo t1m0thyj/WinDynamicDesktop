@@ -17,6 +17,8 @@ jobs:
       with:
         dotnet-version: 6.0.x
 
+    - uses: microsoft/setup-msbuild@v1
+
     - run: dotnet restore src\WinDynamicDesktop.sln
 
     # - run: dotnet publish src\WinDynamicDesktop.csproj -c Release --no-restore -p:PublishProfile=FolderProfile
