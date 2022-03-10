@@ -21,11 +21,9 @@ jobs:
 
     - run: dotnet restore src\WinDynamicDesktop.sln
 
-    # - run: dotnet publish src\WinDynamicDesktop.csproj -c Release --no-restore -p:PublishProfile=FolderProfile
+    - run: dotnet publish src\WinDynamicDesktop.csproj -c Release --no-restore -p:PublishProfile=FolderProfile
 
-    # - run: dotnet publish uwp\WinDynamicDesktop.Package.wapproj -c Release --no-restore
-
-    - run: dotnet msbuild src\WinDynamicDesktop.sln
+    - run: dotnet publish uwp\WinDynamicDesktop.Package.wapproj -c Release -f net48 --no-restore
 
     - run: scripts\package.ps1
 
