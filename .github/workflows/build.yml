@@ -10,11 +10,10 @@ jobs:
     env:
       UseTemporarySignCert: true
 
-    matrix:
-      platform: [x86, x64, ARM64]
-
     strategy:
       fail-fast: false
+      matrix:
+        platform: [x86, x64, ARM64]
 
     steps:
     - uses: actions/checkout@v2
