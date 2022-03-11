@@ -26,9 +26,11 @@ jobs:
 
     - run: dotnet restore src\WinDynamicDesktop.sln
 
+    # TODO Bump version number
+
     - run: dotnet publish src\WinDynamicDesktop.csproj -a ${{ matrix.platform }} -c Release --no-restore --self-contained -p:PublishSingleFile=true
 
-    # - run: dotnet publish uwp\WinDynamicDesktop.Package.wapproj -c Release -f net48 --no-restore
+    - run: msbuild uwp\WinDynamicDesktop.Package.wapproj /p:Configuration=Release /p:Platform=${{ matrix.platform }} /p:UseTemporarySignCert=true
 
     # - run: scripts\package.ps1
 
