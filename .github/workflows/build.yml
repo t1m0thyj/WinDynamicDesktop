@@ -26,7 +26,7 @@ jobs:
 
     - run: dotnet restore src\WinDynamicDesktop.sln
 
-    - run: dotnet publish src\WinDynamicDesktop.csproj -a ${{ matrix.platform }} -c Release --no-restore --self-contained -p:PublishReadyToRun=true -p:PublishSingleFile=true
+    - run: dotnet publish src\WinDynamicDesktop.csproj -a ${{ matrix.platform }} -c Release --no-restore --self-contained -p:PublishSingleFile=true
 
     # - run: dotnet publish uwp\WinDynamicDesktop.Package.wapproj -c Release -f net48 --no-restore
 
