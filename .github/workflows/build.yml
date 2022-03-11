@@ -22,7 +22,7 @@ jobs:
       with:
         dotnet-version: 6.0.x
 
-    # - uses: microsoft/setup-msbuild@v1
+    - uses: microsoft/setup-msbuild@v1
 
     - run: dotnet restore src\WinDynamicDesktop.sln
 
