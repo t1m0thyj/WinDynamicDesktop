@@ -2,11 +2,12 @@ version: 1.0.{build}
 skip_branch_with_pr: true
 image: Visual Studio 2022
 configuration: Release
-platform: x64
+platform:
+- x86
+- x64
+- ARM
 environment:
   UseTemporarySignCert: true
-install:
-- ps: choco install innosetup -y --no-progress
 before_build:
 - ps: dotnet restore src\WinDynamicDesktop.sln /p:VersionSuffix=$env:APPVEYOR_BUILD_NUMBER
 build:

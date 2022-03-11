@@ -1,0 +1,49 @@
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
+
+    env:
+      UseTemporarySignCert: true
+
+    matrix:
+      platform: [x86, x64, ARM64]
+
+    strategy:
+      fail-fast: false
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+
+    # - uses: microsoft/setup-msbuild@v1
+
+    - run: dotnet restore src\WinDynamicDesktop.sln
+
+    - run: dotnet publish src\WinDynamicDesktop.csproj -a ${{ matrix.platform }} -c Release --no-restore
+
+    # - run: dotnet publish uwp\WinDynamicDesktop.Package.wapproj -c Release -f net48 --no-restore
+
+    # - run: scripts\package.ps1
+
+    # - uses: actions/upload-artifact@v3
+    #   with:
+    #     name: portable
+    #     path: dist\WinDynamicDesktop_*_Portable.exe
+
+    # - uses: actions/upload-artifact@v3
+    #   with:
+    #     name: installer
+    #     path: dist\WinDynamicDesktop_*_Setup.exe
+
+    # - uses: actions/upload-artifact@v3
+    #   with:
+    #     name: appxbundle
+    #     path: uwp\AppPackages\**\WinDynamicDesktop*.appxbundle
