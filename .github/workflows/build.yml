@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [x86, x64, ARM64]
+        platform: [x86, x64, arm64]
 
     steps:
     - uses: actions/checkout@v2
@@ -31,6 +31,11 @@ jobs:
     # - run: dotnet publish uwp\WinDynamicDesktop.Package.wapproj -c Release -f net48 --no-restore
 
     # - run: scripts\package.ps1
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: portable
+        path: src\bin\Release\**\publish\*.exe
 
     # - uses: actions/upload-artifact@v3
     #   with:
