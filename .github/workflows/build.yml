@@ -49,4 +49,4 @@ jobs:
     - uses: actions/upload-artifact@v3
       with:
         name: uwp-${{ matrix.platform }}
-        path: uwp\bin\**\Release\*.msix
+        path: uwp\AppPackages\**\*.msix
