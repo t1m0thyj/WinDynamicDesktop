@@ -15,6 +15,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - uses: dotnet/nbgv@master
+      with:
+        setAllVars: true
+
     - uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.x
@@ -22,8 +26,6 @@ jobs:
     - uses: microsoft/setup-msbuild@v1
 
     - run: dotnet restore src\WinDynamicDesktop.sln
-
-    # TODO Bump version number
 
     - run: dotnet publish src\WinDynamicDesktop.csproj -a ${{ matrix.platform }} -c Release --no-restore --self-contained -p:PublishSingleFile=true
 
@@ -34,19 +36,12 @@ jobs:
         Configuration: Release
         TargetPlatform: ${{ matrix.platform }}
 
-    # - run: scripts\package.ps1
-
     - uses: actions/upload-artifact@v3
       with:
-        name: portable-${{ matrix.platform }}
+        name: exe-${{ matrix.platform }}
         path: src\bin\Release\**\publish\*.exe
 
-    # - uses: actions/upload-artifact@v3
-    #   with:
-    #     name: installer
-    #     path: dist\WinDynamicDesktop_*_Setup.exe
-
     - uses: actions/upload-artifact@v3
       with:
-        name: uwp-${{ matrix.platform }}
+        name: msix-${{ matrix.platform }}
         path: uwp\AppPackages\**\*.msix
