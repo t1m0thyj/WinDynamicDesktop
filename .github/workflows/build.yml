@@ -7,9 +7,6 @@ jobs:
     runs-on: windows-latest
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
 
-    env:
-      UseTemporarySignCert: true
-
     strategy:
       fail-fast: false
       matrix:
@@ -30,7 +27,12 @@ jobs:
 
     - run: dotnet publish src\WinDynamicDesktop.csproj -a ${{ matrix.platform }} -c Release --no-restore --self-contained -p:PublishSingleFile=true
 
-    - run: msbuild uwp\WinDynamicDesktop.Package.wapproj /p:Configuration=Release /p:Platform=${{ matrix.platform }} /p:UseTemporarySignCert=true
+    - run: msbuild uwp\WinDynamicDesktop.Package.wapproj /p:AppxBundle=$env:AppxBundle /p:Configuration=$env:Configuration /p:Platform=$env:TargetPlatform /p:UapAppxPackageBuildMode=$env:BuildMode /p:UseTemporarySignCert=true
+      env:
+        AppxBundle: Never
+        BuildMode: SideloadOnly
+        Configuration: Release
+        TargetPlatform: ${{ matrix.platform }}
 
     # - run: scripts\package.ps1
 
@@ -41,15 +43,10 @@ jobs:
 
     # - uses: actions/upload-artifact@v3
     #   with:
-    #     name: portable
-    #     path: dist\WinDynamicDesktop_*_Portable.exe
-
-    # - uses: actions/upload-artifact@v3
-    #   with:
     #     name: installer
     #     path: dist\WinDynamicDesktop_*_Setup.exe
 
-    # - uses: actions/upload-artifact@v3
-    #   with:
-    #     name: appxbundle
-    #     path: uwp\AppPackages\**\WinDynamicDesktop*.appxbundle
+    - uses: actions/upload-artifact@v3
+      with:
+        name: uwp-${{ matrix.platform }}
+        path: uwp\bin\**\Release\*.msix
