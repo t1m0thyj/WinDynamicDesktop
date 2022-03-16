@@ -17,26 +17,18 @@ jobs:
       with:
         fetch-depth: 0
 
-    - uses: dotnet/nbgv@master
-      with:
-        setAllVars: true
-
     - uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.x
 
     - uses: microsoft/setup-msbuild@v1
 
-    - run: dotnet restore src\WinDynamicDesktop.sln
+    - run: dotnet restore src\WinDynamicDesktop.sln --version-suffix $(git rev-parse --short HEAD)
 
-    - run: dotnet publish src\WinDynamicDesktop.csproj -a ${{ matrix.platform }} -c Release --no-restore --self-contained -p:PublishSingleFile=true
+    - run: dotnet publish src\WinDynamicDesktop.csproj -a ${{ matrix.platform }} -c Release --no-restore --self-contained -p:EnableCompressionInSingleFile=true -p:PublishSingleFile=true
 
-    - run: msbuild uwp\WinDynamicDesktop.Package.wapproj /p:AppxBundle=$env:AppxBundle /p:Configuration=$env:Configuration /p:Platform=$env:TargetPlatform /p:UapAppxPackageBuildMode=$env:BuildMode /p:UseTemporarySignCert=true
-      env:
-        AppxBundle: Never
-        BuildMode: SideloadOnly
-        Configuration: Release
-        TargetPlatform: ${{ matrix.platform }}
+    # TODO Remove usage of temporary cert
+    - run: msbuild uwp\WinDynamicDesktop.Package.wapproj /p:AppxBundle=Never /p:Configuration=Release /p:Platform=${{ matrix.platform }} /p:UapAppxPackageBuildMode=SideloadOnly /p:UseTemporarySignCert=true
 
     - uses: actions/upload-artifact@v3
       with:
