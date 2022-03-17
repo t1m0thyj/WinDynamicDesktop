@@ -23,9 +23,9 @@ jobs:
 
     - uses: microsoft/setup-msbuild@v1
 
-    - run: dotnet restore src\WinDynamicDesktop.sln --version-suffix $(git rev-parse --short HEAD)
+    - run: dotnet restore src\WinDynamicDesktop.sln
 
-    - run: dotnet publish src\WinDynamicDesktop.csproj -a ${{ matrix.platform }} -c Release --no-restore --self-contained -p:EnableCompressionInSingleFile=true -p:PublishSingleFile=true
+    - run: dotnet publish src\WinDynamicDesktop.csproj -a ${{ matrix.platform }} -c Release --no-restore --self-contained --version-suffix $(git rev-parse --short HEAD) -p:EnableCompressionInSingleFile=true -p:PublishSingleFile=true
 
     # TODO Remove usage of temporary cert
     - run: msbuild uwp\WinDynamicDesktop.Package.wapproj /p:AppxBundle=Never /p:Configuration=Release /p:Platform=${{ matrix.platform }} /p:UapAppxPackageBuildMode=SideloadOnly /p:UseTemporarySignCert=true
