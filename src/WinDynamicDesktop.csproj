@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
     <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
@@ -15,17 +15,14 @@
     <UseWPF>true</UseWPF>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
-
   <ItemGroup>
     <Resource Include="resources\fonts\fontawesome-webfont.ttf" />
     <EmbeddedResource Include="locale\*.mo" />
     <EmbeddedResource Include="resources\images\*.jpg" />
   </ItemGroup>
-
   <ItemGroup>
     <AdditionalFiles Remove="app.manifest" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="bloomtom.HttpProgress" Version="2.3.2" />
     <PackageReference Include="DesktopBridge.Helpers" Version="1.2.2" />
@@ -40,7 +37,6 @@
     <PackageReference Include="TimeZoneConverter" Version="5.0.0" />
     <PackageReference Include="VirtualDesktop" Version="5.0.5" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -48,7 +44,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

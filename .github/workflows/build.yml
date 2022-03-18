@@ -14,8 +14,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
 
     - uses: actions/setup-dotnet@v1
       with:
@@ -23,12 +21,14 @@ jobs:
 
     - uses: microsoft/setup-msbuild@v1
 
+    - run: scripts\version.ps1
+
     - run: dotnet restore src\WinDynamicDesktop.sln
 
-    - run: dotnet publish src\WinDynamicDesktop.csproj -a ${{ matrix.platform }} -c Release --no-restore --self-contained --version-suffix $(git rev-parse --short HEAD) -p:EnableCompressionInSingleFile=true -p:PublishSingleFile=true
+    - run: dotnet publish src\WinDynamicDesktop.csproj -a ${{ matrix.platform }} -c Release --no-restore --self-contained -p:EnableCompressionInSingleFile=true -p:PublishSingleFile=true
 
     # TODO Remove usage of temporary cert
-    - run: msbuild uwp\WinDynamicDesktop.Package.wapproj /p:AppxBundle=Never /p:Configuration=Release /p:Platform=${{ matrix.platform }} /p:UapAppxPackageBuildMode=SideloadOnly /p:UseTemporarySignCert=true
+    - run: msbuild uwp\WinDynamicDesktop.Package.wapproj /v:m /p:AppxBundle=Never /p:Configuration=Release /p:Platform=${{ matrix.platform }} /p:UapAppxPackageBuildMode=SideloadOnly /p:UseTemporarySignCert=true
 
     - uses: actions/upload-artifact@v3
       with:

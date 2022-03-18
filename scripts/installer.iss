@@ -2,7 +2,8 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "WinDynamicDesktop"
-#define MyAppVersion GetVersionNumbersString("..\src\bin\Release\WinDynamicDesktop.exe")
+;#define MyAppVersion GetVersionNumbersString("..\src\bin\Release\WinDynamicDesktop.exe")
+;#define MyAppPlatform "x64"
 #define MyAppPublisher "Timothy Johnson"
 #define MyAppURL "https://github.com/t1m0thyj/WinDynamicDesktop"
 #define MyAppExeName "WinDynamicDesktop.exe"
@@ -16,7 +17,7 @@
 AppId={{D457A4A2-5B1B-4767-97DF-F8F4FD36875E}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
-;AppVerName={#MyAppName} {#MyAppVersion}
+AppVerName={#MyAppName} {#MyAppVersion} {#MyAppPlatform}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
@@ -27,7 +28,7 @@ DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
-OutputBaseFilename={#MyAppName}_{#MyAppVersion}_Setup
+OutputBaseFilename={#MyAppName}_{#MyAppVersion}_{#MyAppPlatform}_Setup
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -68,7 +69,7 @@ Name: "startonboot"; Description: "&Start {#MyAppName} with Windows"; GroupDescr
 Name: "registerddw"; Description: "&Associate .ddw extension with {#MyAppName}"; GroupDescription: "Other tasks:"
 
 [Files]
-Source: "..\src\bin\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\{#MyAppName}_{#MyAppVersion}_{#MyAppPlatform}_Portable.exe"; DestDir: "{app}"; DestName: "{#MyAppExeName}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]
@@ -90,17 +91,6 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChang
 Filename: "{sys}\taskkill.exe"; Parameters: "/im {#MyAppExeName} /t /f"; RunOnceId: "KillApp"; Flags: runhidden skipifdoesntexist
 
 [Code]
-function InitializeSetup(): Boolean;
-begin
-  if not IsDotNetInstalled(net45, 0) then begin
-    MsgBox('{#MyAppName} requires Microsoft .NET Framework 4.5 or newer to be installed.'#13#13
-      'Download and install .NET Framework from'#13
-      'http://www.microsoft.com/net/ and then rerun Setup.', mbCriticalError, MB_OK);
-    Result := false;
-  end else
-    Result := true;
-end;
-
 procedure CurStepChanged(CurStep : TSetupStep);
 begin
   if (CurStep = ssPostInstall) and IsAdminInstallMode() then
