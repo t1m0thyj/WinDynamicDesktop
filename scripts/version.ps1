@@ -14,6 +14,6 @@ if (!$newVersion) {
 }
 
 $xmlDoc = [XML](Get-Content -Path $appxmanifest)
-$newVersion4 = $newVersion -Replace '^(\d+\.\d+\.\d+)', '$1.0'
+$newVersion4 = $newVersion -Replace '^(\d+\.\d+\.\d+).*', '$1.0'
 $xmlDoc.Package.Identity.setAttribute("Version", $newVersion4)
 $xmlDoc.Save($appxmanifest)
