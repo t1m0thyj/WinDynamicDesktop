@@ -25,10 +25,19 @@ jobs:
 
     - run: dotnet restore src\WinDynamicDesktop.sln
 
-    - run: dotnet publish src\WinDynamicDesktop.csproj -a ${{ matrix.platform }} -c Release --no-restore --self-contained -p:EnableCompressionInSingleFile=true -p:PublishSingleFile=true
+    - run: dotnet publish src\WinDynamicDesktop.csproj -a ${{ matrix.platform }} -c Release --no-restore --self-contained -p:EnableCompressionInSingleFile=$env:EnableCompressionInSingleFile -p:PublishSingleFile=$env:PublishSingleFile
+      env:
+        EnableCompressionInSingleFile: true
+        PublishSingleFile: true
 
-    # TODO Remove usage of temporary cert
-    - run: msbuild uwp\WinDynamicDesktop.Package.wapproj /v:m /p:AppxBundle=Never /p:Configuration=Release /p:Platform=${{ matrix.platform }} /p:UapAppxPackageBuildMode=SideloadOnly /p:UseTemporarySignCert=true
+    - run: msbuild uwp\WinDynamicDesktop.Package.wapproj /v:m /p:AppxBundle=$env:AppxBundle /p:Configuration=$env:Configuration /p:PackageCertificateKeyFile=$env:PackageCertificateKeyFile /p:PackageCertificatePassword=$env:PackageCertificatePassword /p:Platform=$env:Platform /p:UapAppxPackageBuildMode=$env:UapAppxPackageBuildMode
+      env:
+        AppxBundle: Never
+        Configuration: Release
+        PackageCertificateKeyFile: uwp\WinDynamicDesktop.Package_TemporaryKey.pfx
+        PackageCertificatePassword: ${{ secrets.PackageCertificatePassword }}
+        Platform: ${{ matrix.platform }}
+        UapAppxPackageBuildMode: SideloadOnly
 
     - uses: actions/upload-artifact@v3
       with:

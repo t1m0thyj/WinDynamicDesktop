@@ -3,7 +3,7 @@
 
 #define MyAppName "WinDynamicDesktop"
 ;#define MyAppVersion GetVersionNumbersString("..\src\bin\Release\WinDynamicDesktop.exe")
-;#define MyAppPlatform "x64"
+;#define MyAppPlatform "x86"
 #define MyAppPublisher "Timothy Johnson"
 #define MyAppURL "https://github.com/t1m0thyj/WinDynamicDesktop"
 #define MyAppExeName "WinDynamicDesktop.exe"
