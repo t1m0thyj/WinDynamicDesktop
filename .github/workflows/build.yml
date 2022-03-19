@@ -34,7 +34,7 @@ jobs:
       env:
         AppxBundle: Never
         Configuration: Release
-        PackageCertificateKeyFile: uwp\WinDynamicDesktop.Package_TemporaryKey.pfx
+        PackageCertificateKeyFile: WinDynamicDesktop.Package_TemporaryKey.pfx
         PackageCertificatePassword: ${{ secrets.PackageCertificatePassword }}
         Platform: ${{ matrix.platform }}
         UapAppxPackageBuildMode: SideloadOnly
