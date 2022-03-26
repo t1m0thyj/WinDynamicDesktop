@@ -145,12 +145,14 @@ namespace WinDynamicDesktop
                 activeThemes = new string[] { oldSettings.themeName },
                 darkMode = oldSettings.darkMode,
                 enableShuffle = oldSettings.enableShuffle,
-                lastShuffleDate = SafeParse(oldSettings.lastShuffleDate).ToString(CultureInfo.InvariantCulture),
+                lastShuffleDate = oldSettings.lastShuffleDate != null ? SafeParse(
+                    oldSettings.lastShuffleDate).ToString(CultureInfo.InvariantCulture) : null,
                 shuffleHistory = oldSettings.shuffleHistory,
                 favoriteThemes = oldSettings.favoriteThemes,
                 language = oldSettings.language,
                 autoUpdateCheck = !oldSettings.disableAutoUpdate,
-                lastUpdateCheckTime = SafeParse(oldSettings.lastUpdateCheck).ToString(CultureInfo.InvariantCulture),
+                lastUpdateCheckTime = oldSettings.lastUpdateCheck != null ? SafeParse(
+                    oldSettings.lastUpdateCheck).ToString(CultureInfo.InvariantCulture) : null,
                 hideTrayIcon = oldSettings.hideTrayIcon,
                 fullScreenPause = oldSettings.fullScreenPause,
                 enableScripts = oldSettings.enableScripts

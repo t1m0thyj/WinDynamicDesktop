@@ -311,7 +311,7 @@ namespace WinDynamicDesktop
             {
                 displayComboBox.Enabled = false;
             }
-            displayComboBox.SelectedIndex = (JsonConfig.settings.activeThemes?[0] == null || JsonConfig.firstRun) ? 1 : 0;
+            displayComboBox.SelectedIndex = (JsonConfig.settings.activeThemes?[0] == null && !JsonConfig.firstRun) ? 1 : 0;
 
             string activeTheme = JsonConfig.settings.activeThemes?[displayComboBox.SelectedIndex];
             if (activeTheme == null && JsonConfig.firstRun)
