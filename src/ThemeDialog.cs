@@ -299,13 +299,19 @@ namespace WinDynamicDesktop
             imageList.Images.Add(ThemeThumbLoader.ScaleImage(windowsWallpaper, thumbnailSize));
             listView1.Items.Add(_("None"), 0);
 
-            string[] displayNames = DisplayDevices.GetAllMonitorsFriendlyNames().ToArray();
-            for (int i = 0; i < displayNames.Length; i++)
+            if (UwpDesktop.IsMultiDisplaySupported())
             {
-                displayComboBox.Items.Add(string.Format(_("Display {0} - {1}"), i + 1, displayNames[i]));
+                string[] displayNames = DisplayDevices.GetAllMonitorsFriendlyNames().ToArray();
+                for (int i = 0; i < displayNames.Length; i++)
+                {
+                    displayComboBox.Items.Add(string.Format(_("Display {0} - {1}"), i + 1, displayNames[i]));
+                }
             }
-            displayComboBox.Enabled = UwpDesktop.IsMultiDisplaySupported();
-            displayComboBox.SelectedIndex = (JsonConfig.settings.activeThemes?[0] == null) ? 1 : 0;
+            else
+            {
+                displayComboBox.Enabled = false;
+            }
+            displayComboBox.SelectedIndex = (JsonConfig.settings.activeThemes?[0] == null || JsonConfig.firstRun) ? 1 : 0;
 
             string activeTheme = JsonConfig.settings.activeThemes?[displayComboBox.SelectedIndex];
             if (activeTheme == null && JsonConfig.firstRun)
