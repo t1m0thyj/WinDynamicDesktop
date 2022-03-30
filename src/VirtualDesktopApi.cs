@@ -9,6 +9,8 @@ namespace WinDynamicDesktop
 {
     class VirtualDesktopApi
     {
+        private static bool isInitialized = false;
+
         public static void Initialize()
         {
             if (UwpDesktop.IsVirtualDesktopSupported())
@@ -17,6 +19,7 @@ namespace WinDynamicDesktop
                 {
                     VirtualDesktop.Configure();
                     VirtualDesktop.CurrentChanged += OnVirtualDesktopCurrentChanged;
+                    isInitialized = true;
                 }
                 catch (Exception e)
                 {
@@ -27,7 +30,7 @@ namespace WinDynamicDesktop
 
         public static void SetWallpaper(string imagePath)
         {
-            if (JsonConfig.settings.activeThemes[0] == null)
+            if (!isInitialized || JsonConfig.settings.activeThemes[0] == null)
             {
                 return;
             }
@@ -44,7 +47,7 @@ namespace WinDynamicDesktop
 
         private static void OnVirtualDesktopCurrentChanged(object sender, VirtualDesktopChangedEventArgs e)
         {
-            if (JsonConfig.settings.activeThemes[0] == null)
+            if (!isInitialized || JsonConfig.settings.activeThemes[0] == null)
             {
                 foreach (DisplayEvent de in AppContext.wpEngine.displayEvents)
                 {
