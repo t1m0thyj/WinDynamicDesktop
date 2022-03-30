@@ -42,7 +42,7 @@ namespace WinDynamicDesktop
                 IDesktopWallpaper desktopWallpaper = DesktopWallpaperFactory.Create();
                 string monitorId = desktopWallpaper.GetMonitorDevicePathAt((uint)displayIndex);
                 desktopWallpaper.SetWallpaper(monitorId, imagePath);
-                SyncVirtualDesktops(imagePath);
+                SyncWithPrimaryDisplay(imagePath, displayIndex);
             }
             else
             {
@@ -53,13 +53,28 @@ namespace WinDynamicDesktop
                     _activeDesktop.ApplyChanges(AD_Apply.ALL | AD_Apply.FORCE);
 
                     Marshal.ReleaseComObject(_activeDesktop);
-                    SyncVirtualDesktops(imagePath);
+                    SyncWithPrimaryDisplay(imagePath, displayIndex);
                 };
                 Thread thread = new Thread(threadStarter);
                 thread.SetApartmentState(ApartmentState.STA);  // Set the thread to STA (required!)
                 thread.Start();
                 thread.Join(2000);
             }
+        }
+
+        private static async void SyncWithPrimaryDisplay(string imagePath, int displayIndex)
+        {
+            if (displayIndex > 0)
+            {
+                return;
+            }
+
+            if (UwpDesktop.IsUwpSupported() && JsonConfig.settings.changeLockScreen)
+            {
+                await LockScreenChanger.UpdateImage(imagePath);
+            }
+
+            SyncVirtualDesktops(imagePath);
         }
     }
 }

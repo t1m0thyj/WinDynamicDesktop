@@ -1,0 +1,53 @@
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [x86, x64, arm64]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+
+    - uses: microsoft/setup-msbuild@v1
+
+    - run: scripts\version.ps1
+
+    # TODO Remove after https://github.com/Grabacr07/VirtualDesktop/pull/72 is published
+    - run: dotnet nuget add source --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/t1m0thyj/index.json"
+
+    - run: dotnet restore src\WinDynamicDesktop.sln
+
+    - run: dotnet publish src\WinDynamicDesktop.csproj -a ${{ matrix.platform }} -c Release --no-restore --self-contained -p:EnableCompressionInSingleFile=$env:EnableCompressionInSingleFile -p:PublishSingleFile=$env:PublishSingleFile
+      env:
+        EnableCompressionInSingleFile: true
+        PublishSingleFile: true
+
+    - run: msbuild uwp\WinDynamicDesktop.Package.wapproj /v:m /p:AppxBundle=$env:AppxBundle /p:Configuration=$env:Configuration /p:PackageCertificateKeyFile=$env:PackageCertificateKeyFile /p:PackageCertificatePassword=$env:PackageCertificatePassword /p:Platform=$env:Platform /p:UapAppxPackageBuildMode=$env:UapAppxPackageBuildMode
+      env:
+        AppxBundle: Never
+        Configuration: Release
+        PackageCertificateKeyFile: WinDynamicDesktop.Package_TemporaryKey.pfx
+        PackageCertificatePassword: ${{ secrets.PackageCertificatePassword }}
+        Platform: ${{ matrix.platform }}
+        UapAppxPackageBuildMode: SideloadOnly
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: exe-${{ matrix.platform }}
+        path: src\bin\Release\**\publish\*.exe
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: msix-${{ matrix.platform }}
+        path: uwp\AppPackages\**\*.msix

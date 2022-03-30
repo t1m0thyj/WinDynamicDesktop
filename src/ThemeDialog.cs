@@ -33,7 +33,6 @@ namespace WinDynamicDesktop
             Localization.TranslateForm(this);
             this.themeLinkLabel.Left += (this.importButton.Width - oldButtonWidth);
 
-            this.Font = SystemFonts.MessageBoxFont;
             this.FormClosing += OnFormClosing;
             this.FormClosed += OnFormClosed;
 
@@ -300,13 +299,21 @@ namespace WinDynamicDesktop
             imageList.Images.Add(ThemeThumbLoader.ScaleImage(windowsWallpaper, thumbnailSize));
             listView1.Items.Add(_("None"), 0);
 
-            string[] displayNames = DisplayDevices.GetAllMonitorsFriendlyNames().ToArray();
-            for (int i = 0; i < displayNames.Length; i++)
+            if (UwpDesktop.IsMultiDisplaySupported())
             {
-                displayComboBox.Items.Add(string.Format(_("Display {0} - {1}"), i + 1, displayNames[i]));
+                string[] displayNames = DisplayDevices.GetAllMonitorsFriendlyNames().ToArray();
+                for (int i = 0; i < displayNames.Length; i++)
+                {
+                    displayComboBox.Items.Add(string.Format(_("Display {0} - {1}"), i + 1, displayNames[i]));
+                }
             }
-            displayComboBox.Enabled = UwpDesktop.IsMultiDisplaySupported();
-            displayComboBox.SelectedIndex = (JsonConfig.settings.activeThemes?.Length > 1) ? 1 : 0;
+            else
+            {
+                displayComboBox.Enabled = false;
+            }
+            int activeThemeIndex = JsonConfig.settings.activeThemes?.ToList().FindIndex(
+                themeId => themeId != null) ?? -1;
+            displayComboBox.SelectedIndex = activeThemeIndex != -1 ? activeThemeIndex : 0;
 
             string activeTheme = JsonConfig.settings.activeThemes?[displayComboBox.SelectedIndex];
             if (activeTheme == null && JsonConfig.firstRun)
@@ -320,7 +327,12 @@ namespace WinDynamicDesktop
         private void displayComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             // TODO Handle if displays change while dialog is open
-            string activeTheme = JsonConfig.settings.activeThemes?[displayComboBox.SelectedIndex];
+            string activeTheme = null;
+            if (JsonConfig.settings.activeThemes != null &&
+                JsonConfig.settings.activeThemes.Length > displayComboBox.SelectedIndex)
+            {
+                activeTheme = JsonConfig.settings.activeThemes[displayComboBox.SelectedIndex];
+            }
 
             foreach (ListViewItem item in listView1.Items)
             {
@@ -360,7 +372,7 @@ namespace WinDynamicDesktop
 
         private void themeLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            System.Diagnostics.Process.Start(themeLink);
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(themeLink) { UseShellExecute = true });
         }
 
         private void applyButton_Click(object sender, EventArgs e)

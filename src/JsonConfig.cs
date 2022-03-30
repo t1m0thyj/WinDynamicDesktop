@@ -31,6 +31,7 @@ namespace WinDynamicDesktop
         // Theme settings
         public string[] activeThemes { get; set; }
         public bool darkMode { get; set; }
+        public bool changeLockScreen { get; set; }
         public bool enableShuffle { get; set; }
         public string lastShuffleDate { get; set; }
         public string[] shuffleHistory { get; set; }

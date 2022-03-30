@@ -17,8 +17,6 @@ namespace WinDynamicDesktop
         {
             InitializeComponent();
             Localization.TranslateForm(this);
-
-            this.Font = SystemFonts.MessageBoxFont;
         }
 
         private void LanguageDialog_Load(object sender, EventArgs e)
@@ -35,7 +33,7 @@ namespace WinDynamicDesktop
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            System.Diagnostics.Process.Start(translateLink);
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(translateLink) { UseShellExecute = true });
         }
 
         private void okButton_Click(object sender, EventArgs e)

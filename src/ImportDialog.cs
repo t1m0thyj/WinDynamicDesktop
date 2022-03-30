@@ -24,7 +24,6 @@ namespace WinDynamicDesktop
             InitializeComponent();
             Localization.TranslateForm(this);
 
-            this.Font = SystemFonts.MessageBoxFont;
             this.FormClosing += OnFormClosing;
             ThemeLoader.taskbarHandle = this.Handle;
         }

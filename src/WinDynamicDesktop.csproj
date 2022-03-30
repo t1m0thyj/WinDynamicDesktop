@@ -1,237 +1,53 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D752C033-AB46-423A-8611-E2E2A40CA80F}</ProjectGuid>
+    <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+    <Platforms>AnyCPU;x86;x64;ARM64</Platforms>
     <OutputType>WinExe</OutputType>
     <RootNamespace>WinDynamicDesktop</RootNamespace>
     <AssemblyName>WinDynamicDesktop</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <PackageId>WinDynamicDesktop</PackageId>
+    <Product>WinDynamicDesktop</Product>
+    <Copyright>Copyright © 2022 Timothy Johnson</Copyright>
+    <Version>5.0.0</Version>
+    <ApplicationIcon>resources\WinDynamicDesktop.ico</ApplicationIcon>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationIcon>resources\WinDynamicDesktop.ico</ApplicationIcon>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\WindowsPowerShell\3.0\System.Management.Automation.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Runtime.WindowsRuntime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETCore\v4.5\System.Runtime.WindowsRuntime.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Web" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Windows">
-      <HintPath>C:\Program Files (x86)\Windows Kits\10\UnionMetadata\10.0.19041.0\Windows.winmd</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="WindowsFormsIntegration" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="AboutDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AboutDialog.Designer.cs">
-      <DependentUpon>AboutDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="AppContext.cs" />
-    <Compile Include="COM\ActiveDesktop.cs" />
-    <Compile Include="COM\DesktopWallpaper.cs" />
-    <Compile Include="COM\DisplayDevices.cs" />
-    <Compile Include="COM\VirtualDesktopManager.cs" />
-    <Compile Include="HttpEnvironmentProxy.cs" />
-    <Compile Include="SolarScheduler.cs" />
-    <Compile Include="IpcManager.cs" />
-    <Compile Include="ProxyWrapper.cs" />
-    <Compile Include="ThemeJsonValidator.cs" />
-    <Compile Include="ConfigMigrator.cs" />
-    <Compile Include="ErrorHandler.cs" />
-    <Compile Include="DefaultThemes.cs" />
-    <Compile Include="DesktopHelper.cs" />
-    <Compile Include="FullScreenApi.cs" />
-    <Compile Include="MessageDialog.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="RestResponse.cs" />
-    <Compile Include="ScriptManager.cs" />
-    <Compile Include="ThemeResult.cs" />
-    <Compile Include="ScheduleDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ScheduleDialog.Designer.cs">
-      <DependentUpon>ScheduleDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="JsonConfig.cs" />
-    <Compile Include="LanguageDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LanguageDialog.Designer.cs">
-      <DependentUpon>LanguageDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LaunchSequence.cs" />
-    <Compile Include="Localization.cs" />
-    <Compile Include="LocationIQ.cs" />
-    <Compile Include="LocationManager.cs" />
-    <Compile Include="MainMenu.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="DownloadDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DownloadDialog.Designer.cs">
-      <DependentUpon>DownloadDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ImportDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ImportDialog.Designer.cs">
-      <DependentUpon>ImportDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SunriseSunset.cs" />
-    <Compile Include="COM\TaskbarProgress.cs" />
-    <Compile Include="ThemeDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ThemeDialog.Designer.cs">
-      <DependentUpon>ThemeDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ThemeError.cs" />
-    <Compile Include="ThemeLoader.cs" />
-    <Compile Include="ThemeManager.cs" />
-    <Compile Include="ThemeThumbLoader.cs" />
-    <Compile Include="UpdateChecker.cs" />
-    <Compile Include="UwpDesktop.cs" />
-    <Compile Include="UwpHelper.cs" />
-    <Compile Include="UwpLocation.cs" />
-    <Compile Include="VirtualDesktopApi.cs" />
-    <Compile Include="WallpaperApi.cs" />
-    <Compile Include="WallpaperEngine.cs" />
-    <Compile Include="ThemeShuffler.cs" />
-    <Compile Include="WPF\BitmapCache.cs" />
-    <Compile Include="WPF\RelayCommand.cs" />
-    <Page Include="WPF\ThemePreviewer.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Compile Include="WPF\ThemePreviewer.xaml.cs">
-      <DependentUpon>ThemePreviewer.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="WPF\ThemePreviewerViewModel.cs" />
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <SubType>Designer</SubType>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <None Include=".editorconfig" />
-    <None Include="app.manifest" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="locale\*.mo" />
-  </ItemGroup>
   <ItemGroup>
     <Resource Include="resources\fonts\fontawesome-webfont.ttf" />
+    <EmbeddedResource Include="locale\*.mo" />
     <EmbeddedResource Include="resources\images\*.jpg" />
-    <None Include="resources\default_themes.yaml" />
-    <None Include="resources\WinDynamicDesktop.ico" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Costura.Fody">
-      <Version>5.7.0</Version>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="DesktopBridge.Helpers">
-      <Version>1.2.2</Version>
-    </PackageReference>
-    <PackageReference Include="Fody">
-      <Version>6.6.0</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="GeoTimeZone">
-      <Version>4.1.0</Version>
-    </PackageReference>
-    <PackageReference Include="NamedPipeWrapper">
-      <Version>1.5.0</Version>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.1</Version>
-    </PackageReference>
-    <PackageReference Include="NGettext">
-      <Version>0.6.7</Version>
-    </PackageReference>
-    <PackageReference Include="PropertyChanged.Fody">
-      <Version>3.4.0</Version>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="RestSharp">
-      <Version>106.15.0</Version>
-    </PackageReference>
-    <PackageReference Include="SunCalcNet">
-      <Version>1.2.0</Version>
-    </PackageReference>
-    <PackageReference Include="TimeZoneConverter">
-      <Version>3.5.0</Version>
-    </PackageReference>
+    <AdditionalFiles Remove="app.manifest" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <PackageReference Include="bloomtom.HttpProgress" Version="2.3.2" />
+    <PackageReference Include="DesktopBridge.Helpers" Version="1.2.2" />
+    <PackageReference Include="Fody" Version="6.6.0" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" PrivateAssets="all" />
+    <PackageReference Include="GeoTimeZone" Version="4.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="NGettext" Version="0.6.7" />
+    <PackageReference Include="PropertyChanged.Fody" Version="3.4.0" PrivateAssets="all" />
+    <PackageReference Include="RestSharp" Version="107.3.0" />
+    <PackageReference Include="SunCalcNet" Version="1.2.0" />
+    <PackageReference Include="System.Management.Automation" Version="7.2.2" />
+    <PackageReference Include="TimeZoneConverter" Version="5.0.0" />
+    <PackageReference Include="VirtualDesktop" Version="5.0.6" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

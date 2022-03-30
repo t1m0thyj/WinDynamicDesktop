@@ -3,47 +3,58 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using System;
-using System.Runtime.InteropServices;
-using WinDynamicDesktop.COM;
+using WindowsDesktop;
 
 namespace WinDynamicDesktop
 {
-    public class VirtualDesktopApi
+    class VirtualDesktopApi
     {
-        private static IVirtualDesktopManagerInternal manager;
+        private static bool isInitialized = false;
 
-        public static void SetWallpaper(string imagePath)
+        public static void Initialize()
         {
-            for (int attempts = 0; attempts < 2; attempts++)
+            if (UwpDesktop.IsVirtualDesktopSupported())
             {
-                if (manager == null || attempts > 0)
-                {
-                    manager = ImmersiveShellWrapper.GetVirtualDesktopManager();
-                }
-
                 try
                 {
-                    UnsafeSetWallpaper(imagePath);
-                    break;
+                    VirtualDesktop.Configure();
+                    VirtualDesktop.CurrentChanged += OnVirtualDesktopCurrentChanged;
+                    isInitialized = true;
                 }
-                catch (COMException)
+                catch (Exception e)
                 {
-                    continue;
+                    ErrorHandler.LogWarning("Failed to configure virtual desktop\n" + e.ToString());
                 }
             }
         }
 
-        private static void UnsafeSetWallpaper(string imagePath)
+        public static void SetWallpaper(string imagePath)
         {
-            Guid currentDesktopId = manager.GetCurrentDesktop(IntPtr.Zero).GetId();
-            IObjectArray objectArray = manager.GetDesktops(IntPtr.Zero);
-
-            for (uint i = 0u; i < objectArray.GetCount(); i++)
+            if (!isInitialized || JsonConfig.settings.activeThemes[0] == null)
             {
-                objectArray.GetAt(i, typeof(IVirtualDesktop).GUID, out object virtualDesktop);
-                if ((virtualDesktop as IVirtualDesktop).GetId() != currentDesktopId)
+                return;
+            }
+
+            Guid currentDesktopId = VirtualDesktop.Current.Id;
+            foreach (VirtualDesktop virtualDesktop in VirtualDesktop.GetDesktops())
+            {
+                if (virtualDesktop.Id != currentDesktopId)
                 {
-                    manager.SetWallpaperPath((IVirtualDesktop)virtualDesktop, imagePath);
+                    virtualDesktop.WallpaperPath = imagePath;
+                }
+            }
+        }
+
+        private static void OnVirtualDesktopCurrentChanged(object sender, VirtualDesktopChangedEventArgs e)
+        {
+            if (!isInitialized || JsonConfig.settings.activeThemes[0] == null)
+            {
+                foreach (DisplayEvent de in AppContext.wpEngine.displayEvents)
+                {
+                    if (de.lastImagePath != null)
+                    {
+                        UwpDesktop.GetHelper().SetWallpaper(de.lastImagePath, de.displayIndex);
+                    }
                 }
             }
         }

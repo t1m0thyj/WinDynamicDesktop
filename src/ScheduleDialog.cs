@@ -22,7 +22,6 @@ namespace WinDynamicDesktop
             Localization.TranslateForm(this);
             this.sunriseSunsetDurationBox.Left += (sunriseSunsetDurationLabel.Width - oldLabelWidth);
 
-            this.Font = SystemFonts.MessageBoxFont;
             this.FormClosing += OnFormClosing;
         }
 
@@ -120,7 +119,7 @@ namespace WinDynamicDesktop
                 sunriseSunsetDurationBox.Value = JsonConfig.settings.sunriseSunsetDuration;
             }
 
-            if (JsonConfig.settings.locationMode > 0)
+            if (JsonConfig.settings.locationMode > 0 || (JsonConfig.firstRun && hasLocationPermission))
             {
                 radioButton2.Checked = true;
             }
@@ -160,7 +159,7 @@ namespace WinDynamicDesktop
 
             if (radioButton1.Checked)
             {
-                LocationIQService.GetLocationData(locationBox.Text, this);
+                await LocationIQService.GetLocationData(locationBox.Text, this);
             }
             else if (radioButton2.Checked)
             {

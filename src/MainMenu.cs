@@ -42,11 +42,13 @@ namespace WinDynamicDesktop
                 new ToolStripMenuItem("WinDynamicDesktop"),
                 new ToolStripSeparator(),
                 new ToolStripMenuItem(_("&Configure Schedule..."), null, OnScheduleItemClick),
-                themeItem
+                themeItem,
+                new ToolStripSeparator()
             });
             items[0].Enabled = false;
 
-            darkModeItem = new ToolStripMenuItem(_("&Night Mode"), null, OnDarkModeClick);
+            items.AddRange(LockScreenChanger.GetMenuItems());
+            darkModeItem = new ToolStripMenuItem(_("Enable &Night Mode"), null, OnDarkModeClick);
             darkModeItem.Checked = JsonConfig.settings.darkMode;
             startOnBootItem = new ToolStripMenuItem(_("Start on &Boot"), null, OnStartOnBootClick);
 
@@ -55,8 +57,6 @@ namespace WinDynamicDesktop
 
             items.AddRange(new List<ToolStripItem>()
             {
-                new ToolStripMenuItem(_("&Refresh Wallpaper"), null, OnRefreshItemClick),
-                new ToolStripSeparator(),
                 darkModeItem,
                 startOnBootItem,
                 optionsItem,
@@ -75,6 +75,7 @@ namespace WinDynamicDesktop
             List<ToolStripItem> items = new List<ToolStripItem>();
 
             items.Add(new ToolStripMenuItem(_("Select &Language..."), null, OnLanguageItemClick));
+            items.Add(new ToolStripMenuItem(_("&Refresh Wallpaper"), null, OnRefreshItemClick));
             items.Add(new ToolStripSeparator());
 
             shuffleItem = new ToolStripMenuItem(_("Shuffle theme daily"), null, OnShuffleItemClick);
@@ -110,11 +111,6 @@ namespace WinDynamicDesktop
             ThemeManager.SelectTheme();
         }
 
-        private static void OnRefreshItemClick(object sender, EventArgs e)
-        {
-            AppContext.wpEngine.RunScheduler(true);
-        }
-
         private static void OnDarkModeClick(object sender, EventArgs e)
         {
             AppContext.wpEngine.ToggleDarkMode();
@@ -125,9 +121,9 @@ namespace WinDynamicDesktop
             UwpDesktop.GetHelper().ToggleStartOnBoot();
         }
 
-        private static void OnUpdateItemClick(object sender, EventArgs e)
+        private static async void OnUpdateItemClick(object sender, EventArgs e)
         {
-            UpdateChecker.CheckManual();
+            await UpdateChecker.CheckManual();
         }
 
         private static void OnAboutItemClick(object sender, EventArgs e)
@@ -143,6 +139,11 @@ namespace WinDynamicDesktop
         private static void OnLanguageItemClick(object sender, EventArgs e)
         {
             Localization.SelectLanguage(false);
+        }
+
+        private static void OnRefreshItemClick(object sender, EventArgs e)
+        {
+            AppContext.wpEngine.RunScheduler(true);
         }
 
         private static void OnShuffleItemClick(object sender, EventArgs e)

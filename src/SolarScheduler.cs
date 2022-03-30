@@ -107,7 +107,7 @@ namespace WinDynamicDesktop
 
         public static DaySegmentData GetDaySegmentData(SolarData data, DateTime time)
         {
-            int daySegment2 = (data.sunriseTime <= DateTime.Now && DateTime.Now < data.sunsetTime) ? 1 : 0;
+            int daySegment2 = (data.sunriseTime <= DateTime.Now && DateTime.Now < data.sunsetTime) ? 0 : 1;
 
             if (data.polarPeriod == PolarPeriod.PolarDay)
             {

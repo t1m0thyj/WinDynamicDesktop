@@ -18,7 +18,7 @@ namespace WinDynamicDesktop
         public bool useCustomAutoBrightness { get; set; }
     }
 
-    public class AppConfigV4
+    public class OldAppConfigV4
     {
         public string location { get; set; }
         public string latitude { get; set; }
@@ -81,7 +81,7 @@ namespace WinDynamicDesktop
             string jsonText = File.ReadAllText("settings.json");
             OldAppConfigV3 settings = JsonConvert.DeserializeObject<OldAppConfigV3>(jsonText);
             bool legacySettingsEnabled = (settings.changeSystemTheme || settings.changeAppTheme ||
-                settings.changeLockScreen || settings.useAutoBrightness || settings.useCustomAutoBrightness);
+                settings.useAutoBrightness || settings.useCustomAutoBrightness);
             if (legacySettingsEnabled)
             {
                 jsonText = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<AppConfig>(jsonText),
@@ -89,24 +89,27 @@ namespace WinDynamicDesktop
                 File.WriteAllText("settings.json", jsonText);
                 MessageDialog.ShowInfo("Updated to WinDynamicDesktop 4.0 successfully. Some features you were using " +
                     "have been disabled because they were removed from the core app. You were using one or more of " +
-                    "the following features:\n\n* Change Windows 10 app/system theme\n* Change screen brightness\n* " +
-                    "Change lockscreen image\n\nTo re-enable these features, install scripts for them from here: " +
-                    "https://windd.info/scripts/");
+                    "the following features:\n\n* Change Windows 10 app/system theme\n* Change screen brightness\n\n" +
+                    "To re-enable these features, install scripts for them from here: https://windd.info/scripts/");
             }
         }
 
         private static void UpdateToVersion5()  // Added 2021-11-30
         {
+            if (!File.Exists("settings.json"))
+            {
+                return;
+            }
             string jsonText = File.ReadAllText("settings.json");
             if (jsonText.IndexOf("\"themeName\"") == -1)
             {
                 return;
             }
 
-            AppConfigV4 oldSettings = null;
+            OldAppConfigV4 oldSettings = null;
             try
             {
-                oldSettings = JsonConvert.DeserializeObject<AppConfigV4>(jsonText);
+                oldSettings = JsonConvert.DeserializeObject<OldAppConfigV4>(jsonText);
             }
             catch { /* Do nothing */ }
 
@@ -142,12 +145,14 @@ namespace WinDynamicDesktop
                 activeThemes = new string[] { oldSettings.themeName },
                 darkMode = oldSettings.darkMode,
                 enableShuffle = oldSettings.enableShuffle,
-                lastShuffleDate = SafeParse(oldSettings.lastShuffleDate).ToString(CultureInfo.InvariantCulture),
+                lastShuffleDate = oldSettings.lastShuffleDate != null ? SafeParse(
+                    oldSettings.lastShuffleDate).ToString(CultureInfo.InvariantCulture) : null,
                 shuffleHistory = oldSettings.shuffleHistory,
                 favoriteThemes = oldSettings.favoriteThemes,
                 language = oldSettings.language,
                 autoUpdateCheck = !oldSettings.disableAutoUpdate,
-                lastUpdateCheckTime = SafeParse(oldSettings.lastUpdateCheck).ToString(CultureInfo.InvariantCulture),
+                lastUpdateCheckTime = oldSettings.lastUpdateCheck != null ? SafeParse(
+                    oldSettings.lastUpdateCheck).ToString(CultureInfo.InvariantCulture) : null,
                 hideTrayIcon = oldSettings.hideTrayIcon,
                 fullScreenPause = oldSettings.fullScreenPause,
                 enableScripts = oldSettings.enableScripts

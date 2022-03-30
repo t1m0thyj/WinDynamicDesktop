@@ -2,9 +2,11 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-using NamedPipeWrapper;
 using System;
+using System.IO;
+using System.IO.Pipes;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace WinDynamicDesktop
 {
@@ -13,7 +15,7 @@ namespace WinDynamicDesktop
         public bool isFirstInstance;
 
         private Mutex _mutex;
-        private NamedPipeServer<string[]> namedPipeServer;
+        private NamedPipeServerStream namedPipeServer;
 
         public IpcManager()
         {
@@ -24,24 +26,39 @@ namespace WinDynamicDesktop
         public void Dispose()
         {
             _mutex?.Dispose();
-            namedPipeServer?.Stop();
+            namedPipeServer?.Close();
+            namedPipeServer?.Dispose();
         }
 
         public void ListenForArgs(Action<string[]> listener)
         {
-            namedPipeServer = new NamedPipeServer<string[]>("WinDynamicDesktop");
-            namedPipeServer.ClientMessage += (conn, args) => listener(args);
-            namedPipeServer.Start();
+            Task.Factory.StartNew(() =>
+            {
+                namedPipeServer = new NamedPipeServerStream("WinDynamicDesktop", PipeDirection.In);
+                using StreamReader reader = new StreamReader(namedPipeServer);
+
+                while (true)
+                {
+                    if (!namedPipeServer.IsConnected)
+                    {
+                        namedPipeServer.WaitForConnection();
+                    }
+
+                    listener(reader.ReadToEnd().Split(Environment.NewLine));
+                    namedPipeServer.Disconnect();
+                }
+
+            }, TaskCreationOptions.LongRunning);
         }
 
         public void SendArgsToFirstInstance(string[] args)
         {
-            var namedPipeClient = new NamedPipeClient<string[]>("WinDynamicDesktop");
-            namedPipeClient.Start();
-            namedPipeClient.WaitForConnection();
-            namedPipeClient.PushMessage(args);
-            namedPipeClient.WaitForDisconnection();
-            namedPipeClient.Stop();
+            using var namedPipeClient = new NamedPipeClientStream(".", "WinDynamicDesktop", PipeDirection.Out);
+            using StreamWriter writer = new StreamWriter(namedPipeClient);
+            namedPipeClient.Connect();
+
+            writer.Write(string.Join(Environment.NewLine, args));
+            writer.Flush();
         }
     }
 }

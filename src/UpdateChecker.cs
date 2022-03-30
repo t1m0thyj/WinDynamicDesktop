@@ -48,13 +48,11 @@ namespace WinDynamicDesktop
             }
         }
 
-        private static string GetLatestVersion()
+        private static async Task<string> GetLatestVersion()
         {
             var client = new RestClient("https://api.github.com");
-            ProxyWrapper.ApplyProxyToClient(client);
-
-            var request = new RestRequest("/repos/t1m0thyj/WinDynamicDesktop/releases/latest");
-            var response = client.Execute<GitHubApiData>(request);
+            var request = new RestRequest("repos/t1m0thyj/WinDynamicDesktop/releases/latest");
+            var response = await client.ExecuteAsync<GitHubApiData>(request);
 
             return response.IsSuccessful ? response.Data.tag_name.Substring(1) : null;
         }
@@ -72,10 +70,10 @@ namespace WinDynamicDesktop
             return (latest > current);
         }
 
-        public static void CheckManual()
+        public static async Task CheckManual()
         {
             string currentVersion = GetCurrentVersion();
-            string latestVersion = GetLatestVersion();
+            string latestVersion = await GetLatestVersion();
 
             if (latestVersion == null)
             {
@@ -100,10 +98,10 @@ namespace WinDynamicDesktop
             }
         }
 
-        private static void CheckAuto()
+        private static async Task CheckAuto()
         {
             string currentVersion = GetCurrentVersion();
-            string latestVersion = GetLatestVersion();
+            string latestVersion = await GetLatestVersion();
 
             if (latestVersion == null)
             {
@@ -137,7 +135,7 @@ namespace WinDynamicDesktop
                 }
             }
 
-            Task.Run(() => CheckAuto());
+            Task.Run(async () => await CheckAuto());
         }
 
         private static void OnAutoUpdateItemClick(object sender, EventArgs e)

@@ -8,9 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Net;
+using System.Net.Http;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WinDynamicDesktop
@@ -43,9 +44,8 @@ namespace WinDynamicDesktop
             }
             else
             {
-                LoadLocaleFromWeb();
+                LoadLocaleFromWeb().Wait();
             }
-
 
             if (JsonConfig.firstRun)
             {
@@ -163,27 +163,25 @@ namespace WinDynamicDesktop
             languageCodes.Add(languageCode);
         }
 
-        private static void LoadLocaleFromWeb()
+        private static async Task LoadLocaleFromWeb()
         {
             var client = new RestClient("https://api.poeditor.com");
-            ProxyWrapper.ApplyProxyToClient(client);
 
-            var request = new RestRequest("/v2/projects/export", Method.POST);
+            var request = new RestRequest("v2/projects/export", Method.Post);
             request.AddParameter("api_token", poeditorApiToken);
             request.AddParameter("id", "293081");
             request.AddParameter("language", currentLocale);
             request.AddParameter("type", "mo");
 
-            var response = client.Execute<PoEditorApiData>(request);
+            var response = await client.ExecuteAsync<PoEditorApiData>(request);
             if (!response.IsSuccessful)
             {
                 return;
             }
 
-            using (WebClient wc = new WebClient())
+            using (HttpClient httpClient = new HttpClient())
             {
-                ProxyWrapper.ApplyProxyToClient(wc);
-                byte[] moBinary = wc.DownloadData(response.Data.result.url);
+                byte[] moBinary = await httpClient.GetByteArrayAsync(response.Data.result.url);
 
                 using (Stream stream = new MemoryStream(moBinary))
                 {

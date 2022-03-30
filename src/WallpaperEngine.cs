@@ -9,7 +9,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using WinDynamicDesktop.COM;
 
 namespace WinDynamicDesktop
 {
@@ -37,6 +36,7 @@ namespace WinDynamicDesktop
         public WallpaperEngine()
         {
             fullScreenChecker = new FullScreenApi(this);
+            VirtualDesktopApi.Initialize();
 
             backgroundTimer.AutoReset = true;
             backgroundTimer.Interval = 60e3;
@@ -55,7 +55,7 @@ namespace WinDynamicDesktop
             {
                 return;
             }
-            else if (displayEvents == null)
+            else if (displayEvents == null || forceImageUpdate)
             {
                 displayEvents = new List<DisplayEvent> { null };
                 RefreshDisplayList(false);
@@ -85,12 +85,15 @@ namespace WinDynamicDesktop
                     displayEvents[i].currentTheme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
                     displayEvents[i].displayIndex = (JsonConfig.settings.activeThemes[0] == null) ? i : -1;
 
-                    SolarScheduler.CalcNextUpdateTime(data, displayEvents[i]);
-                    SetWallpaper(displayEvents[i]);
-
-                    if (displayEvents[i].nextUpdateTicks < nextDisplayUpdateTicks)
+                    if (displayEvents[i].currentTheme != null)
                     {
-                        nextDisplayUpdateTicks = displayEvents[i].nextUpdateTicks;
+                        SolarScheduler.CalcNextUpdateTime(data, displayEvents[i]);
+                        SetWallpaper(displayEvents[i]);
+
+                        if (displayEvents[i].nextUpdateTicks < nextDisplayUpdateTicks)
+                        {
+                            nextDisplayUpdateTicks = displayEvents[i].nextUpdateTicks;
+                        }
                     }
                 }
             }
@@ -139,7 +142,7 @@ namespace WinDynamicDesktop
 
         private void RefreshDisplayList(bool sendEvent)
         {
-            if (JsonConfig.settings.activeThemes == null)
+            if (JsonConfig.settings.activeThemes == null || JsonConfig.settings.activeThemes[0] != null)
             {
                 return;
             }

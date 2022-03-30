@@ -87,7 +87,14 @@ namespace WinDynamicDesktop
             var profileSettings = Windows.System.UserProfile.UserProfilePersonalizationSettings.Current;
             await profileSettings.TrySetWallpaperImageAsync(file);
 
-            WallpaperApi.SyncVirtualDesktops(imagePath);
+            if (displayIndex <= 0)
+            {
+                if (JsonConfig.settings.changeLockScreen)
+                {
+                    await profileSettings.TrySetLockScreenImageAsync(file);
+                }
+                WallpaperApi.SyncVirtualDesktops(imagePath);
+            }
         }
     }
 }

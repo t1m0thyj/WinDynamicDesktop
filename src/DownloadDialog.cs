@@ -5,13 +5,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using HttpProgress;
 using WinDynamicDesktop.COM;
 
 namespace WinDynamicDesktop
@@ -24,22 +24,20 @@ namespace WinDynamicDesktop
         private List<Uri> themeUris;
         private int themeUriIndex;
         private string themeZipDest;
+        private double downloadTime;
 
-        private Stopwatch stopwatch = new Stopwatch();
-        private WebClient wc = new WebClient();
+        private HttpClient httpClient = new HttpClient();
+        private Progress<ICopyProgress> progress;
 
         public DownloadDialog()
         {
             InitializeComponent();
             Localization.TranslateForm(this);
 
-            this.Font = SystemFonts.MessageBoxFont;
             this.FormClosing += OnFormClosing;
             ThemeLoader.taskbarHandle = this.Handle;
 
-            ProxyWrapper.ApplyProxyToClient(wc);
-            wc.DownloadProgressChanged += OnDownloadProgressChanged;
-            wc.DownloadFileCompleted += OnDownloadFileCompleted;
+            progress = new Progress<ICopyProgress>(OnDownloadProgressChanged);
         }
 
         public void InitDownload(ThemeConfig theme)
@@ -57,8 +55,16 @@ namespace WinDynamicDesktop
         private void DownloadNext(ThemeConfig theme)
         {
             this.Invoke(new Action(() => UpdatePercentage(0)));
-            stopwatch.Start();
-            wc.DownloadFileAsync(themeUris[themeUriIndex], themeZipDest, theme);
+            downloadTime = 0;
+            Task.Run(async () =>
+            {
+                using (var downloadStream = File.OpenWrite(themeZipDest))
+                {
+                    var response = await httpClient.GetAsync(themeUris[themeUriIndex].ToString(),
+                        downloadStream, progress);
+                    this.Invoke(new Action(() => OnDownloadFileCompleted(response, theme)));
+                }
+            });
         }
 
         private void UpdatePercentage(int percentage)
@@ -74,34 +80,34 @@ namespace WinDynamicDesktop
             return (File.Exists(themeZipDest) && ((new FileInfo(themeZipDest)).Length > 1048576));
         }
 
-        private void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        private void OnDownloadProgressChanged(ICopyProgress e)
         {
-            UpdatePercentage(e.ProgressPercentage);
-
-            var currentBytesReceived = e.BytesReceived / 1024d / stopwatch.Elapsed.TotalSeconds;
-
-            if (currentBytesReceived < 1024d)
+            if (e.TransferTime.TotalMilliseconds < (downloadTime + 200))
             {
-                fileTransferSpeedLabel.Text = string.Format(_("{0} KB/s"),
-                    (e.BytesReceived / 1024d / stopwatch.Elapsed.TotalSeconds).ToString("0.#"));
+                return;
+            }
+
+            UpdatePercentage((int)(e.PercentComplete * 100));
+            downloadTime = e.TransferTime.TotalMilliseconds;
+
+            if (e.BytesPerSecond < 1024d)
+            {
+                fileTransferSpeedLabel.Text = string.Format(_("{0} KB/s"), (e.BytesPerSecond / 1024d).ToString("0.#"));
             }
             else
             {
                 fileTransferSpeedLabel.Text = string.Format(_("{0} MB/s"),
-                    (e.BytesReceived / 1024d / 1024d / stopwatch.Elapsed.TotalSeconds).ToString("0.#"));
+                    (e.BytesPerSecond / 1024d / 1024d).ToString("0.#"));
             }
 
             fileSizeProgressLabel.Text = string.Format(_("{0} MB of {1} MB"),
-                (e.BytesReceived / 1024d / 1024d).ToString("0.#"),
-                (e.TotalBytesToReceive / 1024d / 1024d).ToString("0.#"));
+                (e.BytesTransferred / 1024d / 1024d).ToString("0.#"),
+                (e.ExpectedBytes / 1024d / 1024d).ToString("0.#"));
         }
 
-        public async void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+        public async void OnDownloadFileCompleted(HttpResponseMessage response, ThemeConfig theme)
         {
-            stopwatch.Stop();
-            ThemeConfig theme = (ThemeConfig)e.UserState;
-
-            if ((e.Error == null) && EnsureZipNotHtml())
+            if (response.IsSuccessStatusCode && EnsureZipNotHtml())
             {
                 cancelButton.Enabled = false;
                 ThemeResult result = await Task.Run(() => ThemeLoader.ExtractTheme(themeZipDest, theme.themeId));
@@ -141,9 +147,7 @@ namespace WinDynamicDesktop
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
-            wc.DownloadProgressChanged -= OnDownloadProgressChanged;
-            wc.DownloadFileCompleted -= OnDownloadFileCompleted;
-            wc.CancelAsync();
+            httpClient.CancelPendingRequests();
             this.Close();
         }
 
@@ -151,7 +155,7 @@ namespace WinDynamicDesktop
         {
             ThemeLoader.taskbarHandle = IntPtr.Zero;
             ThemeManager.downloadMode = false;
-            wc?.Dispose();
+            httpClient?.Dispose();
 
             Task.Run(() =>
             {

@@ -36,20 +36,19 @@ namespace WinDynamicDesktop
             if (!startOnBoot)
             {
                 startupKey.SetValue("WinDynamicDesktop", Application.ExecutablePath);
-                startOnBoot = true;
             }
             else
             {
                 startupKey.DeleteValue("WinDynamicDesktop");
-                startOnBoot = false;
             }
 
+            startOnBoot = !startOnBoot;
             MainMenu.startOnBootItem.Checked = startOnBoot;
         }
 
         public override void OpenUpdateLink()
         {
-            System.Diagnostics.Process.Start(updateLink);
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(updateLink) { UseShellExecute = true });
         }
 
         public override void SetWallpaper(string imagePath, int displayIndex)
