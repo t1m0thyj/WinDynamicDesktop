@@ -9,7 +9,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using WinDynamicDesktop.COM;
 
 namespace WinDynamicDesktop
 {
@@ -37,7 +36,7 @@ namespace WinDynamicDesktop
         public WallpaperEngine()
         {
             fullScreenChecker = new FullScreenApi(this);
-            VirtualDesktopApi.Initialize(this);
+            VirtualDesktopApi.Initialize();
 
             backgroundTimer.AutoReset = true;
             backgroundTimer.Interval = 60e3;

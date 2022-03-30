@@ -32,6 +32,13 @@ namespace WinDynamicDesktop
             }
         }
 
+        public static void LogWarning(string message)
+        {
+            string timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+            File.AppendAllText(Path.GetFileName(Environment.GetCommandLineArgs()[0]) + ".log",
+                string.Format("[{0}] {1}\n\n", timestamp, message));
+        }
+
         private static void WriteDebugLog()
         {
             AppConfig settings = null;

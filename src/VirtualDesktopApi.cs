@@ -9,16 +9,19 @@ namespace WinDynamicDesktop
 {
     class VirtualDesktopApi
     {
-        private static Action timerEventHandler;
-
-        public static void Initialize(WallpaperEngine wcs)
+        public static void Initialize()
         {
-            timerEventHandler = new Action(() => wcs.HandleTimerEvent(false));
-
             if (UwpDesktop.IsVirtualDesktopSupported())
             {
-                VirtualDesktop.Configure();
-                VirtualDesktop.CurrentChanged += OnVirtualDesktopCurrentChanged;
+                try
+                {
+                    VirtualDesktop.Configure();
+                    VirtualDesktop.CurrentChanged += OnVirtualDesktopCurrentChanged;
+                }
+                catch (Exception e)
+                {
+                    ErrorHandler.LogWarning("Failed to configure virtual desktop\n" + e.ToString());
+                }
             }
         }
 
@@ -43,7 +46,13 @@ namespace WinDynamicDesktop
         {
             if (JsonConfig.settings.activeThemes[0] == null)
             {
-                timerEventHandler.Invoke();
+                foreach (DisplayEvent de in AppContext.wpEngine.displayEvents)
+                {
+                    if (de.lastImagePath != null)
+                    {
+                        UwpDesktop.GetHelper().SetWallpaper(de.lastImagePath, de.displayIndex);
+                    }
+                }
             }
         }
     }

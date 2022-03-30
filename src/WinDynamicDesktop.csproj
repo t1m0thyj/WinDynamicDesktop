@@ -35,7 +35,7 @@
     <PackageReference Include="SunCalcNet" Version="1.2.0" />
     <PackageReference Include="System.Management.Automation" Version="7.2.2" />
     <PackageReference Include="TimeZoneConverter" Version="5.0.0" />
-    <PackageReference Include="VirtualDesktop" Version="5.0.5" />
+    <PackageReference Include="VirtualDesktop" Version="5.0.6" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
