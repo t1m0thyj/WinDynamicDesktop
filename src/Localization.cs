@@ -124,6 +124,8 @@ namespace WinDynamicDesktop
         private static void LoadLanguages()
         {
             AddLanguage("Bahasa Indonesia", "id");  // Indonesian
+            AddLanguage("Basa Jawa", "jv");  // Javanese
+            AddLanguage("Català", "ca");  // Catalan
             AddLanguage("Dansk", "da");  // Danish
             AddLanguage("Deutsch", "de");  // German
             AddLanguage("English", "en");  // English
@@ -131,29 +133,34 @@ namespace WinDynamicDesktop
             AddLanguage("Français", "fr");  // French
             AddLanguage("Hrvatski", "hr");  // Croatian
             AddLanguage("Italiano", "it");  // Italian
+            AddLanguage("Magyar", "hu");  // Hungarian
             AddLanguage("Nederlands", "nl");  // Dutch
             AddLanguage("Polski", "pl");  // Polish
-            AddLanguage("Português (do Brasil)", "pt-br");  // Portuguese (BR)
+            AddLanguage("Português", "pt");  // Portuguese
+            AddLanguage("Português (Brasil)", "pt-br");  // Portuguese (BR)
             AddLanguage("Pусский", "ru");  // Russian
             AddLanguage("Română", "ro");  // Romanian
+            AddLanguage("Suomi", "fi");  // Finnish
             AddLanguage("Svenska", "sv");  // Swedish
             AddLanguage("Tiếng Việt", "vi");  // Vietnamese
             AddLanguage("Türkçe", "tr");  // Turkish
-            AddLanguage("magyar", "hu");  // Hungarian
-            AddLanguage("suomi", "fi");  // Finnish
-            AddLanguage("íslenska", "is");  // Icelandic
+            AddLanguage("Íslenska", "is");  // Icelandic
             AddLanguage("Čeština", "cs");  // Czech
             AddLanguage("Ελληνικά", "el");  // Greek
             AddLanguage("Български", "bg");  // Bulgarian
             AddLanguage("Македонски", "mk");  // Macedonian
             AddLanguage("Українська", "uk");  // Ukrainian
-            AddLanguage("عربي", "ar");  // Arabic
-            AddLanguage("عربي (متحده عرب امارات)", "ar-ae");  // Arabic (U.A.E.)
+            AddLanguage("Қазақша", "kk");  // Kazakh
+            AddLanguage("العربية", "ar");  // Arabic
+            AddLanguage("العربية (الإمارات العربية المتحدة)", "ar-ae");  // Arabic (U.A.E.)
+            AddLanguage("فارسی", "fa");  // Persian
             AddLanguage("हिन्दी", "hi");  // Hindi
             AddLanguage("বাংলা", "bn");  // Bengali
-            AddLanguage("中文 (简体)", "zh-Hans");  // Chinese (simplified)
+            AddLanguage("ภาษาไทย", "th");  // Thai
+            AddLanguage("አማርኛ", "am");  // Amharic
+            AddLanguage("中文简体", "zh-Hans");  // Chinese Simplified
+            AddLanguage("中文繁體", "zh-Hant");  // Chinese Traditional
             AddLanguage("日本語", "ja");  // Japanese
-            AddLanguage("正體中文 (繁體)", "zh-Hant");  // Chinese (traditional)
             AddLanguage("한국어", "ko");  // Korean
         }
 

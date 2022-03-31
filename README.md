@@ -3,7 +3,7 @@
 <br/>
 <a href="https://github.com/t1m0thyj/WinDynamicDesktop/releases"><img src="https://img.shields.io/github/downloads/t1m0thyj/WinDynamicDesktop/total.svg?style=flat-square" alt="GitHub releases"></a>
 <a href="https://chocolatey.org/packages/windynamicdesktop"><img src="https://img.shields.io/chocolatey/v/windynamicdesktop?style=flat-square" alt="Chocolatey package"></a>
-<a href="https://ci.appveyor.com/project/t1m0thyj/WinDynamicDesktop?branch=master"><img src="https://img.shields.io/appveyor/build/t1m0thyj/WinDynamicDesktop/master?logo=appveyor&style=flat-square" alt="Build status"></a>
+<a href="https://github.com/t1m0thyj/WinDynamicDesktop/actions/workflows/build.yml"><img src="https://img.shields.io/github/workflow/status/t1m0thyj/WinDynamicDesktop/Build?logo=github&style=flat-square" alt="Build status"></a>
 </p>
 
 # WinDynamicDesktop

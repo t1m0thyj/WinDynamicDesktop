@@ -1,5 +1,13 @@
 # Changelog
 
+## `5.0.0`
+
+* Added support for setting separate background on multiple monitors
+* Added support for syncing lockscreen image with desktop background
+* Added time of day to preview for downloaded themes
+* Updated from .NET Framework to .NET 6 which is bundled with the app (thanks @sungaila for helping with this)
+* Added Amharic, Catalan, Javanese, Kazakh, Persian, Portuguese, and Thai translations (thanks Yonas, Joaquim, Raihan, Janat, Ali, João, and Chananthip)
+
 ## `4.7.0`
 
 * Added support for syncing wallpaper across virtual desktops in Windows 11

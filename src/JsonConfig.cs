@@ -127,7 +127,8 @@ namespace WinDynamicDesktop
             if (restartPending)
             {
                 restartPending = false;
-                System.Windows.Forms.Application.Restart();
+                System.Diagnostics.Process.Start(System.Windows.Forms.Application.ExecutablePath);
+                System.Windows.Forms.Application.Exit();
             }
             else
             {
