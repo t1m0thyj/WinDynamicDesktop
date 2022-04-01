@@ -28,10 +28,12 @@ jobs:
 
     - run: dotnet restore src\WinDynamicDesktop.sln
 
-    - run: dotnet publish src\WinDynamicDesktop.csproj -a ${{ matrix.platform }} -c Release --no-restore --self-contained -p:EnableCompressionInSingleFile=$env:EnableCompressionInSingleFile -p:PublishSingleFile=$env:PublishSingleFile
+    - run: dotnet publish src\WinDynamicDesktop.csproj -a ${{ matrix.platform }} -c Release --no-restore --self-contained -p:EnableCompressionInSingleFile=$env:EnableCompressionInSingleFile -p:IncludeNativeLibrariesForSelfExtract=$env:IncludeNativeLibrariesForSelfExtract -p:PublishSingleFile=$env:PublishSingleFile -p:UseTemporarySignCert=$env:UseTemporarySignCert
       env:
         EnableCompressionInSingleFile: true
+        IncludeNativeLibrariesForSelfExtract: true
         PublishSingleFile: true
+        UseTemporarySignCert: true
 
     - run: msbuild uwp\WinDynamicDesktop.Package.wapproj /v:m /p:AppxBundle=$env:AppxBundle /p:Configuration=$env:Configuration /p:PackageCertificateKeyFile=$env:PackageCertificateKeyFile /p:PackageCertificatePassword=$env:PackageCertificatePassword /p:Platform=$env:Platform /p:UapAppxPackageBuildMode=$env:UapAppxPackageBuildMode
       env:
