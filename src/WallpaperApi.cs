@@ -5,6 +5,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using WinDynamicDesktop.COM;
 
 namespace WinDynamicDesktop
@@ -32,7 +33,7 @@ namespace WinDynamicDesktop
             }
         }
 
-        public static void SetWallpaper(string imagePath, int displayIndex = -1)
+        public static async void SetWallpaper(string imagePath, int displayIndex = -1)
         {
             EnableTransitions();
 
@@ -42,7 +43,7 @@ namespace WinDynamicDesktop
                 IDesktopWallpaper desktopWallpaper = DesktopWallpaperFactory.Create();
                 string monitorId = desktopWallpaper.GetMonitorDevicePathAt((uint)displayIndex);
                 desktopWallpaper.SetWallpaper(monitorId, imagePath);
-                SyncWithPrimaryDisplay(imagePath, displayIndex);
+                await SyncWithPrimaryDisplay(imagePath, displayIndex);
             }
             else
             {
@@ -53,16 +54,17 @@ namespace WinDynamicDesktop
                     _activeDesktop.ApplyChanges(AD_Apply.ALL | AD_Apply.FORCE);
 
                     Marshal.ReleaseComObject(_activeDesktop);
-                    SyncWithPrimaryDisplay(imagePath, displayIndex);
                 };
                 Thread thread = new Thread(threadStarter);
                 thread.SetApartmentState(ApartmentState.STA);  // Set the thread to STA (required!)
                 thread.Start();
+                var task = SyncWithPrimaryDisplay(imagePath, displayIndex);
                 thread.Join(2000);
+                await task;
             }
         }
 
-        private static async void SyncWithPrimaryDisplay(string imagePath, int displayIndex)
+        private static async Task SyncWithPrimaryDisplay(string imagePath, int displayIndex)
         {
             if (displayIndex > 0)
             {

@@ -19,7 +19,7 @@ namespace WinDynamicDesktop
             try
             {
                 string timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
-                File.AppendAllText(logFilename, string.Format("[{0}] {1}\n\n", timestamp, errorMessage));
+                File.AppendAllText(logFilename, string.Format("[{0}] ERROR {1}\n\n", timestamp, errorMessage));
                 WriteDebugLog();
 
                 MessageDialog.ShowError(string.Format("See the logfile '{0}' for details", logFilename),
@@ -36,7 +36,7 @@ namespace WinDynamicDesktop
         {
             string timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
             File.AppendAllText(Path.GetFileName(Environment.GetCommandLineArgs()[0]) + ".log",
-                string.Format("[{0}] {1}\n\n", timestamp, message));
+                string.Format("[{0}] WARNING {1}\n\n", timestamp, message));
         }
 
         private static void WriteDebugLog()

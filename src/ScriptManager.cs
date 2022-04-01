@@ -66,7 +66,7 @@ namespace WinDynamicDesktop
                 ps.AddParameter("daySegment2", args.daySegment2);
                 ps.AddParameter("daySegment4", args.daySegment4 ?? -1);
                 // TODO Provide all the image paths to scripts, not just first one
-                ps.AddParameter("imagePaths", args.imagePaths);
+                ps.AddParameter("imagePath", args.imagePaths[0]);
                 ps.AddParameter("nightMode", JsonConfig.settings.darkMode);
                 ps.Invoke();
 
