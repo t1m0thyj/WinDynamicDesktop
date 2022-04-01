@@ -12,7 +12,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using WinDynamicDesktop.COM;
+using WindowsDisplayAPI.DisplayConfig;
 
 namespace WinDynamicDesktop
 {
@@ -301,10 +301,11 @@ namespace WinDynamicDesktop
 
             if (UwpDesktop.IsMultiDisplaySupported())
             {
-                string[] displayNames = DisplayDevices.GetAllMonitorsFriendlyNames().ToArray();
+                string[] displayNames = PathDisplayTarget.GetDisplayTargets().Select(
+                    target => target.FriendlyName).ToArray();
                 for (int i = 0; i < displayNames.Length; i++)
                 {
-                    displayComboBox.Items.Add(string.Format(_("Display {0} - {1}"), i + 1, displayNames[i]));
+                    displayComboBox.Items.Add(string.Format(_("Display {0}: {1}"), i + 1, displayNames[i]));
                 }
             }
             else
