@@ -9,7 +9,7 @@
     <PackageId>WinDynamicDesktop</PackageId>
     <Product>WinDynamicDesktop</Product>
     <Copyright>Copyright © 2022 Timothy Johnson</Copyright>
-    <Version>5.0.0</Version>
+    <Version>5.0.1</Version>
     <ApplicationIcon>resources\WinDynamicDesktop.ico</ApplicationIcon>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
@@ -28,7 +28,6 @@
     <PackageReference Include="DesktopBridge.Helpers" Version="1.2.2" />
     <PackageReference Include="Fody" Version="6.6.0" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" PrivateAssets="all" />
     <PackageReference Include="GeoTimeZone" Version="4.1.0" />
-    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.2.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NGettext" Version="0.6.7" />
     <PackageReference Include="PropertyChanged.Fody" Version="3.4.0" PrivateAssets="all" />

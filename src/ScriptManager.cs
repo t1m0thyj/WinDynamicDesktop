@@ -3,9 +3,9 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using System;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Management.Automation;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace WinDynamicDesktop
@@ -57,26 +57,43 @@ namespace WinDynamicDesktop
             }
         }
 
-        private static void RunScript(string path, ScriptArgs args)
+        private static async void RunScript(string path, ScriptArgs args)
         {
-            using (var ps = PowerShell.Create())
+            Process proc = new Process();
+            string command = BuildCommandString(Path.GetFileName(path), args);
+            proc.StartInfo = new ProcessStartInfo("powershell.exe", "-NoProfile -ExecutionPolicy Bypass -Command \"" + command + "\"")
             {
-                ps.AddScript("Set-ExecutionPolicy Bypass -Scope Process -Force");
-                ps.AddScript(File.ReadAllText(path));
-                ps.AddParameter("daySegment2", args.daySegment2);
-                ps.AddParameter("daySegment4", args.daySegment4 ?? -1);
-                // TODO Provide all the image paths to scripts, not just first one
-                ps.AddParameter("imagePath", args.imagePaths[0]);
-                ps.AddParameter("nightMode", JsonConfig.settings.darkMode);
-                ps.Invoke();
+                CreateNoWindow = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                WorkingDirectory = Path.GetDirectoryName(path)
+            };
 
-                if (ps.Streams.Error.Count > 0)
-                {
-                    MessageDialog.ShowWarning(string.Format(_("Error(s) running PowerShell script '{0}':\n\n{1}"), path,
-                        string.Join("\n\n", ps.Streams.Error.ReadAll().Select((er) => er.Exception.ToString()))),
-                        _("Script Error"));
+            var errors = new StringBuilder();
+            proc.ErrorDataReceived += (sender, e) => {
+                if (!string.IsNullOrEmpty(e.Data)) {
+                    errors.Append(e.Data + "\n");
                 }
+            };
+            proc.Start();
+            proc.BeginErrorReadLine();
+            await proc.WaitForExitAsync();
+
+            if (proc.ExitCode != 0)
+            {
+                MessageDialog.ShowWarning(string.Format(_("Error(s) running PowerShell script '{0}':\n\n{1}"), path,
+                    errors), _("Script Error"));
             }
+        }
+
+        private static string BuildCommandString(string filename, ScriptArgs args)
+        {
+            return "& \\\".\\" + filename + "\\\"" +
+                " -daySegment2 " + args.daySegment2.ToString() +
+                " -daySegment4 " + (args.daySegment4 ?? -1).ToString() +
+                " -imagePath \\\"" + args.imagePaths[0] + "\\\"" +
+                " -nightMode " + Convert.ToInt32(JsonConfig.settings.darkMode);
         }
     }
 }
