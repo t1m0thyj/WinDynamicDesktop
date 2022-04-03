@@ -1,5 +1,11 @@
 # Changelog
 
+## `5.0.1`
+
+* Fixed error when wallpaper changes and Change Lockscreen Image is enabled
+* Fixed error when wallpaper changes and PowerShell scripts are enabled
+* Disabled virtual desktop support for Windows 11 Insider builds ([#421](https://github.com/t1m0thyj/WinDynamicDesktop/issues/421))
+
 ## `5.0.0`
 
 * Added support for setting separate background on multiple monitors
