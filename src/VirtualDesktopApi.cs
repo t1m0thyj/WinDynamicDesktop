@@ -17,14 +17,12 @@ namespace WinDynamicDesktop
             {
                 try
                 {
+                    // TODO How to clean up Explorer listener if configure fails
                     VirtualDesktop.Configure();
                     VirtualDesktop.CurrentChanged += OnVirtualDesktopCurrentChanged;
                     isInitialized = true;
                 }
-                catch (Exception e)
-                {
-                    ErrorHandler.LogWarning("Failed to configure virtual desktop\n" + e.ToString());
-                }
+                catch { /* Do nothing */ }
             }
         }
 
