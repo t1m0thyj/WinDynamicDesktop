@@ -42,9 +42,6 @@ WinDynamicDesktop is developed primarily for Windows 10, but should run on any v
 * [Wallpaper gets stuck and won't update](https://github.com/t1m0thyj/WinDynamicDesktop/wiki/Known-issues#wallpaper-gets-stuck-and-wont-update)
 
 ## Limitations
-
-* [Can't change lock screen background](https://github.com/t1m0thyj/WinDynamicDesktop/issues/31)
-* [Can't show separate images on multiple monitors](https://github.com/t1m0thyj/WinDynamicDesktop/issues/117)
 * [Can't show separate images on multiple virtual desktops](https://github.com/t1m0thyj/WinDynamicDesktop/issues/299)
 
 ## Disclaimers
