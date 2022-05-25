@@ -302,10 +302,15 @@ namespace WinDynamicDesktop
             if (UwpDesktop.IsMultiDisplaySupported())
             {
                 // TODO Get the right order of display names
-                string[] displayNames = PathDisplayTarget.GetDisplayTargets().Select(
-                    target => target.FriendlyName).ToArray();
+                string[] displayNames = PathDisplayTarget.GetDisplayTargets()
+                    .Select((target, i) => new KeyValuePair<string, int>(target.FriendlyName, i))
+                    .OrderBy(x => Screen.AllScreens[x.Value].DeviceName).Select(x => x.Key).ToArray();
                 for (int i = 0; i < displayNames.Length; i++)
                 {
+                    if (string.IsNullOrEmpty(displayNames[i]))
+                    {
+                        displayNames[i] = _("Internal Display");
+                    }
                     displayComboBox.Items.Add(string.Format(_("Display {0}: {1}"), i + 1, displayNames[i]));
                 }
             }
