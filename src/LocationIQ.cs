@@ -35,7 +35,7 @@ namespace WinDynamicDesktop
 
         public static async Task GetLocationData(string locationStr, ScheduleDialog dialog)
         {
-            var client = new RestClient("https://us1.locationiq.org");
+            var client = new RestClient("https://us1.locationiq.com");
 
             var request = new RestRequest("v1/search.php");
             request.AddParameter("key", apiKey);
