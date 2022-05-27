@@ -39,7 +39,7 @@ namespace WinDynamicDesktop
 
         // General settings
         public string language { get; set; }
-        public bool autoUpdateCheck { get; set; }
+        public bool autoUpdateCheck { get; set; } = true;
         public string lastUpdateCheckTime { get; set; }
         public bool hideTrayIcon { get; set; }
         public bool fullScreenPause { get; set; }

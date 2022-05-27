@@ -33,9 +33,8 @@ namespace WinDynamicDesktop
         {
             if (!UwpDesktop.IsRunningAsUwp())
             {
-                menuItem = new ToolStripMenuItem(_("Check for &updates automatically once a week"), null,
-                    OnAutoUpdateItemClick);
-                menuItem.Checked = JsonConfig.settings.autoUpdateCheck != false;
+                menuItem = new ToolStripMenuItem(_("Check for &updates once a week"), null, OnAutoUpdateItemClick);
+                menuItem.Checked = JsonConfig.settings.autoUpdateCheck;
 
                 return new List<ToolStripItem>() {
                     new ToolStripSeparator(),

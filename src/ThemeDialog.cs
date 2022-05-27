@@ -301,7 +301,6 @@ namespace WinDynamicDesktop
 
             if (UwpDesktop.IsMultiDisplaySupported())
             {
-                // TODO Get the right order of display names
                 string[] displayNames = PathDisplayTarget.GetDisplayTargets()
                     .Select((target, i) => new KeyValuePair<string, int>(target.FriendlyName, i))
                     .OrderBy(x => Screen.AllScreens[x.Value].DeviceName).Select(x => x.Key).ToArray();

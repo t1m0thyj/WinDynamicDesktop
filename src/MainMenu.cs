@@ -82,7 +82,7 @@ namespace WinDynamicDesktop
             shuffleItem.Checked = JsonConfig.settings.enableShuffle;
             items.Add(shuffleItem);
 
-            fullScreenItem = new ToolStripMenuItem(_("Pause while fullscreen apps running"), null, OnFullScreenItemClick);
+            fullScreenItem = new ToolStripMenuItem(_("Pause when fullscreen apps running"), null, OnFullScreenItemClick);
             fullScreenItem.Checked = JsonConfig.settings.fullScreenPause;
             items.Add(fullScreenItem);
 

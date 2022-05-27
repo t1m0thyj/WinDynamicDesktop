@@ -178,8 +178,8 @@ namespace WinDynamicDesktop
             }
             else if (radioButton3.Checked)
             {
-                JsonConfig.settings.sunriseTime = sunriseTimePicker.Value.ToLongTimeString();
-                JsonConfig.settings.sunsetTime = sunsetTimePicker.Value.ToLongTimeString();
+                JsonConfig.settings.sunriseTime = sunriseTimePicker.Value.ToString("T", CultureInfo.InvariantCulture);
+                JsonConfig.settings.sunsetTime = sunsetTimePicker.Value.ToString("T", CultureInfo.InvariantCulture);
                 JsonConfig.settings.sunriseSunsetDuration = (int)sunriseSunsetDurationBox.Value;
                 this.Close();
             }
