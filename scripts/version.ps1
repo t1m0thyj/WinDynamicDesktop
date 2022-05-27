@@ -13,9 +13,9 @@ if (!$newVersion) {
 }
 
 $xmlDoc.Project.PropertyGroup.Version = $newVersion
-$xmlDoc.Save($csproj)
+$xmlDoc.Save("$pwd\$csproj")
 
 $xmlDoc = [XML](Get-Content -Path $appxmanifest)
 $newVersion4 = $newVersion -Replace '^(\d+\.\d+\.\d+).*', '$1.0'
 $xmlDoc.Package.Identity.setAttribute("Version", $newVersion4)
-$xmlDoc.Save($appxmanifest)
+$xmlDoc.Save("$pwd\$appxmanifest")

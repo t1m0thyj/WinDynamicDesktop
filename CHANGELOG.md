@@ -1,5 +1,14 @@
 # Changelog
 
+## `5.0.2`
+
+:warning: Version 5.0.0 had a bug causing automatic update checking to be disabled for fresh installs. If you want automatic updates, check that they are enabled in the system tray menu: More Options -> Check for updates once a week.
+
+* Updated LocationIQ geocoding provider to stop using endpoint that will be deprecated on June 1
+* Fixed display names shown in wrong order in theme dialog ([#420](https://github.com/t1m0thyj/WinDynamicDesktop/issues/420))
+* Fixed background not updating when night mode is toggled ([#425](https://github.com/t1m0thyj/WinDynamicDesktop/issues/425))
+* Fixed user-defined sunrise and sunset times being stored in wrong locale format ([#432](https://github.com/t1m0thyj/WinDynamicDesktop/issues/432))
+
 ## `5.0.1`
 
 * Fixed error when wallpaper changes and Change Lockscreen Image is enabled

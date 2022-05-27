@@ -123,7 +123,7 @@ namespace WinDynamicDesktop
 
         private static void LoadLanguages()
         {
-            AddLanguage("Bahasa Indonesia", "id");  // Indonesian
+            AddLanguage("Azərbaycan dili", "az");  // Azerbaijani
             AddLanguage("Basa Jawa", "jv");  // Javanese
             AddLanguage("Català", "ca");  // Catalan
             AddLanguage("Dansk", "da");  // Danish
@@ -151,6 +151,7 @@ namespace WinDynamicDesktop
             AddLanguage("Македонски", "mk");  // Macedonian
             AddLanguage("Українська", "uk");  // Ukrainian
             AddLanguage("Қазақша", "kk");  // Kazakh
+            AddLanguage("עברית", "he");  // Hebrew
             AddLanguage("العربية", "ar");  // Arabic
             AddLanguage("العربية (الإمارات العربية المتحدة)", "ar-ae");  // Arabic (U.A.E.)
             AddLanguage("فارسی", "fa");  // Persian
