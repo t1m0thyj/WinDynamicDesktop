@@ -70,30 +70,27 @@ namespace WinDynamicDesktop
             for (int i = 0; i < displayEvents.Count; i++)
             {
                 // TODO After Nvidia update, Display 1 became theme 2, Display 2 became None
-                if (displayEvents[i] == null || displayEvents[i].nextUpdateTicks <= DateTime.Now.Ticks)
+                if (displayEvents[i] == null)
                 {
-                    if (displayEvents[i] == null)
-                    {
-                        displayEvents[i] = new DisplayEvent();
-                    }
-                    else if (forceImageUpdate)
-                    {
-                        displayEvents[i].lastImagePath = null;
-                    }
+                    displayEvents[i] = new DisplayEvent();
+                }
+                else if (forceImageUpdate)
+                {
+                    displayEvents[i].lastImagePath = null;
+                }
 
-                    string themeId = JsonConfig.settings.activeThemes[0] ?? JsonConfig.settings.activeThemes[i + 1];
-                    displayEvents[i].currentTheme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
-                    displayEvents[i].displayIndex = (JsonConfig.settings.activeThemes[0] == null) ? i : -1;
+                string themeId = JsonConfig.settings.activeThemes[0] ?? JsonConfig.settings.activeThemes[i + 1];
+                displayEvents[i].currentTheme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
+                displayEvents[i].displayIndex = (JsonConfig.settings.activeThemes[0] == null) ? i : -1;
+                SolarScheduler.CalcNextUpdateTime(data, displayEvents[i]);
 
-                    if (displayEvents[i].currentTheme != null)
+                if (displayEvents[i].currentTheme != null)
+                {
+                    SetWallpaper(displayEvents[i]);
+
+                    if (displayEvents[i].nextUpdateTicks < nextDisplayUpdateTicks)
                     {
-                        SolarScheduler.CalcNextUpdateTime(data, displayEvents[i]);
-                        SetWallpaper(displayEvents[i]);
-
-                        if (displayEvents[i].nextUpdateTicks < nextDisplayUpdateTicks)
-                        {
-                            nextDisplayUpdateTicks = displayEvents[i].nextUpdateTicks;
-                        }
+                        nextDisplayUpdateTicks = displayEvents[i].nextUpdateTicks;
                     }
                 }
             }

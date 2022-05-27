@@ -58,9 +58,8 @@ namespace WinDynamicDesktop
                 Thread thread = new Thread(threadStarter);
                 thread.SetApartmentState(ApartmentState.STA);  // Set the thread to STA (required!)
                 thread.Start();
-                var task = SyncWithPrimaryDisplay(imagePath, displayIndex);
                 thread.Join(2000);
-                await task;
+                await SyncWithPrimaryDisplay(imagePath, displayIndex);
             }
         }
 

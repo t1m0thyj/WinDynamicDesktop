@@ -144,39 +144,40 @@ namespace WinDynamicDesktop
             DaySegmentData segmentData = GetDaySegmentData(data, dateNow);
             e.daySegment2 = segmentData.segment2;
 
-            if (ThemeManager.IsTheme4Segment(e.currentTheme) && !JsonConfig.settings.darkMode)
+            if (e.currentTheme == null || (ThemeManager.IsTheme4Segment(e.currentTheme) &&
+                !JsonConfig.settings.darkMode))
             {
                 e.daySegment4 = segmentData.segment4;
 
                 switch (segmentData.segmentType)
                 {
                     case DaySegment.AlwaysDay:
-                        imageList = e.currentTheme.dayImageList;
+                        imageList = e.currentTheme?.dayImageList;
                         segmentStart = DateTime.Now.Date;
                         segmentEnd = DateTime.Now.Date.AddDays(1);
                         break;
                     case DaySegment.AlwaysNight:
-                        imageList = e.currentTheme.nightImageList;
+                        imageList = e.currentTheme?.nightImageList;
                         segmentStart = dateNow.Date;
                         segmentEnd = dateNow.Date.AddDays(1);
                         break;
                     case DaySegment.Sunrise:
-                        imageList = e.currentTheme.sunriseImageList;
+                        imageList = e.currentTheme?.sunriseImageList;
                         segmentStart = data.solarTimes[0];
                         segmentEnd = data.solarTimes[1];
                         break;
                     case DaySegment.Day:
-                        imageList = e.currentTheme.dayImageList;
+                        imageList = e.currentTheme?.dayImageList;
                         segmentStart = data.solarTimes[1];
                         segmentEnd = data.solarTimes[2];
                         break;
                     case DaySegment.Sunset:
-                        imageList = e.currentTheme.sunsetImageList;
+                        imageList = e.currentTheme?.sunsetImageList;
                         segmentStart = data.solarTimes[2];
                         segmentEnd = data.solarTimes[3];
                         break;
                     default:
-                        imageList = e.currentTheme.nightImageList;
+                        imageList = e.currentTheme?.nightImageList;
 
                         if (dateNow < data.solarTimes[0])
                         {
@@ -196,11 +197,11 @@ namespace WinDynamicDesktop
             }
             else
             {
-                imageList = e.currentTheme.dayImageList;
+                imageList = e.currentTheme?.dayImageList;
 
                 if (segmentData.segment2 == 1 || JsonConfig.settings.darkMode)
                 {
-                    imageList = e.currentTheme.nightImageList;
+                    imageList = e.currentTheme?.nightImageList;
                 }
 
                 if (data.polarPeriod != PolarPeriod.None)
@@ -227,10 +228,13 @@ namespace WinDynamicDesktop
                 }
             }
 
-            TimeSpan imageDuration = new TimeSpan((segmentEnd - segmentStart).Ticks / imageList.Length);
-            int imageNumber = (int)((dateNow.Ticks - segmentStart.Ticks) / imageDuration.Ticks);
-            e.imageId = imageList[imageNumber];
-            e.nextUpdateTicks = segmentStart.Ticks + imageDuration.Ticks * (imageNumber + 1);
+            if (imageList != null)
+            {
+                TimeSpan imageDuration = new TimeSpan((segmentEnd - segmentStart).Ticks / imageList.Length);
+                int imageNumber = (int)((dateNow.Ticks - segmentStart.Ticks) / imageDuration.Ticks);
+                e.imageId = imageList[imageNumber];
+                e.nextUpdateTicks = segmentStart.Ticks + imageDuration.Ticks * (imageNumber + 1);
+            }
         }
     }
 }
