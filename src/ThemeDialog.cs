@@ -301,9 +301,12 @@ namespace WinDynamicDesktop
 
             if (UwpDesktop.IsMultiDisplaySupported())
             {
-                string[] displayNames = PathDisplayTarget.GetDisplayTargets()
-                    .Select((target, i) => new KeyValuePair<string, int>(target.FriendlyName, i))
-                    .OrderBy(x => Screen.AllScreens[x.Value].DeviceName).Select(x => x.Key).ToArray();
+                var displayDevicePaths = WindowsDisplayAPI.Display.GetDisplays().Select(x => x.DevicePath);
+                var displayTargets = PathDisplayTarget.GetDisplayTargets()
+                    .Where(x => displayDevicePaths.Contains(x.DevicePath)).ToArray();
+                string[] displayNames = Screen.AllScreens
+                    .Select((screen, i) => new KeyValuePair<string, int>(screen.DeviceName, i))
+                    .OrderBy(x => x.Key).Select(x => displayTargets[x.Value].FriendlyName).ToArray();
                 for (int i = 0; i < displayNames.Length; i++)
                 {
                     if (string.IsNullOrEmpty(displayNames[i]))
