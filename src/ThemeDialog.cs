@@ -98,6 +98,19 @@ namespace WinDynamicDesktop
             importDialog.InitImport(themePaths);
         }
 
+        private string[] GetDisplayNames()
+        {
+            // https://github.com/winleafs/Winleafs/blob/98ba3ba/Winleafs.Wpf/Helpers/ScreenBoundsHelper.cs#L36=
+            var activeDisplayDevicePaths = WindowsDisplayAPI.Display.GetDisplays().Select(d => d.DevicePath);
+            var displayTargets = PathDisplayTarget.GetDisplayTargets()
+                .Where(dt => activeDisplayDevicePaths.Contains(dt.DevicePath)).ToArray();
+            return Screen.AllScreens.Select((screen, i) => new KeyValuePair<string, int>(screen.DeviceName, i))
+                .OrderBy(x => x.Key).Select(x => {
+                    string displayName = displayTargets[x.Value].FriendlyName;
+                    return string.IsNullOrEmpty(displayName) ? _("Internal Display") : displayName;
+                }).ToArray();
+        }
+
         private void LoadThemes(List<ThemeConfig> themes, string activeTheme = null)
         {
             Size thumbnailSize = ThemeThumbLoader.GetThumbnailSize(this);
@@ -301,18 +314,9 @@ namespace WinDynamicDesktop
 
             if (UwpDesktop.IsMultiDisplaySupported())
             {
-                var displayDevicePaths = WindowsDisplayAPI.Display.GetDisplays().Select(x => x.DevicePath);
-                var displayTargets = PathDisplayTarget.GetDisplayTargets()
-                    .Where(x => displayDevicePaths.Contains(x.DevicePath)).ToArray();
-                string[] displayNames = Screen.AllScreens
-                    .Select((screen, i) => new KeyValuePair<string, int>(screen.DeviceName, i))
-                    .OrderBy(x => x.Key).Select(x => displayTargets[x.Value].FriendlyName).ToArray();
+                string[] displayNames = GetDisplayNames();
                 for (int i = 0; i < displayNames.Length; i++)
                 {
-                    if (string.IsNullOrEmpty(displayNames[i]))
-                    {
-                        displayNames[i] = _("Internal Display");
-                    }
                     displayComboBox.Items.Add(string.Format(_("Display {0}: {1}"), i + 1, displayNames[i]));
                 }
             }
