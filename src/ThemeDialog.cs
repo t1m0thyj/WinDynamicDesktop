@@ -111,7 +111,7 @@ namespace WinDynamicDesktop
                 }).ToArray();
         }
 
-        private void LoadThemes(List<ThemeConfig> themes, string activeTheme = null)
+        private void LoadThemes(List<ThemeConfig> themes, string activeTheme = null, string focusTheme = null)
         {
             Size thumbnailSize = ThemeThumbLoader.GetThumbnailSize(this);
             ListViewItem focusedItem = null;
@@ -134,14 +134,13 @@ namespace WinDynamicDesktop
                             ListViewItem newItem = listView1.Items.Add(itemText, listView1.LargeImageList.Images.Count - 1);
                             newItem.Tag = theme.themeId;
 
-                            if (activeTheme == null || activeTheme == theme.themeId)
+                            if (activeTheme != null && activeTheme == theme.themeId)
+                            {
+                                newItem.Font = new Font(newItem.Font, FontStyle.Bold);
+                            }
+                            if (focusTheme == null || focusTheme == theme.themeId)
                             {
                                 focusedItem = newItem;
-
-                                if (activeTheme != null)
-                                {
-                                    newItem.Font = new Font(newItem.Font, FontStyle.Bold);
-                                }
                             }
                         }));
                     }
@@ -329,12 +328,13 @@ namespace WinDynamicDesktop
             displayComboBox.SelectedIndex = activeThemeIndex != -1 ? activeThemeIndex : 0;
 
             string activeTheme = JsonConfig.settings.activeThemes?[displayComboBox.SelectedIndex];
+            string focusTheme = activeTheme ?? "";
             if (activeTheme == null && JsonConfig.firstRun)
             {
-                activeTheme = "Mojave_Desert";
+                focusTheme = "Mojave_Desert";
             }
 
-            Task.Run(new Action(() => LoadThemes(ThemeManager.themeSettings, activeTheme ?? "")));
+            Task.Run(new Action(() => LoadThemes(ThemeManager.themeSettings, activeTheme, focusTheme)));
         }
 
         private void displayComboBox_SelectedIndexChanged(object sender, EventArgs e)

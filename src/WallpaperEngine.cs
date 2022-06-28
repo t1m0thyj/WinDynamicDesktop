@@ -79,7 +79,11 @@ namespace WinDynamicDesktop
                     displayEvents[i].lastImagePath = null;
                 }
 
-                string themeId = JsonConfig.settings.activeThemes[0] ?? JsonConfig.settings.activeThemes[i + 1];
+                string themeId = JsonConfig.settings.activeThemes[0];
+                if (themeId == null && JsonConfig.settings.activeThemes.Length > 1)
+                {
+                    themeId = JsonConfig.settings.activeThemes[i + 1];
+                }
                 displayEvents[i].currentTheme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
                 displayEvents[i].displayIndex = (JsonConfig.settings.activeThemes[0] == null) ? i : -1;
                 SolarScheduler.CalcNextUpdateTime(data, displayEvents[i]);
