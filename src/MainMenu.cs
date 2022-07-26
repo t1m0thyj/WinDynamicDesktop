@@ -18,6 +18,7 @@ namespace WinDynamicDesktop
         public static ToolStripMenuItem enableScriptsItem;
         public static ToolStripMenuItem shuffleItem;
         public static ToolStripMenuItem fullScreenItem;
+        public static ToolStripMenuItem hideTrayItem;
 
         public static ContextMenuStrip GetMenu()
         {
@@ -85,6 +86,10 @@ namespace WinDynamicDesktop
             fullScreenItem = new ToolStripMenuItem(_("Pause when fullscreen apps running"), null, OnFullScreenItemClick);
             fullScreenItem.Checked = JsonConfig.settings.fullScreenPause;
             items.Add(fullScreenItem);
+
+            hideTrayItem = new ToolStripMenuItem(_("Hide system tray icon"), null, OnHideTrayItemClick);
+            hideTrayItem.Checked = JsonConfig.settings.hideTrayIcon;
+            items.Add(hideTrayItem);
 
             items.AddRange(UpdateChecker.GetMenuItems());
             items.Add(new ToolStripSeparator());
@@ -154,6 +159,11 @@ namespace WinDynamicDesktop
         private static void OnFullScreenItemClick(object sender, EventArgs e)
         {
             AppContext.wpEngine.fullScreenChecker.ToggleFullScreenPause();
+        }
+
+        private static void OnHideTrayItemClick(object sender, EventArgs e)
+        {
+            AppContext.ToggleTrayIcon();
         }
 
         private static void OnEditConfigFileClick(object sender, EventArgs e)

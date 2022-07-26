@@ -45,7 +45,7 @@ namespace WinDynamicDesktop
             }
             else
             {
-                if (ThemeManager.importPaths.Count > 0)
+                if (ThemeManager.importPaths.Count > 0 || JsonConfig.settings.hideTrayIcon)
                 {
                     ipcManager.SendArgsToFirstInstance(ThemeManager.importPaths.ToArray());
                 }
@@ -82,11 +82,24 @@ namespace WinDynamicDesktop
             notifyIcon.ShowBalloonTip(10000);
         }
 
+        public static void ToggleTrayIcon()
+        {
+            bool isHidden = JsonConfig.settings.hideTrayIcon ^ true;
+            JsonConfig.settings.hideTrayIcon = isHidden;
+            MainMenu.hideTrayItem.Checked = isHidden;
+            notifyIcon.Visible = !isHidden;
+        }
+
         private void OnArgumentsReceived(string[] args)
         {
+            if (JsonConfig.settings.hideTrayIcon)
+            {
+                ToggleTrayIcon();
+            }
+
             ThemeManager.importPaths.AddRange(args);
 
-            if (!ThemeManager.importMode)
+            if (args.Length > 0 && !ThemeManager.importMode)
             {
                 notifyIcon.ContextMenuStrip.BeginInvoke(new Action(() => ThemeManager.SelectTheme()));
             }

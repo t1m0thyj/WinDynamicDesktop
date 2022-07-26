@@ -1,8 +1,15 @@
 # Changelog
 
+## `5.1.0`
+
+* Added Ventura Abstract theme
+* Added "Hide system tray icon" to menu which hides the tray icon until the next time the app is manually launched.
+* Fixed Mojave Desert theme name shown in bold when there is no active theme
+* Fixed IndexOutOfRangeException when applying settings with no active theme
+
 ## `5.0.3`
 
-* Fixed IndexOutOfRangeException when Select Theme dialog is opened and there are multiple monitors. ([#446](https://github.com/t1m0thyj/WinDynamicDesktop/issues/446))
+* Fixed IndexOutOfRangeException when Select Theme dialog is opened and there are multiple monitors ([#446](https://github.com/t1m0thyj/WinDynamicDesktop/issues/446))
 
 ## `5.0.2`
 
