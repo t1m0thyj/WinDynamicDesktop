@@ -105,7 +105,8 @@ namespace WinDynamicDesktop
             var displayTargets = PathDisplayTarget.GetDisplayTargets()
                 .Where(dt => activeDisplayDevicePaths.Contains(dt.DevicePath)).ToArray();
             return Screen.AllScreens.Select((screen, i) => new KeyValuePair<string, int>(screen.DeviceName, i))
-                .OrderBy(x => x.Key).Select(x => {
+                .OrderBy(x => x.Key).Select(x =>
+                {
                     string displayName = displayTargets[x.Value].FriendlyName;
                     return string.IsNullOrEmpty(displayName) ? _("Internal Display") : displayName;
                 }).ToArray();

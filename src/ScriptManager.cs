@@ -71,8 +71,10 @@ namespace WinDynamicDesktop
             };
 
             var errors = new StringBuilder();
-            proc.ErrorDataReceived += (sender, e) => {
-                if (!string.IsNullOrEmpty(e.Data)) {
+            proc.ErrorDataReceived += (sender, e) =>
+            {
+                if (!string.IsNullOrEmpty(e.Data))
+                {
                     errors.Append(e.Data + "\n");
                 }
             };
