@@ -13,16 +13,17 @@ chocolatey_repo = "https://push.chocolatey.org/"
 nuspec_filename = "windynamicdesktop.nuspec"
 script_filename = "tools/chocolateyInstall.ps1"
 
-def installer_checksum(filename):
+def installer_checksum(tag_name, filename):
     checksums = {}
-    with open("../dist/checksums.txt", 'r') as fileobj:
-        for line in fileobj:
-            fst, snd = line.split()
-            checksums[snd] = fst
+    r = requests.get(f"https://github.com/t1m0thyj/WinDynamicDesktop/releases/download/{tag_name}/checksums.txt",
+        allow_redirects=True)
+    for line in r.text.splitlines():
+        fst, snd = line.split()
+        checksums[snd] = fst
     return checksums[filename]
 
 def render_template(filename, replacers):
-    with open(filename, 'r', encoding="utf8") as fileobj:
+    with open(filename, 'r', encoding="utf-8") as fileobj:
         old_text = fileobj.read()
     new_text = old_text
     for key, value in replacers.items():
@@ -31,7 +32,7 @@ def render_template(filename, replacers):
     return old_text
 
 def write_file(filename, contents):
-    with open(filename, 'w', encoding="utf8") as fileobj:
+    with open(filename, 'w', encoding="utf-8") as fileobj:
         fileobj.write(contents)
 
 r = requests.get("https://api.github.com/repos/t1m0thyj/WinDynamicDesktop/releases/latest")
@@ -40,9 +41,9 @@ installer_url = next(a for a in response["assets"] if a["name"].endswith("x86_Se
 installer_url64 = next(a for a in response["assets"] if a["name"].endswith("x64_Setup.exe"))["browser_download_url"]
 package_version = sys.argv[1] if len(sys.argv) > 1 else response["tag_name"][1:]
 replacers = {
-    "installerChecksum": installer_checksum(os.path.basename(installer_url)),
+    "installerChecksum": installer_checksum(response["tag_name"], os.path.basename(installer_url)),
     "installerUrl": installer_url,
-    "installerChecksum64": installer_checksum(os.path.basename(installer_url64)),
+    "installerChecksum64": installer_checksum(response["tag_name"], os.path.basename(installer_url64)),
     "installerUrl64": installer_url64,
     "packageVersion": package_version,
     "releaseNotes": "\n".join(response["body"].splitlines()),

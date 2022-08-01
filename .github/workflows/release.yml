@@ -1,0 +1,43 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version number for release
+        required: true
+        type: string
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+
+    - uses: microsoft/setup-msbuild@v1
+
+    - run: scripts\version.ps1 ${{ github.event.inputs.version }}
+
+    # TODO Remove after https://github.com/Grabacr07/VirtualDesktop/pull/72 is published
+    - run: dotnet nuget add source --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/t1m0thyj/index.json"
+
+    - run: scripts\package.ps1
+
+    - uses: softprops/action-gh-release@v1
+      with:
+        draft: true
+        files: |
+          dist\*.exe
+          dist\checksums.txt
+        name: WinDynamicDesktop ${{ github.event.inputs.version }}
+        tag_name: v${{ github.event.inputs.version }}
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: msixupload
+        path: dist\*.msixupload

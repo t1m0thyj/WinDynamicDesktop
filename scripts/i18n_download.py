@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import shutil
+import sys
 
 from dotenv import load_dotenv
 from poeditor import POEditorAPI
@@ -8,16 +9,12 @@ from poeditor import POEditorAPI
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 load_dotenv()
 
-mo_dir = "../i18n/mo"
-po_dir = "../i18n/po"
+file_type = sys.argv[1] if len(sys.argv) > 1 else "mo"
+output_dir = sys.argv[2] if len(sys.argv) > 2 else "../src/locale"
 
-if os.path.isdir(mo_dir):
-    shutil.rmtree(mo_dir)
-os.mkdir(mo_dir)
-
-if os.path.isdir(po_dir):
-    shutil.rmtree(po_dir)
-os.mkdir(po_dir)
+if len(sys.argv) > 2 and os.path.isdir(output_dir):
+    shutil.rmtree(output_dir)
+os.makedirs(output_dir, exist_ok=True)
 
 client = POEditorAPI(os.getenv("POEDITOR_TOKEN"))
 projects = client.list_projects()
@@ -27,5 +24,4 @@ language_codes = [lang["code"] for lang in languages if lang["percentage"] >= 50
 
 for lc in language_codes:
     print(f"Downloading translation for {lc}")
-    client.export(project_id, lc, "po", local_file=f"{po_dir}/{lc}.po")
-    client.export(project_id, lc, "mo", local_file=f"{mo_dir}/{lc}.mo")
+    client.export(project_id, lc, file_type, local_file=f"{output_dir}/{lc}.{file_type}")
