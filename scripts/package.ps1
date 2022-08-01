@@ -1,5 +1,8 @@
-Import-Module "$env:ProgramFiles\Microsoft Visual Studio\2022\Community\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
-Enter-VsDevShell -VsInstallPath "$env:ProgramFiles\Microsoft Visual Studio\2022\Community"
+if (-Not (Get-Command msbuild -ErrorAction SilentlyContinue)) {
+    Import-Module "$env:ProgramFiles\Microsoft Visual Studio\2022\Community\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
+    Enter-VsDevShell -VsInstallPath "$env:ProgramFiles\Microsoft Visual Studio\2022\Community"
+}
+
 Set-Location "$(Split-Path $MyInvocation.MyCommand.Path)\.."
 
 $appPlatforms = @("x86", "x64", "arm64")
