@@ -23,9 +23,6 @@ jobs:
 
     - run: scripts\version.ps1
 
-    # TODO Remove after https://github.com/Grabacr07/VirtualDesktop/pull/72 is published
-    - run: dotnet nuget add source --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/t1m0thyj/index.json"
-
     - run: dotnet restore src\WinDynamicDesktop.sln
 
     - run: dotnet publish src\WinDynamicDesktop.csproj -a ${{ matrix.platform }} -c Release --no-restore --self-contained -p:EnableCompressionInSingleFile=$env:EnableCompressionInSingleFile -p:IncludeNativeLibrariesForSelfExtract=$env:IncludeNativeLibrariesForSelfExtract -p:PublishSingleFile=$env:PublishSingleFile

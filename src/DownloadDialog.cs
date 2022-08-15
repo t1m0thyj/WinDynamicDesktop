@@ -4,12 +4,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows.Forms;
 using HttpProgress;
 using WinDynamicDesktop.COM;
@@ -21,13 +20,15 @@ namespace WinDynamicDesktop
         public bool applyPending;
 
         private static readonly Func<string, string> _ = Localization.GetTranslation;
+        private ThemeConfig downloadTheme;
         private List<Uri> themeUris;
         private int themeUriIndex;
         private string themeZipDest;
         private double downloadTime;
 
         private HttpClient httpClient = new HttpClient();
-        private Progress<ICopyProgress> progress;
+        private System.Timers.Timer inactiveTimer;
+        private Progress<ICopyProgress> progressReport;
 
         public DownloadDialog()
         {
@@ -37,7 +38,11 @@ namespace WinDynamicDesktop
             this.FormClosing += OnFormClosing;
             ThemeLoader.taskbarHandle = this.Handle;
 
-            progress = new Progress<ICopyProgress>(OnDownloadProgressChanged);
+            inactiveTimer = new System.Timers.Timer();
+            inactiveTimer.AutoReset = false;
+            inactiveTimer.Interval = 10000;
+            inactiveTimer.Elapsed += (sender, e) => OnDownloadFileCompleted(null);
+            progressReport = new Progress<ICopyProgress>(OnDownloadProgressChanged);
         }
 
         public void InitDownload(ThemeConfig theme)
@@ -47,22 +52,38 @@ namespace WinDynamicDesktop
                 label1.Text = string.Format(_("Downloading images for '{0}'..."), ThemeManager.GetThemeName(theme))));
 
             themeUris = DefaultThemes.GetThemeUriList(theme.themeId).ToList();
+            if (themeUris.Count > 1)
+            {
+                this.Invoke(new Action(() =>
+                    themeUriList.Items.AddRange(themeUris.Select(themeUri => themeUri.Host).ToArray())));
+            }
+            else
+            {
+                themeUriList.Hide();
+            }
+
+            downloadTheme = theme;
             themeUriIndex = 0;
             themeZipDest = Path.Combine("themes", theme.themeId + ".zip");
-            DownloadNext(theme);
+            DownloadNext();
         }
 
-        private void DownloadNext(ThemeConfig theme)
+        private void DownloadNext()
         {
-            this.Invoke(new Action(() => UpdatePercentage(0)));
+            this.Invoke(new Action(() => {
+                UpdatePercentage(0);
+                themeUriList.SelectedIndex = themeUriIndex;
+            }));
             downloadTime = 0;
+            inactiveTimer.Start();
+
             Task.Run(async () =>
             {
                 using (var downloadStream = File.OpenWrite(themeZipDest))
                 {
                     var response = await httpClient.GetAsync(themeUris[themeUriIndex].ToString(),
-                        downloadStream, progress);
-                    this.Invoke(new Action(() => OnDownloadFileCompleted(response, theme)));
+                        downloadStream, progressReport);
+                    this.Invoke(new Action(() => OnDownloadFileCompleted(response)));
                 }
             });
         }
@@ -89,8 +110,9 @@ namespace WinDynamicDesktop
 
             UpdatePercentage((int)(e.PercentComplete * 100));
             downloadTime = e.TransferTime.TotalMilliseconds;
+            inactiveTimer.Interval = 10000;
 
-            if (e.BytesPerSecond < 1024d)
+            if (e.BytesPerSecond < 1024d * 1024d)
             {
                 fileTransferSpeedLabel.Text = string.Format(_("{0} KB/s"), (e.BytesPerSecond / 1024d).ToString("0.#"));
             }
@@ -105,12 +127,13 @@ namespace WinDynamicDesktop
                 (e.ExpectedBytes / 1024d / 1024d).ToString("0.#"));
         }
 
-        public async void OnDownloadFileCompleted(HttpResponseMessage response, ThemeConfig theme)
+        private async void OnDownloadFileCompleted(HttpResponseMessage response)
         {
-            if (response.IsSuccessStatusCode && EnsureZipNotHtml())
+            if (response != null && response.IsSuccessStatusCode && EnsureZipNotHtml())
             {
                 cancelButton.Enabled = false;
-                ThemeResult result = await Task.Run(() => ThemeLoader.ExtractTheme(themeZipDest, theme.themeId));
+                ThemeResult result = await Task.Run(() =>
+                    ThemeLoader.ExtractTheme(themeZipDest, downloadTheme.themeId));
                 result.Match(ThemeLoader.HandleError, newTheme =>
                 {
                     int themeIndex = ThemeManager.themeSettings.FindIndex(t => t.themeId == newTheme.themeId);
@@ -126,23 +149,30 @@ namespace WinDynamicDesktop
                 {
                     bool shouldRetry = ThemeLoader.PromptDialog(string.Format(_("Failed to " +
                         "download images for the '{0}' theme. Do you want to try again?"),
-                        theme.themeId));
+                        downloadTheme.themeId));
 
                     if (shouldRetry)
                     {
-                        InitDownload(theme);
+                        InitDownload(downloadTheme);
                     }
                     else
                     {
-                        ThemeLoader.HandleError(new FailedToDownloadImages(theme.themeId));
+                        ThemeLoader.HandleError(new FailedToDownloadImages(downloadTheme.themeId));
                         this.Close();
                     }
                 }
                 else
                 {
-                    DownloadNext(theme);
+                    DownloadNext();
                 }
             }
+        }
+
+        private void themeUriList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            httpClient.CancelPendingRequests();
+            themeUriIndex = themeUriList.SelectedIndex;
+            DownloadNext();
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
@@ -155,6 +185,7 @@ namespace WinDynamicDesktop
         {
             ThemeLoader.taskbarHandle = IntPtr.Zero;
             ThemeManager.downloadMode = false;
+            inactiveTimer?.Stop();
             httpClient?.Dispose();
 
             Task.Run(() =>

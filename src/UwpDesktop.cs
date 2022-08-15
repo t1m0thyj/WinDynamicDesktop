@@ -46,11 +46,6 @@ namespace WinDynamicDesktop
             return Environment.OSVersion.Version.Major >= 10;
         }
 
-        public static bool IsVirtualDesktopSupported()
-        {
-            return Environment.OSVersion.Version.Build >= 21337 && Environment.OSVersion.Version.Build <= 22000;
-        }
-
         public static PlatformHelper GetHelper()
         {
             if (helper == null)

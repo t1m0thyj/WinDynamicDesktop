@@ -34,7 +34,6 @@
     <PackageReference Include="RestSharp" Version="108.0.1" />
     <PackageReference Include="SunCalcNet" Version="1.2.0" />
     <PackageReference Include="TimeZoneConverter" Version="5.0.0" />
-    <PackageReference Include="VirtualDesktop" Version="5.0.6" />
     <PackageReference Include="WindowsDisplayAPI" Version="1.3.0.13" />
   </ItemGroup>
   <ItemGroup>

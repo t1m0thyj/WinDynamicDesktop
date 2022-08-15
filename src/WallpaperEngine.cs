@@ -36,7 +36,6 @@ namespace WinDynamicDesktop
         public WallpaperEngine()
         {
             fullScreenChecker = new FullScreenApi(this);
-            VirtualDesktopApi.Initialize();
 
             backgroundTimer.AutoReset = true;
             backgroundTimer.Interval = 60e3;

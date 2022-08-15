@@ -25,14 +25,6 @@ namespace WinDynamicDesktop
             SendMessageTimeout(FindWindow("Progman", null), 0x52c, IntPtr.Zero, IntPtr.Zero, 0, 500, out result);
         }
 
-        public static void SyncVirtualDesktops(string imagePath)
-        {
-            if (UwpDesktop.IsVirtualDesktopSupported())
-            {
-                VirtualDesktopApi.SetWallpaper(imagePath);
-            }
-        }
-
         public static async void SetWallpaper(string imagePath, int displayIndex = -1)
         {
             EnableTransitions();
@@ -74,8 +66,6 @@ namespace WinDynamicDesktop
             {
                 await LockScreenChanger.UpdateImage(imagePath);
             }
-
-            SyncVirtualDesktops(imagePath);
         }
     }
 }

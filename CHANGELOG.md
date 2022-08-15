@@ -2,8 +2,11 @@
 
 ## `5.1.0`
 
+**Note:** This version removes syncing wallpaper across virtual desktops in Windows 11 because it is too experimental of a feature to support. If you still want this functionality, install the Sync Virtual Desktops script.
+
 * Added Ventura Abstract theme
-* Added "Hide system tray icon" to menu which hides the tray icon until the next time the app is manually launched.
+* Added dropdown in theme download dialog to select alternate mirrors that may be faster
+* Added "Hide system tray icon" to menu which hides the tray icon until the next time the app is manually launched
 * Fixed Mojave Desert theme name shown in bold when there is no active theme
 * Fixed IndexOutOfRangeException when applying settings with no active theme
 

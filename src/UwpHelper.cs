@@ -93,7 +93,6 @@ namespace WinDynamicDesktop
                 {
                     await profileSettings.TrySetLockScreenImageAsync(file);
                 }
-                WallpaperApi.SyncVirtualDesktops(imagePath);
             }
         }
     }
