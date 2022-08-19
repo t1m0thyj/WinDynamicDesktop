@@ -40,7 +40,12 @@ namespace WinDynamicDesktop
 
             if (enableScripts)
             {
-                AppContext.wpEngine.RunScheduler();
+                int scriptCount = Directory.GetFiles("scripts", "*.ps1").Length;
+                AppContext.ShowPopup(string.Format(_("Found {0} PowerShell script(s) to enable"), scriptCount));
+                if (scriptCount > 0)
+                {
+                    AppContext.wpEngine.RunScheduler();
+                }
             }
         }
 
@@ -61,7 +66,8 @@ namespace WinDynamicDesktop
         {
             Process proc = new Process();
             string command = BuildCommandString(Path.GetFileName(path), args);
-            proc.StartInfo = new ProcessStartInfo("powershell.exe", "-NoProfile -ExecutionPolicy Bypass -Command \"" + command + "\"")
+            proc.StartInfo = new ProcessStartInfo("powershell.exe",
+                "-NoProfile -ExecutionPolicy Bypass -Command \"" + command + "\"")
             {
                 CreateNoWindow = true,
                 RedirectStandardError = true,
@@ -82,7 +88,7 @@ namespace WinDynamicDesktop
             proc.BeginErrorReadLine();
             await proc.WaitForExitAsync();
 
-            if (proc.ExitCode != 0)
+            if (proc.ExitCode != 0 || errors.Length > 0)
             {
                 MessageDialog.ShowWarning(string.Format(_("Error(s) running PowerShell script '{0}':\n\n{1}"), path,
                     errors), _("Script Error"));

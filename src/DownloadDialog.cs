@@ -55,7 +55,10 @@ namespace WinDynamicDesktop
             if (themeUris.Count > 1)
             {
                 this.Invoke(new Action(() =>
-                    themeUriList.Items.AddRange(themeUris.Select(themeUri => themeUri.Host).ToArray())));
+                {
+                    themeUriList.Items.Clear();
+                    themeUriList.Items.AddRange(themeUris.Select(themeUri => themeUri.Host).ToArray());
+                }));
             }
             else
             {
@@ -70,7 +73,8 @@ namespace WinDynamicDesktop
 
         private void DownloadNext()
         {
-            this.Invoke(new Action(() => {
+            this.Invoke(new Action(() =>
+            {
                 UpdatePercentage(0);
                 themeUriList.SelectedIndex = themeUriIndex;
             }));
