@@ -233,7 +233,7 @@ namespace WinDynamicDesktop
                 TimeSpan imageDuration = new TimeSpan((segmentEnd - segmentStart).Ticks / imageList.Length);
                 int imageNumber = (int)((dateNow.Ticks - segmentStart.Ticks) / imageDuration.Ticks);
                 e.imageId = imageList[imageNumber];
-                e.nextUpdateTicks = segmentStart.Ticks + imageDuration.Ticks * (imageNumber + 1);
+                e.nextUpdateTime = new DateTime(segmentStart.Ticks + imageDuration.Ticks * (imageNumber + 1));
             }
         }
     }

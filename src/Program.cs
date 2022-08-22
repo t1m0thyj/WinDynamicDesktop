@@ -17,9 +17,9 @@ namespace WinDynamicDesktop
         static void Main(string[] args)
         {
             string localFolder = UwpDesktop.GetHelper().GetLocalFolder();
-            Application.ThreadException += (sender, e) => ErrorHandler.LogError(localFolder, e.Exception);
+            Application.ThreadException += (sender, e) => LoggingHandler.LogError(localFolder, e.Exception);
             AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
-                ErrorHandler.LogError(localFolder, e.ExceptionObject as Exception);
+                LoggingHandler.LogError(localFolder, e.ExceptionObject as Exception);
             Directory.SetCurrentDirectory(FindCwd(localFolder));
 
             // To customize application configuration such as set high DPI settings or default font,

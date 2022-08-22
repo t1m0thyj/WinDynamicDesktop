@@ -44,6 +44,7 @@ namespace WinDynamicDesktop
         public bool hideTrayIcon { get; set; }
         public bool fullScreenPause { get; set; }
         public bool enableScripts { get; set; }
+        public bool debugLogging { get; set; }
     }
 
     class JsonConfig

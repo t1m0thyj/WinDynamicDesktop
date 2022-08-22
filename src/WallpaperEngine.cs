@@ -20,7 +20,7 @@ namespace WinDynamicDesktop
         public int displayIndex;
         public int imageId;
         public string lastImagePath;
-        public long nextUpdateTicks;
+        public DateTime nextUpdateTime;
     }
 
     class WallpaperEngine
@@ -62,6 +62,7 @@ namespace WinDynamicDesktop
 
             schedulerTimer.Stop();
             SolarData data = SunriseSunsetService.GetSolarData(DateTime.Today);
+            AppContext.Log("Calculated solar data: {0}", data);
             long nextDisplayUpdateTicks = long.MaxValue;
 
             ThemeShuffler.MaybeShuffleWallpaper();
@@ -86,14 +87,15 @@ namespace WinDynamicDesktop
                 displayEvents[i].currentTheme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
                 displayEvents[i].displayIndex = (JsonConfig.settings.activeThemes[0] == null) ? i : -1;
                 SolarScheduler.CalcNextUpdateTime(data, displayEvents[i]);
+                AppContext.Log("Updated display event: {0}", displayEvents[i]);
 
                 if (displayEvents[i].currentTheme != null)
                 {
                     SetWallpaper(displayEvents[i]);
 
-                    if (displayEvents[i].nextUpdateTicks < nextDisplayUpdateTicks)
+                    if (displayEvents[i].nextUpdateTime.Ticks < nextDisplayUpdateTicks)
                     {
-                        nextDisplayUpdateTicks = displayEvents[i].nextUpdateTicks;
+                        nextDisplayUpdateTicks = displayEvents[i].nextUpdateTime.Ticks;
                     }
                 }
             }
@@ -103,7 +105,7 @@ namespace WinDynamicDesktop
                 daySegment2 = displayEvents[0].daySegment2,
                 daySegment4 = displayEvents[0].daySegment4,
                 imagePaths = displayEvents.Select(e => e.lastImagePath).ToArray()
-            });
+            }, forceImageUpdate);
 
             if (data.polarPeriod != PolarPeriod.None)
             {
@@ -149,6 +151,7 @@ namespace WinDynamicDesktop
 
             int numDisplaysBefore = displayEvents.Count;
             int numDisplaysAfter = Screen.AllScreens.Length;
+            AppContext.Log("Number of displays updated from {0} to {1}", numDisplaysBefore, numDisplaysAfter);
 
             if (numDisplaysAfter > numDisplaysBefore)
             {
@@ -172,6 +175,7 @@ namespace WinDynamicDesktop
             string imageFilename = e.currentTheme.imageFilename.Replace("*", e.imageId.ToString());
             string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "themes", e.currentTheme.themeId,
                 imageFilename);
+            AppContext.Log("Setting wallpaper to {0}", imagePath);
 
             if (imagePath == e.lastImagePath)
             {
@@ -197,6 +201,7 @@ namespace WinDynamicDesktop
             TimeSpan interval = new TimeSpan(intervalTicks);
             schedulerTimer.Interval = interval.TotalMilliseconds;
             schedulerTimer.Start();
+            AppContext.Log("Started timer for {0:0.000} sec", interval.TotalSeconds);
         }
 
         public void HandleTimerEvent(bool updateLocation)
@@ -220,12 +225,14 @@ namespace WinDynamicDesktop
         {
             if (nextUpdateTime.HasValue && DateTime.Now >= nextUpdateTime.Value)
             {
+                AppContext.Log("Scheduler event triggered by timer 2");
                 HandleTimerEvent(true);
             }
         }
 
         private void OnSchedulerTimerElapsed(object sender, EventArgs e)
         {
+            AppContext.Log("Scheduler event triggered by timer 1");
             HandleTimerEvent(true);
         }
 
@@ -238,12 +245,14 @@ namespace WinDynamicDesktop
         {
             if (e.Mode == PowerModes.Resume)
             {
+                AppContext.Log("Scheduler event triggered by resume from sleep");
                 HandleTimerEvent(false);
             }
         }
 
         private void OnTimeChanged(object sender, EventArgs e)
         {
+            AppContext.Log("Scheduler event triggered by system time change");
             HandleTimerEvent(false);
         }
     }

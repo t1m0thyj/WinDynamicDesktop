@@ -5,6 +5,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,11 +16,18 @@ namespace WinDynamicDesktop
         public int daySegment2;
         public int? daySegment4;
         public string[] imagePaths;
+
+        public bool Equals(ScriptArgs other)
+        {
+            return other != null && this.daySegment2 == other.daySegment2 &&
+                this.daySegment4 == other.daySegment4 && this.imagePaths.SequenceEqual(other.imagePaths);
+        }
     }
 
     class ScriptManager
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
+        private static ScriptArgs lastArgs;
 
         public static void Initialize()
         {
@@ -49,17 +57,19 @@ namespace WinDynamicDesktop
             }
         }
 
-        public static void RunScripts(ScriptArgs args)
+        public static void RunScripts(ScriptArgs args, bool forceUpdate = false)
         {
-            if (!JsonConfig.settings.enableScripts)
+            if (!JsonConfig.settings.enableScripts || (args.Equals(lastArgs) && !forceUpdate))
             {
                 return;
             }
 
+            AppContext.Log("Running scripts with arguments: {0}", args);
             foreach (string scriptPath in Directory.EnumerateFiles("scripts", "*.ps1"))
             {
                 Task.Run(() => RunScript(scriptPath, args));
             }
+            lastArgs = args;
         }
 
         private static async void RunScript(string path, ScriptArgs args)
@@ -75,6 +85,7 @@ namespace WinDynamicDesktop
                 WindowStyle = ProcessWindowStyle.Hidden,
                 WorkingDirectory = Path.GetDirectoryName(path)
             };
+            AppContext.Log("Running PowerShell script: {0}", proc.StartInfo.Arguments);
 
             var errors = new StringBuilder();
             proc.ErrorDataReceived += (sender, e) =>
@@ -90,6 +101,7 @@ namespace WinDynamicDesktop
 
             if (proc.ExitCode != 0 || errors.Length > 0)
             {
+                AppContext.Log("Script failed with errors: {0}", errors);
                 MessageDialog.ShowWarning(string.Format(_("Error(s) running PowerShell script '{0}':\n\n{1}"), path,
                     errors), _("Script Error"));
             }

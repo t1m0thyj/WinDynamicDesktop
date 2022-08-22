@@ -9,7 +9,7 @@ using System.IO;
 
 namespace WinDynamicDesktop
 {
-    class ErrorHandler
+    class LoggingHandler
     {
         public static void LogError(string cwd, Exception exc)
         {
@@ -20,7 +20,7 @@ namespace WinDynamicDesktop
             {
                 string timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
                 File.AppendAllText(logFilename, string.Format("[{0}] {1}\n\n", timestamp, errorMessage));
-                WriteDebugLog();
+                WriteReportLog(exc);
 
                 MessageDialog.ShowError(string.Format("See the logfile '{0}' for details", logFilename),
                     "Errors occurred");
@@ -32,7 +32,46 @@ namespace WinDynamicDesktop
             }
         }
 
-        private static void WriteDebugLog()
+        public static void LogMessage(string message, object[] values)
+        {
+#if !DEBUG
+            if (!JsonConfig.settings.debugLogging)
+            {
+                return;
+            }
+#endif
+
+            string timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+            if (values.Length > 0)
+            {
+                for (int i = 0; i < values.Length; i++)
+                {
+                    if (!values[i].GetType().IsSerializable)
+                    {
+                        values[i] = JsonConvert.SerializeObject(values[i]);
+                    }
+                }
+                message = string.Format(message, values);
+            }
+            File.AppendAllText("debug.log", string.Format("[{0}] {1}\n", timestamp, message));
+        }
+
+        public static void RotateDebugLog()
+        {
+#if !DEBUG
+            if (!JsonConfig.settings.debugLogging)
+            {
+                return;
+            }
+#endif
+
+            if (File.Exists("debug.log") && new FileInfo("debug.log").Length > 1e6)
+            {
+                File.Move("debug.log", "debug.old.log", true);
+            }
+        }
+
+        private static void WriteReportLog(Exception exc)
         {
             AppConfig settings = null;
 
@@ -43,9 +82,10 @@ namespace WinDynamicDesktop
             }
             catch { /* Do nothing */ }
 
-            using (StreamWriter debugLog = new StreamWriter("debug.log"))
+            using (StreamWriter reportLog = new StreamWriter("report.log"))
             {
-                debugLog.WriteLine("//" + DateTime.Now.ToString());
+                reportLog.WriteLine("//" + DateTime.Now.ToString());
+                reportLog.WriteLine(JsonConvert.SerializeObject(exc, Formatting.Indented));
 
                 if (settings != null)
                 {
@@ -62,41 +102,41 @@ namespace WinDynamicDesktop
                         settings.longitude = Math.Round(settings.longitude.Value, MidpointRounding.AwayFromZero);
                     }
 
-                    debugLog.WriteLine("./settings.json");
-                    debugLog.WriteLine(JsonConvert.SerializeObject(settings, Formatting.Indented));
+                    reportLog.WriteLine("./settings.json");
+                    reportLog.WriteLine(JsonConvert.SerializeObject(settings, Formatting.Indented));
                 }
                 else
                 {
-                    debugLog.WriteLine("WARNING: Settings file not found or invalid");
+                    reportLog.WriteLine("WARNING: Settings file not found or invalid");
                 }
 
                 if (Directory.Exists("scripts"))
                 {
                     foreach (string path in Directory.EnumerateFiles("scripts", "*.ps1"))
                     {
-                        debugLog.WriteLine("./" + path.Replace('\\', '/'));
+                        reportLog.WriteLine("./" + path.Replace('\\', '/'));
                     }
                 }
                 else
                 {
-                    debugLog.WriteLine("WARNING: Scripts directory not found");
+                    reportLog.WriteLine("WARNING: Scripts directory not found");
                 }
 
                 if (Directory.Exists("themes"))
                 {
                     foreach (string path in Directory.EnumerateFiles("themes", "*", SearchOption.AllDirectories))
                     {
-                        debugLog.WriteLine("./" + path.Replace('\\', '/'));
+                        reportLog.WriteLine("./" + path.Replace('\\', '/'));
 
                         if (Path.GetExtension(path) == ".json")
                         {
-                            debugLog.WriteLine(File.ReadAllText(path));
+                            reportLog.WriteLine(File.ReadAllText(path));
                         }
                     }
                 }
                 else
                 {
-                    debugLog.WriteLine("WARNING: Themes directory not found");
+                    reportLog.WriteLine("WARNING: Themes directory not found");
                 }
             }
         }

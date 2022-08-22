@@ -21,6 +21,7 @@ namespace WinDynamicDesktop
         {
             JsonConfig.LoadConfig();
             Localization.Initialize();
+            LoggingHandler.RotateDebugLog();
 
             ThemeManager.importPaths = args.Where(System.IO.File.Exists).ToList();
             HandleMultiInstance();
@@ -73,6 +74,11 @@ namespace WinDynamicDesktop
             notifyIcon.MouseUp += OnNotifyIconMouseUp;
 
             Localization.NotifyIfTestMode();
+        }
+
+        public static void Log(string message, params object[] values)
+        {
+            LoggingHandler.LogMessage(message, values);
         }
 
         public static void ShowPopup(string message, string title = null)
