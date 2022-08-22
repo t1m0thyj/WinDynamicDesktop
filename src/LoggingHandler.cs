@@ -11,6 +11,8 @@ namespace WinDynamicDesktop
 {
     class LoggingHandler
     {
+        private static readonly object debugLogLock = new object();
+
         public static void LogError(string cwd, Exception exc)
         {
             string errorMessage = exc.ToString();
@@ -53,7 +55,11 @@ namespace WinDynamicDesktop
                 }
                 message = string.Format(message, values);
             }
-            File.AppendAllText("debug.log", string.Format("[{0}] {1}\n", timestamp, message));
+
+            lock (debugLogLock)
+            {
+                File.AppendAllText("debug.log", string.Format("[{0}] {1}\n", timestamp, message));
+            }
         }
 
         public static void RotateDebugLog()
