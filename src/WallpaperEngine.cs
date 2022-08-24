@@ -57,10 +57,10 @@ namespace WinDynamicDesktop
             else if (displayEvents == null || forceImageUpdate)
             {
                 displayEvents = new List<DisplayEvent> { null };
-                RefreshDisplayList(false);
             }
 
             schedulerTimer.Stop();
+            forceImageUpdate = UpdateDisplayList() || forceImageUpdate;
             SolarData data = SunriseSunsetService.GetSolarData(DateTime.Today);
             AppContext.Log("Calculated solar data: {0}", data);
             long nextDisplayUpdateTicks = long.MaxValue;
@@ -142,16 +142,19 @@ namespace WinDynamicDesktop
             RunScheduler();
         }
 
-        private void RefreshDisplayList(bool sendEvent)
+        private bool UpdateDisplayList()
         {
             if (JsonConfig.settings.activeThemes == null || JsonConfig.settings.activeThemes[0] != null)
             {
-                return;
+                return false;
             }
 
             int numDisplaysBefore = displayEvents.Count;
             int numDisplaysAfter = Screen.AllScreens.Length;
-            AppContext.Log("Number of displays updated from {0} to {1}", numDisplaysBefore, numDisplaysAfter);
+            if (numDisplaysAfter != numDisplaysBefore)
+            {
+                AppContext.Log("Number of displays updated from {0} to {1}", numDisplaysBefore, numDisplaysAfter);
+            }
 
             if (numDisplaysAfter > numDisplaysBefore)
             {
@@ -159,15 +162,13 @@ namespace WinDynamicDesktop
                 {
                     displayEvents.Add(null);
                 }
-                if (sendEvent)
-                {
-                    HandleTimerEvent(false);
-                }
             }
             else if (numDisplaysAfter < numDisplaysBefore)
             {
                 displayEvents.RemoveRange(numDisplaysAfter, numDisplaysBefore - numDisplaysAfter);
             }
+
+            return numDisplaysAfter > numDisplaysBefore;
         }
 
         private void SetWallpaper(DisplayEvent e)
@@ -238,7 +239,10 @@ namespace WinDynamicDesktop
 
         private void OnDisplaySettingsChanged(object sender, EventArgs e)
         {
-            RefreshDisplayList(true);
+            if (UpdateDisplayList())
+            {
+                HandleTimerEvent(false);
+            }
         }
 
         private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
