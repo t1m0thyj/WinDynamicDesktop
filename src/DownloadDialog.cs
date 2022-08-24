@@ -7,8 +7,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Windows.Forms;
 using HttpProgress;
 using WinDynamicDesktop.COM;
@@ -29,6 +29,7 @@ namespace WinDynamicDesktop
         private HttpClient httpClient = new HttpClient();
         private System.Timers.Timer inactiveTimer;
         private Progress<ICopyProgress> progressReport;
+        private CancellationTokenSource tokenSource;
 
         public DownloadDialog()
         {
@@ -80,13 +81,15 @@ namespace WinDynamicDesktop
             }));
             downloadTime = 0;
             inactiveTimer.Start();
+            tokenSource = new CancellationTokenSource();
 
             Task.Run(async () =>
             {
                 using (var downloadStream = File.OpenWrite(themeZipDest))
+                using (tokenSource.Token.Register(downloadStream.Close))
                 {
                     var response = await httpClient.GetAsync(themeUris[themeUriIndex].ToString(),
-                        downloadStream, progressReport);
+                        downloadStream, progressReport, tokenSource.Token);
                     this.Invoke(new Action(() => OnDownloadFileCompleted(response)));
                 }
             });
@@ -174,14 +177,18 @@ namespace WinDynamicDesktop
 
         private void themeUriList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            httpClient.CancelPendingRequests();
+            if (tokenSource == null || tokenSource.IsCancellationRequested)
+            {
+                return;
+            }
+            tokenSource.Cancel();
             themeUriIndex = themeUriList.SelectedIndex;
             DownloadNext();
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
-            httpClient.CancelPendingRequests();
+            tokenSource.Cancel();
             this.Close();
         }
 
