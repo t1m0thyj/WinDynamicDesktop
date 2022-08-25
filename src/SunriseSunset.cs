@@ -59,8 +59,8 @@ namespace WinDynamicDesktop
 
         private static DateTime GetSolarTime(List<SunPhase> sunPhases, SunPhaseName desiredPhase)
         {
-            SunPhase sunPhase = sunPhases.FirstOrDefault(sp => sp.Name.Value == desiredPhase.Value);
-            return (sunPhase != null) ? sunPhase.PhaseTime.ToLocalTime() : DateTime.MinValue;
+            SunPhase? sunPhase = sunPhases.FirstOrDefault(sp => sp.Name.Value == desiredPhase.Value);
+            return sunPhase.HasValue ? sunPhase.Value.PhaseTime.ToLocalTime() : DateTime.MinValue;
         }
 
         public static SolarData GetSolarData(DateTime date)

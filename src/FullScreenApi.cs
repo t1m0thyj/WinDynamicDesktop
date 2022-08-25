@@ -93,7 +93,9 @@ namespace WinDynamicDesktop
             IntPtr shellHandle = GetShellWindow();
             IntPtr hWnd = GetForegroundWindow();
 
+#pragma warning disable 8073
             if (hWnd != null && !hWnd.Equals(IntPtr.Zero))
+#pragma warning restore 8073
             {
                 if (!(hWnd.Equals(desktopHandle) || hWnd.Equals(shellHandle)))
                 {

@@ -63,9 +63,9 @@ namespace WinDynamicDesktop
             forceImageUpdate = UpdateDisplayList() || forceImageUpdate;
             SolarData data = SunriseSunsetService.GetSolarData(DateTime.Today);
             AppContext.Log("Calculated solar data: {0}", data);
-            long nextDisplayUpdateTicks = long.MaxValue;
 
             ThemeShuffler.MaybeShuffleWallpaper();
+            long nextDisplayUpdateTicks = long.MaxValue;
 
             for (int i = 0; i < displayEvents.Count; i++)
             {
@@ -174,26 +174,20 @@ namespace WinDynamicDesktop
         private void SetWallpaper(DisplayEvent e)
         {
             string imageFilename = e.currentTheme.imageFilename.Replace("*", e.imageId.ToString());
-            string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "themes", e.currentTheme.themeId,
-                imageFilename);
-            AppContext.Log("Setting wallpaper to {0}", imagePath);
-
+            string imagePath = Path.Combine(Path.GetFullPath("themes"), e.currentTheme.themeId, imageFilename);
             if (imagePath == e.lastImagePath)
             {
                 return;
             }
-            else
-            {
-                UwpDesktop.GetHelper().SetWallpaper(imagePath, e.displayIndex);
-            }
-
+            
+            AppContext.Log("Setting wallpaper to {0}", imagePath);
+            UwpDesktop.GetHelper().SetWallpaper(imagePath, e.displayIndex);
             e.lastImagePath = imagePath;
         }
 
         private void StartTimer(DateTime futureTime)
         {
             long intervalTicks = futureTime.Ticks - DateTime.Now.Ticks;
-
             if (intervalTicks < timerError)
             {
                 intervalTicks = 1;
