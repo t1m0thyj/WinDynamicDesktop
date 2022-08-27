@@ -179,7 +179,7 @@ namespace WinDynamicDesktop
             {
                 return;
             }
-            
+
             AppContext.Log("Setting wallpaper to {0}", imagePath);
             UwpDesktop.GetHelper().SetWallpaper(imagePath, e.displayIndex);
             e.lastImagePath = imagePath;

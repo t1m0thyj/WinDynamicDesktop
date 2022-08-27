@@ -117,7 +117,8 @@ namespace WinDynamicDesktop
         public static bool IsThemeDownloaded(ThemeConfig theme)
         {
             string themePath = Path.Combine("themes", theme.themeId);
-            return (Directory.Exists(themePath) && (Directory.GetFiles(themePath, theme.imageFilename).Length > 0));
+            return (File.Exists(Path.Combine(themePath, "theme.json")) &&
+                (Directory.GetFiles(themePath, theme.imageFilename).Length > 0));
         }
 
         public static void DisableTheme(string themeId, bool permanent)

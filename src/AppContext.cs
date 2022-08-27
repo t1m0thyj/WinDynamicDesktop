@@ -100,14 +100,14 @@ namespace WinDynamicDesktop
         {
             if (JsonConfig.settings.hideTrayIcon)
             {
-                ToggleTrayIcon();
+                notifyIcon.ContextMenuStrip.BeginInvoke(ToggleTrayIcon);
             }
 
             ThemeManager.importPaths.AddRange(args);
 
             if (args.Length > 0 && !ThemeManager.importMode)
             {
-                notifyIcon.ContextMenuStrip.BeginInvoke(new Action(() => ThemeManager.SelectTheme()));
+                notifyIcon.ContextMenuStrip.BeginInvoke(ThemeManager.SelectTheme);
             }
         }
 

@@ -42,7 +42,7 @@ namespace WinDynamicDesktop
             inactiveTimer = new System.Timers.Timer();
             inactiveTimer.AutoReset = false;
             inactiveTimer.Interval = 10000;
-            inactiveTimer.Elapsed += (sender, e) => OnDownloadFileCompleted(null);
+            inactiveTimer.Elapsed += (sender, e) => this.Invoke(new Action(() => OnDownloadFileCompleted(null)));
             progressReport = new Progress<ICopyProgress>(OnDownloadProgressChanged);
         }
 
@@ -110,7 +110,7 @@ namespace WinDynamicDesktop
 
         private void OnDownloadProgressChanged(ICopyProgress e)
         {
-            if (e.TransferTime.TotalMilliseconds < (downloadTime + 200))
+            if (tokenSource.IsCancellationRequested || e.TransferTime.TotalMilliseconds < (downloadTime + 200))
             {
                 return;
             }
@@ -150,6 +150,7 @@ namespace WinDynamicDesktop
             }
             else
             {
+                tokenSource.Cancel();
                 themeUriIndex++;
 
                 if (themeUriIndex >= themeUris.Count)

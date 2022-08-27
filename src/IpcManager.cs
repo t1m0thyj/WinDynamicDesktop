@@ -44,7 +44,7 @@ namespace WinDynamicDesktop
                         namedPipeServer.WaitForConnection();
                     }
 
-                    listener(reader.ReadToEnd().Split(Environment.NewLine));
+                    listener(reader.ReadToEnd().Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries));
                     namedPipeServer.Disconnect();
                 }
 
