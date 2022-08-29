@@ -105,7 +105,7 @@ namespace WinDynamicDesktop
         private bool EnsureZipNotHtml()
         {
             // Handle case where HTML page gets downloaded instead of ZIP
-            return (File.Exists(themeZipDest) && ((new FileInfo(themeZipDest)).Length > 1048576));
+            return (File.Exists(themeZipDest) && new FileInfo(themeZipDest).Length > 1e6);
         }
 
         private void OnDownloadProgressChanged(ICopyProgress e)

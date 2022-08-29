@@ -2,13 +2,17 @@
 
 ## `5.1.0`
 
-**Note:** This version removes syncing wallpaper across virtual desktops in Windows 11 because it is too experimental of a feature to support. If you still want this functionality, install the Sync Virtual Desktops script.
+**Note:** This version removes syncing wallpaper across virtual desktops in Windows 11 which used an experimental API that is too unstable to support. If you still want this functionality, install the [Sync Virtual Desktops](https://github.com/t1m0thyj/WDD-scripts/tree/master/experimental#synchronize-virtual-desktops) script.
 
-* Added Ventura Abstract theme
+* Added Ventura Abstract theme ([#451](https://github.com/t1m0thyj/WinDynamicDesktop/issues/451))
 * Added dropdown in theme download dialog to select alternate mirrors that may be faster
-* Added "Hide system tray icon" to menu which hides the tray icon until the next time the app is manually launched
-* Fixed Mojave Desert theme name shown in bold when there is no active theme
-* Fixed IndexOutOfRangeException when applying settings with no active theme
+* Added "Hide system tray icon" to menu which hides tray icon until the next time the app is manually launched ([#464](https://github.com/t1m0thyj/WinDynamicDesktop/issues/464))
+* Added Estonian translation (thanks ST)
+* Fixed error when applying settings and there is no active theme ([#457](https://github.com/t1m0thyj/WinDynamicDesktop/issues/457))
+* Fixed theme not updating on displays that were connected when device is sleeping
+* Fixed error when theme download is cancelled
+* Fixed PowerShell scripts being invoked multiple times with the same arguments
+* Fixed incorrect theme name shown in bold when there is no active theme
 
 ## `5.0.3`
 

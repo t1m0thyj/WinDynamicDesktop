@@ -144,6 +144,7 @@ namespace WinDynamicDesktop
             AddLanguage("Svenska", "sv");  // Swedish
             AddLanguage("Tiếng Việt", "vi");  // Vietnamese
             AddLanguage("Türkçe", "tr");  // Turkish
+            AddLanguage("eesti keel", "et");  // Estonian
             AddLanguage("Íslenska", "is");  // Icelandic
             AddLanguage("Čeština", "cs");  // Czech
             AddLanguage("Ελληνικά", "el");  // Greek
