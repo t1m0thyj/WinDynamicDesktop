@@ -154,37 +154,44 @@ namespace WinDynamicDesktop
 
         private async void okButton_Click(object sender, EventArgs e)
         {
+            Application.UseWaitCursor = true;
             okButton.Enabled = false;
             JsonConfig.settings.locationMode = radioButton2.Checked ? 1 : (radioButton3.Checked ? -1 : 0);
 
-            if (radioButton1.Checked)
+            try
             {
-                await LocationIQService.GetLocationData(locationBox.Text, this);
-            }
-            else if (radioButton2.Checked)
-            {
-                bool locationUpdated = await UwpLocation.UpdateGeoposition();
-
-                if (locationUpdated)
+                if (radioButton1.Checked)
                 {
-                    HandleScheduleChange();
+                    await LocationIQService.GetLocationData(locationBox.Text, this);
                 }
-                else
+                else if (radioButton2.Checked)
                 {
-                    hasLocationPermission = UwpLocation.HasAccess();
-                    UpdateLocationState();
-                    MessageDialog.ShowWarning(_("Failed to get location from Windows location service."), _("Error"));
+                    bool locationUpdated = await UwpLocation.UpdateGeoposition();
+
+                    if (locationUpdated)
+                    {
+                        HandleScheduleChange();
+                    }
+                    else
+                    {
+                        hasLocationPermission = UwpLocation.HasAccess();
+                        UpdateLocationState();
+                        MessageDialog.ShowWarning(_("Failed to get location from Windows location service."), _("Error"));
+                    }
+                }
+                else if (radioButton3.Checked)
+                {
+                    JsonConfig.settings.sunriseTime = sunriseTimePicker.Value.ToString("T", CultureInfo.InvariantCulture);
+                    JsonConfig.settings.sunsetTime = sunsetTimePicker.Value.ToString("T", CultureInfo.InvariantCulture);
+                    JsonConfig.settings.sunriseSunsetDuration = (int)sunriseSunsetDurationBox.Value;
+                    this.Close();
                 }
             }
-            else if (radioButton3.Checked)
+            finally
             {
-                JsonConfig.settings.sunriseTime = sunriseTimePicker.Value.ToString("T", CultureInfo.InvariantCulture);
-                JsonConfig.settings.sunsetTime = sunsetTimePicker.Value.ToString("T", CultureInfo.InvariantCulture);
-                JsonConfig.settings.sunriseSunsetDuration = (int)sunriseSunsetDurationBox.Value;
-                this.Close();
+                Application.UseWaitCursor = false;
+                okButton.Enabled = true;
             }
-
-            okButton.Enabled = true;
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
