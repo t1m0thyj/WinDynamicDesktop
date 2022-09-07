@@ -109,11 +109,15 @@ namespace WinDynamicDesktop
 
         private static string BuildCommandString(string filename, ScriptArgs args)
         {
-            return "& \\\".\\" + filename + "\\\"" +
+            string cmdStr = "& \\\".\\" + filename + "\\\"" +
                 " -daySegment2 " + args.daySegment2.ToString() +
                 " -daySegment4 " + (args.daySegment4 ?? -1).ToString() +
-                " -imagePath \\\"" + args.imagePaths[0] + "\\\"" +
                 " -nightMode " + Convert.ToInt32(JsonConfig.settings.darkMode);
+            if (args.imagePaths.Length > 0)
+            {
+                cmdStr += " -imagePath \\\"" + args.imagePaths[0] + "\\\"";
+            }
+            return cmdStr;
         }
     }
 }
