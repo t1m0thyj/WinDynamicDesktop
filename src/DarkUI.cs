@@ -17,9 +17,7 @@ namespace WinDynamicDesktop
 
         public static bool IsDark
         {
-            get {
-                return DarkNet.Instance.UserDefaultAppThemeIsDark;
-            }
+            get { return DarkNet.Instance.UserDefaultAppThemeIsDark; }
         }
 
         public static void ThemeContextMenu(ContextMenuStrip menu)
