@@ -16,6 +16,7 @@ namespace WinDynamicDesktop
         public LanguageDialog()
         {
             InitializeComponent();
+            DarkUI.ThemeForm(this);
             Localization.TranslateForm(this);
         }
 

@@ -36,5 +36,5 @@ jobs:
 
     - uses: actions/upload-artifact@v3
       with:
-        name: msixupload
+        name: msixupload  # To download/extract: gh run download -n msixupload
         path: dist\*.msixupload
