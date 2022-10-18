@@ -2,10 +2,11 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+using Dark.Net;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using Dark.Net;
 
 namespace WinDynamicDesktop
 {
@@ -17,7 +18,7 @@ namespace WinDynamicDesktop
 
         public static bool IsDark
         {
-            get { return DarkNet.Instance.UserDefaultAppThemeIsDark; }
+            get { return IsSupported && DarkNet.Instance.UserDefaultAppThemeIsDark; }
         }
 
         public static void ThemeContextMenu(ContextMenuStrip menu)
@@ -43,7 +44,7 @@ namespace WinDynamicDesktop
 
         public static void ThemeForm(Form form, bool onInit = true)
         {
-            if (onInit)
+            if (onInit && IsSupported)
             {
                 DarkNet.Instance.SetWindowThemeForms(form, Theme.Auto);
             }
@@ -110,6 +111,11 @@ namespace WinDynamicDesktop
 
                 yield return childControl;
             }
+        }
+
+        private static bool IsSupported
+        {
+            get { return Environment.OSVersion.Version.Major >= 10 && Environment.OSVersion.Version.Build >= 17763; }
         }
 
         // https://github.com/AutoDarkMode/Windows-Auto-Night-Mode/blob/bef463c6ee937558cadfc3116bc23e83291b5ac0/AutoDarkModeSvc/Service.cs#L524
