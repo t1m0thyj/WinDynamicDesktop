@@ -23,6 +23,11 @@ namespace WinDynamicDesktop
 
         public static void ThemeContextMenu(ContextMenuStrip menu)
         {
+            if (!IsSupported)
+            {
+                return;
+            }
+
             menu.Renderer = IsDark ? new ToolStripProfessionalRenderer(new DarkColorTable()) :
                 new ToolStripProfessionalRenderer();
 
@@ -44,7 +49,11 @@ namespace WinDynamicDesktop
 
         public static void ThemeForm(Form form, bool onInit = true)
         {
-            if (onInit && IsSupported)
+            if (!IsSupported)
+            {
+                return;
+            }
+            else if (onInit)
             {
                 DarkNet.Instance.SetWindowThemeForms(form, Theme.Auto);
             }
@@ -61,15 +70,13 @@ namespace WinDynamicDesktop
                 {
                     ((Button)childControl).FlatStyle = IsDark ? FlatStyle.Flat : FlatStyle.System;
                 }
-
-                if (childControl is ComboBox)
+                else if (childControl is ComboBox)
                 {
                     ((ComboBox)childControl).FlatStyle = IsDark ? FlatStyle.Flat : FlatStyle.System;
                 }
-
-                if (childControl is LinkLabel)
+                else if (childControl is LinkLabel)
                 {
-                    ((LinkLabel)childControl).LinkColor = IsDark ? Color.Orange : Color.Blue;
+                    ((LinkLabel)childControl).LinkColor = IsDark ? Color.LightBlue : Color.Blue;
                 }
 
                 if (onInit)

@@ -106,8 +106,10 @@ namespace WinDynamicDesktop
 
             if (JsonConfig.settings.sunriseTime != null && JsonConfig.settings.sunsetTime != null)
             {
-                sunriseTimePicker.Value = DateTime.Parse(JsonConfig.settings.sunriseTime, CultureInfo.InvariantCulture);
-                sunsetTimePicker.Value = DateTime.Parse(JsonConfig.settings.sunsetTime, CultureInfo.InvariantCulture);
+                sunriseTimePicker.Value = DateTime.ParseExact(JsonConfig.settings.sunriseTime, "T",
+                    CultureInfo.InvariantCulture);
+                sunsetTimePicker.Value = DateTime.ParseExact(JsonConfig.settings.sunsetTime, "T",
+                    CultureInfo.InvariantCulture);
             }
             else
             {
