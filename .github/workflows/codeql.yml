@@ -1,11 +1,20 @@
 name: CodeQL
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ main, stable ]
+    paths:
+      - '**.cs'
+      - '**.csproj'
+  pull_request:
+    branches: [ main, stable ]
+    paths:
+      - '**.cs'
+      - '**.csproj'
 
 jobs:
   analyze:
     runs-on: windows-latest
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
 
     permissions:
       actions: read
