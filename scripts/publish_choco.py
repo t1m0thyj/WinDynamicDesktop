@@ -2,6 +2,7 @@
 import os
 import subprocess
 import sys
+import tempfile
 
 import requests
 from dotenv import load_dotenv
@@ -53,11 +54,12 @@ replacers = {
 old_nuspec = render_template(nuspec_filename, replacers)
 old_script = render_template(script_filename, replacers)
 
-subprocess.run(["choco", "pack", "--out", "../dist"])
+subprocess.run(["choco", "pack", "--out", tempfile.gettempdir()])
 
 write_file(nuspec_filename, old_nuspec)
 write_file(script_filename, old_script)
 
-nupkg_filename = f"../dist/windynamicdesktop.{package_version}.nupkg"
+nupkg_filename = f"windynamicdesktop.{package_version}.nupkg"
 if input(f"Push {nupkg_filename}? (y/N) ").lower() == "y":
-    subprocess.run(["choco", "push", nupkg_filename, "-s", chocolatey_repo, "-k", os.getenv("CHOCO_APIKEY")])
+    subprocess.run(["choco", "push", os.path.join(tempfile.gettempdir(), nupkg_filename), "-s", chocolatey_repo, "-k",
+        os.getenv("CHOCO_APIKEY")])

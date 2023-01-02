@@ -86,6 +86,6 @@ for msgid, locs in pot_data.items():
 
     pot_lines.append("msgstr \"\"")
 
-with open("../i18n/messages.pot", 'w', encoding="utf-8") as pot_file:
+with open("../src/locale/messages.pot", 'w', encoding="utf-8") as pot_file:
     for line in pot_lines:
         print(line, file=pot_file)

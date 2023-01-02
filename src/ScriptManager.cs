@@ -64,7 +64,7 @@ namespace WinDynamicDesktop
                 return;
             }
 
-            AppContext.Log("Running scripts with arguments: {0}", args);
+            LoggingHandler.LogMessage("Running scripts with arguments: {0}", args);
             foreach (string scriptPath in Directory.EnumerateFiles("scripts", "*.ps1"))
             {
                 Task.Run(() => RunScript(scriptPath, args));
@@ -85,7 +85,7 @@ namespace WinDynamicDesktop
                 WindowStyle = ProcessWindowStyle.Hidden,
                 WorkingDirectory = Path.GetDirectoryName(path)
             };
-            AppContext.Log("Running PowerShell script: {0}", proc.StartInfo.Arguments);
+            LoggingHandler.LogMessage("Running PowerShell script: {0}", proc.StartInfo.Arguments);
 
             var errors = new StringBuilder();
             proc.ErrorDataReceived += (sender, e) =>
@@ -101,7 +101,7 @@ namespace WinDynamicDesktop
 
             if (proc.ExitCode != 0 || errors.Length > 0)
             {
-                AppContext.Log("Script failed with errors: {0}", errors);
+                LoggingHandler.LogMessage("Script failed with errors: {0}", errors);
                 MessageDialog.ShowWarning(string.Format(_("Error(s) running PowerShell script '{0}':\n\n{1}"), path,
                     errors), _("Script Error"));
             }

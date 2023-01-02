@@ -55,7 +55,7 @@ namespace WinDynamicDesktop
         {
             timerEventHandler = new Action(() =>
             {
-                AppContext.Log("Scheduler event triggered by fullscreen app closing");
+                LoggingHandler.LogMessage("Scheduler event triggered by fullscreen app closing");
                 wcs.HandleTimerEvent(true);
             });
 

@@ -34,7 +34,7 @@ namespace WinDynamicDesktop
             }
         }
 
-        public static void LogMessage(string message, object[] values)
+        public static void LogMessage(string message, params object[] values)
         {
 #if !DEBUG
             if (!JsonConfig.settings.debugLogging)

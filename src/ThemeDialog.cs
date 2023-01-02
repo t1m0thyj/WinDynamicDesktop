@@ -340,7 +340,6 @@ namespace WinDynamicDesktop
 
         private void displayComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // TODO Handle if displays change while dialog is open
             string activeTheme = null;
             if (JsonConfig.settings.activeThemes != null &&
                 JsonConfig.settings.activeThemes.Length > displayComboBox.SelectedIndex)

@@ -77,11 +77,6 @@ namespace WinDynamicDesktop
             Localization.NotifyIfTestMode();
         }
 
-        public static void Log(string message, params object[] values)
-        {
-            LoggingHandler.LogMessage(message, values);
-        }
-
         public static void ShowPopup(string message, string title = null)
         {
             notifyIcon.BalloonTipTitle = title ?? "WinDynamicDesktop";

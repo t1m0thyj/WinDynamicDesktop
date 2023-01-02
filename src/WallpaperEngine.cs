@@ -62,14 +62,13 @@ namespace WinDynamicDesktop
             schedulerTimer.Stop();
             forceImageUpdate = UpdateDisplayList() || forceImageUpdate;
             SolarData data = SunriseSunsetService.GetSolarData(DateTime.Today);
-            AppContext.Log("Calculated solar data: {0}", data);
+            LoggingHandler.LogMessage("Calculated solar data: {0}", data);
 
             ThemeShuffler.MaybeShuffleWallpaper();
             long nextDisplayUpdateTicks = long.MaxValue;
 
             for (int i = 0; i < displayEvents.Count; i++)
             {
-                // TODO After Nvidia update, Display 1 became theme 2, Display 2 became None
                 if (displayEvents[i] == null)
                 {
                     displayEvents[i] = new DisplayEvent();
@@ -87,7 +86,7 @@ namespace WinDynamicDesktop
                 displayEvents[i].currentTheme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
                 displayEvents[i].displayIndex = (JsonConfig.settings.activeThemes[0] == null) ? i : -1;
                 SolarScheduler.CalcNextUpdateTime(data, displayEvents[i]);
-                AppContext.Log("Updated display event: {0}", displayEvents[i]);
+                LoggingHandler.LogMessage("Updated display event: {0}", displayEvents[i]);
 
                 if (displayEvents[i].currentTheme != null)
                 {
@@ -153,7 +152,8 @@ namespace WinDynamicDesktop
             int numDisplaysAfter = Screen.AllScreens.Length;
             if (numDisplaysAfter != numDisplaysBefore)
             {
-                AppContext.Log("Number of displays updated from {0} to {1}", numDisplaysBefore, numDisplaysAfter);
+                LoggingHandler.LogMessage("Number of displays updated from {0} to {1}", numDisplaysBefore,
+                    numDisplaysAfter);
             }
 
             if (numDisplaysAfter > numDisplaysBefore)
@@ -180,7 +180,7 @@ namespace WinDynamicDesktop
                 return;
             }
 
-            AppContext.Log("Setting wallpaper to {0}", imagePath);
+            LoggingHandler.LogMessage("Setting wallpaper to {0}", imagePath);
             UwpDesktop.GetHelper().SetWallpaper(imagePath, e.displayIndex);
             e.lastImagePath = imagePath;
         }
@@ -196,7 +196,7 @@ namespace WinDynamicDesktop
             TimeSpan interval = new TimeSpan(intervalTicks);
             schedulerTimer.Interval = interval.TotalMilliseconds;
             schedulerTimer.Start();
-            AppContext.Log("Started timer for {0:0.000} sec", interval.TotalSeconds);
+            LoggingHandler.LogMessage("Started timer for {0:0.000} sec", interval.TotalSeconds);
         }
 
         public void HandleTimerEvent(bool updateLocation)
@@ -220,14 +220,14 @@ namespace WinDynamicDesktop
         {
             if (nextUpdateTime.HasValue && DateTime.Now >= nextUpdateTime.Value)
             {
-                AppContext.Log("Scheduler event triggered by timer 2");
+                LoggingHandler.LogMessage("Scheduler event triggered by timer 2");
                 HandleTimerEvent(true);
             }
         }
 
         private void OnSchedulerTimerElapsed(object sender, EventArgs e)
         {
-            AppContext.Log("Scheduler event triggered by timer 1");
+            LoggingHandler.LogMessage("Scheduler event triggered by timer 1");
             HandleTimerEvent(true);
         }
 
@@ -243,14 +243,14 @@ namespace WinDynamicDesktop
         {
             if (e.Mode == PowerModes.Resume)
             {
-                AppContext.Log("Scheduler event triggered by resume from sleep");
+                LoggingHandler.LogMessage("Scheduler event triggered by resume from sleep");
                 HandleTimerEvent(false);
             }
         }
 
         private void OnTimeChanged(object sender, EventArgs e)
         {
-            AppContext.Log("Scheduler event triggered by system time change");
+            LoggingHandler.LogMessage("Scheduler event triggered by system time change");
             HandleTimerEvent(false);
         }
     }

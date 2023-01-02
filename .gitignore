@@ -1,11 +1,11 @@
 dist/
-i18n/
 themes/
 uwp/AppPackages/
 uwp/BundleArtifacts/
-.env
 uwp/*.assets.cache
 uwp/Package.StoreAssociation.xml
+.env
+*.pot
 
 *.swp
 *.*~

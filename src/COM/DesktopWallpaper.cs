@@ -59,8 +59,7 @@ namespace WinDynamicDesktop.COM
 
         uint GetMonitorDevicePathCount();
 
-        // TODO Define correct RECT type
-        System.Drawing.Rectangle GetMonitorRECT([MarshalAs(UnmanagedType.LPWStr)] string monitorID);
+        System.Windows.Rect GetMonitorRECT([MarshalAs(UnmanagedType.LPWStr)] string monitorID);
 
         void SetBackgroundColor([MarshalAs(UnmanagedType.U4)] COLORREF color);
 

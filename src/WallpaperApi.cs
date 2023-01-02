@@ -31,7 +31,6 @@ namespace WinDynamicDesktop
 
             if (displayIndex != -1)
             {
-                // TODO Error handling for older Windows versions without this API
                 IDesktopWallpaper desktopWallpaper = DesktopWallpaperFactory.Create();
                 string monitorId = desktopWallpaper.GetMonitorDevicePathAt((uint)displayIndex);
                 desktopWallpaper.SetWallpaper(monitorId, imagePath);

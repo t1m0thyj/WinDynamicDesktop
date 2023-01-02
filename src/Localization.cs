@@ -123,6 +123,7 @@ namespace WinDynamicDesktop
 
         private static void LoadLanguages()
         {
+            // Language names from https://github.com/mozilla/language-mapping-list
             AddLanguage("Azərbaycan dili", "az");  // Azerbaijani
             AddLanguage("Basa Jawa", "jv");  // Javanese
             AddLanguage("Català", "ca");  // Catalan
@@ -159,6 +160,7 @@ namespace WinDynamicDesktop
             AddLanguage("हिन्दी", "hi");  // Hindi
             AddLanguage("বাংলা", "bn");  // Bengali
             AddLanguage("ภาษาไทย", "th");  // Thai
+            AddLanguage("ဗမာစကာ", "my");  // Burmese
             AddLanguage("አማርኛ", "am");  // Amharic
             AddLanguage("中文简体", "zh-Hans");  // Chinese Simplified
             AddLanguage("中文繁體", "zh-Hant");  // Chinese Traditional
