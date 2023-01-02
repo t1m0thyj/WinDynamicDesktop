@@ -12,7 +12,7 @@ using TimeZoneConverter;
 
 namespace WinDynamicDesktop
 {
-    public enum PolarPeriod { None, PolarDay, PolarNight };
+    public enum PolarPeriod { None, PolarDay, PolarNight }
 
     public class SolarData
     {

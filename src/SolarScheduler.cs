@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace WinDynamicDesktop
 {
-    public enum DaySegment { Sunrise, Day, Sunset, Night, AlwaysDay, AlwaysNight };
+    public enum DaySegment { Sunrise, Day, Sunset, Night, AlwaysDay, AlwaysNight }
 
     public class DaySegmentData
     {

@@ -102,14 +102,14 @@ namespace WinDynamicDesktop
         private string[] GetDisplayNames()
         {
             // https://github.com/winleafs/Winleafs/blob/98ba3ba/Winleafs.Wpf/Helpers/ScreenBoundsHelper.cs#L36=
-            var activeDisplayDevicePaths = WindowsDisplayAPI.Display.GetDisplays().Select(d => d.DevicePath);
-            var displayTargets = PathDisplayTarget.GetDisplayTargets()
-                .Where(dt => activeDisplayDevicePaths.Contains(dt.DevicePath)).ToArray();
-            return Screen.AllScreens.Select((screen, i) => new KeyValuePair<string, int>(screen.DeviceName, i))
-                .OrderBy(x => x.Key).Select(x =>
+            var activeDisplays = WindowsDisplayAPI.Display.GetDisplays();
+            var activeDisplayDevicePaths = activeDisplays.OrderBy(d => d.DisplayName)
+                .Select(d => d.DevicePath).ToArray();
+            return PathDisplayTarget.GetDisplayTargets()
+                .Where(dt => activeDisplayDevicePaths.Contains(dt.DevicePath))
+                .OrderBy(dt => Array.IndexOf(activeDisplayDevicePaths, dt.DevicePath)).Select(dt =>
                 {
-                    string displayName = displayTargets[x.Value].FriendlyName;
-                    return string.IsNullOrEmpty(displayName) ? _("Internal Display") : displayName;
+                    return string.IsNullOrEmpty(dt.FriendlyName) ? _("Internal Display") : dt.FriendlyName;
                 }).ToArray();
         }
 
@@ -183,7 +183,6 @@ namespace WinDynamicDesktop
                         listView1.LargeImageList.Images[item.ImageIndex].Dispose();
                         break;
                     }
-
                 }
             }
 

@@ -47,7 +47,6 @@ namespace WinDynamicDesktop
                     listener(reader.ReadToEnd().Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries));
                     namedPipeServer.Disconnect();
                 }
-
             }, TaskCreationOptions.LongRunning);
         }
 
