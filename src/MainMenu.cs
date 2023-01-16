@@ -14,6 +14,7 @@ namespace WinDynamicDesktop
         private static readonly Func<string, string> _ = Localization.GetTranslation;
         public static ToolStripMenuItem themeItem;
         public static ToolStripMenuItem darkModeItem;
+        public static ToolStripMenuItem autoDarkMode;
         public static ToolStripMenuItem startOnBootItem;
         public static ToolStripMenuItem enableScriptsItem;
         public static ToolStripMenuItem shuffleItem;
@@ -52,6 +53,8 @@ namespace WinDynamicDesktop
             items.AddRange(LockScreenChanger.GetMenuItems());
             darkModeItem = new ToolStripMenuItem(_("Enable &Night Mode"), null, OnDarkModeClick);
             darkModeItem.Checked = JsonConfig.settings.darkMode;
+            autoDarkMode = new ToolStripMenuItem(_("Enable Auto Dark Mode"), null, OnAutoDarkModeClick);
+            autoDarkMode.Checked = JsonConfig.settings.autoDarkMode;
             startOnBootItem = new ToolStripMenuItem(_("Start on &Boot"), null, OnStartOnBootClick);
 
             ToolStripMenuItem optionsItem = new ToolStripMenuItem(_("More &Options"));
@@ -60,6 +63,7 @@ namespace WinDynamicDesktop
             items.AddRange(new List<ToolStripItem>()
             {
                 darkModeItem,
+                autoDarkMode,
                 startOnBootItem,
                 optionsItem,
                 new ToolStripSeparator(),
@@ -120,6 +124,11 @@ namespace WinDynamicDesktop
         private static void OnDarkModeClick(object sender, EventArgs e)
         {
             AppContext.wpEngine.ToggleDarkMode();
+        }
+
+        private static void OnAutoDarkModeClick(object sender, EventArgs e)
+        {
+            AppContext.wpEngine.ToggleAutoDarkMode();
         }
 
         private static void OnStartOnBootClick(object sender, EventArgs e)

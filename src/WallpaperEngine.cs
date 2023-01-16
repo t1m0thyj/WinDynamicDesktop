@@ -32,7 +32,7 @@ namespace WinDynamicDesktop
         private System.Timers.Timer backgroundTimer = new System.Timers.Timer();
         private System.Timers.Timer schedulerTimer = new System.Timers.Timer();
         private const long timerError = (long)(TimeSpan.TicksPerMillisecond * 15.6);
-
+        
         public WallpaperEngine()
         {
             fullScreenChecker = new FullScreenApi(this);
@@ -91,6 +91,11 @@ namespace WinDynamicDesktop
                 if (displayEvents[i].currentTheme != null)
                 {
                     SetWallpaper(displayEvents[i]);
+                    
+                    if (JsonConfig.settings.autoDarkMode)
+                    {
+                        SwitchTheme(data);
+                    }
 
                     if (displayEvents[i].nextUpdateTime.Ticks < nextDisplayUpdateTicks)
                     {
@@ -141,6 +146,13 @@ namespace WinDynamicDesktop
             RunScheduler();
         }
 
+        public void ToggleAutoDarkMode()
+        {
+            bool isEnabled = JsonConfig.settings.autoDarkMode ^ true;
+            JsonConfig.settings.autoDarkMode = isEnabled;
+            MainMenu.autoDarkMode.Checked = isEnabled;
+        }
+
         private bool UpdateDisplayList()
         {
             if (JsonConfig.settings.activeThemes == null || JsonConfig.settings.activeThemes[0] != null)
@@ -183,6 +195,22 @@ namespace WinDynamicDesktop
             LoggingHandler.LogMessage("Setting wallpaper to {0}", imagePath);
             UwpDesktop.GetHelper().SetWallpaper(imagePath, e.displayIndex);
             e.lastImagePath = imagePath;
+        }
+
+        public void SwitchTheme(SolarData data)
+        {
+            RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", true);
+
+            if (DateTime.Now.TimeOfDay >= data.sunsetTime.TimeOfDay)
+            {
+                key.SetValue("AppsUseLightTheme", 0, RegistryValueKind.DWord);
+                key.SetValue("SystemUsesLightTheme", 0, RegistryValueKind.DWord);
+            }
+            else if (DateTime.Now.TimeOfDay >= data.sunriseTime.TimeOfDay)
+            {
+                key.SetValue("AppsUseLightTheme", 1, RegistryValueKind.DWord);
+                key.SetValue("SystemUsesLightTheme", 1, RegistryValueKind.DWord);
+            }
         }
 
         private void StartTimer(DateTime futureTime)

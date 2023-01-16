@@ -24,6 +24,7 @@ namespace WinDynamicDesktop
         public string latitude { get; set; }
         public string longitude { get; set; }
         public bool darkMode { get; set; }
+        public bool autoDarkMode { get; set; }
         public bool hideTrayIcon { get; set; }
         public bool disableAutoUpdate { get; set; }
         public string lastUpdateCheck { get; set; }
@@ -144,6 +145,7 @@ namespace WinDynamicDesktop
                 sunriseSunsetDuration = oldSettings.sunriseSunsetDuration,
                 activeThemes = new string[] { oldSettings.themeName },
                 darkMode = oldSettings.darkMode,
+                autoDarkMode = oldSettings.autoDarkMode,
                 enableShuffle = oldSettings.enableShuffle,
                 lastShuffleDate = oldSettings.lastShuffleDate != null ? SafeParse(
                     oldSettings.lastShuffleDate).ToString(CultureInfo.InvariantCulture) : null,
