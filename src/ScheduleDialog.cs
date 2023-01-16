@@ -18,7 +18,7 @@ namespace WinDynamicDesktop
         public ScheduleDialog()
         {
             InitializeComponent();
-            DarkUI.ThemeForm(this);
+            AcrylicUI.ThemeForm(this);
             int oldLabelWidth = sunriseSunsetDurationLabel.Width;
             Localization.TranslateForm(this);
             this.sunriseSunsetDurationBox.Left += (sunriseSunsetDurationLabel.Width - oldLabelWidth);
