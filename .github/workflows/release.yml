@@ -25,7 +25,8 @@ jobs:
 
     - run: scripts\package.ps1
 
-    - uses: softprops/action-gh-release@v1
+    # Pin version until this is fixed: https://github.com/softprops/action-gh-release/issues/280
+    - uses: softprops/action-gh-release@v0.1.13
       with:
         draft: true
         files: |
