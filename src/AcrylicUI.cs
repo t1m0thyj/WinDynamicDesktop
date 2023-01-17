@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using WinDynamicDesktop.COM;
 
 namespace WinDynamicDesktop
 {
@@ -24,13 +25,13 @@ namespace WinDynamicDesktop
                 return;
             }
 
-            COM.WinBlur.BlurType blurType = IsDark ? COM.WinBlur.BlurType.Mica : COM.WinBlur.BlurType.None;
-            COM.WinBlur.SetBlurStyle(form, blurType, COM.WinBlur.Mode.DarkMode);
+            WinBlur.BlurType blurType = IsDark ? WinBlur.BlurType.Mica : WinBlur.BlurType.None;
+            WinBlur.SetBlurStyle(form, blurType, WinBlur.Mode.DarkMode);
             form.ForeColor = IsDark ? Color.White : Control.DefaultForeColor;
 
             foreach (Control childControl in GetControls(form))
             {
-                COM.WinBlur.SetBlurStyle(childControl, blurType, COM.WinBlur.Mode.DarkMode);
+                WinBlur.SetBlurStyle(childControl, blurType, WinBlur.Mode.DarkMode);
                 childControl.ForeColor = IsDark ? Color.White : Control.DefaultForeColor;
 
                 if (childControl is LinkLabel)
@@ -42,7 +43,7 @@ namespace WinDynamicDesktop
                 {
                     childControl.Paint += (object sender, PaintEventArgs e) =>
                     {
-                        if (!childControl.Enabled)
+                        if (IsDark && !childControl.Enabled)
                         {
                             TextRenderer.DrawText(e.Graphics, childControl.Text, childControl.Font,
                                 childControl.ClientRectangle, Color.Gray);
@@ -79,7 +80,7 @@ namespace WinDynamicDesktop
 
         private static bool IsSupported
         {
-            get { return Environment.OSVersion.Version.Major >= 10 && Environment.OSVersion.Version.Build >= 22000; }
+            get { return Environment.OSVersion.Version.Major >= 10 && Environment.OSVersion.Version.Build >= 22523; }
         }
     }
 }
