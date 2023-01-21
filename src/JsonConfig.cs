@@ -58,7 +58,7 @@ namespace WinDynamicDesktop
 
         public static void LoadConfig()
         {
-            ConfigMigrator.Run();
+            ConfigMigrator.RenameSettingsFile();
 
             if (autoSaveTimer != null)
             {
@@ -70,10 +70,13 @@ namespace WinDynamicDesktop
                 try
                 {
                     string jsonText = File.ReadAllText("settings.json");
+                    ConfigMigrator.UpdateConfig(jsonText);
                     settings = JsonConvert.DeserializeObject<AppConfig>(jsonText);
                 }
                 catch (JsonReaderException)
                 {
+                    // TODO Prompt user about resetting config
+                    File.Copy("settings.json", "settings.json.bak");
                     MessageDialog.ShowWarning("Your WinDynamicDesktop configuration file was corrupt and has been " +
                         "reset to the default settings.", "Warning");
                     firstRun = true;
@@ -121,7 +124,15 @@ namespace WinDynamicDesktop
                 await Task.Run(() =>
                 {
                     string jsonText = JsonConvert.SerializeObject(settings, Formatting.Indented);
-                    File.WriteAllText("settings.json", jsonText);
+                    if (File.Exists("settings.json"))
+                    {
+                        File.WriteAllText("settings.json.tmp", jsonText);
+                        File.Move("settings.json.tmp", "settings.json", true);
+                    }
+                    else
+                    {
+                        File.WriteAllText("settings.json", jsonText);
+                    }
                 });
             }
 

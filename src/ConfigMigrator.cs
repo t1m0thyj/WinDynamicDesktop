@@ -45,10 +45,19 @@ namespace WinDynamicDesktop
 
     class ConfigMigrator
     {
-        public static void Run()
+        public static void RenameSettingsFile()  // Added 2020-10-25
         {
-            UpdateToVersion4();
-            UpdateToVersion5();
+            if (File.Exists("settings.conf"))
+            {
+                File.Move("settings.conf", "settings.json");
+                JsonConfig.firstRun = false;
+            }
+        }
+
+        public static void UpdateConfig(string jsonText)
+        {
+            UpdateToVersion4(jsonText);
+            UpdateToVersion5(jsonText);
         }
 
         private static DateTime SafeParse(string dateTime)  // Added 2020-05-21
@@ -63,25 +72,20 @@ namespace WinDynamicDesktop
             }
         }
 
-        private static void UpdateToVersion4()  // Added 2020-01-01
+        private static void UpdateToVersion4(string jsonText)  // Added 2020-01-01
         {
-            if (!File.Exists("settings.json"))
+            OldAppConfigV3 oldSettings;
+            try
             {
-                // Updated 2020-10-25 for settings.conf -> settings.json
-                if (File.Exists("settings.conf"))
-                {
-                    File.Move("settings.conf", "settings.json");
-                    JsonConfig.firstRun = false;
-                }
-                else
-                {
-                    return;
-                }
+                oldSettings = JsonConvert.DeserializeObject<OldAppConfigV3>(jsonText);
             }
-            string jsonText = File.ReadAllText("settings.json");
-            OldAppConfigV3 settings = JsonConvert.DeserializeObject<OldAppConfigV3>(jsonText);
-            bool legacySettingsEnabled = (settings.changeSystemTheme || settings.changeAppTheme ||
-                settings.useAutoBrightness || settings.useCustomAutoBrightness);
+            catch
+            {
+                return;
+            }
+
+            bool legacySettingsEnabled = (oldSettings.changeSystemTheme || oldSettings.changeAppTheme ||
+                oldSettings.useAutoBrightness || oldSettings.useCustomAutoBrightness);
             if (legacySettingsEnabled)
             {
                 jsonText = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<AppConfig>(jsonText),
@@ -94,24 +98,22 @@ namespace WinDynamicDesktop
             }
         }
 
-        private static void UpdateToVersion5()  // Added 2021-11-30
+        private static void UpdateToVersion5(string jsonText)  // Added 2021-11-30
         {
-            if (!File.Exists("settings.json"))
-            {
-                return;
-            }
-            string jsonText = File.ReadAllText("settings.json");
             if (jsonText.IndexOf("\"themeName\"") == -1)
             {
                 return;
             }
 
-            OldAppConfigV4 oldSettings = null;
+            OldAppConfigV4 oldSettings;
             try
             {
                 oldSettings = JsonConvert.DeserializeObject<OldAppConfigV4>(jsonText);
             }
-            catch { /* Do nothing */ }
+            catch
+            {
+                return;
+            }
 
             int locationMode = 0;
             double? newLatitude = null;
