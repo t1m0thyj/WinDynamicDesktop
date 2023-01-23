@@ -2,8 +2,8 @@ name: Build
 
 on:
   push:
-    tags-ignore:
-      - '**'
+    branches: [ '**' ]
+    tags-ignore: [ '**' ]
   pull_request:
 
 jobs:
