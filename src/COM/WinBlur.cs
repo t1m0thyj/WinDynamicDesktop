@@ -53,16 +53,16 @@ namespace WinDynamicDesktop.COM
 
         public static void SetBlurStyle(Control cntrl, BlurType blurType, Mode designMode)
         {
-            ParameterTypes.MARGINS bounds = default(ParameterTypes.MARGINS);
+            ParameterTypes.MARGINS bounds = default;
             IntPtr hwnd = cntrl.Handle;
             bounds.cxLeftWidth = 0;
             bounds.cxRightWidth = 0;
             checked
             {
-                bounds.cyTopHeight = cntrl.Height + 10000000;
+                bounds.cyTopHeight = blurType != BlurType.None ? (cntrl.Height + 10000000) : 0;
                 bounds.cyBottomHeight = 0;
-                int result = Methods.DwmExtendFrameIntoClientArea(hwnd, ref bounds);
-                cntrl.BackColor = blurType != BlurType.None ? System.Drawing.Color.Black : Control.DefaultBackColor;
+                Methods.DwmExtendFrameIntoClientArea(hwnd, ref bounds);
+                cntrl.BackColor = blurType != BlurType.None ? System.Drawing.Color.Black : default;
             }
 
             if (blurType == BlurType.None)

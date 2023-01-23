@@ -63,7 +63,6 @@ namespace WinDynamicDesktop
         private void InitializeTrayIcon()
         {
             Application.ApplicationExit += OnApplicationExit;
-            Dark.Net.DarkNet.Instance.UserDefaultAppThemeIsDarkChanged += AcrylicUI.UserDefaultAppThemeIsDarkChanged;
 
             notifyIcon = new NotifyIcon
             {

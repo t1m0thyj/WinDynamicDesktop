@@ -2,7 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-using Dark.Net;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -13,9 +13,12 @@ namespace WinDynamicDesktop
 {
     internal class AcrylicUI
     {
+        private const string registryThemeLocation = @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize";
+        private static bool? appsUseLightTheme;
+
         public static bool IsDark
         {
-            get { return IsSupported && DarkNet.Instance.UserDefaultAppThemeIsDark; }
+            get { return IsSupported && !(appsUseLightTheme ?? GetWindowsThemeSetting()); }
         }
 
         public static void ThemeForm(Form form, bool onInit = true)
@@ -24,19 +27,27 @@ namespace WinDynamicDesktop
             {
                 return;
             }
+            else if (onInit && !appsUseLightTheme.HasValue)
+            {
+                SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;
+            }
 
-            WinBlur.BlurType blurType = IsDark ? WinBlur.BlurType.Mica : WinBlur.BlurType.None;
-            WinBlur.SetBlurStyle(form, blurType, WinBlur.Mode.DarkMode);
-            form.ForeColor = IsDark ? Color.White : Control.DefaultForeColor;
+            WinBlur.SetBlurStyle(form, IsDark ? WinBlur.BlurType.Mica : WinBlur.BlurType.None,
+                IsDark ? WinBlur.Mode.DarkMode : WinBlur.Mode.LightMode);
+            form.ForeColor = IsDark ? Color.White : default;
 
             foreach (Control childControl in GetControls(form))
             {
-                WinBlur.SetBlurStyle(childControl, blurType, WinBlur.Mode.DarkMode);
-                childControl.ForeColor = IsDark ? Color.White : Control.DefaultForeColor;
+                childControl.BackColor = IsDark ? Color.Black : default;
+                childControl.ForeColor = IsDark ? Color.White : default;
 
-                if (childControl is LinkLabel)
+                if (childControl is ButtonBase)
                 {
-                    ((LinkLabel)childControl).LinkColor = IsDark ? Color.LightBlue : Color.Blue;
+                    ((ButtonBase)childControl).UseVisualStyleBackColor = !IsDark;
+                }
+                else if (childControl is LinkLabel)
+                {
+                    ((LinkLabel)childControl).LinkColor = IsDark ? Color.LightBlue : default;
                 }
 
                 if (onInit)
@@ -51,17 +62,6 @@ namespace WinDynamicDesktop
                     };
                 }
             }
-        }
-
-        public static void UserDefaultAppThemeIsDarkChanged(object sender, bool isDark)
-        {
-            AppContext.notifyIcon.ContextMenuStrip.BeginInvoke(() =>
-            {
-                foreach (Form form in Application.OpenForms)
-                {
-                    ThemeForm(form, false);
-                }
-            });
         }
 
         // Code from https://stackoverflow.com/a/664083/5504760
@@ -81,6 +81,32 @@ namespace WinDynamicDesktop
         private static bool IsSupported
         {
             get { return Environment.OSVersion.Version.Major >= 10 && Environment.OSVersion.Version.Build >= 22523; }
+        }
+
+        private static bool GetWindowsThemeSetting()
+        {
+            using (RegistryKey themeKey = Registry.CurrentUser.OpenSubKey(registryThemeLocation))
+            {
+                appsUseLightTheme = (int)themeKey.GetValue("AppsUseLightTheme", 1) != 0;
+            };
+
+            return appsUseLightTheme.Value;
+        }
+
+        private static void OnUserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
+        {
+            if (e.Category != UserPreferenceCategory.General || appsUseLightTheme.Value == GetWindowsThemeSetting())
+            {
+                return;
+            }
+
+            AppContext.notifyIcon.ContextMenuStrip.BeginInvoke(() =>
+            {
+                foreach (Form form in Application.OpenForms)
+                {
+                    ThemeForm(form, false);
+                }
+            });
         }
     }
 }
