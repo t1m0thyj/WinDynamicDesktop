@@ -8,7 +8,7 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
-using System.Timers;
+using System.Windows.Forms;
 
 namespace WinDynamicDesktop
 {
@@ -50,7 +50,7 @@ namespace WinDynamicDesktop
 
     class JsonConfig
     {
-        private static Timer autoSaveTimer;
+        private static System.Timers.Timer autoSaveTimer;
         private static bool restartPending = false;
         private static bool unsavedChanges;
 
@@ -59,30 +59,34 @@ namespace WinDynamicDesktop
 
         public static void LoadConfig()
         {
-            ConfigMigrator.Run();
-
-            if (autoSaveTimer != null)
-            {
-                autoSaveTimer.Stop();
-            }
+            autoSaveTimer?.Stop();
+            ConfigMigrator.RenameSettingsFile();
 
             if (!firstRun)
             {
                 try
                 {
                     string jsonText = File.ReadAllText("settings.json");
+                    ConfigMigrator.UpdateConfig(jsonText);
                     settings = JsonConvert.DeserializeObject<AppConfig>(jsonText);
                 }
                 catch (JsonReaderException)
                 {
-                    MessageDialog.ShowWarning("Your WinDynamicDesktop configuration file was corrupt and has been " +
-                        "reset to the default settings.", "Warning");
-                    firstRun = true;
+                    DialogResult result = MessageDialog.ShowQuestion("The WinDynamicDesktop configuration file is " +
+                        "corrupt and could not be loaded. Do you want to reset to default settings?", "Error", true);
+                    if (result == DialogResult.Yes)
+                    {
+                        firstRun = true;
+                    }
+                    else
+                    {
+                        Environment.Exit(0);
+                    }
                 }
             }
 
             unsavedChanges = false;
-            autoSaveTimer = new Timer();
+            autoSaveTimer = new System.Timers.Timer();
             autoSaveTimer.AutoReset = false;
             autoSaveTimer.Interval = 1000;
 
@@ -122,15 +126,16 @@ namespace WinDynamicDesktop
                 await Task.Run(() =>
                 {
                     string jsonText = JsonConvert.SerializeObject(settings, Formatting.Indented);
-                    File.WriteAllText("settings.json", jsonText);
+                    File.WriteAllText("settings.json.tmp", jsonText);
+                    File.Move("settings.json.tmp", "settings.json", true);
                 });
             }
 
             if (restartPending)
             {
                 restartPending = false;
-                System.Diagnostics.Process.Start(System.Windows.Forms.Application.ExecutablePath);
-                System.Windows.Forms.Application.Exit();
+                System.Diagnostics.Process.Start(Application.ExecutablePath);
+                Application.Exit();
             }
             else
             {

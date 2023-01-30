@@ -29,7 +29,7 @@ namespace WinDynamicDesktop
         public ThemeDialog()
         {
             InitializeComponent();
-            DarkUI.ThemeForm(this);
+            AcrylicUI.ThemeForm(this);
             int oldButtonWidth = this.importButton.Width;
             Localization.TranslateForm(this);
             this.themeLinkLabel.Left += (this.importButton.Width - oldButtonWidth);
@@ -301,7 +301,7 @@ namespace WinDynamicDesktop
 
             listView1.ContextMenuStrip = contextMenuStrip1;
             listView1.ListViewItemSorter = new CompareByItemText();
-            SetWindowTheme(listView1.Handle, DarkUI.IsDark ? "DarkMode_Explorer" : "Explorer", null);
+            SetWindowTheme(listView1.Handle, AcrylicUI.IsDark ? "DarkMode_Explorer" : "Explorer", null);
 
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
@@ -426,7 +426,6 @@ namespace WinDynamicDesktop
                 return;
             }
 
-            DarkUI.ThemeContextMenu(contextMenuStrip1);
             string themeId = (string)listView1.Items[itemIndex].Tag;
             ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
             contextMenuStrip1.Items[1].Enabled = ThemeManager.IsThemeDownloaded(theme);

@@ -102,7 +102,7 @@ namespace WinDynamicDesktop
                 form.Text = GetTranslation(form.Text);
             }
 
-            foreach (Control childControl in DarkUI.GetControls(form))
+            foreach (Control childControl in AcrylicUI.GetControls(form))
             {
                 if (childControl.GetType().GetProperty("Text") != null
                     && childControl.Text != null)

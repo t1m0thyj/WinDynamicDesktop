@@ -1,5 +1,13 @@
 # Changelog
 
+## `5.2.0`
+
+* Added dark UI theme using Mica (only for Windows 11 22H2)
+* Added Burmese translation (thanks Febri)
+* Fixed user-defined sunrise and sunset times being stored incorrectly for some locales ([#487](https://github.com/t1m0thyj/WinDynamicDesktop/issues/487))
+* Fixed IndexOutOfRangeException that could occur when Select Theme dialog is opened and there are multiple monitors ([#498](https://github.com/t1m0thyj/WinDynamicDesktop/issues/498))
+* Fixed error when PowerShell scripts run with blank imagePath parameter because there is no active theme
+
 ## `5.1.0`
 
 **Note:** This version removes syncing wallpaper across virtual desktops in Windows 11 which used an experimental API that is too unstable to support. If you still want this functionality, install the [Sync Virtual Desktops](https://github.com/t1m0thyj/WDD-scripts/tree/master/experimental#synchronize-virtual-desktops) script.

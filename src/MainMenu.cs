@@ -28,7 +28,6 @@ namespace WinDynamicDesktop
 
             ContextMenuStrip menuStrip = new ContextMenuStrip();
             menuStrip.Items.AddRange(menuItems.ToArray());
-            DarkUI.ThemeContextMenu(menuStrip);
             IntPtr handle = menuStrip.Handle;  // Handle needed for BeginInvoke to work
 
             return menuStrip;

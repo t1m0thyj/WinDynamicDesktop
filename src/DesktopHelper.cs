@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using Microsoft.Win32;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace WinDynamicDesktop
@@ -21,24 +22,26 @@ namespace WinDynamicDesktop
 
         public override void CheckStartOnBoot()
         {
-            RegistryKey startupKey = Registry.CurrentUser.OpenSubKey(registryStartupLocation);
-            startOnBoot = startupKey.GetValue("WinDynamicDesktop") != null;
-            startupKey.Close();
+            using (RegistryKey startupKey = Registry.CurrentUser.OpenSubKey(registryStartupLocation))
+            {
+                startOnBoot = startupKey.GetValue("WinDynamicDesktop") != null;
+            };
 
             MainMenu.startOnBootItem.Checked = startOnBoot;
         }
 
         public override void ToggleStartOnBoot()
         {
-            RegistryKey startupKey = Registry.CurrentUser.OpenSubKey(registryStartupLocation, true);
-
-            if (!startOnBoot)
+            using (RegistryKey startupKey = Registry.CurrentUser.OpenSubKey(registryStartupLocation, true))
             {
-                startupKey.SetValue("WinDynamicDesktop", Application.ExecutablePath);
-            }
-            else
-            {
-                startupKey.DeleteValue("WinDynamicDesktop");
+                if (!startOnBoot)
+                {
+                    startupKey.SetValue("WinDynamicDesktop", Application.ExecutablePath);
+                }
+                else
+                {
+                    startupKey.DeleteValue("WinDynamicDesktop");
+                }
             }
 
             startOnBoot = !startOnBoot;
@@ -47,7 +50,7 @@ namespace WinDynamicDesktop
 
         public override void OpenUpdateLink()
         {
-            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(updateLink) { UseShellExecute = true });
+            Process.Start(new ProcessStartInfo(updateLink) { UseShellExecute = true });
         }
 
         public override void SetWallpaper(string imagePath, int displayIndex)
