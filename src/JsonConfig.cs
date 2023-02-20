@@ -72,7 +72,8 @@ namespace WinDynamicDesktop
                 catch (JsonReaderException)
                 {
                     DialogResult result = MessageDialog.ShowQuestion("The WinDynamicDesktop configuration file is " +
-                        "corrupt and could not be loaded. Do you want to reset to default settings?", "Error", true);
+                        "corrupt and could not be loaded. Do you want to reset to default settings?", "Error",
+                        MessageBoxIcon.Error);
                     if (result == DialogResult.Yes)
                     {
                         firstRun = true;

@@ -19,10 +19,10 @@ namespace WinDynamicDesktop
                 cancelButton ? MessageBoxButtons.OKCancel : MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        public static DialogResult ShowQuestion(string message, string title = null, bool useWarningIcon = false)
+        public static DialogResult ShowQuestion(string message, string title = null,
+            MessageBoxIcon questionIcon = MessageBoxIcon.Question)
         {
-            return MessageBox.Show(message, title ?? "WinDynamicDesktop", MessageBoxButtons.YesNo,
-                useWarningIcon ? MessageBoxIcon.Warning : MessageBoxIcon.Question);
+            return MessageBox.Show(message, title ?? "WinDynamicDesktop", MessageBoxButtons.YesNo, questionIcon);
         }
 
         public static DialogResult ShowWarning(string message, string title = null)

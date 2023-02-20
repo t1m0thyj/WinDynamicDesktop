@@ -84,7 +84,7 @@ namespace WinDynamicDesktop
             {
                 DialogResult result = MessageDialog.ShowQuestion(string.Format(_("The following themes are already " +
                     "installed:\n\t{0}\n\nDo you want to overwrite them?"), string.Join("\n\t", duplicateThemeNames)),
-                    _("Question"), true);
+                    _("Question"), MessageBoxIcon.Warning);
 
                 if (result != DialogResult.Yes)
                 {
@@ -481,7 +481,7 @@ namespace WinDynamicDesktop
             ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
 
             DialogResult result = MessageDialog.ShowQuestion(string.Format(_("Are you sure you want to remove " +
-                "the '{0}' theme?"), ThemeManager.GetThemeName(theme)), _("Question"), true);
+                "the '{0}' theme?"), ThemeManager.GetThemeName(theme)), _("Question"), MessageBoxIcon.Warning);
 
             if (result == DialogResult.Yes)
             {
@@ -543,7 +543,7 @@ namespace WinDynamicDesktop
             {
                 DialogResult result = MessageDialog.ShowQuestion(_("WinDynamicDesktop cannot dynamically update your " +
                     "wallpaper until you have selected a theme. Are you sure you want to continue without a theme " +
-                    "selected?"), _("Question"), true);
+                    "selected?"), _("Question"), MessageBoxIcon.Warning);
 
                 if (result != DialogResult.Yes)
                 {

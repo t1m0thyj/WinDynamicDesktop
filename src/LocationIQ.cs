@@ -25,7 +25,7 @@ namespace WinDynamicDesktop
             SolarData solarData = SunriseSunsetService.GetSolarData(DateTime.Today);
 
             DialogResult result = MessageDialog.ShowQuestion(string.Format(_("Is this location correct?\n\n{0}\n{1}"),
-                data.display_name, SunriseSunsetService.GetSunriseSunsetString(solarData)), _("Question"), true);
+                data.display_name, SunriseSunsetService.GetSunriseSunsetString(solarData)), _("Question"));
 
             if (result == DialogResult.Yes)
             {

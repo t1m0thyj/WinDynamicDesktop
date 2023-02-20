@@ -210,7 +210,8 @@ namespace WinDynamicDesktop
             {
                 DialogResult result = MessageDialog.ShowQuestion(_("WinDynamicDesktop cannot display wallpapers " +
                     "until you have entered a valid location, so that it can calculate sunrise and sunset times for " +
-                    "your location. Are you sure you want to cancel and quit the program?"), _("Question"), true);
+                    "your location. Are you sure you want to cancel and quit the program?"), _("Question"),
+                    MessageBoxIcon.Warning);
 
                 if (result == DialogResult.Yes)
                 {
