@@ -48,7 +48,7 @@ namespace WinDynamicDesktop
             SystemEvents.TimeChanged += OnTimeChanged;
         }
 
-        public void RunScheduler(bool forceImageUpdate = false)
+        public void RunScheduler(bool forceImageUpdate = false, string staticImagePath = null)
         {
             if (!LaunchSequence.IsLocationReady() || !LaunchSequence.IsThemeReady())
             {
@@ -103,7 +103,8 @@ namespace WinDynamicDesktop
             {
                 daySegment2 = displayEvents[0].daySegment2,
                 daySegment4 = displayEvents[0].daySegment4,
-                imagePaths = displayEvents.Select(e => e.lastImagePath).ToArray()
+                imagePaths = staticImagePath != null ? new string[] { staticImagePath } :
+                    displayEvents.Select(e => e.lastImagePath).ToArray()
             }, forceImageUpdate);
 
             if (data.polarPeriod != PolarPeriod.None)

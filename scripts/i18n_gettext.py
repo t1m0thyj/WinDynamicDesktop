@@ -2,13 +2,19 @@
 import glob
 import os
 import re
+import sys
 import time
 from collections import OrderedDict
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 app_name = "WinDynamicDesktop"
-exclude_patterns = [app_name + r'$', r'\w+://', r'\w+\d+$', r'\W+$']
+exclude_patterns = [
+    r'^' + app_name + r'$',  # Program name
+    r'^\w+:\S+',  # URL protocol
+    r'^[a-z]+[A-Z0-9]+\w*$',  # WinForms control names
+    r'.+Dialog$',  # WinForms dialog names
+]
 pot_data = OrderedDict()
 
 
@@ -45,11 +51,11 @@ for filename in glob.glob("../src/**/*.cs", recursive=True):
 
                     if match:
                         msg_history = [match.group(1), i + 1]
-        else:
+        elif os.path.dirname(filename).endswith("src"):
             for i, line in enumerate(cs_file):
-                match = re.search(r'\.Text = "(.+)";$', line)
+                match = re.search(r'\W"(.+)"\W', line)
 
-                if match:
+                if match and not line.lstrip().startswith("//"):
                     add_to_pot_data(match.group(1), filename[3:], i + 1)
 
 pot_lines = [
@@ -86,6 +92,6 @@ for msgid, locs in pot_data.items():
 
     pot_lines.append("msgstr \"\"")
 
-with open("../src/locale/messages.pot", 'w', encoding="utf-8") as pot_file:
+with open(sys.argv[1] if len(sys.argv) > 1 else "../src/locale/messages.pot", 'w', encoding="utf-8") as pot_file:
     for line in pot_lines:
         print(line, file=pot_file)

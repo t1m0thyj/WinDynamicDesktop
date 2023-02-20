@@ -109,6 +109,14 @@ namespace WinDynamicDesktop
                 {
                     childControl.Text = GetTranslation(childControl.Text);
                 }
+
+                if (childControl is ComboBox)
+                {
+                    for (int i = 0; i < ((ComboBox)childControl).Items.Count; i++)
+                    {
+                        ((ComboBox)childControl).Items[i] = GetTranslation((string)((ComboBox)childControl).Items[i]);
+                    }
+                }
             }
         }
 

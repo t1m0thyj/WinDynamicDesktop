@@ -204,6 +204,8 @@ namespace WinDynamicDesktop
 
         private void OnFormClosing(object sender, FormClosingEventArgs e)
         {
+            Application.UseWaitCursor = false;
+
             if (e.CloseReason == CloseReason.UserClosing && !LaunchSequence.IsLocationReady())
             {
                 DialogResult result = MessageDialog.ShowQuestion(_("WinDynamicDesktop cannot display wallpapers " +

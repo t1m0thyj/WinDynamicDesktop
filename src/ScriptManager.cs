@@ -52,6 +52,7 @@ namespace WinDynamicDesktop
                 AppContext.ShowPopup(string.Format(_("Found {0} PowerShell script(s) to enable"), scriptCount));
                 if (scriptCount > 0)
                 {
+                    lastArgs = null;
                     AppContext.wpEngine.RunScheduler();
                 }
             }
@@ -76,7 +77,7 @@ namespace WinDynamicDesktop
         {
             Process proc = new Process();
             string command = BuildCommandString(Path.GetFileName(path), args);
-            proc.StartInfo = new ProcessStartInfo("powershell.exe",
+            proc.StartInfo = new ProcessStartInfo(ExistsOnPath("pwsh.exe") ? "pwsh.exe" : "powershell.exe",
                 "-NoProfile -ExecutionPolicy Bypass -Command \"" + command + "\"")
             {
                 CreateNoWindow = true,
@@ -118,6 +119,22 @@ namespace WinDynamicDesktop
                 cmdStr += " -imagePath \\\"" + args.imagePaths[0] + "\\\"";
             }
             return cmdStr;
+        }
+
+        private static bool ExistsOnPath(string filename)
+        {
+            if (File.Exists(filename))
+            {
+                return true;
+            }
+            foreach (string path in Environment.GetEnvironmentVariable("PATH").Split(Path.PathSeparator))
+            {
+                if (File.Exists(Path.Combine(path.Trim(), filename)))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

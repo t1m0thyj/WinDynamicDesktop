@@ -245,6 +245,7 @@ namespace WinDynamicDesktop
             if (selectedIndex == 0)
             {
                 WallpaperApi.SetWallpaper(windowsWallpaper);
+                AppContext.wpEngine.RunScheduler(true, windowsWallpaper);
             }
             else
             {
@@ -372,6 +373,8 @@ namespace WinDynamicDesktop
 
         private void importButton_Click(object sender, EventArgs e)
         {
+            openFileDialog1.Filter = string.Format(_("Theme files|{0}|All files|{1}"), "*.ddw;*.zip;*.json", "*.*");
+            openFileDialog1.Title = _("Import Theme");
             DialogResult result = openFileDialog1.ShowDialog();
 
             if (result == DialogResult.OK)

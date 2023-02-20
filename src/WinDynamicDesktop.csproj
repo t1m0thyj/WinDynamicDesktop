@@ -26,11 +26,10 @@
   <ItemGroup>
     <PackageReference Include="bloomtom.HttpProgress" Version="2.3.2" />
     <PackageReference Include="DesktopBridge.Helpers" Version="1.2.2" />
-    <PackageReference Include="Fody" Version="6.6.4" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" PrivateAssets="all" />
     <PackageReference Include="GeoTimeZone" Version="5.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="NGettext" Version="0.6.7" />
-    <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" PrivateAssets="all" />
+    <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" PrivateAssets="All" />
     <PackageReference Include="RestSharp" Version="108.0.3" />
     <PackageReference Include="SunCalcNet" Version="1.2.2" />
     <PackageReference Include="TimeZoneConverter" Version="6.1.0" />

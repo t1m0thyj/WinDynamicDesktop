@@ -93,10 +93,8 @@
             // 
             // openFileDialog1
             // 
-            this.openFileDialog1.Filter = "Theme files|*.ddw;*.zip;*.json|All files|*.*";
             this.openFileDialog1.InitialDirectory = "shell:Downloads";
             this.openFileDialog1.Multiselect = true;
-            this.openFileDialog1.Title = "Import Theme";
             // 
             // contextMenuStrip1
             // 
