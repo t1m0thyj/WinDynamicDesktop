@@ -140,8 +140,10 @@ namespace WinDynamicDesktop
             AddLanguage("English", "en");  // English
             AddLanguage("Español", "es");  // Spanish
             AddLanguage("Français", "fr");  // French
+            AddLanguage("Galego", "gl");  // Galician
             AddLanguage("Hrvatski", "hr");  // Croatian
             AddLanguage("Italiano", "it");  // Italian
+            AddLanguage("Lëtzebuergesch", "lb");  // Luxembourgish
             AddLanguage("Magyar", "hu");  // Hungarian
             AddLanguage("Nederlands", "nl");  // Dutch
             AddLanguage("Polski", "pl");  // Polish

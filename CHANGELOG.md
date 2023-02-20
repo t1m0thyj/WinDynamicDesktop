@@ -1,5 +1,13 @@
 # Changelog
 
+## `5.2.1`
+
+* Fixed `NullReferenceException` when settings.json file is invalid
+* Fixed PowerShell scripts not being invoked with the latest version of PowerShell (v7) ([#439](https://github.com/t1m0thyj/WinDynamicDesktop/issues/439))
+* Fixed a few strings that were not translatable in Select Theme dialog ([#507](https://github.com/t1m0thyj/WinDynamicDesktop/issues/507))
+* Fixed font rendering issues on Windows 11 with light theme ([#508](https://github.com/t1m0thyj/WinDynamicDesktop/issues/508))
+* Added Galician and Luxembourgish translations (thanks Juan Paz and Arno)
+
 ## `5.2.0`
 
 * Added dark UI theme using Mica (only for Windows 11 22H2)

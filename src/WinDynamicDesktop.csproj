@@ -9,7 +9,7 @@
     <PackageId>WinDynamicDesktop</PackageId>
     <Product>WinDynamicDesktop</Product>
     <Copyright>Copyright © 2023 Timothy Johnson</Copyright>
-    <Version>5.2.0</Version>
+    <Version>5.2.1</Version>
     <ApplicationIcon>resources\WinDynamicDesktop.ico</ApplicationIcon>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
