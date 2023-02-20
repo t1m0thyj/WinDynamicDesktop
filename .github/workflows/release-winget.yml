@@ -9,4 +9,5 @@ jobs:
       - uses: vedantmgoyal2009/winget-releaser@v2
         with:
           identifier: t1m0thyj.WinDynamicDesktop
+          installers-regex: 'Setup\.exe$'
           token: ${{ secrets.WINGET_TOKEN }}
