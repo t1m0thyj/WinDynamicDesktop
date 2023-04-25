@@ -2,6 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+using HttpProgress;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +11,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using HttpProgress;
 using WinDynamicDesktop.COM;
 
 namespace WinDynamicDesktop
@@ -43,7 +43,7 @@ namespace WinDynamicDesktop
             inactiveTimer = new System.Timers.Timer();
             inactiveTimer.AutoReset = false;
             inactiveTimer.Interval = 10000;
-            inactiveTimer.Elapsed += (sender, e) => this.Invoke(new Action(() => OnDownloadFileCompleted(null)));
+            inactiveTimer.Elapsed += (sender, e) => this.Invoke(new Action(() => OnDownloadFileCompleted(false)));
             progressReport = new Progress<ICopyProgress>(OnDownloadProgressChanged);
         }
 
@@ -86,13 +86,14 @@ namespace WinDynamicDesktop
 
             Task.Run(async () =>
             {
+                HttpResponseMessage response;
                 using (var downloadStream = File.OpenWrite(themeZipDest))
                 using (tokenSource.Token.Register(downloadStream.Close))
                 {
-                    var response = await httpClient.GetAsync(themeUris[themeUriIndex].ToString(),
+                    response = await httpClient.GetAsync(themeUris[themeUriIndex].ToString(),
                         downloadStream, progressReport, tokenSource.Token);
-                    this.Invoke(new Action(() => OnDownloadFileCompleted(response)));
                 }
+                this.Invoke(new Action(() => OnDownloadFileCompleted(response.IsSuccessStatusCode)));
             });
         }
 
@@ -101,12 +102,6 @@ namespace WinDynamicDesktop
             progressBar1.Value = percentage;
             progressBar1.Refresh();
             TaskbarProgress.SetValue(this.Handle, percentage, 100);
-        }
-
-        private bool EnsureZipNotHtml()
-        {
-            // Handle case where HTML page gets downloaded instead of ZIP
-            return (File.Exists(themeZipDest) && new FileInfo(themeZipDest).Length > 1e6);
         }
 
         private void OnDownloadProgressChanged(ICopyProgress e)
@@ -135,9 +130,10 @@ namespace WinDynamicDesktop
                 (e.ExpectedBytes / 1024d / 1024d).ToString("0.#"));
         }
 
-        private async void OnDownloadFileCompleted(HttpResponseMessage response)
+        private async void OnDownloadFileCompleted(bool success)
         {
-            if (response != null && response.IsSuccessStatusCode && EnsureZipNotHtml())
+            // Handle case where HTML page gets downloaded instead of ZIP
+            if (success && File.Exists(themeZipDest) && new FileInfo(themeZipDest).Length > 1e6)
             {
                 cancelButton.Enabled = false;
                 ThemeResult result = await Task.Run(() =>
