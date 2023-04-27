@@ -45,6 +45,7 @@ namespace WinDynamicDesktop
             schedulerTimer.Elapsed += OnSchedulerTimerElapsed;
             SystemEvents.DisplaySettingsChanged += OnDisplaySettingsChanged;
             SystemEvents.PowerModeChanged += OnPowerModeChanged;
+            SystemEvents.SessionSwitch += OnSessionSwitch;
             SystemEvents.TimeChanged += OnTimeChanged;
         }
 
@@ -245,6 +246,15 @@ namespace WinDynamicDesktop
             if (e.Mode == PowerModes.Resume)
             {
                 LoggingHandler.LogMessage("Scheduler event triggered by resume from sleep");
+                HandleTimerEvent(false);
+            }
+        }
+
+        private void OnSessionSwitch(object sender, SessionSwitchEventArgs e)
+        {
+            if (e.Reason == SessionSwitchReason.SessionUnlock)
+            {
+                LoggingHandler.LogMessage("Scheduler event triggered by user session unlock");
                 HandleTimerEvent(false);
             }
         }
