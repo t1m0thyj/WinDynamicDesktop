@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using WinDynamicDesktop.COM;
+using static WinDynamicDesktop.COM.WindowBackdrop.ParameterTypes;
 
 namespace WinDynamicDesktop
 {
@@ -32,20 +33,17 @@ namespace WinDynamicDesktop
                 SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;
             }
 
-            WinBlur.SetBlurStyle(form, IsDark ? WinBlur.BlurType.Mica : WinBlur.BlurType.None,
-                IsDark ? WinBlur.Mode.DarkMode : WinBlur.Mode.LightMode);
+            EnableMica(form);
+            form.BackColor = IsDark ? Color.Black : default;
             form.ForeColor = IsDark ? Color.White : default;
+            form.TransparencyKey = form.BackColor;
 
             foreach (Control childControl in GetControls(form))
             {
                 childControl.BackColor = IsDark ? Color.Black : default;
                 childControl.ForeColor = IsDark ? Color.White : default;
 
-                if (childControl is ButtonBase)
-                {
-                    ((ButtonBase)childControl).UseVisualStyleBackColor = !IsDark;
-                }
-                else if (childControl is LinkLabel)
+                if (childControl is LinkLabel)
                 {
                     ((LinkLabel)childControl).LinkColor = IsDark ? Color.LightBlue : default;
                 }
@@ -91,6 +89,21 @@ namespace WinDynamicDesktop
             };
 
             return appsUseLightTheme.Value;
+        }
+
+        private static void EnableMica(Form form)
+        {
+            var margins = new MARGINS()
+            {
+                cxLeftWidth = -1,
+                cxRightWidth = -1,
+                cyTopHeight = -1,
+                cyBottomHeight = -1
+            };
+            WindowBackdrop.Methods.ExtendFrame(form.Handle, margins);
+            WindowBackdrop.Methods.SetWindowAttribute(form.Handle, DWMWINDOWATTRIBUTE.DWMWA_USE_IMMERSIVE_DARK_MODE,
+                IsDark ? 1 : 0);
+            WindowBackdrop.Methods.SetWindowAttribute(form.Handle, DWMWINDOWATTRIBUTE.DWMWA_SYSTEMBACKDROP_TYPE, 2);
         }
 
         private static void OnUserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
