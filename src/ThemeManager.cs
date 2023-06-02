@@ -2,13 +2,13 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using RestSharp;
 
 namespace WinDynamicDesktop
 {
@@ -106,12 +106,6 @@ namespace WinDynamicDesktop
                 }
                 setSize(string.Format(_("{0} MB"), (sizeBytes / 1024d / 1024d).ToString("0.#")));
             });
-        }
-
-        public static bool IsTheme4Segment(ThemeConfig theme)
-        {
-            return (!JsonConfig.IsNullOrEmpty(theme.sunriseImageList) &&
-                !JsonConfig.IsNullOrEmpty(theme.sunsetImageList));
         }
 
         public static bool IsThemeDownloaded(ThemeConfig theme)

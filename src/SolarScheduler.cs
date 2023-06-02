@@ -71,34 +71,35 @@ namespace WinDynamicDesktop
                     }
                 }
             }
-            else if (ThemeManager.IsTheme4Segment(theme))
-            {
-                for (int i = 0; i < theme.sunriseImageList.Length; i++)
-                {
-                    times.Add(data.solarTimes[0] + TimeSpan.FromTicks((data.solarTimes[1].Ticks - data.solarTimes[0].Ticks) * i / theme.sunriseImageList.Length));
-                }
-                for (int i = 0; i < theme.dayImageList.Length; i++)
-                {
-                    times.Add(data.solarTimes[1] + TimeSpan.FromTicks((data.solarTimes[2].Ticks - data.solarTimes[1].Ticks) * i / theme.dayImageList.Length));
-                }
-                for (int i = 0; i < theme.sunsetImageList.Length; i++)
-                {
-                    times.Add(data.solarTimes[2] + TimeSpan.FromTicks((data.solarTimes[3].Ticks - data.solarTimes[2].Ticks) * i / theme.sunsetImageList.Length));
-                }
-                for (int i = 0; i < theme.nightImageList.Length; i++)
-                {
-                    times.Add(data.solarTimes[3] + TimeSpan.FromTicks((nextData.solarTimes[0].Ticks - data.solarTimes[3].Ticks) * i / theme.nightImageList.Length));
-                }
-            }
             else
             {
+                bool hasSunriseImages = !JsonConfig.IsNullOrEmpty(theme.sunriseImageList);
+                bool hasSunsetImages = !JsonConfig.IsNullOrEmpty(theme.sunsetImageList);
+                if (hasSunriseImages)
+                {
+                    for (int i = 0; i < theme.sunriseImageList.Length; i++)
+                    {
+                        times.Add(data.solarTimes[0] + TimeSpan.FromTicks((data.solarTimes[1].Ticks - data.solarTimes[0].Ticks) * i / theme.sunriseImageList.Length));
+                    }
+                }
                 for (int i = 0; i < theme.dayImageList.Length; i++)
                 {
-                    times.Add(data.sunriseTime + TimeSpan.FromTicks((data.sunsetTime.Ticks - data.sunriseTime.Ticks) * i / theme.dayImageList.Length));
+                    DateTime dayStartTime = hasSunriseImages ? data.solarTimes[1] : data.sunriseTime;
+                    DateTime dayEndTime = hasSunsetImages ? data.solarTimes[2] : data.sunsetTime;
+                    times.Add(dayStartTime + TimeSpan.FromTicks((dayEndTime.Ticks - dayStartTime.Ticks) * i / theme.dayImageList.Length));
+                }
+                if (hasSunsetImages)
+                {
+                    for (int i = 0; i < theme.sunsetImageList.Length; i++)
+                    {
+                        times.Add(data.solarTimes[2] + TimeSpan.FromTicks((data.solarTimes[3].Ticks - data.solarTimes[2].Ticks) * i / theme.sunsetImageList.Length));
+                    }
                 }
                 for (int i = 0; i < theme.nightImageList.Length; i++)
                 {
-                    times.Add(data.sunsetTime + TimeSpan.FromTicks((nextData.sunriseTime.Ticks - data.sunsetTime.Ticks) * i / theme.nightImageList.Length));
+                    DateTime nightStartTime = hasSunsetImages ? data.solarTimes[3] : data.sunsetTime;
+                    DateTime nightEndTime = hasSunriseImages ? nextData.solarTimes[0] : nextData.sunriseTime;
+                    times.Add(nightStartTime + TimeSpan.FromTicks((nightEndTime.Ticks - nightStartTime.Ticks) * i / theme.nightImageList.Length));
                 }
             }
 
@@ -144,23 +145,37 @@ namespace WinDynamicDesktop
             DaySegmentData segmentData = GetDaySegmentData(data, dateNow);
             e.daySegment2 = segmentData.segment2;
 
-            if (e.currentTheme == null || (ThemeManager.IsTheme4Segment(e.currentTheme) &&
-                !JsonConfig.settings.darkMode))
+            bool preferSegment2 = JsonConfig.settings.darkMode;
+            if (!preferSegment2 && e.currentTheme != null)
+            {
+                if ((segmentData.segmentType == DaySegment.Sunrise || segmentData.segmentType == DaySegment.Night) &&
+                    JsonConfig.IsNullOrEmpty(e.currentTheme.sunriseImageList))
+                {
+                    preferSegment2 = true;
+                }
+                else if ((segmentData.segmentType == DaySegment.Sunset || segmentData.segmentType == DaySegment.Day) &&
+                    JsonConfig.IsNullOrEmpty(e.currentTheme.sunsetImageList))
+                {
+                    preferSegment2 = true;
+                }
+            }
+
+            if (data.polarPeriod != PolarPeriod.None)
+            {
+                imageList = e.currentTheme?.dayImageList;
+                if (data.polarPeriod == PolarPeriod.PolarNight || JsonConfig.settings.darkMode)
+                {
+                    imageList = e.currentTheme?.nightImageList;
+                }
+                segmentStart = dateNow.Date;
+                segmentEnd = dateNow.Date.AddDays(1);
+            }
+            else if (!preferSegment2)
             {
                 e.daySegment4 = segmentData.segment4;
 
                 switch (segmentData.segmentType)
                 {
-                    case DaySegment.AlwaysDay:
-                        imageList = e.currentTheme?.dayImageList;
-                        segmentStart = DateTime.Now.Date;
-                        segmentEnd = DateTime.Now.Date.AddDays(1);
-                        break;
-                    case DaySegment.AlwaysNight:
-                        imageList = e.currentTheme?.nightImageList;
-                        segmentStart = dateNow.Date;
-                        segmentEnd = dateNow.Date.AddDays(1);
-                        break;
                     case DaySegment.Sunrise:
                         imageList = e.currentTheme?.sunriseImageList;
                         segmentStart = data.solarTimes[0];
@@ -198,18 +213,12 @@ namespace WinDynamicDesktop
             else
             {
                 imageList = e.currentTheme?.dayImageList;
-
                 if (segmentData.segment2 == 1 || JsonConfig.settings.darkMode)
                 {
                     imageList = e.currentTheme?.nightImageList;
                 }
 
-                if (data.polarPeriod != PolarPeriod.None)
-                {
-                    segmentStart = dateNow.Date;
-                    segmentEnd = dateNow.Date.AddDays(1);
-                }
-                else if (segmentData.segment2 == 0)
+                if (segmentData.segment2 == 0)
                 {
                     segmentStart = data.sunriseTime;
                     segmentEnd = data.sunsetTime;
