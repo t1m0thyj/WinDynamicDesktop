@@ -243,7 +243,8 @@ namespace WinDynamicDesktop
 
         private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
         {
-            if (e.Mode == PowerModes.Resume)
+            if (e.Mode == PowerModes.Resume && (UpdateDisplayList() ||
+                (nextUpdateTime.HasValue && DateTime.Now >= nextUpdateTime.Value)))
             {
                 LoggingHandler.LogMessage("Scheduler event triggered by resume from sleep");
                 HandleTimerEvent(false);
@@ -252,7 +253,8 @@ namespace WinDynamicDesktop
 
         private void OnSessionSwitch(object sender, SessionSwitchEventArgs e)
         {
-            if (e.Reason == SessionSwitchReason.SessionUnlock)
+            if (e.Reason == SessionSwitchReason.SessionUnlock && (UpdateDisplayList() ||
+                (nextUpdateTime.HasValue && DateTime.Now >= nextUpdateTime.Value)))
             {
                 LoggingHandler.LogMessage("Scheduler event triggered by user session unlock");
                 HandleTimerEvent(false);
