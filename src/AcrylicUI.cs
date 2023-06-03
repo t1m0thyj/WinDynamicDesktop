@@ -35,13 +35,15 @@ namespace WinDynamicDesktop
 
             EnableMica(form);
             form.BackColor = IsDark ? Color.Black : default;
+            form.BackColor = Color.FromArgb(form.BackColor.R, form.BackColor.G,
+                (form.BackColor.B < 255) ? (form.BackColor.B + 1) : (form.BackColor.B - 1));
             form.ForeColor = IsDark ? Color.White : default;
             form.TransparencyKey = form.BackColor;
 
             foreach (Control childControl in GetControls(form))
             {
-                childControl.BackColor = IsDark ? Color.Black : default;
-                childControl.ForeColor = IsDark ? Color.White : default;
+                childControl.BackColor = IsDark ? form.BackColor : default;
+                childControl.ForeColor = IsDark ? form.ForeColor : default;
 
                 if (childControl is LinkLabel)
                 {
