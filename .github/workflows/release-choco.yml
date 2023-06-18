@@ -12,6 +12,9 @@ jobs:
   publish:
     runs-on: windows-latest # choco can only be run on windows
     steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+      - run: pip install -r scripts/requirements.txt
       - run: python scripts/publish_choco.py ${{ inputs.release_tag || github.event.release.tag_name }}
         env:
           CHOCO_APIKEY: ${{ secrets.CHOCO_APIKEY }}

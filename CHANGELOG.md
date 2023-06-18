@@ -5,7 +5,7 @@
 * Added Sonoma Abstract theme
 * Added support for 3-segment wallpapers ([#442](https://github.com/t1m0thyj/WinDynamicDesktop/issues/442))
 * Added Taiwanese translation (thanks SABA)
-* Fixed `The process cannot access the file` error when downloading themes ([#492](https://github.com/t1m0thyj/WinDynamicDesktop/issues/492))
+* Fixed "The process cannot access the file" error when downloading themes ([#492](https://github.com/t1m0thyj/WinDynamicDesktop/issues/492))
 
 ## `5.2.1`
 
