@@ -36,7 +36,7 @@ def write_file(filename, contents):
     with open(filename, 'w', encoding="utf-8") as fileobj:
         fileobj.write(contents)
 
-release_tag = sys.argv[1] if len(sys.argv) > 1 else "latest"
+release_tag = f"tags/{sys.argv[1]}" if len(sys.argv) > 1 else "latest"
 r = requests.get(f"https://api.github.com/repos/t1m0thyj/WinDynamicDesktop/releases/{release_tag}")
 response = r.json()
 installer_url = next(a for a in response["assets"] if a["name"].endswith("x86_Setup.exe"))["browser_download_url"]
