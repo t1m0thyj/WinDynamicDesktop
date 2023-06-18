@@ -174,6 +174,7 @@ namespace WinDynamicDesktop
             AddLanguage("አማርኛ", "am");  // Amharic
             AddLanguage("中文简体", "zh-Hans");  // Chinese Simplified
             AddLanguage("中文繁體", "zh-Hant");  // Chinese Traditional
+            AddLanguage("中文（台灣）", "zh-TW");  // Chinese Traditional (Taiwan)
             AddLanguage("日本語", "ja");  // Japanese
             AddLanguage("한국어", "ko");  // Korean
         }
