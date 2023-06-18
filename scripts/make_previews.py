@@ -3,8 +3,16 @@ import glob
 import json
 import os
 import sys
+from io import BytesIO
 
-from PIL import Image
+from PIL import Image, ImageFilter
+
+HAS_MOZJPEG = False
+try:
+    import mozjpeg_lossless_optimization as mozjpeg
+    HAS_MOZJPEG = True
+except ImportError:
+    pass
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
@@ -42,7 +50,14 @@ for theme_dir in glob.glob(f"{input_dir}/**"):
         img = Image.open(f"{theme_dir}/{filename}")
         img.thumbnail((img_width, img_height))
         if jpeg_quality >= 0:
-            img.save(f"{output_dir}/{theme_name}_{phase}.jpg", quality=jpeg_quality)
+            if HAS_MOZJPEG:
+                jpeg_io = BytesIO()
+                img.save(jpeg_io, format="JPEG", quality=jpeg_quality)
+                jpeg_io.seek(0)
+                with open(f"{output_dir}/{theme_name}_{phase}.jpg", 'wb') as fileobj:
+                    fileobj.write(mozjpeg.optimize(jpeg_io.read()))
+            else:
+                img.save(f"{output_dir}/{theme_name}_{phase}.jpg", quality=jpeg_quality)
         else:
             img.save(f"{output_dir}/{theme_name}_{phase}.png")
 
