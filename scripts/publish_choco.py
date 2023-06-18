@@ -36,11 +36,12 @@ def write_file(filename, contents):
     with open(filename, 'w', encoding="utf-8") as fileobj:
         fileobj.write(contents)
 
-r = requests.get("https://api.github.com/repos/t1m0thyj/WinDynamicDesktop/releases/latest")
+release_tag = sys.argv[1] if len(sys.argv) > 1 else "latest"
+r = requests.get(f"https://api.github.com/repos/t1m0thyj/WinDynamicDesktop/releases/{release_tag}")
 response = r.json()
 installer_url = next(a for a in response["assets"] if a["name"].endswith("x86_Setup.exe"))["browser_download_url"]
 installer_url64 = next(a for a in response["assets"] if a["name"].endswith("x64_Setup.exe"))["browser_download_url"]
-package_version = sys.argv[1] if len(sys.argv) > 1 else response["tag_name"][1:]
+package_version = response["tag_name"].removeprefix("v")
 replacers = {
     "installerChecksum": installer_checksum(response["tag_name"], os.path.basename(installer_url)),
     "installerUrl": installer_url,
@@ -60,6 +61,6 @@ write_file(nuspec_filename, old_nuspec)
 write_file(script_filename, old_script)
 
 nupkg_filename = f"windynamicdesktop.{package_version}.nupkg"
-if input(f"Push {nupkg_filename}? (y/N) ").lower() == "y":
+if os.getenv("CI") or input(f"Push {nupkg_filename}? (y/N) ").lower() == "y":
     subprocess.run(["choco", "push", os.path.join(tempfile.gettempdir(), nupkg_filename), "-s", chocolatey_repo, "-k",
         os.getenv("CHOCO_APIKEY")])
