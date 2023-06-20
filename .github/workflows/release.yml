@@ -25,15 +25,11 @@ jobs:
 
     - run: scripts\package.ps1
 
-    # Pin version until this is fixed: https://github.com/softprops/action-gh-release/issues/280
-    - uses: softprops/action-gh-release@v0.1.13
-      with:
-        draft: true
-        files: |
-          dist\*.exe
-          dist\checksums.txt
-        name: WinDynamicDesktop ${{ github.event.inputs.version }}
-        tag_name: v${{ github.event.inputs.version }}
+    - run: gh release create $TAG_NAME --draft --title "$RELEASE_NAME" dist\*.exe dist\checksums.txt
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        RELEASE_NAME: WinDynamicDesktop ${{ github.event.inputs.version }}
+        TAG_NAME: v${{ github.event.inputs.version }}
 
     - uses: actions/upload-artifact@v3
       with:

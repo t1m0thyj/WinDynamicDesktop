@@ -1,5 +1,9 @@
 # Changelog
 
+## `5.3.1`
+
+* Updated dark theme to stop using buggy Mica effect which may prevent mouse clicks ([#525](https://github.com/t1m0thyj/WinDynamicDesktop/issues/525))
+
 ## `5.3.0`
 
 * Added Sonoma Abstract theme
