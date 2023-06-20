@@ -25,7 +25,9 @@ jobs:
 
     - run: scripts\package.ps1
 
-    - run: gh release create $TAG_NAME --draft --title "$RELEASE_NAME" dist\*.exe dist\checksums.txt
+    - run: |
+        gh release create $TAG_NAME --draft --title "$RELEASE_NAME"
+        gh release upload $TAG_NAME dist\*.exe dist\checksums.txt
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         RELEASE_NAME: WinDynamicDesktop ${{ github.event.inputs.version }}
