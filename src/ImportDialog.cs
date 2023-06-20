@@ -22,7 +22,7 @@ namespace WinDynamicDesktop
         public ImportDialog()
         {
             InitializeComponent();
-            AcrylicUI.ThemeForm(this);
+            DarkUI.ThemeForm(this);
             Localization.TranslateForm(this);
 
             this.FormClosing += OnFormClosing;

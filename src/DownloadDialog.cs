@@ -34,7 +34,7 @@ namespace WinDynamicDesktop
         public DownloadDialog()
         {
             InitializeComponent();
-            AcrylicUI.ThemeForm(this);
+            DarkUI.ThemeForm(this);
             Localization.TranslateForm(this);
 
             this.FormClosing += OnFormClosing;
