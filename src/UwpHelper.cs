@@ -80,8 +80,9 @@ namespace WinDynamicDesktop
             WallpaperApi.EnableTransitions();
 
             string[] pathSegments = imagePath.Split(Path.DirectorySeparatorChar);
-            var uri = new Uri("ms-appdata:///local/themes/" + pathSegments[pathSegments.Length - 2] + "/" +
-                pathSegments[pathSegments.Length - 1]);
+            var uri = new Uri("ms-appdata:///local/themes/" +
+                Uri.EscapeDataString(pathSegments[pathSegments.Length - 2]) + "/" +
+                Uri.EscapeDataString(pathSegments[pathSegments.Length - 1]));
             var file = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri);
 
             var profileSettings = Windows.System.UserProfile.UserProfilePersonalizationSettings.Current;
