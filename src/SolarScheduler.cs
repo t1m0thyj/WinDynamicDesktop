@@ -82,13 +82,16 @@ namespace WinDynamicDesktop
                         times.Add(data.solarTimes[0] + TimeSpan.FromTicks((data.solarTimes[1].Ticks - data.solarTimes[0].Ticks) * i / theme.sunriseImageList.Length));
                     }
                 }
-                for (int i = 0; i < theme.dayImageList.Length; i++)
+                if (!hasSunriseImages || !theme.dayImageList.SequenceEqual(theme.sunriseImageList))
                 {
-                    DateTime dayStartTime = hasSunriseImages ? data.solarTimes[1] : data.sunriseTime;
-                    DateTime dayEndTime = hasSunsetImages ? data.solarTimes[2] : data.sunsetTime;
-                    times.Add(dayStartTime + TimeSpan.FromTicks((dayEndTime.Ticks - dayStartTime.Ticks) * i / theme.dayImageList.Length));
+                    for (int i = 0; i < theme.dayImageList.Length; i++)
+                    {
+                        DateTime dayStartTime = hasSunriseImages ? data.solarTimes[1] : data.sunriseTime;
+                        DateTime dayEndTime = hasSunsetImages ? data.solarTimes[2] : data.sunsetTime;
+                        times.Add(dayStartTime + TimeSpan.FromTicks((dayEndTime.Ticks - dayStartTime.Ticks) * i / theme.dayImageList.Length));
+                    }
                 }
-                if (hasSunsetImages)
+                if (hasSunsetImages && !theme.sunsetImageList.SequenceEqual(theme.dayImageList))
                 {
                     for (int i = 0; i < theme.sunsetImageList.Length; i++)
                     {
