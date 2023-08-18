@@ -10,7 +10,7 @@ on:
         type: string
 jobs:
   publish:
-    runs-on: windows-latest # action can only be run on windows
+    runs-on: ubuntu-latest
     steps:
       - uses: vedantmgoyal2009/winget-releaser@v2
         with:
