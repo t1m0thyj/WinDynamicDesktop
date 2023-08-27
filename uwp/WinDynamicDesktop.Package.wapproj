@@ -50,11 +50,10 @@
     <FilterSatelliteAssembliesForMakePri>false</FilterSatelliteAssembliesForMakePri>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <NoWarn>$(NoWarn);NU1702</NoWarn>
-    <PackageCertificateThumbprint>392C0BA890A8408C501186BD83DCA2FC2E305D43</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="('$(Configuration)' == 'Debug') Or ('$(UseTemporarySignCert)' == 'true')">
     <PackageCertificateKeyFile>WinDynamicDesktop.Package_TemporaryKey.pfx</PackageCertificateKeyFile>
-    <PackageCertificateThumbprint>392C0BA890A8408C501186BD83DCA2FC2E305D43</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>B613C5F0A52DB5F78C3BADA2B1DDE3246F9D0CE1</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="('$(Configuration)' == 'Release') And ('$(UseTemporarySignCert)' != 'true')">
     <PackageCertificateThumbprint>CB1A6283A6FD16EF9026AB059F94176D5F0A54C0</PackageCertificateThumbprint>
