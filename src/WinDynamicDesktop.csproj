@@ -25,7 +25,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="bloomtom.HttpProgress" Version="2.3.2" />
-    <PackageReference Include="DarkNet" Version="2.2.0" />
+    <PackageReference Include="DarkNet" Version="2.3.0" />
     <PackageReference Include="DesktopBridge.Helpers" Version="1.2.2" />
     <PackageReference Include="GeoTimeZone" Version="5.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
