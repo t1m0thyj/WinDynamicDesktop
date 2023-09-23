@@ -77,10 +77,11 @@ namespace WinDynamicDesktop
 
             data.sunriseTime = GetSolarTime(sunPhases, SunPhaseName.Sunrise);
             data.sunsetTime = GetSolarTime(sunPhases, SunPhaseName.Sunset);
-            data.solarTimes = new DateTime[4]
+            data.solarTimes = new DateTime[5]
             {
                 GetSolarTime(sunPhases, SunPhaseName.Dawn),
                 GetSolarTime(sunPhases, SunPhaseName.GoldenHourEnd),
+                GetSolarTime(sunPhases, SunPhaseName.SolarNoon),
                 GetSolarTime(sunPhases, SunPhaseName.GoldenHour),
                 GetSolarTime(sunPhases, SunPhaseName.Dusk)
             };
@@ -102,17 +103,17 @@ namespace WinDynamicDesktop
                 }
             }
             // Skip night segment if dawn/dusk are undefined
-            else if (data.solarTimes[0] == DateTime.MinValue && data.solarTimes[3] == DateTime.MinValue)
+            else if (data.solarTimes[0] == DateTime.MinValue && data.solarTimes[4] == DateTime.MinValue)
             {
                 data.solarTimes[0] = data.sunriseTime.Date;
-                data.solarTimes[3] = data.sunsetTime.Date.AddDays(1).AddTicks(-1);
+                data.solarTimes[4] = data.sunsetTime.Date.AddDays(1).AddTicks(-1);
             }
             // Skip day segment if golden hour (end) are undefined
-            else if (data.solarTimes[1] == DateTime.MinValue && data.solarTimes[2] == DateTime.MinValue)
+            else if (data.solarTimes[1] == DateTime.MinValue && data.solarTimes[3] == DateTime.MinValue)
             {
-                DateTime midDay = new DateTime((data.solarTimes[0].Ticks + data.solarTimes[3].Ticks) / 2);
+                DateTime midDay = new DateTime((data.solarTimes[0].Ticks + data.solarTimes[4].Ticks) / 2);
                 data.solarTimes[1] = midDay;
-                data.solarTimes[2] = midDay;
+                data.solarTimes[3] = midDay;
             }
 
             return data;
