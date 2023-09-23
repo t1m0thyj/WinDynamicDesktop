@@ -208,7 +208,7 @@ namespace WinDynamicDesktop
                         if (dateNow < data.solarTimes[0])
                         {
                             SolarData yesterdaysData = SunriseSunsetService.GetSolarData(dateNow.Date.AddDays(-1));
-                            segmentStart = yesterdaysdata.solarTimes[4];
+                            segmentStart = yesterdaysData.solarTimes[4];
                             segmentEnd = data.solarTimes[0];
                         }
                         else
