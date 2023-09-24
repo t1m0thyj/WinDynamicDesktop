@@ -46,8 +46,8 @@ namespace WinDynamicDesktop
                     if (data.polarPeriod == PolarPeriod.PolarDay)
                     {
                         long x = data.solarTimes[2] + TimeSpan.FromTicks((TimeSpan.FromDays(1).Ticks * i / theme.dayImageList.Length) - TimeSpan.FromHours(12).Ticks);
-                        DateTime x_min = DateTime.Today;
-                        DateTime x_max = DateTime.Today + TimeSpan.FromDays(1);
+                        DateTime x_min = data.solarTimes[2] - TimeSpan.FromHours(12);
+                        DateTime x_max = data.solarTimes[2] + TimeSpan.FromHours(12);
                         long xx = (((x.Ticks - x_min.Ticks) % (x_max.Ticks - x_min.Ticks)) + (x_max.Ticks - x_min.Ticks)) % (x_max.Ticks - x_min.Ticks) + x_min.Ticks;
                         times.Add(new DateTime(xx));
                     }
@@ -67,12 +67,22 @@ namespace WinDynamicDesktop
                 {
                     if (data.polarPeriod == PolarPeriod.PolarNight)
                     {
-                        long x = data.solarTimes[2] + TimeSpan.FromTicks(TimeSpan.FromDays(1).Ticks * i / theme.dayImageList.Length);
-                        DateTime x_min = DateTime.Today;
-                        DateTime x_max = DateTime.Today + TimeSpan.FromDays(1);
-                        long xx = (((x - x_min) % (x_max - x_min)) + (x_max - x_min)) % (x_max - x_min) + x_min;
-                        times.Add(new DateTime(xx));
-                    }
+                        if (DateTime.now > data.solarTimes[2])
+                        {
+                            long x = data.solarTimes[2] + TimeSpan.FromTicks(TimeSpan.FromDays(1).Ticks * i / theme.dayImageList.Length);
+                            DateTime x_min = data.solarTimes[2];
+                            DateTime x_max = data.solarTimes[2] + TimeSpan.FromDays(1);
+                            long xx = (((x - x_min) % (x_max - x_min)) + (x_max - x_min)) % (x_max - x_min) + x_min;
+                            times.Add(new DateTime(xx));
+                        }
+                        else
+                        {
+                            long x = data.solarTimes[2] + TimeSpan.FromTicks(TimeSpan.FromDays(1).Ticks * i / theme.dayImageList.Length);
+                            DateTime x_min = data.solarTimes[2] - TimeSpan.FromDays(1);
+                            DateTime x_max = data.solarTimes[2];
+                            long xx = (((x - x_min) % (x_max - x_min)) + (x_max - x_min)) % (x_max - x_min) + x_min;
+                            times.Add(new DateTime(xx));
+                        }
                     else
                     {
                         times.Add(DateTime.MinValue);
