@@ -24,6 +24,10 @@ Choose a schedule for cycling through wallpaper images over 24 hours
 
 ![Screenshot of Configure Timing window](images/configure_schedule.png)
 
+## Scripts
+
+Extend the behavior of WinDynamicDesktop with PowerShell scripts, and share them with other users [here](https://github.com/t1m0thyj/WDD-scripts#readme)
+
 ## Supported Devices
 
 WinDynamicDesktop is developed primarily for Windows 10, but should run on any version of Windows with .NET Framework 4.5 or newer installed. If your version of .NET Framework is too old, you can install a newer one from [here](https://www.microsoft.com/net/download).
@@ -31,8 +35,6 @@ WinDynamicDesktop is developed primarily for Windows 10, but should run on any v
 ## Resources
 
 * [Get Help](https://github.com/t1m0thyj/WinDynamicDesktop/wiki)
-* [Download Themes](https://windd.info/themes/)
-* [Download Scripts](https://windd.info/scripts/)
 * [Translate on POEditor](https://poeditor.com/join/project/DEgfVpyuiK)
 * [.ddw Theme Creator](https://ddw-theme-creator.vercel.app/) (thanks @gdstewart)
 
