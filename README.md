@@ -26,7 +26,7 @@ Choose a schedule for cycling through wallpaper images over 24 hours
 
 ## Scripts
 
-Customize the behavior of your system & wallpaper by scripting, or download some of [these](https://github.com/t1m0thyj/WDD-scripts#readme) scripts.
+Extend the behavior of WinDynamicDesktop with PowerShell scripts, and share them with other users [here](https://github.com/t1m0thyj/WDD-scripts#readme)
 
 ## Supported Devices
 
@@ -35,7 +35,6 @@ WinDynamicDesktop is developed primarily for Windows 10, but should run on any v
 ## Resources
 
 * [Get Help](https://github.com/t1m0thyj/WinDynamicDesktop/wiki)
-* [Download Themes](https://windd.info/themes/)
 * [Translate on POEditor](https://poeditor.com/join/project/DEgfVpyuiK)
 * [.ddw Theme Creator](https://ddw-theme-creator.vercel.app/) (thanks @gdstewart)
 
