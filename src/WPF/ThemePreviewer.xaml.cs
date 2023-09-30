@@ -16,11 +16,13 @@ namespace WinDynamicDesktop.WPF
 
         private readonly Storyboard fadeAnimation;
         private readonly DispatcherTimer triggerTimer;
+        private readonly ThemeDialog parentForm;
 
-        public ThemePreviewer()
+        public ThemePreviewer(ThemeDialog parentForm)
         {
             ViewModel = new ThemePreviewerViewModel(StartAnimation, StopAnimation);
             DataContext = ViewModel;
+            this.parentForm = parentForm;
 
             InitializeComponent();
 
@@ -49,6 +51,18 @@ namespace WinDynamicDesktop.WPF
         private void StopAnimation()
         {
             fadeAnimation.Stop(FrontImage);
+        }
+
+        private void OnSecondaryButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (!ViewModel.IsDownloaded)
+            {
+                parentForm.DownloadTheme(ThemeManager.themeSettings[ViewModel.SelectedIndex - 1], false);
+            }
+            else
+            {
+                ViewModel.IsFavorite = !ViewModel.IsFavorite;
+            }
         }
     }
 }

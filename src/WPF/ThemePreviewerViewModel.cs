@@ -113,6 +113,20 @@ namespace WinDynamicDesktop.WPF
             set => SetProperty(ref isPlaying, value);
         }
 
+        private bool isDownloaded;
+        public bool IsDownloaded
+        {
+            get => isDownloaded;
+            set => SetProperty(ref isDownloaded, value);
+        }
+
+        private bool isFavorite;
+        public bool IsFavorite
+        {
+            get => isFavorite;
+            set => SetProperty(ref isFavorite, value);
+        }
+
         private bool isMouseOver;
         public bool IsMouseOver
         {
@@ -221,6 +235,8 @@ namespace WinDynamicDesktop.WPF
         public void PreviewTheme(ThemeConfig theme)
         {
             Stop();
+            IsDownloaded = false;
+            IsFavorite = false;
 
             int activeImage = 0;
             string[] sunrise = null;
@@ -232,10 +248,11 @@ namespace WinDynamicDesktop.WPF
             {
                 Title = ThemeManager.GetThemeName(theme);
                 Author = ThemeManager.GetThemeAuthor(theme);
-                bool isDownloaded = ThemeManager.IsThemeDownloaded(theme);
+                IsDownloaded = ThemeManager.IsThemeDownloaded(theme);
 
-                if (isDownloaded)
+                if (IsDownloaded)
                 {
+                    IsFavorite = JsonConfig.settings.favoriteThemes.Contains(theme.themeId);
                     ThemeManager.CalcThemeInstallSize(theme, size => { DownloadSize = size; });
 
                     List<DateTime> imageTimes = SolarScheduler.GetAllImageTimes(theme);

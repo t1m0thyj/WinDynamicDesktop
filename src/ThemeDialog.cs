@@ -48,9 +48,10 @@ namespace WinDynamicDesktop
             }
 
             this.previewerHost.Anchor &= ~AnchorStyles.Left;
-            this.displayComboBox.Width = newWidth;
+            this.displayComboBox.Width = newWidth - this.optionsButton.Width - 10;
+            this.optionsButton.Left = newWidth - this.optionsButton.Width + 20;
             this.listView1.Width = newWidth;
-            this.downloadButton.Left += (newWidth - oldWidth) / 2;
+            //this.downloadButton.Left += (newWidth - oldWidth) / 2;
             this.applyButton.Left += (newWidth - oldWidth) / 2;
             this.closeButton.Left += (newWidth - oldWidth) / 2;
             this.Width += (newWidth - oldWidth);
@@ -256,7 +257,7 @@ namespace WinDynamicDesktop
             }
         }
 
-        private void DownloadTheme(ThemeConfig theme, bool applyPending)
+        public void DownloadTheme(ThemeConfig theme, bool applyPending)
         {
             DownloadDialog downloadDialog = new DownloadDialog() { Owner = this, applyPending = applyPending };
             downloadDialog.FormClosed += OnDownloadDialogClosed;
@@ -285,7 +286,7 @@ namespace WinDynamicDesktop
                 themeDownloaded = ThemeManager.IsThemeDownloaded(theme);
             }
 
-            downloadButton.Enabled = !themeDownloaded;
+            //downloadButton.Enabled = !themeDownloaded;
             applyButton.Enabled = true;
 
             previewer.ViewModel.PreviewTheme(theme);
@@ -297,7 +298,7 @@ namespace WinDynamicDesktop
 
         private void ThemeDialog_Load(object sender, EventArgs e)
         {
-            previewer = new WPF.ThemePreviewer();
+            previewer = new WPF.ThemePreviewer(this);
             previewerHost.Child = previewer;
 
             listView1.ContextMenuStrip = contextMenuStrip1;
@@ -364,11 +365,6 @@ namespace WinDynamicDesktop
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateSelectedItem();
-        }
-
-        private void downloadButton_Click(object sender, EventArgs e)
-        {
-            DownloadTheme(ThemeManager.themeSettings[selectedIndex - 1], false);
         }
 
         private void importButton_Click(object sender, EventArgs e)
