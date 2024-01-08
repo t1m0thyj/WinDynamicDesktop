@@ -45,7 +45,7 @@ namespace WinDynamicDesktop
                 {
                     if (data.polarPeriod == PolarPeriod.PolarDay)
                     {
-                        times.Add(DateTime.Today + TimeSpan.FromTicks(TimeSpan.FromDays(1).Ticks * i / theme.dayImageList.Length));
+                        times.Add(data.solarNoon.AddHours(-12) + TimeSpan.FromTicks(TimeSpan.FromDays(1).Ticks * i / theme.dayImageList.Length));
                     }
                     else
                     {
@@ -63,7 +63,7 @@ namespace WinDynamicDesktop
                 {
                     if (data.polarPeriod == PolarPeriod.PolarNight)
                     {
-                        times.Add(DateTime.Today + TimeSpan.FromTicks(TimeSpan.FromDays(1).Ticks * i / theme.nightImageList.Length));
+                        times.Add(data.solarNoon.AddHours(-12) + TimeSpan.FromTicks(TimeSpan.FromDays(1).Ticks * i / theme.nightImageList.Length));
                     }
                     else
                     {
@@ -170,8 +170,8 @@ namespace WinDynamicDesktop
                 {
                     imageList = e.currentTheme?.nightImageList;
                 }
-                segmentStart = dateNow.Date;
-                segmentEnd = dateNow.Date.AddDays(1);
+                segmentStart = data.solarNoon.AddHours(-12);
+                segmentEnd = data.solarNoon.AddHours(12).AddTicks(-1);
             }
             else if (!preferSegment2)
             {

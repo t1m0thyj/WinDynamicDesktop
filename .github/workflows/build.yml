@@ -52,3 +52,6 @@ jobs:
       with:
         name: msix-${{ matrix.platform }}
         path: uwp\AppPackages\**\*.msix
+    
+    - run: dotnet test --verbosity normal
+      working-directory: test
