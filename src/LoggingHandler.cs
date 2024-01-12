@@ -48,7 +48,9 @@ namespace WinDynamicDesktop
             {
                 for (int i = 0; i < values.Length; i++)
                 {
+#pragma warning disable SYSLIB0050
                     if (!values[i].GetType().IsSerializable)
+#pragma warning restore SYSLIB0050
                     {
                         values[i] = JsonConvert.SerializeObject(values[i]);
                     }
