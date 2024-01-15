@@ -28,62 +28,65 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.closeButton = new System.Windows.Forms.Button();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.iconBox = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.iconBox)).BeginInit();
-            this.SuspendLayout();
+            closeButton = new System.Windows.Forms.Button();
+            richTextBox1 = new System.Windows.Forms.RichTextBox();
+            iconBox = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)iconBox).BeginInit();
+            SuspendLayout();
             // 
             // closeButton
             // 
-            this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.closeButton.Location = new System.Drawing.Point(207, 226);
-            this.closeButton.Name = "closeButton";
-            this.closeButton.Size = new System.Drawing.Size(75, 23);
-            this.closeButton.TabIndex = 0;
-            this.closeButton.Text = "Close";
-            this.closeButton.UseVisualStyleBackColor = true;
-            this.closeButton.Click += new System.EventHandler(this.closeButton_Click);
+            closeButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            closeButton.Location = new System.Drawing.Point(241, 261);
+            closeButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            closeButton.Name = "closeButton";
+            closeButton.Size = new System.Drawing.Size(88, 27);
+            closeButton.TabIndex = 0;
+            closeButton.Text = "Close";
+            closeButton.UseVisualStyleBackColor = true;
+            closeButton.Click += closeButton_Click;
             // 
             // richTextBox1
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(13, 84);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(463, 127);
-            this.richTextBox1.TabIndex = 1;
-            this.richTextBox1.Text = "";
-            this.richTextBox1.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.richTextBox1_LinkClicked);
+            richTextBox1.Location = new System.Drawing.Point(15, 97);
+            richTextBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            richTextBox1.Name = "richTextBox1";
+            richTextBox1.ReadOnly = true;
+            richTextBox1.Size = new System.Drawing.Size(540, 146);
+            richTextBox1.TabIndex = 1;
+            richTextBox1.Text = "";
+            richTextBox1.LinkClicked += richTextBox1_LinkClicked;
             // 
             // iconBox
             // 
-            this.iconBox.Location = new System.Drawing.Point(208, 12);
-            this.iconBox.Name = "iconBox";
-            this.iconBox.Size = new System.Drawing.Size(72, 64);
-            this.iconBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.iconBox.TabIndex = 0;
-            this.iconBox.TabStop = false;
+            iconBox.Location = new System.Drawing.Point(243, 14);
+            iconBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            iconBox.Name = "iconBox";
+            iconBox.Size = new System.Drawing.Size(84, 74);
+            iconBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            iconBox.TabIndex = 0;
+            iconBox.TabStop = false;
             // 
             // AboutDialog
             // 
-            this.AcceptButton = this.closeButton;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(488, 261);
-            this.Controls.Add(this.iconBox);
-            this.Controls.Add(this.richTextBox1);
-            this.Controls.Add(this.closeButton);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Icon = global::WinDynamicDesktop.Properties.Resources.AppIcon;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "AboutDialog";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "About WinDynamicDesktop";
-            this.Load += new System.EventHandler(this.AboutDialog_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.iconBox)).EndInit();
-            this.ResumeLayout(false);
-
+            AcceptButton = closeButton;
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(569, 301);
+            Controls.Add(iconBox);
+            Controls.Add(richTextBox1);
+            Controls.Add(closeButton);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            Icon = Properties.Resources.AppIcon;
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "AboutDialog";
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            Text = "About WinDynamicDesktop";
+            Load += AboutDialog_Load;
+            ((System.ComponentModel.ISupportInitialize)iconBox).EndInit();
+            ResumeLayout(false);
         }
 
         #endregion

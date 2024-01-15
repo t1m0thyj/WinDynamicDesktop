@@ -28,170 +28,170 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.applyButton = new System.Windows.Forms.Button();
-            this.closeButton = new System.Windows.Forms.Button();
-            this.themeLinkLabel = new System.Windows.Forms.LinkLabel();
-            this.importButton = new System.Windows.Forms.Button();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.favoriteThemeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteThemeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.downloadButton = new System.Windows.Forms.Button();
-            this.previewerHost = new System.Windows.Forms.Integration.ElementHost();
-            this.listView1 = new System.Windows.Forms.ListView();
-            this.displayComboBox = new System.Windows.Forms.ComboBox();
-            this.contextMenuStrip1.SuspendLayout();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            applyButton = new System.Windows.Forms.Button();
+            closeButton = new System.Windows.Forms.Button();
+            themeLinkLabel = new System.Windows.Forms.LinkLabel();
+            importButton = new System.Windows.Forms.Button();
+            openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(components);
+            favoriteThemeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            deleteThemeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            downloadButton = new System.Windows.Forms.Button();
+            previewerHost = new System.Windows.Forms.Integration.ElementHost();
+            listView1 = new System.Windows.Forms.ListView();
+            displayComboBox = new System.Windows.Forms.ComboBox();
+            contextMenuStrip1.SuspendLayout();
+            SuspendLayout();
             // 
             // applyButton
             // 
-            this.applyButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.applyButton.Location = new System.Drawing.Point(459, 423);
-            this.applyButton.Name = "applyButton";
-            this.applyButton.Size = new System.Drawing.Size(75, 23);
-            this.applyButton.TabIndex = 5;
-            this.applyButton.Text = "Apply";
-            this.applyButton.UseVisualStyleBackColor = true;
-            this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
+            applyButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            applyButton.Location = new System.Drawing.Point(536, 488);
+            applyButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            applyButton.Name = "applyButton";
+            applyButton.Size = new System.Drawing.Size(88, 27);
+            applyButton.TabIndex = 5;
+            applyButton.Text = "Apply";
+            applyButton.UseVisualStyleBackColor = true;
+            applyButton.Click += applyButton_Click;
             // 
             // closeButton
             // 
-            this.closeButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.closeButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.closeButton.Location = new System.Drawing.Point(559, 423);
-            this.closeButton.Name = "closeButton";
-            this.closeButton.Size = new System.Drawing.Size(75, 23);
-            this.closeButton.TabIndex = 6;
-            this.closeButton.Text = "Close";
-            this.closeButton.UseVisualStyleBackColor = true;
-            this.closeButton.Click += new System.EventHandler(this.closeButton_Click);
+            closeButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            closeButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            closeButton.Location = new System.Drawing.Point(652, 488);
+            closeButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            closeButton.Name = "closeButton";
+            closeButton.Size = new System.Drawing.Size(88, 27);
+            closeButton.TabIndex = 6;
+            closeButton.Text = "Close";
+            closeButton.UseVisualStyleBackColor = true;
+            closeButton.Click += closeButton_Click;
             // 
             // themeLinkLabel
             // 
-            this.themeLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.themeLinkLabel.AutoSize = true;
-            this.themeLinkLabel.Location = new System.Drawing.Point(135, 428);
-            this.themeLinkLabel.Name = "themeLinkLabel";
-            this.themeLinkLabel.Size = new System.Drawing.Size(118, 13);
-            this.themeLinkLabel.TabIndex = 3;
-            this.themeLinkLabel.TabStop = true;
-            this.themeLinkLabel.Text = "Get more themes online";
-            this.themeLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.themeLinkLabel_LinkClicked);
+            themeLinkLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            themeLinkLabel.AutoSize = true;
+            themeLinkLabel.Location = new System.Drawing.Point(158, 494);
+            themeLinkLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            themeLinkLabel.Name = "themeLinkLabel";
+            themeLinkLabel.Size = new System.Drawing.Size(134, 15);
+            themeLinkLabel.TabIndex = 3;
+            themeLinkLabel.TabStop = true;
+            themeLinkLabel.Text = "Get more themes online";
+            themeLinkLabel.LinkClicked += themeLinkLabel_LinkClicked;
             // 
             // importButton
             // 
-            this.importButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.importButton.AutoSize = true;
-            this.importButton.Location = new System.Drawing.Point(12, 423);
-            this.importButton.Name = "importButton";
-            this.importButton.Size = new System.Drawing.Size(107, 23);
-            this.importButton.TabIndex = 2;
-            this.importButton.Text = "Import from file...";
-            this.importButton.UseVisualStyleBackColor = true;
-            this.importButton.Click += new System.EventHandler(this.importButton_Click);
+            importButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            importButton.AutoSize = true;
+            importButton.Location = new System.Drawing.Point(14, 488);
+            importButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            importButton.Name = "importButton";
+            importButton.Size = new System.Drawing.Size(125, 27);
+            importButton.TabIndex = 2;
+            importButton.Text = "Import from file...";
+            importButton.UseVisualStyleBackColor = true;
+            importButton.Click += importButton_Click;
             // 
             // openFileDialog1
             // 
-            this.openFileDialog1.InitialDirectory = "shell:Downloads";
-            this.openFileDialog1.Multiselect = true;
+            openFileDialog1.InitialDirectory = "shell:Downloads";
+            openFileDialog1.Multiselect = true;
             // 
             // contextMenuStrip1
             // 
-            this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.favoriteThemeMenuItem,
-            this.deleteThemeMenuItem});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 48);
-            this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
+            contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { favoriteThemeMenuItem, deleteThemeMenuItem });
+            contextMenuStrip1.Name = "contextMenuStrip1";
+            contextMenuStrip1.Size = new System.Drawing.Size(181, 48);
+            contextMenuStrip1.Opening += contextMenuStrip1_Opening;
             // 
             // favoriteThemeMenuItem
             // 
-            this.favoriteThemeMenuItem.Name = "favoriteThemeMenuItem";
-            this.favoriteThemeMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.favoriteThemeMenuItem.Text = "toolStripMenuItem1";
-            this.favoriteThemeMenuItem.Click += new System.EventHandler(this.favoriteThemeMenuItem_Click);
+            favoriteThemeMenuItem.Name = "favoriteThemeMenuItem";
+            favoriteThemeMenuItem.Size = new System.Drawing.Size(180, 22);
+            favoriteThemeMenuItem.Text = "toolStripMenuItem1";
+            favoriteThemeMenuItem.Click += favoriteThemeMenuItem_Click;
             // 
             // deleteThemeMenuItem
             // 
-            this.deleteThemeMenuItem.Name = "deleteThemeMenuItem";
-            this.deleteThemeMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.deleteThemeMenuItem.Text = "toolStripMenuItem1";
-            this.deleteThemeMenuItem.Click += new System.EventHandler(this.deleteThemeMenuItem_Click);
+            deleteThemeMenuItem.Name = "deleteThemeMenuItem";
+            deleteThemeMenuItem.Size = new System.Drawing.Size(180, 22);
+            deleteThemeMenuItem.Text = "toolStripMenuItem1";
+            deleteThemeMenuItem.Click += deleteThemeMenuItem_Click;
             // 
             // downloadButton
             // 
-            this.downloadButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.downloadButton.Location = new System.Drawing.Point(359, 423);
-            this.downloadButton.Name = "downloadButton";
-            this.downloadButton.Size = new System.Drawing.Size(75, 23);
-            this.downloadButton.TabIndex = 4;
-            this.downloadButton.Text = "Download";
-            this.downloadButton.UseVisualStyleBackColor = true;
-            this.downloadButton.Click += new System.EventHandler(this.downloadButton_Click);
+            downloadButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            downloadButton.Location = new System.Drawing.Point(419, 488);
+            downloadButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            downloadButton.Name = "downloadButton";
+            downloadButton.Size = new System.Drawing.Size(88, 27);
+            downloadButton.TabIndex = 4;
+            downloadButton.Text = "Download";
+            downloadButton.UseVisualStyleBackColor = true;
+            downloadButton.Click += downloadButton_Click;
             // 
             // previewerHost
             // 
-            this.previewerHost.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.previewerHost.Location = new System.Drawing.Point(219, 10);
-            this.previewerHost.Name = "previewerHost";
-            this.previewerHost.Size = new System.Drawing.Size(555, 400);
-            this.previewerHost.TabIndex = 1;
-            this.previewerHost.Child = null;
+            previewerHost.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            previewerHost.Location = new System.Drawing.Point(255, 12);
+            previewerHost.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            previewerHost.Name = "previewerHost";
+            previewerHost.Size = new System.Drawing.Size(648, 462);
+            previewerHost.TabIndex = 1;
             // 
             // listView1
             // 
-            this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(10, 40);
-            this.listView1.MultiSelect = false;
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(200, 370);
-            this.listView1.TabIndex = 0;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
+            listView1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            listView1.Location = new System.Drawing.Point(12, 46);
+            listView1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            listView1.MultiSelect = false;
+            listView1.Name = "listView1";
+            listView1.Size = new System.Drawing.Size(233, 426);
+            listView1.TabIndex = 0;
+            listView1.UseCompatibleStateImageBehavior = false;
+            listView1.SelectedIndexChanged += listView1_SelectedIndexChanged;
             // 
             // displayComboBox
             // 
-            this.displayComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.displayComboBox.FormattingEnabled = true;
-            this.displayComboBox.Items.AddRange(new object[] {
-            "All Displays"});
-            this.displayComboBox.Location = new System.Drawing.Point(10, 10);
-            this.displayComboBox.Name = "displayComboBox";
-            this.displayComboBox.Size = new System.Drawing.Size(200, 21);
-            this.displayComboBox.TabIndex = 7;
-            this.displayComboBox.SelectedIndexChanged += new System.EventHandler(this.displayComboBox_SelectedIndexChanged);
+            displayComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            displayComboBox.FormattingEnabled = true;
+            displayComboBox.Items.AddRange(new object[] { "All Displays" });
+            displayComboBox.Location = new System.Drawing.Point(12, 12);
+            displayComboBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            displayComboBox.Name = "displayComboBox";
+            displayComboBox.Size = new System.Drawing.Size(233, 23);
+            displayComboBox.TabIndex = 7;
+            displayComboBox.SelectedIndexChanged += displayComboBox_SelectedIndexChanged;
             // 
             // ThemeDialog
             // 
-            this.AcceptButton = this.applyButton;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.closeButton;
-            this.ClientSize = new System.Drawing.Size(784, 461);
-            this.Controls.Add(this.displayComboBox);
-            this.Controls.Add(this.listView1);
-            this.Controls.Add(this.downloadButton);
-            this.Controls.Add(this.importButton);
-            this.Controls.Add(this.themeLinkLabel);
-            this.Controls.Add(this.applyButton);
-            this.Controls.Add(this.closeButton);
-            this.Controls.Add(this.previewerHost);
-            this.Icon = global::WinDynamicDesktop.Properties.Resources.AppIcon;
-            this.MinimumSize = new System.Drawing.Size(740, 350);
-            this.Name = "ThemeDialog";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Select Theme";
-            this.Load += new System.EventHandler(this.ThemeDialog_Load);
-            this.contextMenuStrip1.ResumeLayout(false);
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AcceptButton = applyButton;
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            CancelButton = closeButton;
+            ClientSize = new System.Drawing.Size(915, 532);
+            Controls.Add(displayComboBox);
+            Controls.Add(listView1);
+            Controls.Add(downloadButton);
+            Controls.Add(importButton);
+            Controls.Add(themeLinkLabel);
+            Controls.Add(applyButton);
+            Controls.Add(closeButton);
+            Controls.Add(previewerHost);
+            Icon = Properties.Resources.AppIcon;
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MinimumSize = new System.Drawing.Size(861, 398);
+            Name = "ThemeDialog";
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            Text = "Select Theme";
+            Load += ThemeDialog_Load;
+            contextMenuStrip1.ResumeLayout(false);
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
