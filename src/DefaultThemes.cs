@@ -2,8 +2,10 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace WinDynamicDesktop
@@ -11,6 +13,8 @@ namespace WinDynamicDesktop
     class DefaultThemes
     {
         private static string[] yamlLines = Array.Empty<string>();
+        public static string windowsWallpaperFolder = Environment.ExpandEnvironmentVariables(
+            @"%SystemRoot%\Web\Wallpaper\Windows");
 
         public static string[] GetDefaultThemes()
         {
@@ -21,6 +25,23 @@ namespace WinDynamicDesktop
 
             return yamlLines.Where((line) => !line.StartsWith("-"))
                 .Select((line) => line.TrimEnd(':')).ToArray();
+        }
+
+        public static ThemeConfig GetWindowsTheme()
+        {
+            if (Environment.OSVersion.Version.Build >= 22000 && Directory.Exists(windowsWallpaperFolder))
+            {
+                return new ThemeConfig
+                {
+                    themeId = "Windows_11",
+                    imageFilename = "img*.jpg",
+                    imageCredits = "Microsoft",
+                    dayImageList = new[] { 0 },
+                    nightImageList = new[] { 19 }
+                };
+            }
+
+            return null;
         }
 
         public static Uri[] GetThemeUriList(string themeId)
@@ -35,6 +56,22 @@ namespace WinDynamicDesktop
             }
 
             return uriList.ToArray();
+        }
+
+        public static void InstallWindowsTheme(ThemeConfig theme)
+        {
+            string themePath = Path.Combine("themes", theme.themeId);
+            Directory.CreateDirectory(themePath);
+            string jsonText = JsonConvert.SerializeObject(theme, Formatting.Indented, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+            });
+            File.WriteAllText(Path.Combine(themePath, "theme.json"), jsonText);
+            string[] imagePaths = Directory.GetFiles(windowsWallpaperFolder, theme.imageFilename);
+            foreach (string imagePath in imagePaths)
+            {
+                File.Copy(imagePath, Path.Combine(themePath, Path.GetFileName(imagePath)), true);
+            }
         }
     }
 }

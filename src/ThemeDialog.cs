@@ -399,6 +399,10 @@ namespace WinDynamicDesktop
             if (selectedIndex > 0)
             {
                 themeDownloaded = ThemeManager.IsThemeDownloaded(ThemeManager.themeSettings[selectedIndex - 1]);
+                if (ThemeManager.IsThemePreinstalled(ThemeManager.themeSettings[selectedIndex - 1]))
+                {
+                    DefaultThemes.InstallWindowsTheme(ThemeManager.themeSettings[selectedIndex - 1]);
+                }
             }
 
             if (!themeDownloaded)
@@ -431,7 +435,8 @@ namespace WinDynamicDesktop
 
             string themeId = (string)listView1.Items[itemIndex].Tag;
             ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
-            contextMenuStrip1.Items[1].Enabled = ThemeManager.IsThemeDownloaded(theme);
+            bool isWindowsTheme = themeId == DefaultThemes.GetWindowsTheme()?.themeId;
+            contextMenuStrip1.Items[1].Enabled = ThemeManager.IsThemeDownloaded(theme) && !isWindowsTheme;
 
             if (JsonConfig.settings.favoriteThemes == null ||
                 !JsonConfig.settings.favoriteThemes.Contains(themeId))
@@ -443,7 +448,7 @@ namespace WinDynamicDesktop
                 contextMenuStrip1.Items[0].Text = _("Remove from favorites");
             }
 
-            if (ThemeManager.defaultThemes.Contains(themeId))
+            if (ThemeManager.defaultThemes.Contains(themeId) || isWindowsTheme)
             {
                 contextMenuStrip1.Items[1].Text = _("Delete");
             }
