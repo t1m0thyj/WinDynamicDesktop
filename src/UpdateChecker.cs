@@ -7,11 +7,27 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WinDynamicDesktop
 {
+    [Flags]
+    public enum RestartFlags
+    {
+        /// <summary>No restart restrictions</summary>
+        NONE = 0,
+        /// <summary>Do not restart if process terminates due to unhandled exception</summary>
+        RESTART_NO_CRASH = 1,
+        /// <summary>Do not restart if process terminates due to application not responding</summary>
+        RESTART_NO_HANG = 2,
+        /// <summary>Do not restart if process terminates due to installation of update</summary>
+        RESTART_NO_PATCH = 4,
+        /// <summary>Do not restart if process terminates due to computer restart as result of an update</summary>
+        RESTART_NO_REBOOT = 8
+    }
+
     class UpdateChecker
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
@@ -28,6 +44,9 @@ namespace WinDynamicDesktop
 
             TryCheckAuto();
         }
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        internal static extern uint RegisterApplicationRestart(string pwzCommandline, int dwFlags);
 
         public static List<ToolStripItem> GetMenuItems()
         {

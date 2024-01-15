@@ -9,6 +9,41 @@ using System.Windows.Forms;
 
 namespace WinDynamicDesktop
 {
+    class CustomContextMenu : ContextMenuStrip
+    {
+        private const int ENDSESSION_CLOSEAPP = 0x1;
+        private const int WM_QUERYENDSESSION = 0x11;
+        private const int WM_ENDSESSION = 0x16;
+
+        public CustomContextMenu(ToolStripItem[] menuItems)
+        {
+            this.Items.AddRange(menuItems);
+            IntPtr _handle = this.Handle;  // Handle needed for BeginInvoke to work
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            // https://github.com/rocksdanister/lively/blob/9142f6a4cfc222cd494f205a5daaa1a0238282e3/src/Lively/Lively/Views/WindowMsg/WndProcMsgWindow.xaml.cs#L41
+            switch (m.Msg)
+            {
+                case WM_QUERYENDSESSION:
+                    if (m.LParam.ToInt32() == ENDSESSION_CLOSEAPP)
+                    {
+                        UpdateChecker.RegisterApplicationRestart(null, (int)RestartFlags.RESTART_NO_CRASH |
+                            (int)RestartFlags.RESTART_NO_HANG | (int)RestartFlags.RESTART_NO_REBOOT);
+                    }
+                    m.Result = new IntPtr(1);
+                    break;
+                case WM_ENDSESSION:
+                    Application.Exit();
+                    break;
+                default:
+                    base.WndProc(ref m);
+                    break;
+            }
+        }
+    }
+
     class MainMenu
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
@@ -24,12 +59,7 @@ namespace WinDynamicDesktop
         {
             List<ToolStripItem> menuItems = GetMenuItems();
             UwpDesktop.GetHelper().CheckStartOnBoot();
-
-            ContextMenuStrip menuStrip = new ContextMenuStrip();
-            menuStrip.Items.AddRange(menuItems.ToArray());
-            IntPtr handle = menuStrip.Handle;  // Handle needed for BeginInvoke to work
-
-            return menuStrip;
+            return new CustomContextMenu(menuItems.ToArray());
         }
 
         private static List<ToolStripItem> GetMenuItems()

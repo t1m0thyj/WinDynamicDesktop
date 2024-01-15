@@ -62,7 +62,7 @@ namespace WinDynamicDesktop
                 @"\par }";
         }
 
-        // Code from https://stackoverflow.com/questions/1368020/how-to-output-unicode-string-to-rtf-using-c
+        // Code from https://stackoverflow.com/q/1368020/5504760
         private string GetRtfUnicodeEscapedString(string s)
         {
             var sb = new StringBuilder();
