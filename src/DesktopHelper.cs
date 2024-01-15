@@ -27,7 +27,7 @@ namespace WinDynamicDesktop
                 startOnBoot = startupKey.GetValue("WinDynamicDesktop") != null;
             };
 
-            MainMenu.startOnBootItem.Checked = startOnBoot;
+            TrayMenu.startOnBootItem.Checked = startOnBoot;
         }
 
         public override void ToggleStartOnBoot()
@@ -45,7 +45,7 @@ namespace WinDynamicDesktop
             }
 
             startOnBoot = !startOnBoot;
-            MainMenu.startOnBootItem.Checked = startOnBoot;
+            TrayMenu.startOnBootItem.Checked = startOnBoot;
         }
 
         public override void OpenUpdateLink()

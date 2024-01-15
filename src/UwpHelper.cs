@@ -27,14 +27,14 @@ namespace WinDynamicDesktop
                     break;
                 case Windows.ApplicationModel.StartupTaskState.DisabledByUser:
                     startOnBoot = false;
-                    MainMenu.startOnBootItem.Enabled = false;
+                    TrayMenu.startOnBootItem.Enabled = false;
                     break;
                 case Windows.ApplicationModel.StartupTaskState.Enabled:
                     startOnBoot = true;
                     break;
             }
 
-            MainMenu.startOnBootItem.Checked = startOnBoot;
+            TrayMenu.startOnBootItem.Checked = startOnBoot;
         }
 
         public override async void ToggleStartOnBoot()
@@ -61,7 +61,7 @@ namespace WinDynamicDesktop
                 startOnBoot = false;
             }
 
-            MainMenu.startOnBootItem.Checked = startOnBoot;
+            TrayMenu.startOnBootItem.Checked = startOnBoot;
         }
 
         public override async void OpenUpdateLink()

@@ -43,7 +43,7 @@ namespace WinDynamicDesktop
         public static void ToggleEnableScripts()
         {
             bool enableScripts = JsonConfig.settings.enableScripts ^ true;
-            MainMenu.enableScriptsItem.Checked = enableScripts;
+            TrayMenu.enableScriptsItem.Checked = enableScripts;
             JsonConfig.settings.enableScripts = enableScripts;
 
             if (enableScripts)

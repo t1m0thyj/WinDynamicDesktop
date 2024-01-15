@@ -68,7 +68,7 @@ namespace WinDynamicDesktop
         public void ToggleFullScreenPause()
         {
             bool fullScreenPause = JsonConfig.settings.fullScreenPause ^ true;
-            MainMenu.fullScreenItem.Checked = fullScreenPause;
+            TrayMenu.fullScreenItem.Checked = fullScreenPause;
             SetFullScreenPause(fullScreenPause);
             JsonConfig.settings.fullScreenPause = fullScreenPause;
         }

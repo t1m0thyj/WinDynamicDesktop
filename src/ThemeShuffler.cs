@@ -57,7 +57,7 @@ namespace WinDynamicDesktop
         {
             bool isEnabled = JsonConfig.settings.enableShuffle ^ true;
             JsonConfig.settings.enableShuffle = isEnabled;
-            MainMenu.shuffleItem.Checked = isEnabled;
+            TrayMenu.shuffleItem.Checked = isEnabled;
 
             if (JsonConfig.settings.enableShuffle)
             {

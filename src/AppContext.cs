@@ -71,7 +71,7 @@ namespace WinDynamicDesktop
                 Icon = Properties.Resources.AppIcon,
                 Text = "WinDynamicDesktop",
             };
-            notifyIcon.ContextMenuStrip = MainMenu.GetMenu();
+            notifyIcon.ContextMenuStrip = new TrayMenu();
             notifyIcon.MouseUp += OnNotifyIconMouseUp;
 
             Localization.NotifyIfTestMode();
@@ -88,7 +88,7 @@ namespace WinDynamicDesktop
         {
             bool isHidden = JsonConfig.settings.hideTrayIcon ^ true;
             JsonConfig.settings.hideTrayIcon = isHidden;
-            MainMenu.hideTrayItem.Checked = isHidden;
+            TrayMenu.hideTrayItem.Checked = isHidden;
             notifyIcon.Visible = !isHidden;
         }
 

@@ -138,7 +138,7 @@ namespace WinDynamicDesktop
         {
             bool isEnabled = JsonConfig.settings.darkMode ^ true;
             JsonConfig.settings.darkMode = isEnabled;
-            MainMenu.darkModeItem.Checked = isEnabled;
+            TrayMenu.darkModeItem.Checked = isEnabled;
 
             RunScheduler();
         }
