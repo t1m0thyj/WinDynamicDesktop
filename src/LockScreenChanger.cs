@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WinDynamicDesktop
@@ -16,13 +15,14 @@ namespace WinDynamicDesktop
 
         public static List<ToolStripItem> GetMenuItems()
         {
-            if (JsonConfig.settings.changeLockScreen && !UwpDesktop.IsUwpSupported())
+            if ((JsonConfig.settings.lockScreenFollowIndex != -1 || JsonConfig.settings.lockScreenTheme != null) &&
+                !UwpDesktop.IsUwpSupported())
             {
-                JsonConfig.settings.changeLockScreen = false;
+                JsonConfig.settings.lockScreenFollowIndex = -1;
+                JsonConfig.settings.lockScreenTheme = null;
             }
 
-            menuItem = new ToolStripMenuItem(_("Change &Lockscreen Image"), null, OnLockScreenItemClick);
-            menuItem.Checked = JsonConfig.settings.changeLockScreen;
+            menuItem = new ToolStripMenuItem(_("Sync &lockscreen image with this display"), null, OnLockScreenItemClick);
             menuItem.Enabled = UwpDesktop.IsUwpSupported();
 
             return new List<ToolStripItem>() {
@@ -30,10 +30,20 @@ namespace WinDynamicDesktop
             };
         }
 
-        public static async Task UpdateImage(string imagePath)
+        public static async void UpdateImage(string imagePath)
         {
             var imageFile = await Windows.Storage.StorageFile.GetFileFromPathAsync(imagePath);
             await Windows.System.UserProfile.LockScreen.SetImageFileAsync(imageFile);
+        }
+
+        public static void UpdateMenuItems(int displayIndex, int? lockScreenFollowIndex = null)
+        {
+            if (lockScreenFollowIndex.HasValue)
+            {
+                JsonConfig.settings.lockScreenFollowIndex = lockScreenFollowIndex.Value;
+            }
+
+            menuItem.Checked = menuItem.Enabled && JsonConfig.settings.lockScreenFollowIndex == displayIndex;
         }
 
         private static void OnLockScreenItemClick(object sender, EventArgs e)

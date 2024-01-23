@@ -20,7 +20,6 @@ namespace WinDynamicDesktop
         public static ToolStripMenuItem darkModeItem;
         public static ToolStripMenuItem startOnBootItem;
         public static ToolStripMenuItem enableScriptsItem;
-        public static ToolStripMenuItem shuffleItem;
         public static ToolStripMenuItem fullScreenItem;
         public static ToolStripMenuItem hideTrayItem;
 
@@ -70,7 +69,6 @@ namespace WinDynamicDesktop
             });
             items[0].Enabled = false;
 
-            items.AddRange(LockScreenChanger.GetMenuItems());
             darkModeItem = new ToolStripMenuItem(_("Enable &Night Mode"), null, OnDarkModeClick);
             darkModeItem.Checked = JsonConfig.settings.darkMode;
             startOnBootItem = new ToolStripMenuItem(_("Start on &Boot"), null, OnStartOnBootClick);
@@ -101,11 +99,8 @@ namespace WinDynamicDesktop
             items.Add(new ToolStripMenuItem(_("&Refresh Wallpaper"), null, OnRefreshItemClick));
             items.Add(new ToolStripSeparator());
 
-            shuffleItem = new ToolStripMenuItem(_("Shuffle theme daily"), null, OnShuffleItemClick);
-            shuffleItem.Checked = JsonConfig.settings.enableShuffle;
-            items.Add(shuffleItem);
-
-            fullScreenItem = new ToolStripMenuItem(_("Pause when fullscreen apps running"), null, OnFullScreenItemClick);
+            fullScreenItem = new ToolStripMenuItem(_("Pause when fullscreen apps running"), null,
+                OnFullScreenItemClick);
             fullScreenItem.Checked = JsonConfig.settings.fullScreenPause;
             items.Add(fullScreenItem);
 
@@ -171,11 +166,6 @@ namespace WinDynamicDesktop
         private void OnRefreshItemClick(object sender, EventArgs e)
         {
             AppContext.wpEngine.RunScheduler(true);
-        }
-
-        private void OnShuffleItemClick(object sender, EventArgs e)
-        {
-            ThemeShuffler.ToggleShuffle();
         }
 
         private void OnFullScreenItemClick(object sender, EventArgs e)

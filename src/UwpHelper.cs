@@ -71,29 +71,28 @@ namespace WinDynamicDesktop
 
         public override async void SetWallpaper(string imagePath, int displayIndex)
         {
-            if (displayIndex != -1)
+            if (displayIndex >= 0)
             {
                 WallpaperApi.SetWallpaper(imagePath, displayIndex);
                 return;
             }
-
-            WallpaperApi.EnableTransitions();
 
             string[] pathSegments = imagePath.Split(Path.DirectorySeparatorChar);
             var uri = new Uri("ms-appdata:///local/themes/" +
                 Uri.EscapeDataString(pathSegments[pathSegments.Length - 2]) + "/" +
                 Uri.EscapeDataString(pathSegments[pathSegments.Length - 1]));
             var file = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri);
-
             var profileSettings = Windows.System.UserProfile.UserProfilePersonalizationSettings.Current;
-            await profileSettings.TrySetWallpaperImageAsync(file);
 
-            if (displayIndex <= 0)
+            switch (displayIndex)
             {
-                if (JsonConfig.settings.changeLockScreen)
-                {
+                case (int)DisplayIndex.ALL_DISPLAYS:
+                    WallpaperApi.EnableTransitions();
+                    await profileSettings.TrySetWallpaperImageAsync(file);
+                    break;
+                case (int)DisplayIndex.LOCKSCREEN:
                     await profileSettings.TrySetLockScreenImageAsync(file);
-                }
+                    break;
             }
         }
     }

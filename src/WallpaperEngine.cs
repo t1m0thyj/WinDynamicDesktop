@@ -12,6 +12,12 @@ using System.Windows.Forms;
 
 namespace WinDynamicDesktop
 {
+    public enum DisplayIndex
+    {
+        ALL_DISPLAYS = -1,
+        LOCKSCREEN = -2,
+    }
+
     public class DisplayEvent
     {
         public ThemeConfig currentTheme;
@@ -25,13 +31,13 @@ namespace WinDynamicDesktop
 
     class WallpaperEngine
     {
-        public List<DisplayEvent> displayEvents;
-        public FullScreenApi fullScreenChecker;
-
-        private DateTime? nextUpdateTime;
         private System.Timers.Timer backgroundTimer = new System.Timers.Timer();
         private System.Timers.Timer schedulerTimer = new System.Timers.Timer();
         private const long timerError = (long)(TimeSpan.TicksPerMillisecond * 15.6);
+
+        public FullScreenApi fullScreenChecker;
+        private List<DisplayEvent> displayEvents;
+        private DateTime? nextUpdateTime;
 
         public WallpaperEngine()
         {
@@ -92,6 +98,7 @@ namespace WinDynamicDesktop
                 if (displayEvents[i].currentTheme != null)
                 {
                     SetWallpaper(displayEvents[i]);
+                    // TODO Make sure lockscreen update triggered if synced
 
                     if (displayEvents[i].nextUpdateTime.Ticks < nextDisplayUpdateTicks)
                     {

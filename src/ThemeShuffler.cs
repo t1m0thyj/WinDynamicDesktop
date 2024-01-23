@@ -6,12 +6,43 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace WinDynamicDesktop
 {
     class ThemeShuffler
     {
+        private static readonly Func<string, string> _ = Localization.GetTranslation;
+        private static ToolStripMenuItem noneMenuItem;
+        private static ToolStripMenuItem favoritesMenuItem;
+        private static ToolStripMenuItem allMenuItem;
+        private static ToolStripMenuItem shufflePeriodItem;
         private static Random rng = new Random();
+
+        public static List<ToolStripItem> GetMenuItems()
+        {
+            noneMenuItem = new ToolStripMenuItem(_("Don't &shuffle themes"), null, OnShuffleNoneItemClick);
+            favoritesMenuItem = new ToolStripMenuItem(_("Shuffle &favorite themes"), null, OnShuffleFavoritesItemClick);
+            allMenuItem = new ToolStripMenuItem(_("Shuffle &all themes"), null, OnShuffleAllItemClick);
+            shufflePeriodItem = new ToolStripMenuItem(_("Choose shuffle frequency"), null);
+            // TODO Add event handlers for submenu
+            shufflePeriodItem.DropDownItems.Add(new ToolStripMenuItem(_("Every Hour"), null));
+            shufflePeriodItem.DropDownItems.Add(new ToolStripMenuItem(_("Every 12 Hours"), null));
+            shufflePeriodItem.DropDownItems.Add(new ToolStripMenuItem(_("Every Day"), null));
+            shufflePeriodItem.DropDownItems.Add(new ToolStripMenuItem(_("Every 2 Days"), null));
+            shufflePeriodItem.DropDownItems.Add(new ToolStripMenuItem(_("Every Week"), null));
+            shufflePeriodItem.DropDownItems.Add(new ToolStripMenuItem(_("Every Month"), null));
+            ((ToolStripMenuItem)shufflePeriodItem.DropDownItems[1]).Checked = true;
+            UpdateMenuItems();
+
+            return new List<ToolStripItem>()
+            {
+                noneMenuItem,
+                favoritesMenuItem,
+                allMenuItem,
+                shufflePeriodItem
+            };
+        }
 
         public static void AddThemeToHistory(string themeId, bool clearHistory = false)
         {
@@ -34,7 +65,7 @@ namespace WinDynamicDesktop
 
         public static void MaybeShuffleWallpaper()
         {
-            if (!JsonConfig.settings.enableShuffle)
+            if (JsonConfig.settings.themeShuffleMode == 0)
             {
                 return;
             }
@@ -53,19 +84,6 @@ namespace WinDynamicDesktop
             ShuffleWallpaper();
         }
 
-        public static void ToggleShuffle()
-        {
-            bool isEnabled = JsonConfig.settings.enableShuffle ^ true;
-            JsonConfig.settings.enableShuffle = isEnabled;
-            TrayMenu.shuffleItem.Checked = isEnabled;
-
-            if (JsonConfig.settings.enableShuffle)
-            {
-                JsonConfig.settings.lastShuffleDate = null;
-                AppContext.wpEngine.RunScheduler();
-            }
-        }
-
         private static ThemeConfig GetNextTheme()
         {
             List<string> shuffleHistory = JsonConfig.settings.shuffleHistory?.ToList() ?? new List<string>();
@@ -74,7 +92,14 @@ namespace WinDynamicDesktop
 
             foreach (ThemeConfig theme in ThemeManager.themeSettings)
             {
-                if (!shuffleHistory.Contains(theme.themeId) && (theme.imageFilename != null))
+                if ((int)(JsonConfig.settings.themeShuffleMode / 10) == 1 &&
+                    (JsonConfig.settings.favoriteThemes == null ||
+                    !JsonConfig.settings.favoriteThemes.Contains(theme.themeId)))
+                {
+                    continue;
+                }
+
+                if (!shuffleHistory.Contains(theme.themeId) && theme.imageFilename != null)
                 {
                     themeChoices.Add(theme);
                 }
@@ -113,6 +138,37 @@ namespace WinDynamicDesktop
                     JsonConfig.settings.activeThemes[i] = GetNextTheme().themeId;
                 }
             }
+        }
+
+        private static void UpdateMenuItems(int? shuffleMode = null)
+        {
+            if (shuffleMode.HasValue)
+            {
+                JsonConfig.settings.themeShuffleMode = shuffleMode.Value;
+                if (shuffleMode > 0)
+                {
+                    JsonConfig.settings.lastShuffleDate = null;
+                }
+            }
+
+            noneMenuItem.Checked = JsonConfig.settings.themeShuffleMode == 0;
+            favoritesMenuItem.Checked = JsonConfig.settings.themeShuffleMode == 1;
+            allMenuItem.Checked = JsonConfig.settings.themeShuffleMode == 2;
+        }
+
+        private static void OnShuffleNoneItemClick(object sender, EventArgs e)
+        {
+            UpdateMenuItems(0);
+        }
+
+        private static void OnShuffleFavoritesItemClick(object sender, EventArgs e)
+        {
+            UpdateMenuItems(12);
+        }
+
+        private static void OnShuffleAllItemClick(object sender, EventArgs e)
+        {
+            UpdateMenuItems(22);
         }
     }
 }

@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ThemeDialog));
             applyButton = new System.Windows.Forms.Button();
             closeButton = new System.Windows.Forms.Button();
             themeLinkLabel = new System.Windows.Forms.LinkLabel();
@@ -40,8 +41,11 @@
             downloadButton = new System.Windows.Forms.Button();
             previewerHost = new System.Windows.Forms.Integration.ElementHost();
             listView1 = new System.Windows.Forms.ListView();
-            displayComboBox = new System.Windows.Forms.ComboBox();
+            toolStrip1 = new System.Windows.Forms.ToolStrip();
+            displayComboBox = new System.Windows.Forms.ToolStripComboBox();
+            meatballButton = new System.Windows.Forms.ToolStripDropDownButton();
             contextMenuStrip1.SuspendLayout();
+            toolStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // applyButton
@@ -119,7 +123,7 @@
             // 
             deleteThemeMenuItem.Name = "deleteThemeMenuItem";
             deleteThemeMenuItem.Size = new System.Drawing.Size(180, 22);
-            deleteThemeMenuItem.Text = "toolStripMenuItem1";
+            deleteThemeMenuItem.Text = "toolStripMenuItem2";
             deleteThemeMenuItem.Click += deleteThemeMenuItem_Click;
             // 
             // downloadButton
@@ -155,17 +159,40 @@
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.SelectedIndexChanged += listView1_SelectedIndexChanged;
             // 
+            // toolStrip1
+            // 
+            toolStrip1.AutoSize = false;
+            toolStrip1.CanOverflow = false;
+            toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
+            toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { displayComboBox, meatballButton });
+            toolStrip1.Location = new System.Drawing.Point(12, 12);
+            toolStrip1.Name = "toolStrip1";
+            toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            toolStrip1.Size = new System.Drawing.Size(233, 25);
+            toolStrip1.TabIndex = 10;
+            toolStrip1.Text = "toolStrip1";
+            // 
             // displayComboBox
             // 
+            displayComboBox.AutoSize = false;
             displayComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            displayComboBox.FormattingEnabled = true;
             displayComboBox.Items.AddRange(new object[] { "All Displays" });
-            displayComboBox.Location = new System.Drawing.Point(12, 12);
-            displayComboBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             displayComboBox.Name = "displayComboBox";
-            displayComboBox.Size = new System.Drawing.Size(233, 23);
-            displayComboBox.TabIndex = 7;
+            displayComboBox.Size = new System.Drawing.Size(200, 25);
             displayComboBox.SelectedIndexChanged += displayComboBox_SelectedIndexChanged;
+            // 
+            // meatballButton
+            // 
+            meatballButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            meatballButton.Image = (System.Drawing.Image)resources.GetObject("meatballButton.Image");
+            meatballButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            meatballButton.Margin = new System.Windows.Forms.Padding(5, 1, 0, 2);
+            meatballButton.Name = "meatballButton";
+            meatballButton.ShowDropDownArrow = false;
+            meatballButton.Size = new System.Drawing.Size(20, 22);
+            meatballButton.Text = "…";
+            meatballButton.ToolTipText = "See More";
             // 
             // ThemeDialog
             // 
@@ -174,7 +201,7 @@
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = closeButton;
             ClientSize = new System.Drawing.Size(915, 532);
-            Controls.Add(displayComboBox);
+            Controls.Add(toolStrip1);
             Controls.Add(listView1);
             Controls.Add(downloadButton);
             Controls.Add(importButton);
@@ -190,6 +217,8 @@
             Text = "Select Theme";
             Load += ThemeDialog_Load;
             contextMenuStrip1.ResumeLayout(false);
+            toolStrip1.ResumeLayout(false);
+            toolStrip1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -206,6 +235,8 @@
         private System.Windows.Forms.Integration.ElementHost previewerHost;
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ToolStripMenuItem deleteThemeMenuItem;
-        private System.Windows.Forms.ComboBox displayComboBox;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripComboBox displayComboBox;
+        private System.Windows.Forms.ToolStripDropDownButton meatballButton;
     }
 }

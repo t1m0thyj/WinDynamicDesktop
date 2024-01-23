@@ -5,7 +5,6 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Threading.Tasks;
 using WinDynamicDesktop.COM;
 
 namespace WinDynamicDesktop
@@ -25,16 +24,15 @@ namespace WinDynamicDesktop
             SendMessageTimeout(FindWindow("Progman", null), 0x52c, IntPtr.Zero, IntPtr.Zero, 0, 500, out result);
         }
 
-        public static async void SetWallpaper(string imagePath, int displayIndex = -1)
+        public static void SetWallpaper(string imagePath, int displayIndex = -1)
         {
             EnableTransitions();
 
-            if (displayIndex != -1)
+            if (displayIndex != (int)DisplayIndex.ALL_DISPLAYS)
             {
                 IDesktopWallpaper desktopWallpaper = DesktopWallpaperFactory.Create();
                 string monitorId = desktopWallpaper.GetMonitorDevicePathAt((uint)displayIndex);
                 desktopWallpaper.SetWallpaper(monitorId, imagePath);
-                await SyncWithPrimaryDisplay(imagePath, displayIndex);
             }
             else
             {
@@ -50,20 +48,6 @@ namespace WinDynamicDesktop
                 thread.SetApartmentState(ApartmentState.STA);  // Set the thread to STA (required!)
                 thread.Start();
                 thread.Join(2000);
-                await SyncWithPrimaryDisplay(imagePath, displayIndex);
-            }
-        }
-
-        private static async Task SyncWithPrimaryDisplay(string imagePath, int displayIndex)
-        {
-            if (displayIndex > 0)
-            {
-                return;
-            }
-
-            if (UwpDesktop.IsUwpSupported() && JsonConfig.settings.changeLockScreen)
-            {
-                await LockScreenChanger.UpdateImage(imagePath);
             }
         }
     }

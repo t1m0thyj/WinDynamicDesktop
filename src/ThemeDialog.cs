@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -37,6 +38,9 @@ namespace WinDynamicDesktop
             this.FormClosing += OnFormClosing;
             this.FormClosed += OnFormClosed;
 
+            this.toolStrip1.Renderer = new CustomToolStripRenderer();
+            this.meatballButton.Image = GetMeatballIcon();
+
             Rectangle bounds = Screen.FromControl(this).Bounds;
             Size thumbnailSize = ThemeThumbLoader.GetThumbnailSize(this);
             int newWidth = thumbnailSize.Width + SystemInformation.VerticalScrollBarWidth;
@@ -48,7 +52,8 @@ namespace WinDynamicDesktop
             }
 
             this.previewerHost.Anchor &= ~AnchorStyles.Left;
-            this.displayComboBox.Width = newWidth;
+            this.toolStrip1.Width = newWidth;
+            this.displayComboBox.Width = newWidth - this.meatballButton.Width - 8;
             this.listView1.Width = newWidth;
             this.downloadButton.Left += (newWidth - oldWidth) / 2;
             this.applyButton.Left += (newWidth - oldWidth) / 2;
@@ -62,6 +67,20 @@ namespace WinDynamicDesktop
             int bestWidth = (bestHeight - heightDiff) * bounds.Width / bounds.Height + widthDiff;
             this.Size = new Size(bestWidth, bestHeight);
             this.CenterToScreen();
+        }
+
+        public Bitmap GetMeatballIcon()
+        {
+            Bitmap bitmap = new Bitmap(16, 16, PixelFormat.Format32bppArgb);
+            using (Graphics graphics = Graphics.FromImage(bitmap))
+            {
+                graphics.Clear(Color.Transparent);
+                for (int i = 0; i < 3; i++)
+                {
+                    graphics.FillEllipse(new SolidBrush(this.ForeColor), i * 6, 6, 4, 4);
+                }
+            }
+            return bitmap;
         }
 
         public void ImportThemes(List<string> themePaths)
@@ -329,6 +348,10 @@ namespace WinDynamicDesktop
                 themeId => themeId != null) ?? -1;
             displayComboBox.SelectedIndex = activeThemeIndex != -1 ? activeThemeIndex : 0;
 
+            meatballButton.DropDownItems.AddRange(ThemeShuffler.GetMenuItems().ToArray());
+            meatballButton.DropDownItems.Add(new ToolStripSeparator());
+            meatballButton.DropDownItems.AddRange(LockScreenChanger.GetMenuItems().ToArray());
+
             string activeTheme = JsonConfig.settings.activeThemes?[displayComboBox.SelectedIndex];
             string focusTheme = activeTheme ?? "";
             if (activeTheme == null && JsonConfig.firstRun)
@@ -395,6 +418,7 @@ namespace WinDynamicDesktop
         {
             applyButton.Enabled = false;
             bool themeDownloaded = true;
+            // TODO Make sure new shuffle gets applied
 
             if (selectedIndex > 0)
             {
@@ -562,6 +586,13 @@ namespace WinDynamicDesktop
         {
             previewer.ViewModel.Stop();
         }
+    }
+
+    public class CustomToolStripRenderer : ToolStripSystemRenderer
+    {
+        public CustomToolStripRenderer() { }
+
+        protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e) { }
     }
 
     // Comparer class to make ListView sort by theme name
