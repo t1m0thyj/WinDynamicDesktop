@@ -4,6 +4,7 @@
 
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace WinDynamicDesktop
 {
@@ -71,29 +72,31 @@ namespace WinDynamicDesktop
 
         public override async void SetWallpaper(string imagePath, int displayIndex)
         {
-            if (displayIndex >= 0)
+            if (displayIndex != -1)
             {
                 WallpaperApi.SetWallpaper(imagePath, displayIndex);
-                return;
             }
+            else
+            {
+                WallpaperApi.EnableTransitions();
+                var profileSettings = Windows.System.UserProfile.UserProfilePersonalizationSettings.Current;
+                await profileSettings.TrySetWallpaperImageAsync(await LoadImageFile(imagePath));
+            }
+        }
 
+        public override async void SetLockScreen(string imagePath)
+        {
+            var profileSettings = Windows.System.UserProfile.UserProfilePersonalizationSettings.Current;
+            await profileSettings.TrySetLockScreenImageAsync(await LoadImageFile(imagePath));
+        }
+
+        private static Task<Windows.Storage.StorageFile> LoadImageFile(string imagePath)
+        {
             string[] pathSegments = imagePath.Split(Path.DirectorySeparatorChar);
             var uri = new Uri("ms-appdata:///local/themes/" +
                 Uri.EscapeDataString(pathSegments[pathSegments.Length - 2]) + "/" +
                 Uri.EscapeDataString(pathSegments[pathSegments.Length - 1]));
-            var file = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri);
-            var profileSettings = Windows.System.UserProfile.UserProfilePersonalizationSettings.Current;
-
-            switch (displayIndex)
-            {
-                case (int)DisplayIndex.ALL_DISPLAYS:
-                    WallpaperApi.EnableTransitions();
-                    await profileSettings.TrySetWallpaperImageAsync(file);
-                    break;
-                case (int)DisplayIndex.LOCKSCREEN:
-                    await profileSettings.TrySetLockScreenImageAsync(file);
-                    break;
-            }
+            return Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri).AsTask();
         }
     }
 }

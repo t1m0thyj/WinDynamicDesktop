@@ -248,5 +248,14 @@ namespace WinDynamicDesktop
                 e.nextUpdateTime = new DateTime(segmentStart.Ticks + imageDuration.Ticks * (imageNumber + 1));
             }
         }
+
+        public static void ToggleDarkMode()
+        {
+            bool isEnabled = JsonConfig.settings.darkMode ^ true;
+            JsonConfig.settings.darkMode = isEnabled;
+            TrayMenu.darkModeItem.Checked = isEnabled;
+
+            AppContext.scheduler.Run();
+        }
     }
 }

@@ -10,6 +10,16 @@ using System.Windows.Forms;
 
 namespace WinDynamicDesktop
 {
+    enum ShufflePeriod
+    {
+        EveryHour = 0,
+        Every12Hours = 1,
+        EveryDay = 2,
+        Every2Days = 3,
+        EveryWeek = 4,
+        EveryMonth = 5
+    }
+
     class ThemeShuffler
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
@@ -63,24 +73,49 @@ namespace WinDynamicDesktop
             JsonConfig.settings.lastShuffleDate = DateTime.Now.ToString(CultureInfo.InvariantCulture);
         }
 
-        public static void MaybeShuffleWallpaper()
+        public static void MaybeShuffleWallpaper(SolarData solarData)
         {
-            if (JsonConfig.settings.themeShuffleMode == 0)
+            if ((int)(JsonConfig.settings.themeShuffleMode / 10) == 0)
             {
                 return;
             }
 
-            if (JsonConfig.settings.lastShuffleDate != null)
+            if (JsonConfig.settings.lastShuffleTime != null)
             {
-                DateTime lastShuffleDate = DateTime.Parse(JsonConfig.settings.lastShuffleDate,
+                DateTime lastShuffleTime = DateTime.Parse(JsonConfig.settings.lastShuffleTime,
                     CultureInfo.InvariantCulture);
+                bool shouldSkip = false;
 
-                if (lastShuffleDate.Date == DateTime.Now.Date)
+                switch (JsonConfig.settings.themeShuffleMode % 10)
+                {
+                    case (int)ShufflePeriod.EveryHour:
+                        shouldSkip = lastShuffleTime.Date == DateTime.Now.Date &&
+                            lastShuffleTime.Hour == DateTime.Now.Hour;
+                        break;
+                    case (int)ShufflePeriod.Every12Hours:
+                        shouldSkip = lastShuffleTime.Date == DateTime.Now.Date &&
+                            lastShuffleTime.Hour == DateTime.Now.Hour;
+                        break;
+                    case (int)ShufflePeriod.EveryDay:
+                        shouldSkip = lastShuffleTime.Date == DateTime.Now.Date;
+                        break;
+                    case (int)ShufflePeriod.Every2Days:
+                        shouldSkip = lastShuffleTime.Date == DateTime.Now.Date ||
+                            lastShuffleTime.Date == DateTime.Now.Date.AddDays(-1);
+                        break;
+                    case (int)ShufflePeriod.EveryWeek:
+                        break;
+                    case (int)ShufflePeriod.EveryMonth:
+                        break;
+                }
+
+                if (shouldSkip)
                 {
                     return;
                 }
             }
 
+            // TODO Return next update time
             ShuffleWallpaper();
         }
 
@@ -140,14 +175,14 @@ namespace WinDynamicDesktop
             }
         }
 
-        private static void UpdateMenuItems(int? shuffleMode = null)
+        private static void UpdateMenuItems(int? shuffleMode = null, int? shufflePeriod = null)
         {
             if (shuffleMode.HasValue)
             {
                 JsonConfig.settings.themeShuffleMode = shuffleMode.Value;
                 if (shuffleMode > 0)
                 {
-                    JsonConfig.settings.lastShuffleDate = null;
+                    JsonConfig.settings.lastShuffleTime = null;
                 }
             }
 

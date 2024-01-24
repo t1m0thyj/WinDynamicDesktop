@@ -55,11 +55,12 @@ namespace WinDynamicDesktop
 
         public override void SetWallpaper(string imagePath, int displayIndex)
         {
-            if (displayIndex != (int)DisplayIndex.LOCKSCREEN)
-            {
-                WallpaperApi.SetWallpaper(imagePath, displayIndex);
-            }
-            else if (UwpDesktop.IsUwpSupported())
+            WallpaperApi.SetWallpaper(imagePath, displayIndex);
+        }
+
+        public override void SetLockScreen(string imagePath)
+        {
+            if (UwpDesktop.IsUwpSupported())
             {
                 LockScreenChanger.UpdateImage(imagePath);
             }

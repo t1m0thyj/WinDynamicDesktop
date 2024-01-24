@@ -15,7 +15,7 @@ namespace WinDynamicDesktop
         private IpcManager ipcManager;
 
         public static NotifyIcon notifyIcon;
-        public static WallpaperEngine wpEngine = new WallpaperEngine();
+        public static EventScheduler scheduler = new EventScheduler();
 
         public AppContext(string[] args)
         {
@@ -31,7 +31,7 @@ namespace WinDynamicDesktop
             ThemeManager.Initialize();
             ScriptManager.Initialize();
 
-            wpEngine.RunScheduler();
+            scheduler.Run();
             LaunchSequence.NextStep();
             UpdateChecker.Initialize();
         }

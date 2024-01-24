@@ -51,12 +51,12 @@ namespace WinDynamicDesktop
         private delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject,
             int idChild, uint dwEventThread, uint dwmsEventTime);
 
-        public FullScreenApi(WallpaperEngine wcs)
+        public FullScreenApi(Action timerEventHandler)
         {
-            timerEventHandler = new Action(() =>
+            this.timerEventHandler = new Action(() =>
             {
                 LoggingHandler.LogMessage("Scheduler event triggered by fullscreen app closing");
-                wcs.HandleTimerEvent(true);
+                timerEventHandler();
             });
 
             if (JsonConfig.settings.fullScreenPause)

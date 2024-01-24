@@ -29,7 +29,7 @@ namespace WinDynamicDesktop
 
         public void HandleScheduleChange()
         {
-            AppContext.wpEngine.RunScheduler();
+            AppContext.scheduler.Run();
             this.Close();
         }
 

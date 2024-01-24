@@ -53,7 +53,7 @@ namespace WinDynamicDesktop
                 if (scriptCount > 0)
                 {
                     lastArgs = null;
-                    AppContext.wpEngine.RunScheduler();
+                    AppContext.scheduler.Run();
                 }
             }
         }

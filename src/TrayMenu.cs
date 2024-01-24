@@ -135,7 +135,7 @@ namespace WinDynamicDesktop
 
         private void OnDarkModeClick(object sender, EventArgs e)
         {
-            AppContext.wpEngine.ToggleDarkMode();
+            SolarScheduler.ToggleDarkMode();
         }
 
         private void OnStartOnBootClick(object sender, EventArgs e)
@@ -165,12 +165,12 @@ namespace WinDynamicDesktop
 
         private void OnRefreshItemClick(object sender, EventArgs e)
         {
-            AppContext.wpEngine.RunScheduler(true);
+            AppContext.scheduler.Run(true);
         }
 
         private void OnFullScreenItemClick(object sender, EventArgs e)
         {
-            AppContext.wpEngine.fullScreenChecker.ToggleFullScreenPause();
+            AppContext.scheduler.fullScreenChecker.ToggleFullScreenPause();
         }
 
         private void OnHideTrayItemClick(object sender, EventArgs e)

@@ -264,12 +264,12 @@ namespace WinDynamicDesktop
             if (selectedIndex == 0)
             {
                 WallpaperApi.SetWallpaper(windowsWallpaper);
-                AppContext.wpEngine.RunScheduler(true, windowsWallpaper);
+                AppContext.scheduler.Run(true, windowsWallpaper);
             }
             else
             {
                 ThemeShuffler.AddThemeToHistory(activeTheme);
-                AppContext.wpEngine.RunScheduler(true);
+                AppContext.scheduler.Run(true);
                 AppContext.ShowPopup(string.Format(_("New theme applied: {0}"),
                     ThemeManager.GetThemeName(ThemeManager.themeSettings[selectedIndex - 1])));
             }

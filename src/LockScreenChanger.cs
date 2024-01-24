@@ -52,7 +52,7 @@ namespace WinDynamicDesktop
             JsonConfig.settings.changeLockScreen = isEnabled;
             menuItem.Checked = isEnabled;
 
-            AppContext.wpEngine.RunScheduler(true);
+            AppContext.scheduler.Run(true);
         }
     }
 }

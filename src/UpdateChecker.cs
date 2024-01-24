@@ -153,7 +153,7 @@ namespace WinDynamicDesktop
                 }
             }
 
-            Task.Run(async () => await CheckAuto());
+            Task.Run(CheckAuto);
         }
 
         private static void OnAutoUpdateItemClick(object sender, EventArgs e)

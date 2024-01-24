@@ -28,7 +28,7 @@ namespace WinDynamicDesktop
         {
             EnableTransitions();
 
-            if (displayIndex != (int)DisplayIndex.ALL_DISPLAYS)
+            if (displayIndex != -1)
             {
                 IDesktopWallpaper desktopWallpaper = DesktopWallpaperFactory.Create();
                 string monitorId = desktopWallpaper.GetMonitorDevicePathAt((uint)displayIndex);
