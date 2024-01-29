@@ -29,23 +29,24 @@ namespace WinDynamicDesktop
         private static ToolStripMenuItem shufflePeriodItem;
         private static Random rng = new Random();
 
-        public static List<ToolStripItem> GetMenuItems()
+        public static ToolStripItem[] GetMenuItems()
         {
             noneMenuItem = new ToolStripMenuItem(_("Don't &shuffle themes"), null, OnShuffleNoneItemClick);
             favoritesMenuItem = new ToolStripMenuItem(_("Shuffle &favorite themes"), null, OnShuffleFavoritesItemClick);
             allMenuItem = new ToolStripMenuItem(_("Shuffle &all themes"), null, OnShuffleAllItemClick);
-            shufflePeriodItem = new ToolStripMenuItem(_("Choose shuffle frequency"), null);
-            // TODO Add event handlers for submenu
-            shufflePeriodItem.DropDownItems.Add(new ToolStripMenuItem(_("Every Hour"), null));
-            shufflePeriodItem.DropDownItems.Add(new ToolStripMenuItem(_("Every 12 Hours"), null));
-            shufflePeriodItem.DropDownItems.Add(new ToolStripMenuItem(_("Every Day"), null));
-            shufflePeriodItem.DropDownItems.Add(new ToolStripMenuItem(_("Every 2 Days"), null));
-            shufflePeriodItem.DropDownItems.Add(new ToolStripMenuItem(_("Every Week"), null));
-            shufflePeriodItem.DropDownItems.Add(new ToolStripMenuItem(_("Every Month"), null));
-            ((ToolStripMenuItem)shufflePeriodItem.DropDownItems[1]).Checked = true;
+            shufflePeriodItem = new ToolStripMenuItem(_("Choose shuffle &duration"), null);
+            shufflePeriodItem.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                new ToolStripMenuItem(_("Every Hour"), null, OnShufflePeriodItemClick),
+                new ToolStripMenuItem(_("Every 12 Hours"), null, OnShufflePeriodItemClick),
+                new ToolStripMenuItem(_("Every Day"), null, OnShufflePeriodItemClick),
+                new ToolStripMenuItem(_("Every 2 Days"), null, OnShufflePeriodItemClick),
+                new ToolStripMenuItem(_("Every Week"), null, OnShufflePeriodItemClick),
+                new ToolStripMenuItem(_("Every Month"), null, OnShufflePeriodItemClick)
+            });
             UpdateMenuItems();
 
-            return new List<ToolStripItem>()
+            return new ToolStripItem[]
             {
                 noneMenuItem,
                 favoritesMenuItem,
@@ -70,53 +71,80 @@ namespace WinDynamicDesktop
 
             shuffleHistory.Add(themeId);
             JsonConfig.settings.shuffleHistory = shuffleHistory.ToArray();
-            JsonConfig.settings.lastShuffleDate = DateTime.Now.ToString(CultureInfo.InvariantCulture);
+            JsonConfig.settings.lastShuffleTime = DateTime.Now.ToString(CultureInfo.InvariantCulture);
         }
 
-        public static void MaybeShuffleWallpaper(SolarData solarData)
+        public static DateTime? MaybeShuffleWallpaper(SolarData solarData)
         {
             if ((int)(JsonConfig.settings.themeShuffleMode / 10) == 0)
             {
-                return;
+                return null;
             }
+
+            bool shouldShuffle = true;
+            DateTime? lastShuffleTime = null;
+            DateTime? nextUpdateTime = null;
 
             if (JsonConfig.settings.lastShuffleTime != null)
             {
-                DateTime lastShuffleTime = DateTime.Parse(JsonConfig.settings.lastShuffleTime,
-                    CultureInfo.InvariantCulture);
-                bool shouldSkip = false;
+                lastShuffleTime = DateTime.Parse(JsonConfig.settings.lastShuffleTime, CultureInfo.InvariantCulture);
 
                 switch (JsonConfig.settings.themeShuffleMode % 10)
                 {
                     case (int)ShufflePeriod.EveryHour:
-                        shouldSkip = lastShuffleTime.Date == DateTime.Now.Date &&
-                            lastShuffleTime.Hour == DateTime.Now.Hour;
+                        shouldShuffle = lastShuffleTime.Value.Date != DateTime.Now.Date ||
+                            lastShuffleTime.Value.Hour != DateTime.Now.Hour;
                         break;
                     case (int)ShufflePeriod.Every12Hours:
-                        shouldSkip = lastShuffleTime.Date == DateTime.Now.Date &&
-                            lastShuffleTime.Hour == DateTime.Now.Hour;
+                        shouldShuffle = lastShuffleTime.Value < DateTime.Now.AddHours(-12);
                         break;
                     case (int)ShufflePeriod.EveryDay:
-                        shouldSkip = lastShuffleTime.Date == DateTime.Now.Date;
+                        shouldShuffle = lastShuffleTime.Value.Date != DateTime.Now.Date;
                         break;
                     case (int)ShufflePeriod.Every2Days:
-                        shouldSkip = lastShuffleTime.Date == DateTime.Now.Date ||
-                            lastShuffleTime.Date == DateTime.Now.Date.AddDays(-1);
+                        shouldShuffle = lastShuffleTime.Value.Date < DateTime.Now.Date.AddDays(-1);
                         break;
                     case (int)ShufflePeriod.EveryWeek:
+                        shouldShuffle = lastShuffleTime.Value.Date < DateTime.Now.Date.AddDays(-6);
                         break;
                     case (int)ShufflePeriod.EveryMonth:
+                        shouldShuffle = lastShuffleTime.Value.Date != DateTime.Now.Date &&
+                            lastShuffleTime.Value.Month != DateTime.Now.Month;
                         break;
-                }
-
-                if (shouldSkip)
-                {
-                    return;
                 }
             }
 
-            // TODO Return next update time
-            ShuffleWallpaper();
+            if (shouldShuffle)
+            {
+                LoggingHandler.LogMessage(string.Format("Last shuffle time was {0}",
+                    JsonConfig.settings.lastShuffleTime));
+                ShuffleWallpaper();
+            }
+
+            switch (JsonConfig.settings.themeShuffleMode % 10)
+            {
+                case (int)ShufflePeriod.EveryHour:
+                    nextUpdateTime = DateTime.Today.AddHours(DateTime.Now.Hour + 1);
+                    break;
+                case (int)ShufflePeriod.Every12Hours:
+                    nextUpdateTime = DateTime.Now < solarData.solarNoon ? solarData.solarNoon :
+                        solarData.solarNoon.AddHours(12);
+                    break;
+                case (int)ShufflePeriod.EveryDay:
+                    nextUpdateTime = DateTime.Today.AddDays(1);
+                    break;
+                case (int)ShufflePeriod.Every2Days:
+                    nextUpdateTime = (lastShuffleTime?.Date ?? DateTime.Today).AddDays(2);
+                    break;
+                case (int)ShufflePeriod.EveryWeek:
+                    nextUpdateTime = DateTime.Today.AddDays(7 - (int)DateTime.Today.DayOfWeek);
+                    break;
+                case (int)ShufflePeriod.EveryMonth:
+                    nextUpdateTime = DateTime.Today.AddDays(-DateTime.Today.Day).AddMonths(1);
+                    break;
+            }
+
+            return nextUpdateTime?.AddTicks(1);
         }
 
         private static ThemeConfig GetNextTheme()
@@ -173,22 +201,35 @@ namespace WinDynamicDesktop
                     JsonConfig.settings.activeThemes[i] = GetNextTheme().themeId;
                 }
             }
+
+            if (JsonConfig.settings.lockScreenTheme != null)
+            {
+                JsonConfig.settings.lockScreenTheme = GetNextTheme().themeId;
+            }
         }
 
         private static void UpdateMenuItems(int? shuffleMode = null, int? shufflePeriod = null)
         {
-            if (shuffleMode.HasValue)
+            if (shuffleMode.HasValue || shufflePeriod.HasValue)
             {
-                JsonConfig.settings.themeShuffleMode = shuffleMode.Value;
+                shuffleMode = shuffleMode ?? (int)(JsonConfig.settings.themeShuffleMode / 10);
+                shufflePeriod = shufflePeriod ?? (JsonConfig.settings.themeShuffleMode % 10);
+                JsonConfig.settings.themeShuffleMode = shuffleMode.Value * 10 + shufflePeriod.Value;
+
                 if (shuffleMode > 0)
                 {
                     JsonConfig.settings.lastShuffleTime = null;
                 }
             }
 
-            noneMenuItem.Checked = JsonConfig.settings.themeShuffleMode == 0;
-            favoritesMenuItem.Checked = JsonConfig.settings.themeShuffleMode == 1;
-            allMenuItem.Checked = JsonConfig.settings.themeShuffleMode == 2;
+            noneMenuItem.Checked = shuffleMode == 0;
+            favoritesMenuItem.Checked = shuffleMode == 1;
+            allMenuItem.Checked = shuffleMode == 2;
+            shufflePeriodItem.Enabled = shuffleMode > 0;
+            for (int i = 0; i < shufflePeriodItem.DropDownItems.Count; i++)
+            {
+                ((ToolStripMenuItem)shufflePeriodItem.DropDownItems[i]).Checked = i == shufflePeriod;
+            }
         }
 
         private static void OnShuffleNoneItemClick(object sender, EventArgs e)
@@ -198,12 +239,17 @@ namespace WinDynamicDesktop
 
         private static void OnShuffleFavoritesItemClick(object sender, EventArgs e)
         {
-            UpdateMenuItems(12);
+            UpdateMenuItems(1);
         }
 
         private static void OnShuffleAllItemClick(object sender, EventArgs e)
         {
-            UpdateMenuItems(22);
+            UpdateMenuItems(2);
+        }
+
+        private static void OnShufflePeriodItemClick(object sender, EventArgs e)
+        {
+            UpdateMenuItems(null, shufflePeriodItem.DropDownItems.IndexOf((ToolStripMenuItem)sender));
         }
     }
 }

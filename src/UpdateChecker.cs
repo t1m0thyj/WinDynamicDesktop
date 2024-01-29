@@ -4,7 +4,6 @@
 
 using RestSharp;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -48,21 +47,22 @@ namespace WinDynamicDesktop
         [DllImport("kernel32.dll", SetLastError = true)]
         internal static extern uint RegisterApplicationRestart(string pwzCommandline, int dwFlags);
 
-        public static List<ToolStripItem> GetMenuItems()
+        public static ToolStripItem[] GetMenuItems()
         {
             if (!UwpDesktop.IsRunningAsUwp())
             {
                 menuItem = new ToolStripMenuItem(_("Check for &updates once a week"), null, OnAutoUpdateItemClick);
                 menuItem.Checked = JsonConfig.settings.autoUpdateCheck;
 
-                return new List<ToolStripItem>() {
-                    new ToolStripSeparator(),
-                    menuItem
+                return new ToolStripItem[]
+                {
+                    menuItem,
+                    new ToolStripSeparator()
                 };
             }
             else
             {
-                return new List<ToolStripItem>();
+                return Array.Empty<ToolStripItem>();
             }
         }
 

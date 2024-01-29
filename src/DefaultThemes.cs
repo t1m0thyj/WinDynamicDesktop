@@ -13,6 +13,8 @@ namespace WinDynamicDesktop
     class DefaultThemes
     {
         private static string[] yamlLines = Array.Empty<string>();
+        public static string windowsLockScreenFolder = Environment.ExpandEnvironmentVariables(
+            @"%SystemRoot%\Web\Screen");
         public static string windowsWallpaperFolder = Environment.ExpandEnvironmentVariables(
             @"%SystemRoot%\Web\Wallpaper\Windows");
 

@@ -14,6 +14,8 @@ namespace WinDynamicDesktop
 {
     public class DisplayEvent
     {
+        public const int LockScreenIndex = int.MaxValue;
+
         public ThemeConfig currentTheme;
         public int daySegment2;
         public int? daySegment4;
@@ -49,7 +51,7 @@ namespace WinDynamicDesktop
             SystemEvents.TimeChanged += OnTimeChanged;
         }
 
-        public void Run(bool forceImageUpdate = false, string staticImagePath = null)
+        public void Run(bool forceImageUpdate = false, DisplayEvent overrideEvent = null)
         {
             if (!LaunchSequence.IsLocationReady() || !LaunchSequence.IsThemeReady())
             {
@@ -57,16 +59,14 @@ namespace WinDynamicDesktop
             }
             else if (displayEvents == null || forceImageUpdate)
             {
-                displayEvents = new List<DisplayEvent> { null };
+                displayEvents = new List<DisplayEvent> { null, null };
             }
 
             schedulerTimer.Stop();
             forceImageUpdate = UpdateDisplayList() || forceImageUpdate;
             SolarData data = SunriseSunsetService.GetSolarData(DateTime.Today);
             LoggingHandler.LogMessage("Calculated solar data: {0}", data);
-
-            ThemeShuffler.MaybeShuffleWallpaper(data);
-            long nextDisplayUpdateTicks = long.MaxValue;
+            long nextDisplayUpdateTicks = ThemeShuffler.MaybeShuffleWallpaper(data)?.Ticks ?? long.MaxValue;
 
             for (int i = 0; i < displayEvents.Count; i++)
             {
@@ -79,20 +79,36 @@ namespace WinDynamicDesktop
                     displayEvents[i].lastImagePath = null;
                 }
 
-                string themeId = JsonConfig.settings.activeThemes[0];
-                if (themeId == null && JsonConfig.settings.activeThemes.Length > 1)
+                if (i < displayEvents.Count - 1)
                 {
-                    themeId = JsonConfig.settings.activeThemes[i + 1];
+                    string themeId = JsonConfig.settings.activeThemes[0];
+                    if (themeId == null && JsonConfig.settings.activeThemes.Length > 1)
+                    {
+                        themeId = JsonConfig.settings.activeThemes[i + 1];
+                    }
+                    displayEvents[i].currentTheme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
+                    displayEvents[i].displayIndex = JsonConfig.settings.activeThemes[0] == null ? i : -1;
                 }
-                displayEvents[i].currentTheme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
-                displayEvents[i].displayIndex = (JsonConfig.settings.activeThemes[0] == null) ? i : -1;
+                else
+                {
+                    if (!LockScreenChanger.IsEnabled())
+                    {
+                        continue;
+                    }
+                    string themeId = JsonConfig.settings.lockScreenDisplayIndex != -1 ?
+                        JsonConfig.settings.activeThemes[JsonConfig.settings.lockScreenDisplayIndex] :
+                        JsonConfig.settings.lockScreenTheme;
+                    displayEvents[i].currentTheme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
+                    displayEvents[i].displayIndex = DisplayEvent.LockScreenIndex;
+                }
+
                 SolarScheduler.CalcNextUpdateTime(data, displayEvents[i]);
                 LoggingHandler.LogMessage("Updated display event: {0}", displayEvents[i]);
 
-                if (displayEvents[i].currentTheme != null)
+                bool isEventOverridden = displayEvents[i].displayIndex == overrideEvent?.displayIndex;
+                if (displayEvents[i].currentTheme != null || isEventOverridden)
                 {
-                    HandleDisplayEvent(displayEvents[i]);
-                    // TODO Make sure lockscreen update triggered if synced
+                    HandleDisplayEvent(isEventOverridden ? overrideEvent : displayEvents[i]);
 
                     if (displayEvents[i].nextUpdateTime.Ticks < nextDisplayUpdateTicks)
                     {
@@ -105,34 +121,16 @@ namespace WinDynamicDesktop
             {
                 daySegment2 = displayEvents[0].daySegment2,
                 daySegment4 = displayEvents[0].daySegment4,
-                imagePaths = staticImagePath != null ? new string[] { staticImagePath } :
-                    displayEvents.Select(e => e.lastImagePath).ToArray()
+                imagePaths = displayEvents.Select(e =>
+                    (e.displayIndex == overrideEvent?.displayIndex ? overrideEvent : e).lastImagePath).ToArray()
             }, forceImageUpdate);
 
-            if (data.polarPeriod != PolarPeriod.None)
-            {
-                nextUpdateTime = DateTime.Today.AddDays(1);
-            }
-            else if (data.sunriseTime <= DateTime.Now && DateTime.Now < data.sunsetTime)
-            {
-                nextUpdateTime = data.sunsetTime;
-            }
-            else if (DateTime.Now < data.solarTimes[0])
-            {
-                nextUpdateTime = data.sunriseTime;
-            }
-            else
-            {
-                SolarData tomorrowsData = SunriseSunsetService.GetSolarData(DateTime.Today.AddDays(1));
-                nextUpdateTime = tomorrowsData.sunriseTime;
-            }
-
+            nextUpdateTime = SolarScheduler.CalcNextUpdateTime(data);
             if (nextDisplayUpdateTicks > 0 && nextDisplayUpdateTicks < nextUpdateTime.Value.Ticks)
             {
                 nextUpdateTime = new DateTime(nextDisplayUpdateTicks);
             }
 
-            // TODO Setup display events, lockscreen events, script events, shuffle events
             StartTimer(nextUpdateTime.Value);
         }
 
@@ -143,7 +141,7 @@ namespace WinDynamicDesktop
                 return false;
             }
 
-            int numDisplaysBefore = displayEvents.Count;
+            int numDisplaysBefore = displayEvents.Count - 1;
             int numDisplaysAfter = Screen.AllScreens.Length;
             if (numDisplaysAfter != numDisplaysBefore)
             {
@@ -155,7 +153,7 @@ namespace WinDynamicDesktop
             {
                 for (int i = 0; i < (numDisplaysAfter - numDisplaysBefore); i++)
                 {
-                    displayEvents.Add(null);
+                    displayEvents.Insert(displayEvents.Count - 1, null);
                 }
             }
             else if (numDisplaysAfter < numDisplaysBefore)
@@ -168,15 +166,26 @@ namespace WinDynamicDesktop
 
         private void HandleDisplayEvent(DisplayEvent e)
         {
-            string imageFilename = e.currentTheme.imageFilename.Replace("*", e.imageId.ToString());
-            string imagePath = Path.Combine(Path.GetFullPath("themes"), e.currentTheme.themeId, imageFilename);
-            if (imagePath == e.lastImagePath)
+            string imagePath = e.lastImagePath;
+            if (e.currentTheme != null)
             {
-                return;
+                string imageFilename = e.currentTheme.imageFilename.Replace("*", e.imageId.ToString());
+                imagePath = Path.Combine(Path.GetFullPath("themes"), e.currentTheme.themeId, imageFilename);
+                if (imagePath == e.lastImagePath)
+                {
+                    return;
+                }
             }
 
             LoggingHandler.LogMessage("Setting wallpaper to {0}", imagePath);
-            UwpDesktop.GetHelper().SetWallpaper(imagePath, e.displayIndex);
+            if (e.displayIndex != DisplayEvent.LockScreenIndex)
+            {
+                UwpDesktop.GetHelper().SetWallpaper(imagePath, e.displayIndex);
+            }
+            else
+            {
+                UwpDesktop.GetHelper().SetLockScreen(imagePath);
+            }
             e.lastImagePath = imagePath;
         }
 

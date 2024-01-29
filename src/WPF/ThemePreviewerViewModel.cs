@@ -218,7 +218,7 @@ namespace WinDynamicDesktop.WPF
             }
         }
 
-        public void PreviewTheme(ThemeConfig theme)
+        public void PreviewTheme(ThemeConfig theme, string imagePath = null)
         {
             Stop();
 
@@ -312,7 +312,7 @@ namespace WinDynamicDesktop.WPF
             else
             {
                 Author = "Microsoft";
-                Items.Add(new ThemePreviewItem(string.Empty, ThemeThumbLoader.GetWindowsWallpaper()));
+                Items.Add(new ThemePreviewItem(string.Empty, imagePath));
                 activeImage = 0;
             }
 

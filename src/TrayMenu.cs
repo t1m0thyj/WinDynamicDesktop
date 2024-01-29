@@ -16,18 +16,16 @@ namespace WinDynamicDesktop
         private const int WM_ENDSESSION = 0x16;
         private static readonly Func<string, string> _ = Localization.GetTranslation;
 
-        public static ToolStripMenuItem themeItem;
         public static ToolStripMenuItem darkModeItem;
         public static ToolStripMenuItem startOnBootItem;
-        public static ToolStripMenuItem enableScriptsItem;
         public static ToolStripMenuItem fullScreenItem;
         public static ToolStripMenuItem hideTrayItem;
+        public static ToolStripMenuItem enableScriptsItem;
 
         public TrayMenu()
         {
-            List<ToolStripItem> menuItems = GetMenuItems();
+            this.Items.AddRange(GetMenuItems());
             UwpDesktop.GetHelper().CheckStartOnBoot();
-            this.Items.AddRange(menuItems.ToArray());
             IntPtr _handle = this.Handle;  // Handle needed for BeginInvoke to work
         }
 
@@ -53,31 +51,21 @@ namespace WinDynamicDesktop
             }
         }
 
-        private List<ToolStripItem> GetMenuItems()
+        private ToolStripItem[] GetMenuItems()
         {
-            List<ToolStripItem> items = new List<ToolStripItem>();
-
-            themeItem = new ToolStripMenuItem(_("&Select Theme..."), null, OnThemeItemClick);
-
-            items.AddRange(new List<ToolStripItem>()
-            {
-                new ToolStripMenuItem("WinDynamicDesktop"),
-                new ToolStripSeparator(),
-                new ToolStripMenuItem(_("&Configure Schedule..."), null, OnScheduleItemClick),
-                themeItem,
-                new ToolStripSeparator()
-            });
-            items[0].Enabled = false;
-
             darkModeItem = new ToolStripMenuItem(_("Enable &Night Mode"), null, OnDarkModeClick);
             darkModeItem.Checked = JsonConfig.settings.darkMode;
             startOnBootItem = new ToolStripMenuItem(_("Start on &Boot"), null, OnStartOnBootClick);
-
             ToolStripMenuItem optionsItem = new ToolStripMenuItem(_("More &Options"));
-            optionsItem.DropDownItems.AddRange(GetOptionsMenuItems().ToArray());
+            optionsItem.DropDownItems.AddRange(GetOptionsMenuItems());
 
-            items.AddRange(new List<ToolStripItem>()
+            return new ToolStripItem[]
             {
+                new ToolStripMenuItem("WinDynamicDesktop") { Enabled = false },
+                new ToolStripSeparator(),
+                new ToolStripMenuItem(_("&Configure Schedule..."), null, OnScheduleItemClick),
+                new ToolStripMenuItem(_("&Select Theme..."), null, OnThemeItemClick),
+                new ToolStripSeparator(),
                 darkModeItem,
                 startOnBootItem,
                 optionsItem,
@@ -86,41 +74,47 @@ namespace WinDynamicDesktop
                 new ToolStripMenuItem(_("&About"), null, OnAboutItemClick),
                 new ToolStripSeparator(),
                 new ToolStripMenuItem(_("E&xit"), null, OnExitItemClick)
-            });
-
-            return items;
+            };
         }
 
-        private List<ToolStripItem> GetOptionsMenuItems()
+        private ToolStripItem[] GetOptionsMenuItems()
         {
-            List<ToolStripItem> items = new List<ToolStripItem>();
-
-            items.Add(new ToolStripMenuItem(_("Select &Language..."), null, OnLanguageItemClick));
-            items.Add(new ToolStripMenuItem(_("&Refresh Wallpaper"), null, OnRefreshItemClick));
-            items.Add(new ToolStripSeparator());
+            List<ToolStripItem> items = new List<ToolStripItem>()
+            {
+                new ToolStripMenuItem(_("Select &Language..."), null, OnLanguageItemClick),
+                new ToolStripMenuItem(_("&Refresh Wallpaper"), null, OnRefreshItemClick),
+                new ToolStripSeparator()
+            };
 
             fullScreenItem = new ToolStripMenuItem(_("Pause when fullscreen apps running"), null,
                 OnFullScreenItemClick);
             fullScreenItem.Checked = JsonConfig.settings.fullScreenPause;
-            items.Add(fullScreenItem);
-
             hideTrayItem = new ToolStripMenuItem(_("Hide system tray icon"), null, OnHideTrayItemClick);
             hideTrayItem.Checked = JsonConfig.settings.hideTrayIcon;
-            items.Add(hideTrayItem);
+            items.AddRange(new ToolStripItem[]
+            {
+                fullScreenItem,
+                hideTrayItem,
+                new ToolStripSeparator()
+            });
 
             items.AddRange(UpdateChecker.GetMenuItems());
-            items.Add(new ToolStripSeparator());
 
-            items.Add(new ToolStripMenuItem(_("Edit configuration file"), null, OnEditConfigFileClick));
-            items.Add(new ToolStripMenuItem(_("Reload configuration file"), null, OnReloadConfigFileClick));
-            items.Add(new ToolStripSeparator());
+            items.AddRange(new ToolStripItem[]
+            {
+                new ToolStripMenuItem(_("Edit configuration file"), null, OnEditConfigFileClick),
+                new ToolStripMenuItem(_("Reload configuration file"), null, OnReloadConfigFileClick),
+                new ToolStripSeparator()
+            });
 
             enableScriptsItem = new ToolStripMenuItem(_("Enable PowerShell scripts"), null, OnEnableScriptsClick);
             enableScriptsItem.Checked = JsonConfig.settings.enableScripts;
-            items.Add(enableScriptsItem);
-            items.Add(new ToolStripMenuItem(_("Manage installed scripts"), null, OnManageScriptsClick));
-
-            return items;
+            items.AddRange(new ToolStripItem[]
+            {
+                enableScriptsItem,
+                new ToolStripMenuItem(_("Manage installed scripts"), null, OnManageScriptsClick)
+            });
+            return items.ToArray();
         }
 
         private void OnScheduleItemClick(object sender, EventArgs e)

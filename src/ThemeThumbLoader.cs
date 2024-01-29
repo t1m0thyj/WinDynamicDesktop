@@ -34,29 +34,22 @@ namespace WinDynamicDesktop
             return new Size(scaledWidth, scaledWidth * 9 / 16);
         }
 
-        public static string GetWindowsWallpaper()
+        public static string GetWindowsWallpaper(bool isLockScreen = false)
         {
+            string windowsWallpaperFolder = isLockScreen ? DefaultThemes.windowsLockScreenFolder :
+                DefaultThemes.windowsWallpaperFolder;
             string wallpaperPath = null;
 
-            if (Directory.Exists(DefaultThemes.windowsWallpaperFolder))
+            if (Directory.Exists(windowsWallpaperFolder))
             {
-                string[] wallpaperFiles = Directory.GetFiles(DefaultThemes.windowsWallpaperFolder);
+                string[] wallpaperFiles = Directory.GetFiles(windowsWallpaperFolder);
                 if (wallpaperFiles.Length > 0)
                 {
                     wallpaperPath = wallpaperFiles[0];
                 }
             }
 
-            if (wallpaperPath == null)
-            {
-                wallpaperPath = Path.Combine(Environment.CurrentDirectory, "wallpaper_blank.jpg");
-                if (!File.Exists(wallpaperPath))
-                {
-                    (new Bitmap(1, 1)).Save(wallpaperPath, ImageFormat.Jpeg);
-                }
-            }
-
-            return wallpaperPath;
+            return wallpaperPath ?? CreateBlankWallpaper();
         }
 
         public static Image ScaleImage(Image tempImage, Size size)
@@ -156,6 +149,16 @@ namespace WinDynamicDesktop
                     outdatedThemeIds.Remove(themeId);
                 }
             }
+        }
+
+        private static string CreateBlankWallpaper()
+        {
+            string wallpaperPath = Path.Combine(Environment.CurrentDirectory, "wallpaper_blank.jpg");
+            if (!File.Exists(wallpaperPath))
+            {
+                (new Bitmap(1, 1)).Save(wallpaperPath, ImageFormat.Jpeg);
+            }
+            return wallpaperPath;
         }
 
         private static string GetThumbnailPath(ThemeConfig theme)

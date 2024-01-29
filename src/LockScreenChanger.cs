@@ -3,7 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace WinDynamicDesktop
@@ -12,20 +11,25 @@ namespace WinDynamicDesktop
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
         private static ToolStripMenuItem menuItem;
+        private static int activeDisplayIndex;
 
-        public static List<ToolStripItem> GetMenuItems()
+        public static bool IsEnabled()
         {
-            if ((JsonConfig.settings.lockScreenFollowIndex != -1 || JsonConfig.settings.lockScreenTheme != null) &&
-                !UwpDesktop.IsUwpSupported())
+            return JsonConfig.settings.lockScreenDisplayIndex != -1 || JsonConfig.settings.lockScreenTheme != null;
+        }
+
+        public static ToolStripItem[] GetMenuItems()
+        {
+            if (IsEnabled() && !UwpDesktop.IsUwpSupported())
             {
-                JsonConfig.settings.lockScreenFollowIndex = -1;
+                JsonConfig.settings.lockScreenDisplayIndex = -1;
                 JsonConfig.settings.lockScreenTheme = null;
             }
 
-            menuItem = new ToolStripMenuItem(_("Sync &lockscreen image with this display"), null, OnLockScreenItemClick);
+            menuItem = new ToolStripMenuItem(_("Sync &lockscreen image with {0}"), null, OnLockScreenItemClick);
             menuItem.Enabled = UwpDesktop.IsUwpSupported();
 
-            return new List<ToolStripItem>() {
+            return new ToolStripItem[] {
                 menuItem
             };
         }
@@ -36,23 +40,29 @@ namespace WinDynamicDesktop
             await Windows.System.UserProfile.LockScreen.SetImageFileAsync(imageFile);
         }
 
-        public static void UpdateMenuItems(int displayIndex, int? lockScreenFollowIndex = null)
+        public static void UpdateMenuItems(int? selectedDisplayIndex = null)
         {
-            if (lockScreenFollowIndex.HasValue)
-            {
-                JsonConfig.settings.lockScreenFollowIndex = lockScreenFollowIndex.Value;
-            }
+            activeDisplayIndex = Math.Max(0, selectedDisplayIndex ?? JsonConfig.settings.lockScreenDisplayIndex);
+            menuItem.Checked = menuItem.Enabled && activeDisplayIndex == JsonConfig.settings.lockScreenDisplayIndex;
+            menuItem.Text = string.Format(_("Sync &lock screen image with {0}"), GetDisplayName());
+        }
 
-            menuItem.Checked = menuItem.Enabled && JsonConfig.settings.lockScreenFollowIndex == displayIndex;
+        public static string GetDisplayName()
+        {
+            return activeDisplayIndex == 0 ? _("All Displays") : string.Format(_("Display {0}"), activeDisplayIndex);
         }
 
         private static void OnLockScreenItemClick(object sender, EventArgs e)
         {
-            bool isEnabled = JsonConfig.settings.changeLockScreen ^ true;
-            JsonConfig.settings.changeLockScreen = isEnabled;
-            menuItem.Checked = isEnabled;
-
-            AppContext.scheduler.Run(true);
+            if (JsonConfig.settings.lockScreenDisplayIndex == -1)
+            {
+                JsonConfig.settings.lockScreenDisplayIndex = activeDisplayIndex;
+            }
+            else
+            {
+                JsonConfig.settings.lockScreenDisplayIndex = -1;
+            }
+            UpdateMenuItems();
         }
     }
 }

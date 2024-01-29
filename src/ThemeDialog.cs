@@ -23,7 +23,8 @@ namespace WinDynamicDesktop
 
         private static readonly Func<string, string> _ = Localization.GetTranslation;
         private const string themeLink = "https://windd.info/themes/";
-        private readonly string windowsWallpaper = ThemeThumbLoader.GetWindowsWallpaper();
+        private readonly string windowsWallpaper = ThemeThumbLoader.GetWindowsWallpaper(false);
+        private readonly string windowsLockScreen = ThemeThumbLoader.GetWindowsWallpaper(true);
 
         private WPF.ThemePreviewer previewer;
 
@@ -226,6 +227,22 @@ namespace WinDynamicDesktop
             {
                 activeThemes[0] = activeTheme;
             }
+            else if (IsLockScreenSelected)
+            {
+                if (JsonConfig.settings.lockScreenDisplayIndex != -1)
+                {
+                    DialogResult result = MessageDialog.ShowQuestion(string.Format(
+                        _("Applying this theme will stop the lock screen image from syncing with {0}. " +
+                        "Are you sure you want to continue?"), LockScreenChanger.GetDisplayName()));
+                    if (result != DialogResult.Yes)
+                    {
+                        return;
+                    }
+                }
+
+                JsonConfig.settings.lockScreenDisplayIndex = -1;
+                JsonConfig.settings.lockScreenTheme = activeTheme;
+            }
             else
             {
                 int numNewDisplays = Screen.AllScreens.Length - activeThemes.Count + 1;
@@ -263,8 +280,12 @@ namespace WinDynamicDesktop
 
             if (selectedIndex == 0)
             {
-                WallpaperApi.SetWallpaper(windowsWallpaper);
-                AppContext.scheduler.Run(true, windowsWallpaper);
+                AppContext.scheduler.Run(true, new DisplayEvent()
+                {
+                    displayIndex = IsLockScreenSelected ? DisplayEvent.LockScreenIndex :
+                        (displayComboBox.SelectedIndex - 1),
+                    lastImagePath = windowsWallpaper
+                });
             }
             else
             {
@@ -307,7 +328,16 @@ namespace WinDynamicDesktop
             downloadButton.Enabled = !themeDownloaded;
             applyButton.Enabled = true;
 
-            previewer.ViewModel.PreviewTheme(theme);
+            previewer.ViewModel.PreviewTheme(theme, ThemeThumbLoader.GetWindowsWallpaper(IsLockScreenSelected));
+        }
+
+        private bool IsLockScreenSelected
+        {
+            get
+            {
+                return UwpDesktop.IsUwpSupported() &&
+                    displayComboBox.SelectedIndex == displayComboBox.Items.Count - 1;
+            }
         }
 
         // Code to change ListView appearance from https://stackoverflow.com/a/4463114/5504760
@@ -332,6 +362,10 @@ namespace WinDynamicDesktop
             imageList.Images.Add(ThemeThumbLoader.ScaleImage(windowsWallpaper, thumbnailSize));
             listView1.Items.Add(_("None"), 0);
 
+            meatballButton.DropDownItems.AddRange(ThemeShuffler.GetMenuItems());
+            meatballButton.DropDownItems.Add(new ToolStripSeparator());
+            meatballButton.DropDownItems.AddRange(LockScreenChanger.GetMenuItems());
+
             if (UwpDesktop.IsMultiDisplaySupported())
             {
                 string[] displayNames = GetDisplayNames();
@@ -340,17 +374,15 @@ namespace WinDynamicDesktop
                     displayComboBox.Items.Add(string.Format(_("Display {0}: {1}"), i + 1, displayNames[i]));
                 }
             }
-            else
+            if (UwpDesktop.IsUwpSupported())
             {
-                displayComboBox.Enabled = false;
+                imageList.Images.Add(ThemeThumbLoader.ScaleImage(windowsLockScreen, thumbnailSize));
+                displayComboBox.Items.Add(_("Lock Screen"));
             }
+            displayComboBox.Enabled = displayComboBox.Items.Count > 1;
             int activeThemeIndex = JsonConfig.settings.activeThemes?.ToList().FindIndex(
                 themeId => themeId != null) ?? -1;
             displayComboBox.SelectedIndex = activeThemeIndex != -1 ? activeThemeIndex : 0;
-
-            meatballButton.DropDownItems.AddRange(ThemeShuffler.GetMenuItems().ToArray());
-            meatballButton.DropDownItems.Add(new ToolStripSeparator());
-            meatballButton.DropDownItems.AddRange(LockScreenChanger.GetMenuItems().ToArray());
 
             string activeTheme = JsonConfig.settings.activeThemes?[displayComboBox.SelectedIndex];
             string focusTheme = activeTheme ?? "";
@@ -364,11 +396,19 @@ namespace WinDynamicDesktop
 
         private void displayComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string activeTheme = null;
-            if (JsonConfig.settings.activeThemes != null &&
+            string activeTheme = IsLockScreenSelected ? JsonConfig.settings.lockScreenTheme : null;
+            if (!IsLockScreenSelected && JsonConfig.settings.activeThemes != null &&
                 JsonConfig.settings.activeThemes.Length > displayComboBox.SelectedIndex)
             {
                 activeTheme = JsonConfig.settings.activeThemes[displayComboBox.SelectedIndex];
+            }
+            LockScreenChanger.UpdateMenuItems(IsLockScreenSelected ? null : displayComboBox.SelectedIndex);
+
+            int oldImageIndex = listView1.Items[0].ImageIndex;
+            listView1.Items[0].ImageIndex = IsLockScreenSelected ? 1 : 0;
+            if (oldImageIndex != listView1.Items[0].ImageIndex)
+            {
+                UpdateSelectedItem();
             }
 
             foreach (ListViewItem item in listView1.Items)
@@ -418,7 +458,6 @@ namespace WinDynamicDesktop
         {
             applyButton.Enabled = false;
             bool themeDownloaded = true;
-            // TODO Make sure new shuffle gets applied
 
             if (selectedIndex > 0)
             {

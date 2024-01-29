@@ -33,11 +33,11 @@ namespace WinDynamicDesktop
         public bool darkMode { get; set; }
         [Obsolete("Will be removed in v6")]
         public bool changeLockScreen { get; set; }
-        public int lockScreenFollowIndex { get; set; } = -1;
+        public int lockScreenDisplayIndex { get; set; } = -1;
         public string lockScreenTheme { get; set; }
         [Obsolete("Will be removed in v6")]
         public bool enableShuffle { get; set; }
-        public int themeShuffleMode { get; set; }
+        public int themeShuffleMode { get; set; } = (int)ShufflePeriod.EveryDay;
         [Obsolete("Will be removed in v6")]
         public string lastShuffleDate { get; set; }
         public string lastShuffleTime { get; set; }
@@ -95,7 +95,7 @@ namespace WinDynamicDesktop
 #pragma warning disable 618
             if (settings.changeLockScreen)
             {
-                settings.lockScreenFollowIndex = 0;
+                settings.lockScreenDisplayIndex = settings.activeThemes[0] == null ? 0 : -1;
                 settings.changeLockScreen = false;
             }
             if (settings.enableShuffle)

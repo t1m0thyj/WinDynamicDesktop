@@ -139,6 +139,27 @@ namespace WinDynamicDesktop
             }
         }
 
+        public static DateTime CalcNextUpdateTime(SolarData data)
+        {
+            if (data.polarPeriod != PolarPeriod.None)
+            {
+                return DateTime.Today.AddDays(1);
+            }
+            else if (data.sunriseTime <= DateTime.Now && DateTime.Now < data.sunsetTime)
+            {
+                return data.sunsetTime;
+            }
+            else if (DateTime.Now < data.solarTimes[0])
+            {
+                return data.sunriseTime;
+            }
+            else
+            {
+                SolarData tomorrowsData = SunriseSunsetService.GetSolarData(DateTime.Today.AddDays(1));
+                return tomorrowsData.sunriseTime;
+            }
+        }
+
         public static void CalcNextUpdateTime(SolarData data, DisplayEvent e)
         {
             int[] imageList;
