@@ -9,7 +9,7 @@ $xmlDoc = [XML](Get-Content -Path $csproj)
 $oldVersion = $xmlDoc.Project.PropertyGroup.Version
 
 if (!$newVersion) {
-    $newVersion = "$oldVersion-$(git rev-parse --short HEAD)"
+    $newVersion = "$oldVersion-g$(git rev-parse --short HEAD)"
 }
 
 $xmlDoc.Project.PropertyGroup.Version = $newVersion

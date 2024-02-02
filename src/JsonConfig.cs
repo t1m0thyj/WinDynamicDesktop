@@ -31,9 +31,16 @@ namespace WinDynamicDesktop
         // Theme settings
         public string[] activeThemes { get; set; }
         public bool darkMode { get; set; }
+        [Obsolete("Will be removed in v6")]
         public bool changeLockScreen { get; set; }
+        public int lockScreenDisplayIndex { get; set; } = -1;
+        public string lockScreenTheme { get; set; }
+        [Obsolete("Will be removed in v6")]
         public bool enableShuffle { get; set; }
+        public int themeShuffleMode { get; set; } = (int)ShufflePeriod.EveryDay;
+        [Obsolete("Will be removed in v6")]
         public string lastShuffleDate { get; set; }
+        public string lastShuffleTime { get; set; }
         public string[] shuffleHistory { get; set; }
         public string[] favoriteThemes { get; set; }
 
@@ -84,6 +91,24 @@ namespace WinDynamicDesktop
                     }
                 }
             }
+
+#pragma warning disable 618
+            if (settings.changeLockScreen)
+            {
+                settings.lockScreenDisplayIndex = settings.activeThemes[0] == null ? 0 : -1;
+                settings.changeLockScreen = false;
+            }
+            if (settings.enableShuffle)
+            {
+                settings.themeShuffleMode = 22;
+                settings.enableShuffle = false;
+            }
+            if (settings.lastShuffleDate != null)
+            {
+                settings.lastShuffleTime = settings.lastShuffleDate;
+                settings.lastShuffleDate = null;
+            }
+#pragma warning restore 618
 
             unsavedChanges = false;
             autoSaveTimer = new System.Timers.Timer();

@@ -19,9 +19,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - uses: actions/setup-dotnet@v3
+    - uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: 8.0.x
 
     - uses: microsoft/setup-msbuild@v1
 
@@ -43,12 +43,15 @@ jobs:
         UapAppxPackageBuildMode: SideloadOnly
         UseTemporarySignCert: true
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: exe-${{ matrix.platform }}
         path: src\bin\Release\**\publish\*.exe
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: msix-${{ matrix.platform }}
         path: uwp\AppPackages\**\*.msix
+    
+    - run: dotnet test --verbosity normal
+      working-directory: test

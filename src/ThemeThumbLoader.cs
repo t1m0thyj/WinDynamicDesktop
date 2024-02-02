@@ -16,8 +16,6 @@ namespace WinDynamicDesktop
     class ThemeThumbLoader
     {
         private static List<string> outdatedThemeIds = new List<string>();
-        private static string windowsWallpaperFolder = Environment.ExpandEnvironmentVariables(
-            @"%SystemRoot%\Web\Wallpaper\Windows");
 
         public static Size GetThumbnailSize(System.Windows.Forms.Control control)
         {
@@ -36,8 +34,10 @@ namespace WinDynamicDesktop
             return new Size(scaledWidth, scaledWidth * 9 / 16);
         }
 
-        public static string GetWindowsWallpaper()
+        public static string GetWindowsWallpaper(bool isLockScreen = false)
         {
+            string windowsWallpaperFolder = isLockScreen ? DefaultThemes.windowsLockScreenFolder :
+                DefaultThemes.windowsWallpaperFolder;
             string wallpaperPath = null;
 
             if (Directory.Exists(windowsWallpaperFolder))
@@ -49,16 +49,7 @@ namespace WinDynamicDesktop
                 }
             }
 
-            if (wallpaperPath == null)
-            {
-                wallpaperPath = Path.Combine(Environment.CurrentDirectory, "wallpaper_blank.jpg");
-                if (!File.Exists(wallpaperPath))
-                {
-                    (new Bitmap(1, 1)).Save(wallpaperPath, ImageFormat.Jpeg);
-                }
-            }
-
-            return wallpaperPath;
+            return wallpaperPath ?? CreateBlankWallpaper();
         }
 
         public static Image ScaleImage(Image tempImage, Size size)
@@ -89,11 +80,9 @@ namespace WinDynamicDesktop
 
         public static Image GetThumbnailImage(ThemeConfig theme, Size size, bool useCache)
         {
-            string themePath = Path.Combine("themes", theme.themeId);
-            string thumbnailPath = Path.Combine(themePath, "thumbnail.png");
-
             if (useCache)
             {
+                string thumbnailPath = GetThumbnailPath(theme);
                 if (File.Exists(thumbnailPath))
                 {
                     Image cachedImage = Image.FromFile(thumbnailPath);
@@ -118,6 +107,8 @@ namespace WinDynamicDesktop
                 }
             }
 
+            string themePath = !ThemeManager.IsThemePreinstalled(theme) ? Path.Combine("themes", theme.themeId) :
+                DefaultThemes.windowsWallpaperFolder;
             int imageId1 = theme.dayHighlight ?? theme.dayImageList[theme.dayImageList.Length / 2];
             int imageId2 = theme.nightHighlight ?? theme.nightImageList[theme.nightImageList.Length / 2];
             string imageFilename1 = theme.imageFilename.Replace("*", imageId1.ToString());
@@ -152,12 +143,28 @@ namespace WinDynamicDesktop
                 {
                     ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
                     Image thumbnailImage = listView.LargeImageList.Images[item.ImageIndex];
-                    string thumbnailPath = Path.Combine("themes", themeId, "thumbnail.png");
+                    string thumbnailPath = GetThumbnailPath(theme);
 
                     Task.Run(new Action(() => thumbnailImage.Save(thumbnailPath, ImageFormat.Png)));
                     outdatedThemeIds.Remove(themeId);
                 }
             }
+        }
+
+        private static string CreateBlankWallpaper()
+        {
+            string wallpaperPath = Path.Combine(Environment.CurrentDirectory, "wallpaper_blank.jpg");
+            if (!File.Exists(wallpaperPath))
+            {
+                (new Bitmap(1, 1)).Save(wallpaperPath, ImageFormat.Jpeg);
+            }
+            return wallpaperPath;
+        }
+
+        private static string GetThumbnailPath(ThemeConfig theme)
+        {
+            return !ThemeManager.IsThemePreinstalled(theme) ? Path.Combine("themes", theme.themeId, "thumbnail.png") :
+                Path.Combine(Path.GetTempPath(), "WinDynamicDesktop_" + theme.themeId + "_thumbnail.png");
         }
     }
 }

@@ -3,8 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WinDynamicDesktop
@@ -13,36 +11,58 @@ namespace WinDynamicDesktop
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
         private static ToolStripMenuItem menuItem;
+        private static int activeDisplayIndex;
 
-        public static List<ToolStripItem> GetMenuItems()
+        public static bool IsEnabled()
         {
-            if (JsonConfig.settings.changeLockScreen && !UwpDesktop.IsUwpSupported())
+            return JsonConfig.settings.lockScreenDisplayIndex != -1 || JsonConfig.settings.lockScreenTheme != null;
+        }
+
+        public static ToolStripItem[] GetMenuItems()
+        {
+            if (IsEnabled() && !UwpDesktop.IsUwpSupported())
             {
-                JsonConfig.settings.changeLockScreen = false;
+                JsonConfig.settings.lockScreenDisplayIndex = -1;
+                JsonConfig.settings.lockScreenTheme = null;
             }
 
-            menuItem = new ToolStripMenuItem(_("Change &Lockscreen Image"), null, OnLockScreenItemClick);
-            menuItem.Checked = JsonConfig.settings.changeLockScreen;
+            menuItem = new ToolStripMenuItem(_("Sync &lockscreen image with {0}"), null, OnLockScreenItemClick);
             menuItem.Enabled = UwpDesktop.IsUwpSupported();
 
-            return new List<ToolStripItem>() {
+            return new ToolStripItem[] {
                 menuItem
             };
         }
 
-        public static async Task UpdateImage(string imagePath)
+        public static async void UpdateImage(string imagePath)
         {
             var imageFile = await Windows.Storage.StorageFile.GetFileFromPathAsync(imagePath);
             await Windows.System.UserProfile.LockScreen.SetImageFileAsync(imageFile);
         }
 
+        public static void UpdateMenuItems(int? selectedDisplayIndex = null)
+        {
+            activeDisplayIndex = Math.Max(0, selectedDisplayIndex ?? JsonConfig.settings.lockScreenDisplayIndex);
+            menuItem.Checked = menuItem.Enabled && activeDisplayIndex == JsonConfig.settings.lockScreenDisplayIndex;
+            menuItem.Text = string.Format(_("Sync &lock screen image with {0}"), GetDisplayName());
+        }
+
+        public static string GetDisplayName()
+        {
+            return activeDisplayIndex == 0 ? _("All Displays") : string.Format(_("Display {0}"), activeDisplayIndex);
+        }
+
         private static void OnLockScreenItemClick(object sender, EventArgs e)
         {
-            bool isEnabled = JsonConfig.settings.changeLockScreen ^ true;
-            JsonConfig.settings.changeLockScreen = isEnabled;
-            menuItem.Checked = isEnabled;
-
-            AppContext.wpEngine.RunScheduler(true);
+            if (JsonConfig.settings.lockScreenDisplayIndex == -1)
+            {
+                JsonConfig.settings.lockScreenDisplayIndex = activeDisplayIndex;
+            }
+            else
+            {
+                JsonConfig.settings.lockScreenDisplayIndex = -1;
+            }
+            UpdateMenuItems();
         }
     }
 }

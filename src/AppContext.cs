@@ -15,7 +15,7 @@ namespace WinDynamicDesktop
         private IpcManager ipcManager;
 
         public static NotifyIcon notifyIcon;
-        public static WallpaperEngine wpEngine = new WallpaperEngine();
+        public static EventScheduler scheduler = new EventScheduler();
 
         public AppContext(string[] args)
         {
@@ -31,7 +31,7 @@ namespace WinDynamicDesktop
             ThemeManager.Initialize();
             ScriptManager.Initialize();
 
-            wpEngine.RunScheduler();
+            scheduler.Run();
             LaunchSequence.NextStep();
             UpdateChecker.Initialize();
         }
@@ -71,7 +71,7 @@ namespace WinDynamicDesktop
                 Icon = Properties.Resources.AppIcon,
                 Text = "WinDynamicDesktop",
             };
-            notifyIcon.ContextMenuStrip = MainMenu.GetMenu();
+            notifyIcon.ContextMenuStrip = new TrayMenu();
             notifyIcon.MouseUp += OnNotifyIconMouseUp;
 
             Localization.NotifyIfTestMode();
@@ -88,7 +88,7 @@ namespace WinDynamicDesktop
         {
             bool isHidden = JsonConfig.settings.hideTrayIcon ^ true;
             JsonConfig.settings.hideTrayIcon = isHidden;
-            MainMenu.hideTrayItem.Checked = isHidden;
+            TrayMenu.hideTrayItem.Checked = isHidden;
             notifyIcon.Visible = !isHidden;
         }
 

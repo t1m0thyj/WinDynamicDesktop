@@ -19,16 +19,17 @@ namespace WinDynamicDesktop
         {
             InitializeComponent();
             DarkUI.ThemeForm(this);
-            int oldLabelWidth = sunriseSunsetDurationLabel.Width;
+            int oldLabelRightMargin = sunriseTimeLabel.Right;
             Localization.TranslateForm(this);
-            this.sunriseSunsetDurationBox.Left += (sunriseSunsetDurationLabel.Width - oldLabelWidth);
+            this.sunriseTimeLabel.Left += (oldLabelRightMargin - sunriseTimeLabel.Right);
+            this.sunsetTimeLabel.Left += (oldLabelRightMargin - sunsetTimeLabel.Right);
 
             this.FormClosing += OnFormClosing;
         }
 
         public void HandleScheduleChange()
         {
-            AppContext.wpEngine.RunScheduler();
+            AppContext.scheduler.Run();
             this.Close();
         }
 

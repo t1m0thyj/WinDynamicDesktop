@@ -98,7 +98,8 @@ namespace WinDynamicDesktop
         {
             Task.Run(() =>
             {
-                DirectoryInfo dirInfo = new DirectoryInfo(Path.Combine("themes", theme.themeId));
+                DirectoryInfo dirInfo = new DirectoryInfo(!IsThemePreinstalled(theme) ?
+                    Path.Combine("themes", theme.themeId) : DefaultThemes.windowsWallpaperFolder);
                 long sizeBytes = 0;
                 foreach (FileInfo fileInfo in dirInfo.EnumerateFiles())
                 {
@@ -112,7 +113,14 @@ namespace WinDynamicDesktop
         {
             string themePath = Path.Combine("themes", theme.themeId);
             return (File.Exists(Path.Combine(themePath, "theme.json")) &&
-                (Directory.GetFiles(themePath, theme.imageFilename).Length > 0));
+                (Directory.GetFiles(themePath, theme.imageFilename).Length > 0)) || IsThemePreinstalled(theme);
+        }
+
+        public static bool IsThemePreinstalled(ThemeConfig theme)
+        {
+            ThemeConfig windowsTheme = DefaultThemes.GetWindowsTheme();
+            return windowsTheme != null && theme.themeId == windowsTheme.themeId &&
+                !Directory.Exists(Path.Combine("themes", theme.themeId));
         }
 
         public static void DisableTheme(string themeId, bool permanent)
@@ -200,6 +208,12 @@ namespace WinDynamicDesktop
                 {
                     themeSettings.Add(new ThemeConfig { themeId = themeId });
                 }
+            }
+
+            ThemeConfig windowsTheme = DefaultThemes.GetWindowsTheme();
+            if (windowsTheme != null && !themeIds.Contains(windowsTheme.themeId))
+            {
+                themeSettings.Add(windowsTheme);
             }
         }
 

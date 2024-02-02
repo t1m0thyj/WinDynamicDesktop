@@ -4,6 +4,7 @@
 
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace WinDynamicDesktop
 {
@@ -27,14 +28,14 @@ namespace WinDynamicDesktop
                     break;
                 case Windows.ApplicationModel.StartupTaskState.DisabledByUser:
                     startOnBoot = false;
-                    MainMenu.startOnBootItem.Enabled = false;
+                    TrayMenu.startOnBootItem.Enabled = false;
                     break;
                 case Windows.ApplicationModel.StartupTaskState.Enabled:
                     startOnBoot = true;
                     break;
             }
 
-            MainMenu.startOnBootItem.Checked = startOnBoot;
+            TrayMenu.startOnBootItem.Checked = startOnBoot;
         }
 
         public override async void ToggleStartOnBoot()
@@ -61,7 +62,7 @@ namespace WinDynamicDesktop
                 startOnBoot = false;
             }
 
-            MainMenu.startOnBootItem.Checked = startOnBoot;
+            TrayMenu.startOnBootItem.Checked = startOnBoot;
         }
 
         public override async void OpenUpdateLink()
@@ -74,27 +75,28 @@ namespace WinDynamicDesktop
             if (displayIndex != -1)
             {
                 WallpaperApi.SetWallpaper(imagePath, displayIndex);
-                return;
             }
+            else
+            {
+                WallpaperApi.EnableTransitions();
+                var profileSettings = Windows.System.UserProfile.UserProfilePersonalizationSettings.Current;
+                await profileSettings.TrySetWallpaperImageAsync(await LoadImageFile(imagePath));
+            }
+        }
 
-            WallpaperApi.EnableTransitions();
+        public override async void SetLockScreen(string imagePath)
+        {
+            var profileSettings = Windows.System.UserProfile.UserProfilePersonalizationSettings.Current;
+            await profileSettings.TrySetLockScreenImageAsync(await LoadImageFile(imagePath));
+        }
 
+        private static Task<Windows.Storage.StorageFile> LoadImageFile(string imagePath)
+        {
             string[] pathSegments = imagePath.Split(Path.DirectorySeparatorChar);
             var uri = new Uri("ms-appdata:///local/themes/" +
                 Uri.EscapeDataString(pathSegments[pathSegments.Length - 2]) + "/" +
                 Uri.EscapeDataString(pathSegments[pathSegments.Length - 1]));
-            var file = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri);
-
-            var profileSettings = Windows.System.UserProfile.UserProfilePersonalizationSettings.Current;
-            await profileSettings.TrySetWallpaperImageAsync(file);
-
-            if (displayIndex <= 0)
-            {
-                if (JsonConfig.settings.changeLockScreen)
-                {
-                    await profileSettings.TrySetLockScreenImageAsync(file);
-                }
-            }
+            return Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri).AsTask();
         }
     }
 }

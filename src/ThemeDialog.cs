@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -22,7 +23,8 @@ namespace WinDynamicDesktop
 
         private static readonly Func<string, string> _ = Localization.GetTranslation;
         private const string themeLink = "https://windd.info/themes/";
-        private readonly string windowsWallpaper = ThemeThumbLoader.GetWindowsWallpaper();
+        private readonly string windowsWallpaper = ThemeThumbLoader.GetWindowsWallpaper(false);
+        private readonly string windowsLockScreen = ThemeThumbLoader.GetWindowsWallpaper(true);
 
         private WPF.ThemePreviewer previewer;
 
@@ -37,6 +39,9 @@ namespace WinDynamicDesktop
             this.FormClosing += OnFormClosing;
             this.FormClosed += OnFormClosed;
 
+            this.toolStrip1.Renderer = new CustomToolStripRenderer();
+            this.meatballButton.Image = GetMeatballIcon();
+
             Rectangle bounds = Screen.FromControl(this).Bounds;
             Size thumbnailSize = ThemeThumbLoader.GetThumbnailSize(this);
             int newWidth = thumbnailSize.Width + SystemInformation.VerticalScrollBarWidth;
@@ -48,7 +53,8 @@ namespace WinDynamicDesktop
             }
 
             this.previewerHost.Anchor &= ~AnchorStyles.Left;
-            this.displayComboBox.Width = newWidth;
+            this.toolStrip1.Width = newWidth;
+            this.displayComboBox.Width = newWidth - this.meatballButton.Width - 8;
             this.listView1.Width = newWidth;
             this.downloadButton.Left += (newWidth - oldWidth) / 2;
             this.applyButton.Left += (newWidth - oldWidth) / 2;
@@ -62,6 +68,20 @@ namespace WinDynamicDesktop
             int bestWidth = (bestHeight - heightDiff) * bounds.Width / bounds.Height + widthDiff;
             this.Size = new Size(bestWidth, bestHeight);
             this.CenterToScreen();
+        }
+
+        public Bitmap GetMeatballIcon()
+        {
+            Bitmap bitmap = new Bitmap(16, 16, PixelFormat.Format32bppArgb);
+            using (Graphics graphics = Graphics.FromImage(bitmap))
+            {
+                graphics.Clear(Color.Transparent);
+                for (int i = 0; i < 3; i++)
+                {
+                    graphics.FillEllipse(new SolidBrush(this.ForeColor), i * 6, 6, 4, 4);
+                }
+            }
+            return bitmap;
         }
 
         public void ImportThemes(List<string> themePaths)
@@ -207,6 +227,22 @@ namespace WinDynamicDesktop
             {
                 activeThemes[0] = activeTheme;
             }
+            else if (IsLockScreenSelected)
+            {
+                if (JsonConfig.settings.lockScreenDisplayIndex != -1)
+                {
+                    DialogResult result = MessageDialog.ShowQuestion(string.Format(
+                        _("Applying this theme will stop the lock screen image from syncing with {0}. " +
+                        "Are you sure you want to continue?"), LockScreenChanger.GetDisplayName()));
+                    if (result != DialogResult.Yes)
+                    {
+                        return;
+                    }
+                }
+
+                JsonConfig.settings.lockScreenDisplayIndex = -1;
+                JsonConfig.settings.lockScreenTheme = activeTheme;
+            }
             else
             {
                 int numNewDisplays = Screen.AllScreens.Length - activeThemes.Count + 1;
@@ -244,13 +280,17 @@ namespace WinDynamicDesktop
 
             if (selectedIndex == 0)
             {
-                WallpaperApi.SetWallpaper(windowsWallpaper);
-                AppContext.wpEngine.RunScheduler(true, windowsWallpaper);
+                AppContext.scheduler.Run(true, new DisplayEvent()
+                {
+                    displayIndex = IsLockScreenSelected ? DisplayEvent.LockScreenIndex :
+                        (displayComboBox.SelectedIndex - 1),
+                    lastImagePath = windowsWallpaper
+                });
             }
             else
             {
                 ThemeShuffler.AddThemeToHistory(activeTheme);
-                AppContext.wpEngine.RunScheduler(true);
+                AppContext.scheduler.Run(true);
                 AppContext.ShowPopup(string.Format(_("New theme applied: {0}"),
                     ThemeManager.GetThemeName(ThemeManager.themeSettings[selectedIndex - 1])));
             }
@@ -288,7 +328,16 @@ namespace WinDynamicDesktop
             downloadButton.Enabled = !themeDownloaded;
             applyButton.Enabled = true;
 
-            previewer.ViewModel.PreviewTheme(theme);
+            previewer.ViewModel.PreviewTheme(theme, ThemeThumbLoader.GetWindowsWallpaper(IsLockScreenSelected));
+        }
+
+        private bool IsLockScreenSelected
+        {
+            get
+            {
+                return UwpDesktop.IsUwpSupported() &&
+                    displayComboBox.SelectedIndex == displayComboBox.Items.Count - 1;
+            }
         }
 
         // Code to change ListView appearance from https://stackoverflow.com/a/4463114/5504760
@@ -313,6 +362,10 @@ namespace WinDynamicDesktop
             imageList.Images.Add(ThemeThumbLoader.ScaleImage(windowsWallpaper, thumbnailSize));
             listView1.Items.Add(_("None"), 0);
 
+            meatballButton.DropDownItems.AddRange(ThemeShuffler.GetMenuItems());
+            meatballButton.DropDownItems.Add(new ToolStripSeparator());
+            meatballButton.DropDownItems.AddRange(LockScreenChanger.GetMenuItems());
+
             if (UwpDesktop.IsMultiDisplaySupported())
             {
                 string[] displayNames = GetDisplayNames();
@@ -321,10 +374,12 @@ namespace WinDynamicDesktop
                     displayComboBox.Items.Add(string.Format(_("Display {0}: {1}"), i + 1, displayNames[i]));
                 }
             }
-            else
+            if (UwpDesktop.IsUwpSupported())
             {
-                displayComboBox.Enabled = false;
+                imageList.Images.Add(ThemeThumbLoader.ScaleImage(windowsLockScreen, thumbnailSize));
+                displayComboBox.Items.Add(_("Lock Screen"));
             }
+            displayComboBox.Enabled = displayComboBox.Items.Count > 1;
             int activeThemeIndex = JsonConfig.settings.activeThemes?.ToList().FindIndex(
                 themeId => themeId != null) ?? -1;
             displayComboBox.SelectedIndex = activeThemeIndex != -1 ? activeThemeIndex : 0;
@@ -341,11 +396,19 @@ namespace WinDynamicDesktop
 
         private void displayComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string activeTheme = null;
-            if (JsonConfig.settings.activeThemes != null &&
+            string activeTheme = IsLockScreenSelected ? JsonConfig.settings.lockScreenTheme : null;
+            if (!IsLockScreenSelected && JsonConfig.settings.activeThemes != null &&
                 JsonConfig.settings.activeThemes.Length > displayComboBox.SelectedIndex)
             {
                 activeTheme = JsonConfig.settings.activeThemes[displayComboBox.SelectedIndex];
+            }
+            LockScreenChanger.UpdateMenuItems(IsLockScreenSelected ? null : displayComboBox.SelectedIndex);
+
+            int oldImageIndex = listView1.Items[0].ImageIndex;
+            listView1.Items[0].ImageIndex = IsLockScreenSelected ? 1 : 0;
+            if (oldImageIndex != listView1.Items[0].ImageIndex)
+            {
+                UpdateSelectedItem();
             }
 
             foreach (ListViewItem item in listView1.Items)
@@ -399,6 +462,10 @@ namespace WinDynamicDesktop
             if (selectedIndex > 0)
             {
                 themeDownloaded = ThemeManager.IsThemeDownloaded(ThemeManager.themeSettings[selectedIndex - 1]);
+                if (ThemeManager.IsThemePreinstalled(ThemeManager.themeSettings[selectedIndex - 1]))
+                {
+                    DefaultThemes.InstallWindowsTheme(ThemeManager.themeSettings[selectedIndex - 1]);
+                }
             }
 
             if (!themeDownloaded)
@@ -431,7 +498,8 @@ namespace WinDynamicDesktop
 
             string themeId = (string)listView1.Items[itemIndex].Tag;
             ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
-            contextMenuStrip1.Items[1].Enabled = ThemeManager.IsThemeDownloaded(theme);
+            bool isWindowsTheme = themeId == DefaultThemes.GetWindowsTheme()?.themeId;
+            contextMenuStrip1.Items[1].Enabled = ThemeManager.IsThemeDownloaded(theme) && !isWindowsTheme;
 
             if (JsonConfig.settings.favoriteThemes == null ||
                 !JsonConfig.settings.favoriteThemes.Contains(themeId))
@@ -443,7 +511,7 @@ namespace WinDynamicDesktop
                 contextMenuStrip1.Items[0].Text = _("Remove from favorites");
             }
 
-            if (ThemeManager.defaultThemes.Contains(themeId))
+            if (ThemeManager.defaultThemes.Contains(themeId) || isWindowsTheme)
             {
                 contextMenuStrip1.Items[1].Text = _("Delete");
             }
@@ -557,6 +625,13 @@ namespace WinDynamicDesktop
         {
             previewer.ViewModel.Stop();
         }
+    }
+
+    public class CustomToolStripRenderer : ToolStripSystemRenderer
+    {
+        public CustomToolStripRenderer() { }
+
+        protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e) { }
     }
 
     // Comparer class to make ListView sort by theme name

@@ -1,4 +1,4 @@
-﻿// This Source Code Form is subject to the terms of the Mozilla Public
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -20,11 +20,13 @@ namespace WinDynamicDesktop
         public DateTime sunriseTime { get; set; }
         public DateTime sunsetTime { get; set; }
         public DateTime[] solarTimes { get; set; }
+        public DateTime solarNoon { get; set; }
     }
 
     class SunriseSunsetService
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
+        internal static Func<DateTime> GetDateTimeNow = () => DateTime.Now;
 
         private static SolarData GetUserProvidedSolarData(DateTime date)
         {
@@ -50,7 +52,7 @@ namespace WinDynamicDesktop
         {
             string tzName = TimeZoneLookup.GetTimeZone(latitude, longitude).Result;
             TimeZoneInfo tzInfo = TZConvert.GetTimeZoneInfo(tzName);
-            DateTime localDate = TimeZoneInfo.ConvertTime(date.Add(DateTime.Now.TimeOfDay), tzInfo);
+            DateTime localDate = TimeZoneInfo.ConvertTime(date.Add(GetDateTimeNow().TimeOfDay), tzInfo);
             // Set time to noon because of https://github.com/mourner/suncalc/issues/107
             DateTime utcDate = new DateTimeOffset(
                 localDate.Year, localDate.Month, localDate.Day, 12, 0, 0, tzInfo.GetUtcOffset(localDate)).UtcDateTime;
@@ -59,8 +61,8 @@ namespace WinDynamicDesktop
 
         private static DateTime GetSolarTime(List<SunPhase> sunPhases, SunPhaseName desiredPhase)
         {
-            SunPhase? sunPhase = sunPhases.FirstOrDefault(sp => sp.Name.Value == desiredPhase.Value);
-            return sunPhase.HasValue ? sunPhase.Value.PhaseTime.ToLocalTime() : DateTime.MinValue;
+            SunPhase sunPhase = sunPhases.FirstOrDefault(sp => sp.Name.Value == desiredPhase.Value);
+            return sunPhase.Name != null ? sunPhase.PhaseTime.ToLocalTime() : DateTime.MinValue;
         }
 
         public static SolarData GetSolarData(DateTime date)
@@ -75,6 +77,7 @@ namespace WinDynamicDesktop
             var sunPhases = GetSunPhases(date, latitude, longitude);
             SolarData data = new SolarData();
 
+            // Sunrise/sunset = -0.833 deg, Civil twilight = -6 deg, Golden hour = +6 deg above horizon
             data.sunriseTime = GetSolarTime(sunPhases, SunPhaseName.Sunrise);
             data.sunsetTime = GetSolarTime(sunPhases, SunPhaseName.Sunset);
             data.solarTimes = new DateTime[5]
@@ -85,22 +88,14 @@ namespace WinDynamicDesktop
                 GetSolarTime(sunPhases, SunPhaseName.GoldenHour),
                 GetSolarTime(sunPhases, SunPhaseName.Dusk)
             };
+            data.solarNoon = GetSolarTime(sunPhases, SunPhaseName.SolarNoon);
 
             // Assume polar day/night if sunrise/sunset time are undefined
             if (data.sunriseTime == DateTime.MinValue || data.sunsetTime == DateTime.MinValue)
             {
-                DateTime solarNoon = GetSolarTime(sunPhases, SunPhaseName.SolarNoon);
-                double sunAltitude = SunCalcNet.SunCalc.GetSunPosition(solarNoon.ToUniversalTime(), latitude,
+                double sunAltitude = SunCalcNet.SunCalc.GetSunPosition(data.solarNoon.ToUniversalTime(), latitude,
                     longitude).Altitude;
-
-                if (sunAltitude > 0)
-                {
-                    data.polarPeriod = PolarPeriod.PolarDay;
-                }
-                else
-                {
-                    data.polarPeriod = PolarPeriod.PolarNight;
-                }
+                data.polarPeriod = sunAltitude > 0 ? PolarPeriod.PolarDay : PolarPeriod.PolarNight;
             }
             // Skip night segment if dawn/dusk are undefined
             else if (data.solarTimes[0] == DateTime.MinValue && data.solarTimes[4] == DateTime.MinValue)
@@ -114,6 +109,16 @@ namespace WinDynamicDesktop
                 DateTime midDay = new DateTime((data.solarTimes[0].Ticks + data.solarTimes[4].Ticks) / 2);
                 data.solarTimes[1] = midDay;
                 data.solarTimes[3] = midDay;
+            // Skip night segment (civil polar day) if dawn/dusk time are undefined
+            else if (data.solarTimes[0] == DateTime.MinValue && data.solarTimes[3] == DateTime.MinValue)
+            {
+                data.solarTimes[0] = data.solarNoon.AddHours(-12);
+                data.solarTimes[3] = data.solarNoon.AddHours(12).AddTicks(-1);
+            }
+            // Skip day segment (civil polar night) if golden hour is undefined
+            else if (data.solarTimes[1] == DateTime.MinValue && data.solarTimes[2] == DateTime.MinValue)
+            {
+                data.solarTimes[1] = data.solarTimes[2] = data.solarNoon;
             }
 
             return data;

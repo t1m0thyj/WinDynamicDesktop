@@ -1,4 +1,4 @@
-﻿// This Source Code Form is subject to the terms of the Mozilla Public
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -45,7 +45,7 @@ namespace WinDynamicDesktop
                 {
                     if (data.polarPeriod == PolarPeriod.PolarDay)
                     {
-                        if (DateTime.now < (data.solarTimes[2] - TimeSpan.FromHours(12))
+                        if (DateTime.now < (data.solarTimes[2] - TimeSpan.FromHours(12)))
                         {
                             long x = data.solarTimes[2] + TimeSpan.FromTicks((TimeSpan.FromDays(1).Ticks * i / theme.dayImageList.Length) - TimeSpan.FromHours(12).Ticks);
                             DateTime x_min = data.solarTimes[2] - TimeSpan.FromHours(36);
@@ -53,7 +53,7 @@ namespace WinDynamicDesktop
                             long xx = (((x.Ticks - x_min.Ticks) % (x_max.Ticks - x_min.Ticks)) + (x_max.Ticks - x_min.Ticks)) % (x_max.Ticks - x_min.Ticks) + x_min.Ticks;
                             times.Add(new DateTime(xx));
                         }
-                        else if (DateTime.now > (data.solarTimes[2] + TimeSpan.FromHours(12))
+                        else if (DateTime.now > (data.solarTimes[2] + TimeSpan.FromHours(12)))
                         {
                             long x = data.solarTimes[2] + TimeSpan.FromTicks((TimeSpan.FromDays(1).Ticks * i / theme.dayImageList.Length) - TimeSpan.FromHours(12).Ticks);
                             DateTime x_min = data.solarTimes[2] + TimeSpan.FromHours(12);
@@ -70,6 +70,7 @@ namespace WinDynamicDesktop
                             times.Add(new DateTime(xx));
                         }
                             
+                        times.Add(data.solarNoon.AddHours(-12) + TimeSpan.FromTicks(TimeSpan.FromDays(1).Ticks * i / theme.dayImageList.Length));
                     }
                     else
                     {
@@ -103,6 +104,8 @@ namespace WinDynamicDesktop
                             long xx = (((x - x_min) % (x_max - x_min)) + (x_max - x_min)) % (x_max - x_min) + x_min;
                             times.Add(new DateTime(xx));
                         }
+                        times.Add(data.solarNoon.AddHours(-12) + TimeSpan.FromTicks(TimeSpan.FromDays(1).Ticks * i / theme.nightImageList.Length));
+                    }
                     else
                     {
                         times.Add(DateTime.MinValue);
@@ -177,6 +180,27 @@ namespace WinDynamicDesktop
             }
         }
 
+        public static DateTime CalcNextUpdateTime(SolarData data)
+        {
+            if (data.polarPeriod != PolarPeriod.None)
+            {
+                return DateTime.Today.AddDays(1);
+            }
+            else if (data.sunriseTime <= DateTime.Now && DateTime.Now < data.sunsetTime)
+            {
+                return data.sunsetTime;
+            }
+            else if (DateTime.Now < data.solarTimes[0])
+            {
+                return data.sunriseTime;
+            }
+            else
+            {
+                SolarData tomorrowsData = SunriseSunsetService.GetSolarData(DateTime.Today.AddDays(1));
+                return tomorrowsData.sunriseTime;
+            }
+        }
+
         public static void CalcNextUpdateTime(SolarData data, DisplayEvent e)
         {
             int[] imageList;
@@ -208,8 +232,8 @@ namespace WinDynamicDesktop
                 {
                     imageList = e.currentTheme?.nightImageList;
                 }
-                segmentStart = dateNow.Date;
-                segmentEnd = dateNow.Date.AddDays(1);
+                segmentStart = data.solarNoon.AddHours(-12);
+                segmentEnd = data.solarNoon.AddHours(12).AddTicks(-1);
             }
             else if (!preferSegment2)
             {
@@ -285,6 +309,15 @@ namespace WinDynamicDesktop
                 e.imageId = imageList[imageNumber];
                 e.nextUpdateTime = new DateTime(segmentStart.Ticks + imageDuration.Ticks * (imageNumber + 1));
             }
+        }
+
+        public static void ToggleDarkMode()
+        {
+            bool isEnabled = JsonConfig.settings.darkMode ^ true;
+            JsonConfig.settings.darkMode = isEnabled;
+            TrayMenu.darkModeItem.Checked = isEnabled;
+
+            AppContext.scheduler.Run();
         }
     }
 }

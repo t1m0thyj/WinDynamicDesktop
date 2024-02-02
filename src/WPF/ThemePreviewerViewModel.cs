@@ -218,7 +218,7 @@ namespace WinDynamicDesktop.WPF
             }
         }
 
-        public void PreviewTheme(ThemeConfig theme)
+        public void PreviewTheme(ThemeConfig theme, string imagePath = null)
         {
             Stop();
 
@@ -312,7 +312,7 @@ namespace WinDynamicDesktop.WPF
             else
             {
                 Author = "Microsoft";
-                Items.Add(new ThemePreviewItem(string.Empty, ThemeThumbLoader.GetWindowsWallpaper()));
+                Items.Add(new ThemePreviewItem(string.Empty, imagePath));
                 activeImage = 0;
             }
 
@@ -426,8 +426,10 @@ namespace WinDynamicDesktop.WPF
 
         private static string[] ImagePaths(ThemeConfig theme, int[] imageList)
         {
+            string themePath = !ThemeManager.IsThemePreinstalled(theme) ? Path.Combine("themes", theme.themeId) :
+                DefaultThemes.windowsWallpaperFolder;
             return imageList.Select(id =>
-                Path.Combine("themes", theme.themeId, theme.imageFilename.Replace("*", id.ToString()))).ToArray();
+                Path.Combine(themePath, theme.imageFilename.Replace("*", id.ToString()))).ToArray();
         }
 
         private static void TryRelease(SemaphoreSlim semaphore)

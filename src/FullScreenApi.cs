@@ -51,12 +51,12 @@ namespace WinDynamicDesktop
         private delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject,
             int idChild, uint dwEventThread, uint dwmsEventTime);
 
-        public FullScreenApi(WallpaperEngine wcs)
+        public FullScreenApi(Action timerEventHandler)
         {
-            timerEventHandler = new Action(() =>
+            this.timerEventHandler = new Action(() =>
             {
                 LoggingHandler.LogMessage("Scheduler event triggered by fullscreen app closing");
-                wcs.HandleTimerEvent(true);
+                timerEventHandler();
             });
 
             if (JsonConfig.settings.fullScreenPause)
@@ -68,7 +68,7 @@ namespace WinDynamicDesktop
         public void ToggleFullScreenPause()
         {
             bool fullScreenPause = JsonConfig.settings.fullScreenPause ^ true;
-            MainMenu.fullScreenItem.Checked = fullScreenPause;
+            TrayMenu.fullScreenItem.Checked = fullScreenPause;
             SetFullScreenPause(fullScreenPause);
             JsonConfig.settings.fullScreenPause = fullScreenPause;
         }
@@ -93,9 +93,9 @@ namespace WinDynamicDesktop
             IntPtr shellHandle = GetShellWindow();
             IntPtr hWnd = GetForegroundWindow();
 
-#pragma warning disable 8073
+#pragma warning disable 0472
             if (hWnd != null && !hWnd.Equals(IntPtr.Zero))
-#pragma warning restore 8073
+#pragma warning restore 0472
             {
                 if (!(hWnd.Equals(desktopHandle) || hWnd.Equals(shellHandle)))
                 {
