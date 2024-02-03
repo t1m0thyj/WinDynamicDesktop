@@ -91,10 +91,6 @@ namespace WinDynamicDesktop
                 }
                 else
                 {
-                    if (!LockScreenChanger.IsEnabled())
-                    {
-                        continue;
-                    }
                     string themeId = JsonConfig.settings.lockScreenDisplayIndex != -1 ?
                         JsonConfig.settings.activeThemes[JsonConfig.settings.lockScreenDisplayIndex] :
                         JsonConfig.settings.lockScreenTheme;

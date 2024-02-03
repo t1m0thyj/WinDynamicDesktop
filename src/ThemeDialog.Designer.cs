@@ -109,7 +109,8 @@
             contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { favoriteThemeMenuItem, deleteThemeMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new System.Drawing.Size(181, 48);
+            contextMenuStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            contextMenuStrip1.Size = new System.Drawing.Size(181, 70);
             contextMenuStrip1.Opening += contextMenuStrip1_Opening;
             // 
             // favoriteThemeMenuItem
@@ -179,7 +180,7 @@
             displayComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             displayComboBox.Items.AddRange(new object[] { "All Displays" });
             displayComboBox.Name = "displayComboBox";
-            displayComboBox.Size = new System.Drawing.Size(200, 25);
+            displayComboBox.Size = new System.Drawing.Size(200, 23);
             displayComboBox.SelectedIndexChanged += displayComboBox_SelectedIndexChanged;
             // 
             // meatballButton

@@ -76,7 +76,7 @@ namespace WinDynamicDesktop
 
         public static DateTime? MaybeShuffleWallpaper(SolarData solarData)
         {
-            if ((int)(JsonConfig.settings.themeShuffleMode / 10) == 0)
+            if (JsonConfig.settings.themeShuffleMode / 10 == 0)
             {
                 return null;
             }
@@ -155,7 +155,7 @@ namespace WinDynamicDesktop
 
             foreach (ThemeConfig theme in ThemeManager.themeSettings)
             {
-                if ((int)(JsonConfig.settings.themeShuffleMode / 10) == 1 &&
+                if (JsonConfig.settings.themeShuffleMode / 10 == 1 &&
                     (JsonConfig.settings.favoriteThemes == null ||
                     !JsonConfig.settings.favoriteThemes.Contains(theme.themeId)))
                 {
@@ -210,10 +210,12 @@ namespace WinDynamicDesktop
 
         private static void UpdateMenuItems(int? shuffleMode = null, int? shufflePeriod = null)
         {
-            if (shuffleMode.HasValue || shufflePeriod.HasValue)
+            bool settingsChanged = shuffleMode.HasValue || shufflePeriod.HasValue;
+            shuffleMode = shuffleMode ?? (JsonConfig.settings.themeShuffleMode / 10);
+            shufflePeriod = shufflePeriod ?? (JsonConfig.settings.themeShuffleMode % 10);
+
+            if (settingsChanged)
             {
-                shuffleMode = shuffleMode ?? (int)(JsonConfig.settings.themeShuffleMode / 10);
-                shufflePeriod = shufflePeriod ?? (JsonConfig.settings.themeShuffleMode % 10);
                 JsonConfig.settings.themeShuffleMode = shuffleMode.Value * 10 + shufflePeriod.Value;
 
                 if (shuffleMode > 0)

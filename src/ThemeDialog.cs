@@ -242,6 +242,7 @@ namespace WinDynamicDesktop
 
                 JsonConfig.settings.lockScreenDisplayIndex = -1;
                 JsonConfig.settings.lockScreenTheme = activeTheme;
+                LockScreenChanger.UpdateMenuItems();
             }
             else
             {
@@ -278,21 +279,28 @@ namespace WinDynamicDesktop
                 item.Font = new Font(item.Font, item.Selected ? FontStyle.Bold : FontStyle.Regular);
             }
 
-            if (selectedIndex == 0)
-            {
-                AppContext.scheduler.Run(true, new DisplayEvent()
-                {
-                    displayIndex = IsLockScreenSelected ? DisplayEvent.LockScreenIndex :
-                        (displayComboBox.SelectedIndex - 1),
-                    lastImagePath = windowsWallpaper
-                });
-            }
-            else
+            if (selectedIndex > 0)
             {
                 ThemeShuffler.AddThemeToHistory(activeTheme);
                 AppContext.scheduler.Run(true);
                 AppContext.ShowPopup(string.Format(_("New theme applied: {0}"),
                     ThemeManager.GetThemeName(ThemeManager.themeSettings[selectedIndex - 1])));
+            }
+            else if (!IsLockScreenSelected)
+            {
+                AppContext.scheduler.Run(true, new DisplayEvent()
+                {
+                    displayIndex = displayComboBox.SelectedIndex - 1,
+                    lastImagePath = windowsWallpaper
+                });
+            }
+            else
+            {
+                AppContext.scheduler.Run(true, new DisplayEvent()
+                {
+                    displayIndex = DisplayEvent.LockScreenIndex,
+                    lastImagePath = windowsLockScreen
+                });
             }
         }
 
@@ -629,7 +637,10 @@ namespace WinDynamicDesktop
 
     public class CustomToolStripRenderer : ToolStripSystemRenderer
     {
-        public CustomToolStripRenderer() { }
+        public CustomToolStripRenderer()
+        {
+            ToolStripManager.VisualStylesEnabled = false;
+        }
 
         protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e) { }
     }

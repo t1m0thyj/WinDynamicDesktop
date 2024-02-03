@@ -13,14 +13,10 @@ namespace WinDynamicDesktop
         private static ToolStripMenuItem menuItem;
         private static int activeDisplayIndex;
 
-        public static bool IsEnabled()
-        {
-            return JsonConfig.settings.lockScreenDisplayIndex != -1 || JsonConfig.settings.lockScreenTheme != null;
-        }
-
         public static ToolStripItem[] GetMenuItems()
         {
-            if (IsEnabled() && !UwpDesktop.IsUwpSupported())
+            if ((JsonConfig.settings.lockScreenDisplayIndex != -1 || JsonConfig.settings.lockScreenTheme != null) &&
+                !UwpDesktop.IsUwpSupported())
             {
                 JsonConfig.settings.lockScreenDisplayIndex = -1;
                 JsonConfig.settings.lockScreenTheme = null;
@@ -54,14 +50,8 @@ namespace WinDynamicDesktop
 
         private static void OnLockScreenItemClick(object sender, EventArgs e)
         {
-            if (JsonConfig.settings.lockScreenDisplayIndex == -1)
-            {
-                JsonConfig.settings.lockScreenDisplayIndex = activeDisplayIndex;
-            }
-            else
-            {
-                JsonConfig.settings.lockScreenDisplayIndex = -1;
-            }
+            JsonConfig.settings.lockScreenDisplayIndex = JsonConfig.settings.lockScreenDisplayIndex == -1 ?
+                activeDisplayIndex : -1;
             UpdateMenuItems();
         }
     }
