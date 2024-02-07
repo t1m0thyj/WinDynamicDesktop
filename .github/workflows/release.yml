@@ -19,7 +19,7 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
-    - uses: microsoft/setup-msbuild@v1
+    - uses: microsoft/setup-msbuild@v2
 
     - run: scripts\version.ps1 ${{ github.event.inputs.version }}
 
