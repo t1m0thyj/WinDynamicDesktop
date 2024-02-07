@@ -81,11 +81,11 @@ namespace WinDynamicDesktop
                 return null;
             }
 
-            bool shouldShuffle = true;
+            bool shouldShuffle = GetThemeChoices().Any();
             DateTime? lastShuffleTime = null;
             DateTime? nextUpdateTime = null;
 
-            if (JsonConfig.settings.lastShuffleTime != null)
+            if (shouldShuffle && JsonConfig.settings.lastShuffleTime != null)
             {
                 lastShuffleTime = DateTime.Parse(JsonConfig.settings.lastShuffleTime, CultureInfo.InvariantCulture);
 
@@ -150,9 +150,32 @@ namespace WinDynamicDesktop
         private static ThemeConfig GetNextTheme()
         {
             List<string> shuffleHistory = JsonConfig.settings.shuffleHistory?.ToList() ?? new List<string>();
-            List<ThemeConfig> themeChoices = new List<ThemeConfig>();
+            ThemeConfig[] themeChoices = GetThemeChoices().Where(
+                (theme) => !shuffleHistory.Contains(theme.themeId)).ToArray();
             ThemeConfig nextTheme;
 
+            if (themeChoices.Length > 0)
+            {
+                nextTheme = themeChoices[rng.Next(themeChoices.Length)];
+            }
+            else
+            {
+                themeChoices = GetThemeChoices().ToArray();
+                nextTheme = themeChoices[rng.Next(themeChoices.Length)];
+                string lastThemeId = shuffleHistory.LastOrDefault();
+
+                while ((themeChoices.Length > 1) && (nextTheme.themeId == lastThemeId))
+                {
+                    nextTheme = themeChoices[rng.Next(themeChoices.Length)];
+                }
+            }
+
+            AddThemeToHistory(nextTheme.themeId, themeChoices.Length == 0);
+            return nextTheme;
+        }
+
+        private static IEnumerable<ThemeConfig> GetThemeChoices()
+        {
             foreach (ThemeConfig theme in ThemeManager.themeSettings)
             {
                 if (JsonConfig.settings.themeShuffleMode / 10 == 1 &&
@@ -162,30 +185,11 @@ namespace WinDynamicDesktop
                     continue;
                 }
 
-                if (!shuffleHistory.Contains(theme.themeId) && theme.imageFilename != null)
+                if (theme.imageFilename != null)
                 {
-                    themeChoices.Add(theme);
+                    yield return theme;
                 }
             }
-
-            if (themeChoices.Count > 0)
-            {
-                nextTheme = themeChoices[rng.Next(themeChoices.Count)];
-            }
-            else
-            {
-                themeChoices = ThemeManager.themeSettings.Where((theme) => theme.imageFilename != null).ToList();
-                nextTheme = themeChoices[rng.Next(themeChoices.Count)];
-                string lastThemeId = shuffleHistory.LastOrDefault();
-
-                while ((themeChoices.Count > 1) && (nextTheme.themeId == lastThemeId))
-                {
-                    nextTheme = themeChoices[rng.Next(themeChoices.Count)];
-                }
-            }
-
-            AddThemeToHistory(nextTheme.themeId, themeChoices.Count == 0);
-            return nextTheme;
         }
 
         private static void ShuffleWallpaper()

@@ -556,6 +556,14 @@ namespace WinDynamicDesktop
             string themeId = (string)listView1.Items[itemIndex].Tag;
             ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
 
+            if ((JsonConfig.settings.activeThemes != null && JsonConfig.settings.activeThemes.Contains(themeId))
+                || JsonConfig.settings.lockScreenTheme == themeId)
+            {
+                MessageDialog.ShowWarning(string.Format(_("The '{0}' theme cannot be deleted because it is " +
+                    "currently active for one or more displays."), ThemeManager.GetThemeName(theme)), _("Warning"));
+                return;
+            }
+
             DialogResult result = MessageDialog.ShowQuestion(string.Format(_("Are you sure you want to remove " +
                 "the '{0}' theme?"), ThemeManager.GetThemeName(theme)), _("Question"), MessageBoxIcon.Warning);
 
