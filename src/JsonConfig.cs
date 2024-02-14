@@ -92,28 +92,11 @@ namespace WinDynamicDesktop
                 }
             }
 
-#pragma warning disable 618
-            if (settings.changeLockScreen)
-            {
-                settings.lockScreenDisplayIndex = settings.activeThemes[0] == null ? 0 : -1;
-                settings.changeLockScreen = false;
-            }
-            if (settings.enableShuffle)
-            {
-                settings.themeShuffleMode = 22;
-                settings.enableShuffle = false;
-            }
-            if (settings.lastShuffleDate != null)
-            {
-                settings.lastShuffleTime = settings.lastShuffleDate;
-                settings.lastShuffleDate = null;
-            }
-#pragma warning restore 618
-
             unsavedChanges = false;
             autoSaveTimer = new System.Timers.Timer();
             autoSaveTimer.AutoReset = false;
             autoSaveTimer.Interval = 1000;
+            ConfigMigrator.UpdateObsoleteSettings();
 
             settings.PropertyChanged += OnSettingsPropertyChanged;
             autoSaveTimer.Elapsed += OnAutoSaveTimerElapsed;

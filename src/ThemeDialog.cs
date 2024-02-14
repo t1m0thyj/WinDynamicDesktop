@@ -560,7 +560,7 @@ namespace WinDynamicDesktop
                 || JsonConfig.settings.lockScreenTheme == themeId)
             {
                 MessageDialog.ShowWarning(string.Format(_("The '{0}' theme cannot be deleted because it is " +
-                    "currently active for one or more displays."), ThemeManager.GetThemeName(theme)), _("Warning"));
+                    "currently active for one or more displays."), ThemeManager.GetThemeName(theme)), _("Error"));
                 return;
             }
 

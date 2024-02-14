@@ -73,15 +73,15 @@ namespace WinDynamicDesktop.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Big_Sur:
         ///- https://github.com/t1m0thyj/WDD-mac-themes/releases/download/big-sur/Big_Sur.ddw
+        ///- https://gitlab.com/t1m0thyj/wdd-themes/-/package_files/50073274/download
         ///- https://bitbucket.org/t1m0thyj/wdd-themes/downloads/Big_Sur.ddw
         ///
         ///Big_Sur_Abstract:
         ///- https://github.com/t1m0thyj/WDD-mac-themes/releases/download/big-sur/Big_Sur_Abstract_2.ddw
+        ///- https://gitlab.com/t1m0thyj/wdd-themes/-/package_files/50073442/download
         ///- https://bitbucket.org/t1m0thyj/wdd-themes/downloads/Big_Sur_Abstract_2.ddw
         ///
-        ///Catalina:
-        ///- https://github.com/t1m0thyj/WDD-mac-themes/releases/download/catalina/Catalina.ddw
-        ///- https://bitbucket.org/t1m0thyj/wdd-themes/downloads/Cata [rest of string was truncated]&quot;;.
+        ///Cat [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DefaultThemesYaml {
             get {

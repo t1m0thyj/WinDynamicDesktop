@@ -3,7 +3,8 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using System;
-using System.Drawing;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Windows.Forms;
 
 namespace WinDynamicDesktop
@@ -12,6 +13,7 @@ namespace WinDynamicDesktop
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
         private const string translateLink = "https://poeditor.com/join/project/DEgfVpyuiK";
+        private List<string> languageNames = new List<string>();
 
         public LanguageDialog()
         {
@@ -22,13 +24,17 @@ namespace WinDynamicDesktop
 
         private void LanguageDialog_Load(object sender, EventArgs e)
         {
-            comboBox1.Items.AddRange(Localization.languageNames.ToArray());
+            foreach (string langCode in Localization.languageCodes)
+            {
+                languageNames.Add(new CultureInfo(langCode).NativeName);
+            }
+            comboBox1.Items.AddRange(languageNames.ToArray());
+            comboBox1.Sorted = true;
 
-            int langIndex = Localization.languageCodes.IndexOf(Localization.currentLocale);
-
+            int langIndex = Array.IndexOf(Localization.languageCodes, Localization.currentLocale);
             if (langIndex != -1)
             {
-                comboBox1.SelectedIndex = langIndex;
+                comboBox1.SelectedItem = languageNames[langIndex];
             }
         }
 
@@ -39,10 +45,10 @@ namespace WinDynamicDesktop
 
         private void okButton_Click(object sender, EventArgs e)
         {
-            string oldLocale = Localization.currentLocale;
-            string languageCode = Localization.languageCodes[comboBox1.SelectedIndex];
+            int langIndex = languageNames.IndexOf((string)comboBox1.SelectedItem);
+            string languageCode = Localization.languageCodes[langIndex];
 
-            if (languageCode != oldLocale)
+            if (languageCode != Localization.currentLocale)
             {
                 Localization.currentLocale = languageCode;
 

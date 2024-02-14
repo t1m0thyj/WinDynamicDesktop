@@ -60,6 +60,27 @@ namespace WinDynamicDesktop
             UpdateToVersion5(jsonText);
         }
 
+        public static void UpdateObsoleteSettings()  // Added 2024-01-22
+        {
+#pragma warning disable 618
+            if (JsonConfig.settings.changeLockScreen)
+            {
+                JsonConfig.settings.lockScreenDisplayIndex = JsonConfig.settings.activeThemes[0] == null ? 0 : -1;
+                JsonConfig.settings.changeLockScreen = false;
+            }
+            if (JsonConfig.settings.enableShuffle)
+            {
+                JsonConfig.settings.themeShuffleMode = 22;
+                JsonConfig.settings.enableShuffle = false;
+            }
+            if (JsonConfig.settings.lastShuffleDate != null)
+            {
+                JsonConfig.settings.lastShuffleTime = JsonConfig.settings.lastShuffleDate;
+                JsonConfig.settings.lastShuffleDate = null;
+            }
+#pragma warning restore 618
+        }
+
         private static DateTime SafeParse(string dateTime)  // Added 2020-05-21
         {
             try
@@ -137,6 +158,7 @@ namespace WinDynamicDesktop
 
             AppConfig newSettings = new AppConfig
             {
+#pragma warning disable 618
                 locationMode = locationMode,
                 location = oldSettings.location,
                 latitude = newLatitude,
@@ -158,6 +180,7 @@ namespace WinDynamicDesktop
                 hideTrayIcon = oldSettings.hideTrayIcon,
                 fullScreenPause = oldSettings.fullScreenPause,
                 enableScripts = oldSettings.enableScripts
+#pragma warning restore 618
             };
 
             jsonText = JsonConvert.SerializeObject(newSettings, Formatting.Indented);

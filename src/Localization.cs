@@ -5,9 +5,9 @@
 using NGettext;
 using RestSharp;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Text;
@@ -21,8 +21,30 @@ namespace WinDynamicDesktop
         private static readonly string poeditorApiToken = Encoding.UTF8.GetString(Convert.FromBase64String(
             "ODdlMGM3ZjRmMjE1YjRiMjkwNTE4NDUyMWE4Y2FkNTE="));
 
-        public static List<string> languageCodes = new List<string>();
-        public static List<string> languageNames = new List<string>();
+        public static string[] languageCodes = new string[]
+        {
+            "am", "ar", "ar-ae", "az",
+            "bg", "bn",
+            "ca", "cs",
+            "da", "de",
+            "el", "en", "es", "et",
+            "fa", "fi", "fr",
+            "gl",
+            "he", "hi", "hr", "hu",
+            "id", "is", "it",
+            "ja", "jv",
+            "kk", "ko",
+            "lb",
+            "mk", "my",
+            "nl",
+            "pl", "pt", "pt-br",
+            "ro", "ru",
+            "sk", "sv",
+            "ta", "th", "tr",
+            "ug", "uk",
+            "vi",
+            "zh-Hans", "zh-Hant", "zh-TW"
+        };
 
         public static string currentLocale;
         private static ICatalog catalog = null;
@@ -30,7 +52,6 @@ namespace WinDynamicDesktop
         public static void Initialize()
         {
             currentLocale = JsonConfig.settings.language?.Replace("poeditor:", "");
-            LoadLanguages();
 
             if (currentLocale == null)
             {
@@ -127,62 +148,6 @@ namespace WinDynamicDesktop
                 AppContext.ShowPopup(string.Format(
                     Localization.GetTranslation("Downloaded '{0}' translation from POEditor"), currentLocale));
             }
-        }
-
-        private static void LoadLanguages()
-        {
-            // Language names from https://github.com/mozilla/language-mapping-list
-            AddLanguage("Azərbaycan dili", "az");  // Azerbaijani
-            AddLanguage("Basa Jawa", "jv");  // Javanese
-            AddLanguage("Català", "ca");  // Catalan
-            AddLanguage("Dansk", "da");  // Danish
-            AddLanguage("Deutsch", "de");  // German
-            AddLanguage("English", "en");  // English
-            AddLanguage("Español", "es");  // Spanish
-            AddLanguage("Français", "fr");  // French
-            AddLanguage("Galego", "gl");  // Galician
-            AddLanguage("Hrvatski", "hr");  // Croatian
-            AddLanguage("Italiano", "it");  // Italian
-            AddLanguage("Lëtzebuergesch", "lb");  // Luxembourgish
-            AddLanguage("Magyar", "hu");  // Hungarian
-            AddLanguage("Nederlands", "nl");  // Dutch
-            AddLanguage("Polski", "pl");  // Polish
-            AddLanguage("Português", "pt");  // Portuguese
-            AddLanguage("Português (Brasil)", "pt-br");  // Portuguese (BR)
-            AddLanguage("Pусский", "ru");  // Russian
-            AddLanguage("Română", "ro");  // Romanian
-            AddLanguage("Suomi", "fi");  // Finnish
-            AddLanguage("Svenska", "sv");  // Swedish
-            AddLanguage("Tiếng Việt", "vi");  // Vietnamese
-            AddLanguage("Türkçe", "tr");  // Turkish
-            AddLanguage("eesti keel", "et");  // Estonian
-            AddLanguage("Íslenska", "is");  // Icelandic
-            AddLanguage("Čeština", "cs");  // Czech
-            AddLanguage("Ελληνικά", "el");  // Greek
-            AddLanguage("Български", "bg");  // Bulgarian
-            AddLanguage("Македонски", "mk");  // Macedonian
-            AddLanguage("Українська", "uk");  // Ukrainian
-            AddLanguage("Қазақша", "kk");  // Kazakh
-            AddLanguage("עברית", "he");  // Hebrew
-            AddLanguage("العربية", "ar");  // Arabic
-            AddLanguage("العربية (الإمارات العربية المتحدة)", "ar-ae");  // Arabic (U.A.E.)
-            AddLanguage("فارسی", "fa");  // Persian
-            AddLanguage("हिन्दी", "hi");  // Hindi
-            AddLanguage("বাংলা", "bn");  // Bengali
-            AddLanguage("ภาษาไทย", "th");  // Thai
-            AddLanguage("ဗမာစကာ", "my");  // Burmese
-            AddLanguage("አማርኛ", "am");  // Amharic
-            AddLanguage("中文简体", "zh-Hans");  // Chinese Simplified
-            AddLanguage("中文繁體", "zh-Hant");  // Chinese Traditional
-            AddLanguage("中文（台灣）", "zh-TW");  // Chinese Traditional (Taiwan)
-            AddLanguage("日本語", "ja");  // Japanese
-            AddLanguage("한국어", "ko");  // Korean
-        }
-
-        private static void AddLanguage(string languageName, string languageCode)
-        {
-            languageNames.Add(languageName);
-            languageCodes.Add(languageCode);
         }
 
         private static async Task LoadLocaleFromWeb()
