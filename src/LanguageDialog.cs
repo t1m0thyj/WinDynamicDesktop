@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace WinDynamicDesktop
@@ -26,9 +27,16 @@ namespace WinDynamicDesktop
         {
             foreach (string langCode in Localization.languageCodes)
             {
-                languageNames.Add(new CultureInfo(langCode).NativeName);
+                try
+                {
+                    languageNames.Add(new CultureInfo(langCode).NativeName);
+                }
+                catch (CultureNotFoundException)
+                {
+                    languageNames.Add(null);
+                }
             }
-            comboBox1.Items.AddRange(languageNames.ToArray());
+            comboBox1.Items.AddRange(languageNames.Where(x => x != null).ToArray());
             comboBox1.Sorted = true;
 
             int langIndex = Array.IndexOf(Localization.languageCodes, Localization.currentLocale);
