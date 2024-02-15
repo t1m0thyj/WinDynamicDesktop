@@ -1,5 +1,24 @@
 # Changelog
 
+## `5.4.0`
+
+### Enhancements
+
+* Added shuffle option to include only favorite themes ([#359](https://github.com/t1m0thyj/WinDynamicDesktop/issues/359))
+* Added shuffle option to change frequency to hourly, daily, weekly, or monthly ([#397](https://github.com/t1m0thyj/WinDynamicDesktop/issues/397))
+* Added lock screen as another display in Select Theme dialog which can have a separate theme applied ([#500](https://github.com/t1m0thyj/WinDynamicDesktop/issues/500))
+* Added Windows 11 wallpaper to list of built-in dynamic wallpapers (only for Windows 11) ([#526](https://github.com/t1m0thyj/WinDynamicDesktop/issues/526))
+* Made wallpaper timing more accurate for polar day and polar night by showing brightest image at solar noon ([#545](https://github.com/t1m0thyj/WinDynamicDesktop/issues/545))
+* Added Slovak, Tamil, and Uyghur translations (thanks Ignus, Arjun, and Widio)
+* Updated from .NET 6 to .NET 8 (this should not affect most users)
+
+### Bug Fixes
+
+* Fixed error in Store app when applying theme if name contains special characters ([#434](https://github.com/t1m0thyj/WinDynamicDesktop/issues/434))
+* Fixed crash when Microsoft Store force closes app to update to newer version ([#512](https://github.com/t1m0thyj/WinDynamicDesktop/issues/512))
+* Fixed misplaced strings in Configure Schedule dialog when localized ([#513](https://github.com/t1m0thyj/WinDynamicDesktop/issues/513))
+* Fixed error that could happen previewing theme with only day and night segments ([#529](https://github.com/t1m0thyj/WinDynamicDesktop/issues/529))
+
 ## `5.3.1`
 
 * Updated dark theme to stop using buggy Mica effect which may prevent mouse clicks ([#525](https://github.com/t1m0thyj/WinDynamicDesktop/issues/525))
