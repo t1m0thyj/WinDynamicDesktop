@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ThemeDialog));
             applyButton = new System.Windows.Forms.Button();
             closeButton = new System.Windows.Forms.Button();
             themeLinkLabel = new System.Windows.Forms.LinkLabel();
@@ -110,7 +109,7 @@
             contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { favoriteThemeMenuItem, deleteThemeMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
             contextMenuStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            contextMenuStrip1.Size = new System.Drawing.Size(181, 70);
+            contextMenuStrip1.Size = new System.Drawing.Size(181, 48);
             contextMenuStrip1.Opening += contextMenuStrip1_Opening;
             // 
             // favoriteThemeMenuItem
@@ -186,12 +185,10 @@
             // meatballButton
             // 
             meatballButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            meatballButton.Image = (System.Drawing.Image)resources.GetObject("meatballButton.Image");
-            meatballButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             meatballButton.Margin = new System.Windows.Forms.Padding(5, 1, 0, 2);
             meatballButton.Name = "meatballButton";
             meatballButton.ShowDropDownArrow = false;
-            meatballButton.Size = new System.Drawing.Size(20, 22);
+            meatballButton.Size = new System.Drawing.Size(4, 22);
             meatballButton.Text = "…";
             meatballButton.ToolTipText = "See More";
             // 

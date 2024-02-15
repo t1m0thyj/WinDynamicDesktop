@@ -1,5 +1,9 @@
 # Changelog
 
+## `5.4.1`
+
+* Fixed crash when opening Select Theme dialog due to resource missing from Release build.
+
 ## `5.4.0`
 
 ### Enhancements
