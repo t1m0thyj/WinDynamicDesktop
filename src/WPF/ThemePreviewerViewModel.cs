@@ -426,8 +426,7 @@ namespace WinDynamicDesktop.WPF
 
         private static string[] ImagePaths(ThemeConfig theme, int[] imageList)
         {
-            string themePath = !ThemeManager.IsThemePreinstalled(theme) ? Path.Combine("themes", theme.themeId) :
-                DefaultThemes.windowsWallpaperFolder;
+            string themePath = ThemeManager.GetThemeDirectory(theme);
             return imageList.Select(id =>
                 Path.Combine(themePath, theme.imageFilename.Replace("*", id.ToString()))).ToArray();
         }

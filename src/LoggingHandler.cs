@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace WinDynamicDesktop
 {
@@ -92,7 +93,11 @@ namespace WinDynamicDesktop
 
             using (StreamWriter reportLog = new StreamWriter("report.log"))
             {
-                reportLog.WriteLine("//" + DateTime.Now.ToString());
+                reportLog.WriteLine("//" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss UTCzzz",
+                    CultureInfo.InvariantCulture));
+                reportLog.WriteLine("//" + Environment.OSVersion.VersionString + " " +
+                    RuntimeInformation.OSArchitecture.ToString());
+                reportLog.WriteLine("//WinDynamicDesktop " + AboutDialog.GetVersionString());
                 reportLog.WriteLine(JsonConvert.SerializeObject(exc, Formatting.Indented));
 
                 if (settings != null)

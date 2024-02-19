@@ -23,9 +23,9 @@ namespace WinDynamicDesktop
             string yamlText = Properties.Resources.DefaultThemesYaml;
             yamlLines = yamlText.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
                 .Select((line) => line.Trim())
-                .Where((line) => !line.StartsWith("#")).ToArray();
+                .Where((line) => !line.StartsWith('#')).ToArray();
 
-            return yamlLines.Where((line) => !line.StartsWith("-"))
+            return yamlLines.Where((line) => !line.StartsWith('-'))
                 .Select((line) => line.TrimEnd(':')).ToArray();
         }
 

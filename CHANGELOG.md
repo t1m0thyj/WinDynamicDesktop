@@ -2,7 +2,7 @@
 
 ## `5.4.1`
 
-* Fixed crash when opening Select Theme dialog due to resource missing from Release build.
+* Fixed crash when opening Select Theme dialog due to resource missing from Release build ([#562](https://github.com/t1m0thyj/WinDynamicDesktop/issues/562))
 
 ## `5.4.0`
 

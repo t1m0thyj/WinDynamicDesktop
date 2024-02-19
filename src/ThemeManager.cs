@@ -36,7 +36,7 @@ namespace WinDynamicDesktop
             {
                 string themeId = Path.GetFileName(Path.GetDirectoryName(filePath));
 
-                if (!themeId.StartsWith("."))
+                if (!themeId.StartsWith('.'))
                 {
                     themeIds.Add(themeId);
                 }
@@ -75,6 +75,17 @@ namespace WinDynamicDesktop
             return IsThemeDownloaded(theme) ? theme.imageCredits : "Apple";
         }
 
+        public static string GetThemeDirectory(ThemeConfig theme)
+        {
+            string defaultThemeDir = Path.Combine("themes", theme.themeId);
+            ThemeConfig windowsTheme = DefaultThemes.GetWindowsTheme();
+            if (windowsTheme != null && theme.themeId == windowsTheme.themeId && !Directory.Exists(defaultThemeDir))
+            {
+                return DefaultThemes.windowsWallpaperFolder;
+            }
+            return defaultThemeDir;
+        }
+
         public static void CalcThemeDownloadSize(ThemeConfig theme, Action<string> setSize)
         {
             Task.Run(async () =>
@@ -98,8 +109,7 @@ namespace WinDynamicDesktop
         {
             Task.Run(() =>
             {
-                DirectoryInfo dirInfo = new DirectoryInfo(!IsThemePreinstalled(theme) ?
-                    Path.Combine("themes", theme.themeId) : DefaultThemes.windowsWallpaperFolder);
+                DirectoryInfo dirInfo = new DirectoryInfo(GetThemeDirectory(theme));
                 long sizeBytes = 0;
                 foreach (FileInfo fileInfo in dirInfo.EnumerateFiles())
                 {
@@ -118,9 +128,7 @@ namespace WinDynamicDesktop
 
         public static bool IsThemePreinstalled(ThemeConfig theme)
         {
-            ThemeConfig windowsTheme = DefaultThemes.GetWindowsTheme();
-            return windowsTheme != null && theme.themeId == windowsTheme.themeId &&
-                !Directory.Exists(Path.Combine("themes", theme.themeId));
+            return GetThemeDirectory(theme) == DefaultThemes.windowsWallpaperFolder;
         }
 
         public static void DisableTheme(string themeId, bool permanent)
@@ -137,8 +145,7 @@ namespace WinDynamicDesktop
 
             if (permanent)
             {
-                Directory.Move(Path.Combine("themes", themeId),
-                    Path.Combine("themes", "." + themeId));
+                Directory.Move(Path.Combine("themes", themeId), Path.Combine("themes", "." + themeId));
             }
         }
 

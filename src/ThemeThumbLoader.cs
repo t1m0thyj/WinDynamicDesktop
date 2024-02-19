@@ -107,8 +107,7 @@ namespace WinDynamicDesktop
                 }
             }
 
-            string themePath = !ThemeManager.IsThemePreinstalled(theme) ? Path.Combine("themes", theme.themeId) :
-                DefaultThemes.windowsWallpaperFolder;
+            string themePath = ThemeManager.GetThemeDirectory(theme);
             int imageId1 = theme.dayHighlight ?? theme.dayImageList[theme.dayImageList.Length / 2];
             int imageId2 = theme.nightHighlight ?? theme.nightImageList[theme.nightImageList.Length / 2];
             string imageFilename1 = theme.imageFilename.Replace("*", imageId1.ToString());

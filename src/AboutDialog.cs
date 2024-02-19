@@ -24,6 +24,14 @@ namespace WinDynamicDesktop
             Localization.TranslateForm(this);
         }
 
+        public static string GetVersionString()
+        {
+            string versionStr = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            versionStr = versionStr.Remove(versionStr.Length - 2);
+            versionStr += UwpDesktop.IsRunningAsUwp() ? " (UWP)" : string.Empty;
+            return versionStr;
+        }
+
         private void AboutDialog_Load(object sender, EventArgs e)
         {
             iconBox.Image = (new Icon(Properties.Resources.AppIcon, 64, 64)).ToBitmap();
@@ -37,18 +45,13 @@ namespace WinDynamicDesktop
 
         private string GetRtfText()
         {
-            string versionStr = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            versionStr = versionStr.Remove(versionStr.Length - 2);
-            versionStr += UwpDesktop.IsRunningAsUwp() ? " (UWP)" : string.Empty;
-
             string copyrightLine = ((AssemblyCopyrightAttribute)Attribute.GetCustomAttribute(
                 Assembly.GetExecutingAssembly(), typeof(AssemblyCopyrightAttribute), false)).Copyright;
-
             string donateRateLine = string.Format(_("If you like the app, please consider {0} or {1} :)"),
                 GetRtfLink(donateLink, _("donating")), GetRtfLink(rateLink, _("rating it")));
 
             return @"{\rtf1\pc\fs5\par" +
-                @"\sb72\qc\fs30\b WinDynamicDesktop " + versionStr + @"\b0\par" +
+                @"\sb72\qc\fs30\b WinDynamicDesktop " + GetVersionString() + @"\b0\par" +
                 @"\fs20 " + _("Port of macOS Mojave Dynamic Desktop feature to Windows 10") + @"\par " +
                 copyrightLine + @"\par " +
                 GetRtfLink(websiteLink) + @"\par " +

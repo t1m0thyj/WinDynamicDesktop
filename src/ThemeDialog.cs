@@ -54,7 +54,7 @@ namespace WinDynamicDesktop
 
             this.previewerHost.Anchor &= ~AnchorStyles.Left;
             this.toolStrip1.Width = newWidth;
-            this.displayComboBox.Width = newWidth - this.meatballButton.Width - 8;
+            this.displayComboBox.Width += newWidth - oldWidth + this.meatballButton.Margin.Left;
             this.listView1.Width = newWidth;
             this.downloadButton.Left += (newWidth - oldWidth) / 2;
             this.applyButton.Left += (newWidth - oldWidth) / 2;
@@ -68,20 +68,6 @@ namespace WinDynamicDesktop
             int bestWidth = (bestHeight - heightDiff) * bounds.Width / bounds.Height + widthDiff;
             this.Size = new Size(bestWidth, bestHeight);
             this.CenterToScreen();
-        }
-
-        public Bitmap GetMeatballIcon()
-        {
-            Bitmap bitmap = new Bitmap(16, 16, PixelFormat.Format32bppArgb);
-            using (Graphics graphics = Graphics.FromImage(bitmap))
-            {
-                graphics.Clear(Color.Transparent);
-                for (int i = 0; i < 3; i++)
-                {
-                    graphics.FillEllipse(new SolidBrush(this.ForeColor), i * 6, 6, 4, 4);
-                }
-            }
-            return bitmap;
         }
 
         public void ImportThemes(List<string> themePaths)
@@ -133,6 +119,20 @@ namespace WinDynamicDesktop
                 }).ToArray();
         }
 
+        private Bitmap GetMeatballIcon()
+        {
+            Bitmap bitmap = new Bitmap(16, 16, PixelFormat.Format32bppArgb);
+            using (Graphics graphics = Graphics.FromImage(bitmap))
+            {
+                graphics.Clear(Color.Transparent);
+                for (int i = 0; i < 3; i++)
+                {
+                    graphics.FillEllipse(new SolidBrush(this.ForeColor), i * 6, 6, 4, 4);
+                }
+            }
+            return bitmap;
+        }
+
         private void LoadThemes(List<ThemeConfig> themes, string activeTheme = null, string focusTheme = null)
         {
             Size thumbnailSize = ThemeThumbLoader.GetThumbnailSize(this);
@@ -153,7 +153,8 @@ namespace WinDynamicDesktop
                             {
                                 itemText = "★ " + itemText;
                             }
-                            ListViewItem newItem = listView1.Items.Add(itemText, listView1.LargeImageList.Images.Count - 1);
+                            ListViewItem newItem = listView1.Items.Add(itemText,
+                                listView1.LargeImageList.Images.Count - 1);
                             newItem.Tag = theme.themeId;
 
                             if (activeTheme != null && activeTheme == theme.themeId)
