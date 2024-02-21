@@ -24,7 +24,7 @@ namespace WinDynamicDesktop
 
         public static bool IsThemeReady()
         {
-            return (JsonConfig.settings.activeThemes != null && ThemeManager.importPaths.Count == 0);
+            return (!JsonConfig.IsNullOrEmpty(JsonConfig.settings.activeThemes) && ThemeManager.importPaths.Count == 0);
         }
 
         public static void NextStep(bool themeReadyOverride = false)

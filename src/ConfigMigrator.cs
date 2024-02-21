@@ -65,7 +65,8 @@ namespace WinDynamicDesktop
 #pragma warning disable 618
             if (JsonConfig.settings.changeLockScreen)
             {
-                JsonConfig.settings.lockScreenDisplayIndex = JsonConfig.settings.activeThemes[0] == null ? 0 : -1;
+                JsonConfig.settings.lockScreenDisplayIndex = Array.FindIndex(JsonConfig.settings.activeThemes,
+                    (themeId) => themeId != null);
                 JsonConfig.settings.changeLockScreen = false;
             }
             if (JsonConfig.settings.enableShuffle)

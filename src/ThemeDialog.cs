@@ -222,7 +222,8 @@ namespace WinDynamicDesktop
         private void ApplySelectedTheme()
         {
             string activeTheme = (selectedIndex > 0) ? ThemeManager.themeSettings[selectedIndex - 1].themeId : null;
-            List<string> activeThemes = JsonConfig.settings.activeThemes?.ToList() ?? new List<string> { null };
+            List<string> activeThemes = JsonConfig.IsNullOrEmpty(JsonConfig.settings.activeThemes) ?
+                new List<string> { null } : JsonConfig.settings.activeThemes.ToList();
 
             if (displayComboBox.SelectedIndex == 0)
             {
@@ -557,9 +558,9 @@ namespace WinDynamicDesktop
             string themeId = (string)listView1.Items[itemIndex].Tag;
             ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
 
-            if ((JsonConfig.settings.activeThemes != null && (JsonConfig.settings.activeThemes[0] == themeId ||
-                (JsonConfig.settings.activeThemes[0] == null && JsonConfig.settings.activeThemes.Contains(themeId))))
-                || JsonConfig.settings.lockScreenTheme == themeId)
+            if ((!JsonConfig.IsNullOrEmpty(JsonConfig.settings.activeThemes) &&
+                (JsonConfig.settings.activeThemes[0] == themeId || (JsonConfig.settings.activeThemes[0] == null &&
+                JsonConfig.settings.activeThemes.Contains(themeId)))) || JsonConfig.settings.lockScreenTheme == themeId)
             {
                 MessageDialog.ShowWarning(string.Format(_("The '{0}' theme cannot be deleted because it is " +
                     "currently active for one or more displays."), ThemeManager.GetThemeName(theme)), _("Error"));

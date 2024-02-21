@@ -132,7 +132,8 @@ namespace WinDynamicDesktop
 
         private bool UpdateDisplayList()
         {
-            if (JsonConfig.settings.activeThemes == null || JsonConfig.settings.activeThemes[0] != null)
+            if (JsonConfig.IsNullOrEmpty(JsonConfig.settings.activeThemes) ||
+                JsonConfig.settings.activeThemes[0] != null)
             {
                 return false;
             }
