@@ -185,7 +185,7 @@ namespace WinDynamicDesktop
                     continue;
                 }
 
-                if (theme.imageFilename != null)
+                if (theme.imageFilename != null && !ThemeManager.IsThemePreinstalled(theme))
                 {
                     yield return theme;
                 }

@@ -4,6 +4,7 @@
 
 using Newtonsoft.Json;
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -17,7 +18,8 @@ namespace WinDynamicDesktop
         public static void LogError(string cwd, Exception exc)
         {
             string errorMessage = exc.ToString();
-            string logFilename = Path.Combine(cwd, Path.GetFileName(Environment.GetCommandLineArgs()[0]) + ".log");
+            string processFilename = Process.GetCurrentProcess().MainModule.FileName;
+            string logFilename = Path.Combine(cwd, Path.GetFileName(processFilename) + ".log");
 
             try
             {
