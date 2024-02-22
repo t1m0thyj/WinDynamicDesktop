@@ -394,7 +394,8 @@ namespace WinDynamicDesktop
                 themeId => themeId != null) ?? -1;
             displayComboBox.SelectedIndex = activeThemeIndex != -1 ? activeThemeIndex : 0;
 
-            string activeTheme = JsonConfig.settings.activeThemes?[displayComboBox.SelectedIndex];
+            string activeTheme = JsonConfig.IsNullOrEmpty(JsonConfig.settings.activeThemes) ? null :
+                JsonConfig.settings.activeThemes[displayComboBox.SelectedIndex];
             string focusTheme = activeTheme ?? "";
             if (activeTheme == null && JsonConfig.firstRun)
             {

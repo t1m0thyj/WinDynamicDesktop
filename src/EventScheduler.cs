@@ -174,16 +174,26 @@ namespace WinDynamicDesktop
                 }
             }
 
-            LoggingHandler.LogMessage("Setting wallpaper to {0}", imagePath);
-            if (e.displayIndex != DisplayEvent.LockScreenIndex)
+            LoggingHandler.LogMessage("Setting wallpaper to {0}@{1}", imagePath, e.displayIndex);
+            try
             {
-                UwpDesktop.GetHelper().SetWallpaper(imagePath, e.displayIndex);
+                if (e.displayIndex != DisplayEvent.LockScreenIndex)
+                {
+                    UwpDesktop.GetHelper().SetWallpaper(imagePath, e.displayIndex);
+                }
+                else
+                {
+                    UwpDesktop.GetHelper().SetLockScreen(imagePath);
+                }
+                e.lastImagePath = imagePath;
             }
-            else
+            catch (Exception exc)
             {
-                UwpDesktop.GetHelper().SetLockScreen(imagePath);
+                LoggingHandler.LogMessage("Error setting wallpaper: {0}", exc.ToString());
+                MessageDialog.ShowWarning(string.Format(Localization.GetTranslation(
+                    "Error occurred when setting wallpaper '{0}':\n\n{1}"),
+                    Path.GetRelativePath(Environment.CurrentDirectory, imagePath), exc.ToString()));
             }
-            e.lastImagePath = imagePath;
         }
 
         private void StartTimer(DateTime futureTime)
