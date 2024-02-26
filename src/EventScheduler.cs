@@ -190,9 +190,7 @@ namespace WinDynamicDesktop
             catch (Exception exc)
             {
                 LoggingHandler.LogMessage("Error setting wallpaper: {0}", exc.ToString());
-                MessageDialog.ShowWarning(string.Format(Localization.GetTranslation(
-                    "Error occurred when setting wallpaper '{0}':\n\n{1}"),
-                    Path.GetRelativePath(Environment.CurrentDirectory, imagePath), exc.ToString()));
+                LoggingHandler.LogError(UwpDesktop.GetHelper().GetLocalFolder(), exc);
             }
         }
 

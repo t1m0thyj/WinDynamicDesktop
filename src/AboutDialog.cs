@@ -26,7 +26,7 @@ namespace WinDynamicDesktop
 
         public static string GetVersionString()
         {
-            string versionStr = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            string versionStr = UpdateChecker.GetCurrentVersion();
             versionStr = versionStr.Remove(versionStr.Length - 2);
             versionStr += UwpDesktop.IsRunningAsUwp() ? " (UWP)" : string.Empty;
             return versionStr;

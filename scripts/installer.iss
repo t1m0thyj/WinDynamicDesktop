@@ -35,6 +35,7 @@ WizardStyle=modern
 CloseApplications=force
 LicenseFile=..\LICENSE
 OutputDir=..\dist
+RestartApplications=no
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"

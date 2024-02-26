@@ -17,7 +17,7 @@ namespace WinDynamicDesktop
         public static NotifyIcon notifyIcon;
         public static EventScheduler scheduler = new EventScheduler();
 
-        public AppContext(string[] args)
+        public AppContext(string[] args) : base(new HiddenForm())
         {
             JsonConfig.LoadConfig();
             Localization.Initialize();
@@ -96,14 +96,14 @@ namespace WinDynamicDesktop
         {
             if (JsonConfig.settings.hideTrayIcon)
             {
-                notifyIcon.ContextMenuStrip.BeginInvoke(ToggleTrayIcon);
+                MainForm.BeginInvoke(ToggleTrayIcon);
             }
 
             ThemeManager.importPaths.AddRange(args);
 
             if (args.Length > 0 && !ThemeManager.importMode)
             {
-                notifyIcon.ContextMenuStrip.BeginInvoke(ThemeManager.SelectTheme);
+                MainForm.BeginInvoke(ThemeManager.SelectTheme);
             }
         }
 

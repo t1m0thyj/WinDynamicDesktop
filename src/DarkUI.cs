@@ -56,13 +56,10 @@ namespace WinDynamicDesktop
 
         public static void UserDefaultAppThemeIsDarkChanged(object sender, bool isDark)
         {
-            AppContext.notifyIcon.ContextMenuStrip.BeginInvoke(() =>
+            foreach (Form form in Application.OpenForms)
             {
-                foreach (Form form in Application.OpenForms)
-                {
-                    ThemeForm(form, false);
-                }
-            });
+                form.BeginInvoke(() => ThemeForm(form, false));
+            }
         }
 
         // Code from https://stackoverflow.com/a/664083/5504760

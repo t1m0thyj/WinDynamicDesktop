@@ -11,9 +11,6 @@ namespace WinDynamicDesktop
 {
     class TrayMenu : ContextMenuStrip
     {
-        private const int ENDSESSION_CLOSEAPP = 0x1;
-        private const int WM_QUERYENDSESSION = 0x11;
-        private const int WM_ENDSESSION = 0x16;
         private static readonly Func<string, string> _ = Localization.GetTranslation;
 
         public static ToolStripMenuItem darkModeItem;
@@ -26,29 +23,6 @@ namespace WinDynamicDesktop
         {
             this.Items.AddRange(GetMenuItems());
             UwpDesktop.GetHelper().CheckStartOnBoot();
-            IntPtr _handle = this.Handle;  // Handle needed for BeginInvoke to work
-        }
-
-        protected override void WndProc(ref Message m)
-        {
-            // https://github.com/rocksdanister/lively/blob/9142f6a4cfc222cd494f205a5daaa1a0238282e3/src/Lively/Lively/Views/WindowMsg/WndProcMsgWindow.xaml.cs#L41
-            switch (m.Msg)
-            {
-                case WM_QUERYENDSESSION:
-                    if (m.LParam.ToInt32() == ENDSESSION_CLOSEAPP)
-                    {
-                        UpdateChecker.RegisterApplicationRestart(null, (int)RestartFlags.RESTART_NO_CRASH |
-                            (int)RestartFlags.RESTART_NO_HANG | (int)RestartFlags.RESTART_NO_REBOOT);
-                    }
-                    m.Result = new IntPtr(1);
-                    break;
-                case WM_ENDSESSION:
-                    Application.Exit();
-                    break;
-                default:
-                    base.WndProc(ref m);
-                    break;
-            }
         }
 
         private ToolStripItem[] GetMenuItems()

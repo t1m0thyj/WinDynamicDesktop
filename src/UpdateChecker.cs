@@ -44,8 +44,8 @@ namespace WinDynamicDesktop
             TryCheckAuto();
         }
 
-        [DllImport("kernel32.dll", SetLastError = true)]
-        internal static extern uint RegisterApplicationRestart(string pwzCommandline, int dwFlags);
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+        internal static extern uint RegisterApplicationRestart(string pwzCommandline, uint dwFlags);
 
         public static ToolStripItem[] GetMenuItems()
         {
@@ -66,6 +66,11 @@ namespace WinDynamicDesktop
             }
         }
 
+        public static string GetCurrentVersion()
+        {
+            return Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        }
+
         private static async Task<string> GetLatestVersion()
         {
             var client = new RestClient("https://api.github.com");
@@ -73,11 +78,6 @@ namespace WinDynamicDesktop
             var response = await client.ExecuteAsync<GitHubApiData>(request);
 
             return response.IsSuccessful ? response.Data.tag_name.Substring(1) : null;
-        }
-
-        private static string GetCurrentVersion()
-        {
-            return Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
 
         private static bool IsUpdateAvailable(string currentVersion, string latestVersion)

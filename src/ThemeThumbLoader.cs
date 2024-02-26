@@ -152,7 +152,7 @@ namespace WinDynamicDesktop
 
         private static string CreateBlankWallpaper()
         {
-            string wallpaperPath = Path.Combine(Environment.CurrentDirectory, "wallpaper_blank.jpg");
+            string wallpaperPath = Path.Combine(Path.GetTempPath(), "WinDynamicDesktop_blank_preview.jpg");
             if (!File.Exists(wallpaperPath))
             {
                 (new Bitmap(1, 1)).Save(wallpaperPath, ImageFormat.Jpeg);

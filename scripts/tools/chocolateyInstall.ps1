@@ -18,7 +18,7 @@ $packageArgs = @{
   checksum64    = '{{installerChecksum64}}'
   checksumType64= 'sha256'
 
-  silentArgs    = '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP- /RESTARTAPPLICATIONS'
+  silentArgs    = '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-'
   validExitCodes= @(0)
 }
 
