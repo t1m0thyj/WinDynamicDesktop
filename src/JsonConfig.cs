@@ -7,7 +7,6 @@ using PropertyChanged;
 using System;
 using System.ComponentModel;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WinDynamicDesktop
@@ -59,6 +58,7 @@ namespace WinDynamicDesktop
         private static System.Timers.Timer autoSaveTimer;
         private static bool restartPending = false;
         private static bool unsavedChanges;
+        private static readonly object settingsFileLock = new object();
 
         public static AppConfig settings = new AppConfig();
         public static bool firstRun = !File.Exists("settings.json");
@@ -93,9 +93,8 @@ namespace WinDynamicDesktop
             }
 
             unsavedChanges = false;
-            autoSaveTimer = new System.Timers.Timer();
+            autoSaveTimer = new System.Timers.Timer(1000);
             autoSaveTimer.AutoReset = false;
-            autoSaveTimer.Interval = 1000;
             ConfigMigrator.UpdateObsoleteSettings();
 
             settings.PropertyChanged += OnSettingsPropertyChanged;
@@ -108,6 +107,22 @@ namespace WinDynamicDesktop
             autoSaveTimer.Start();
         }
 
+        public static void SaveConfig()
+        {
+            if (!unsavedChanges)
+            {
+                return;
+            }
+
+            unsavedChanges = autoSaveTimer.Enabled = false;
+            string jsonText = JsonConvert.SerializeObject(settings, Formatting.Indented);
+            lock (settingsFileLock)
+            {
+                File.WriteAllText("settings.json.tmp", jsonText);
+                File.Move("settings.json.tmp", "settings.json", true);
+            }
+        }
+
         public static bool IsNullOrEmpty(Array array)
         {
             return (array == null || array.Length == 0);
@@ -115,40 +130,23 @@ namespace WinDynamicDesktop
 
         private static void OnSettingsPropertyChanged(object sender, EventArgs e)
         {
-            unsavedChanges = true;
-            autoSaveTimer.Start();
+            unsavedChanges = autoSaveTimer.Enabled = true;
         }
 
-        private static async void OnAutoSaveTimerElapsed(object sender, EventArgs e)
+        private static void OnAutoSaveTimerElapsed(object sender, EventArgs e)
         {
             if (!restartPending && !unsavedChanges)
             {
                 return;
             }
 
-            if (unsavedChanges)
-            {
-                unsavedChanges = false;
-                autoSaveTimer.Elapsed -= OnAutoSaveTimerElapsed;
-
-                await Task.Run(() =>
-                {
-                    string jsonText = JsonConvert.SerializeObject(settings, Formatting.Indented);
-                    File.WriteAllText("settings.json.tmp", jsonText);
-                    File.Move("settings.json.tmp", "settings.json", true);
-                });
-            }
+            SaveConfig();
 
             if (restartPending)
             {
                 restartPending = false;
                 System.Diagnostics.Process.Start(Application.ExecutablePath);
                 Application.Exit();
-            }
-            else
-            {
-                autoSaveTimer.Elapsed += OnAutoSaveTimerElapsed;
-                autoSaveTimer.Start();
             }
         }
     }

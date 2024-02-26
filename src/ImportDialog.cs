@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -90,8 +89,11 @@ namespace WinDynamicDesktop
 
         private void OnFormClosing(object sender, FormClosingEventArgs e)
         {
-            ThemeLoader.taskbarHandle = IntPtr.Zero;
             ThemeManager.importMode = false;
+            if (thumbnailsLoaded)
+            {
+                ThemeLoader.taskbarHandle = IntPtr.Zero;
+            }
         }
     }
 }

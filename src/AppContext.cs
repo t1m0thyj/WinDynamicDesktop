@@ -126,6 +126,7 @@ namespace WinDynamicDesktop
                 notifyIcon.Visible = false;
             }
 
+            JsonConfig.SaveConfig();
             ipcManager?.Dispose();
         }
     }

@@ -140,38 +140,48 @@ namespace WinDynamicDesktop
 
             foreach (ThemeConfig theme in themes.ToList())
             {
-                try
+                ListViewItem tempItem = this.Invoke(new Func<ListViewItem>(() =>
                 {
-                    using (Image thumbnailImage = ThemeThumbLoader.GetThumbnailImage(theme, thumbnailSize, true))
+                    string itemText = ThemeManager.GetThemeName(theme);
+                    if (JsonConfig.settings.favoriteThemes != null &&
+                        JsonConfig.settings.favoriteThemes.Contains(theme.themeId))
                     {
-                        this.Invoke(new Action(() =>
+                        itemText = "★ " + itemText;
+                    }
+                    ListViewItem newItem = listView1.Items.Add(itemText);
+                    newItem.Tag = theme.themeId;
+
+                    if (activeTheme != null && activeTheme == theme.themeId)
+                    {
+                        newItem.Font = new Font(newItem.Font, FontStyle.Bold);
+                    }
+                    if (focusTheme == null || focusTheme == theme.themeId)
+                    {
+                        focusedItem = newItem;
+                    }
+
+                    return newItem;
+                }));
+
+                this.BeginInvoke(new Action<ListViewItem>((newItem) =>
+                {
+                    try
+                    {
+                        using (Image thumbnailImage = ThemeThumbLoader.GetThumbnailImage(theme, thumbnailSize, true))
                         {
                             listView1.LargeImageList.Images.Add(thumbnailImage);
-                            string itemText = ThemeManager.GetThemeName(theme);
-                            if (JsonConfig.settings.favoriteThemes != null &&
-                                JsonConfig.settings.favoriteThemes.Contains(theme.themeId))
-                            {
-                                itemText = "★ " + itemText;
-                            }
-                            ListViewItem newItem = listView1.Items.Add(itemText,
-                                listView1.LargeImageList.Images.Count - 1);
-                            newItem.Tag = theme.themeId;
-
-                            if (activeTheme != null && activeTheme == theme.themeId)
-                            {
-                                newItem.Font = new Font(newItem.Font, FontStyle.Bold);
-                            }
-                            if (focusTheme == null || focusTheme == theme.themeId)
-                            {
-                                focusedItem = newItem;
-                            }
-                        }));
+                            newItem.ImageIndex = listView1.LargeImageList.Images.Count - 1;
+                        }
                     }
-                }
-                catch (OutOfMemoryException)
-                {
-                    ThemeLoader.HandleError(new FailedToCreateThumbnail(theme.themeId));
-                }
+                    catch (OutOfMemoryException)
+                    {
+                        ThemeLoader.HandleError(new FailedToCreateThumbnail(theme.themeId));
+                        if (ThemeManager.themeSettings.Find(t => t.themeId == theme.themeId) == null)
+                        {
+                            listView1.Items.RemoveAt(newItem.Index);
+                        }
+                    }
+                }), tempItem);
             }
 
             this.Invoke(new Action(() =>
