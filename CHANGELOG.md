@@ -1,5 +1,15 @@
 # Changelog
 
+## `5.4.2`
+
+**Note:** Version 5.4.0 had a bug causing the Change Lockscreen Image setting to be disabled in some cases when it had been enabled before. If you had this option selected, check lock screen settings in the Select Theme dialog to make sure it is still enabled after upgrading.
+
+* Fixed error when shuffle theme option is enabled and Windows 11 theme gets picked ([#535](https://github.com/t1m0thyj/WinDynamicDesktop/issues/535))
+* Fixed error when setting lock screen image and no other displays have wallpaper set ([#536](https://github.com/t1m0thyj/WinDynamicDesktop/issues/536))
+* Fixed crash when disconnecting user account if app is running in background ([#569](https://github.com/t1m0thyj/WinDynamicDesktop/issues/569))
+* Fixed hang when uninstalling app from Microsoft Store ([#570](https://github.com/t1m0thyj/WinDynamicDesktop/issues/570))
+* Fixed ellipsis (3 dots) button in Select Theme dialog not rendering on high-DPI displays
+
 ## `5.4.1`
 
 * Fixed crash when opening Select Theme dialog due to resource missing from Release build ([#562](https://github.com/t1m0thyj/WinDynamicDesktop/issues/562))

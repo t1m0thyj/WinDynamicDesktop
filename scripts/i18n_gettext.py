@@ -47,10 +47,10 @@ for filename in glob.glob("../src/**/*.cs", recursive=True):
                     add_to_pot_data(match.group(1), filename[3:], i + 1)
 
                 if not msg_history:
-                    match = re.search(r'(?:_|Localization\.GetTranslation)\("(.+)"\s', line)
+                    match = re.search(r'(?:_|Localization\.GetTranslation)\((?:"(.+)")?\s', line)
 
                     if match:
-                        msg_history = [match.group(1), i + 1]
+                        msg_history = [match.group(1) or "", i + 1]
         elif os.path.dirname(filename).endswith("src"):
             for i, line in enumerate(cs_file):
                 match = re.search(r'\W"(.+)"\W', line)
