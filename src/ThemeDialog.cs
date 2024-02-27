@@ -11,6 +11,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsDisplayAPI.DisplayConfig;
@@ -20,6 +21,7 @@ namespace WinDynamicDesktop
     public partial class ThemeDialog : Form
     {
         private int selectedIndex;
+        private SemaphoreSlim loadSemaphore = new SemaphoreSlim(1);
 
         private static readonly Func<string, string> _ = Localization.GetTranslation;
         private const string themeLink = "https://windd.info/themes/";
@@ -135,53 +137,44 @@ namespace WinDynamicDesktop
 
         private void LoadThemes(List<ThemeConfig> themes, string activeTheme = null, string focusTheme = null)
         {
+            this.loadSemaphore.Wait(60000);
             Size thumbnailSize = ThemeThumbLoader.GetThumbnailSize(this);
             ListViewItem focusedItem = null;
 
             foreach (ThemeConfig theme in themes.ToList())
             {
-                ListViewItem tempItem = this.Invoke(new Func<ListViewItem>(() =>
+                try
                 {
-                    string itemText = ThemeManager.GetThemeName(theme);
-                    if (JsonConfig.settings.favoriteThemes != null &&
-                        JsonConfig.settings.favoriteThemes.Contains(theme.themeId))
+                    using (Image thumbnailImage = ThemeThumbLoader.GetThumbnailImage(theme, thumbnailSize, true))
                     {
-                        itemText = "★ " + itemText;
-                    }
-                    ListViewItem newItem = listView1.Items.Add(itemText);
-                    newItem.Tag = theme.themeId;
-
-                    if (activeTheme != null && activeTheme == theme.themeId)
-                    {
-                        newItem.Font = new Font(newItem.Font, FontStyle.Bold);
-                    }
-                    if (focusTheme == null || focusTheme == theme.themeId)
-                    {
-                        focusedItem = newItem;
-                    }
-
-                    return newItem;
-                }));
-
-                this.BeginInvoke(new Action<ListViewItem>((newItem) =>
-                {
-                    try
-                    {
-                        using (Image thumbnailImage = ThemeThumbLoader.GetThumbnailImage(theme, thumbnailSize, true))
+                        this.Invoke(new Action(() =>
                         {
                             listView1.LargeImageList.Images.Add(thumbnailImage);
-                            newItem.ImageIndex = listView1.LargeImageList.Images.Count - 1;
-                        }
+                            string itemText = ThemeManager.GetThemeName(theme);
+                            if (JsonConfig.settings.favoriteThemes != null &&
+                                JsonConfig.settings.favoriteThemes.Contains(theme.themeId))
+                            {
+                                itemText = "★ " + itemText;
+                            }
+                            ListViewItem newItem = listView1.Items.Add(itemText,
+                                listView1.LargeImageList.Images.Count - 1);
+                            newItem.Tag = theme.themeId;
+
+                            if (activeTheme != null && activeTheme == theme.themeId)
+                            {
+                                newItem.Font = new Font(newItem.Font, FontStyle.Bold);
+                            }
+                            if (focusTheme == null || focusTheme == theme.themeId)
+                            {
+                                focusedItem = newItem;
+                            }
+                        }));
                     }
-                    catch (OutOfMemoryException)
-                    {
-                        ThemeLoader.HandleError(new FailedToCreateThumbnail(theme.themeId));
-                        if (ThemeManager.themeSettings.Find(t => t.themeId == theme.themeId) == null)
-                        {
-                            listView1.Items.RemoveAt(newItem.Index);
-                        }
-                    }
-                }), tempItem);
+                }
+                catch (OutOfMemoryException)
+                {
+                    ThemeLoader.HandleError(new FailedToCreateThumbnail(theme.themeId));
+                }
             }
 
             this.Invoke(new Action(() =>
@@ -198,6 +191,7 @@ namespace WinDynamicDesktop
 
                 ThemeThumbLoader.CacheThumbnails(listView1);
             }));
+            this.loadSemaphore.Release();
         }
 
         private void LoadImportedThemes(List<ThemeConfig> themes, ImportDialog importDialog)

@@ -5,7 +5,7 @@ if (-Not (Get-Command msbuild -ErrorAction SilentlyContinue)) {
 
 Set-Location "$(Split-Path $MyInvocation.MyCommand.Path)\.."
 
-$appPlatforms = @("x86", "x64", "arm64")
+$appPlatforms = if ($args) { $args } else { @("x86", "x64", "arm64") }
 $appVersion = ([Xml](Get-Content -Path "src\WinDynamicDesktop.csproj")).Project.PropertyGroup.Version
 
 Remove-Item "dist" -ErrorAction Ignore -Recurse
