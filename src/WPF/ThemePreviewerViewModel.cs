@@ -365,7 +365,7 @@ namespace WinDynamicDesktop.WPF
         public void Stop()
         {
             stopAnimation();
-            while (fadeQueue.TryDequeue(out int temp)) ;
+            while (fadeQueue.TryDequeue(out int temp)) { }
             TryRelease(fadeSemaphore);
 
             transitionTimer.Stop();

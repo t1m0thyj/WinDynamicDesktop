@@ -16,7 +16,7 @@ if len(sys.argv) > 2 and os.path.isdir(output_dir):
     shutil.rmtree(output_dir)
 os.makedirs(output_dir, exist_ok=True)
 
-client = POEditorAPI(os.getenv("POEDITOR_TOKEN"))
+client = POEditorAPI(os.getenv("POEDITOR_API_TOKEN"))
 projects = client.list_projects()
 project_id = [proj for proj in projects if proj["name"] == "WinDynamicDesktop"][0]["id"]
 languages = client.list_project_languages(project_id)

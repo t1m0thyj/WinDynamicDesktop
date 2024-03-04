@@ -4,6 +4,7 @@
 
 using System;
 using System.IO;
+using System.Text;
 using System.Windows.Forms;
 
 namespace WinDynamicDesktop
@@ -21,6 +22,7 @@ namespace WinDynamicDesktop
             AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
                 LoggingHandler.LogError(localFolder, e.ExceptionObject as Exception);
             Directory.SetCurrentDirectory(FindCwd(localFolder));
+            LoadDotEnv();
 
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
@@ -44,6 +46,24 @@ namespace WinDynamicDesktop
             }
 
             return cwd;
+        }
+
+        static void LoadDotEnv()
+        {
+            string envText = Encoding.UTF8.GetString(Properties.Resources.SecretsEnv);
+            string[] envLines = envText.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (string line in envLines)
+            {
+                string[] parts = line.Split('=', 2, StringSplitOptions.RemoveEmptyEntries);
+
+                if (parts.Length == 2)
+                {
+                    string rawValue = parts[1].StartsWith("base64:") ?
+                        Encoding.UTF8.GetString(Convert.FromBase64String(parts[1].Substring(7))) : parts[1];
+                    Environment.SetEnvironmentVariable(parts[0], rawValue);
+                }
+            }
         }
     }
 }

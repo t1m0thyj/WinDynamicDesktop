@@ -63,4 +63,4 @@ write_file(script_filename, old_script)
 nupkg_filename = f"windynamicdesktop.{package_version}.nupkg"
 if os.getenv("CI") or input(f"Push {nupkg_filename}? (y/N) ").lower() == "y":
     subprocess.run(["choco", "push", os.path.join(tempfile.gettempdir(), nupkg_filename), "-s", chocolatey_repo, "-k",
-        os.getenv("CHOCO_APIKEY")])
+        os.getenv("CHOCO_API_KEY")])

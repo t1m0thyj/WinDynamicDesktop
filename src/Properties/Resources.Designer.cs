@@ -88,5 +88,15 @@ namespace WinDynamicDesktop.Properties {
                 return ResourceManager.GetString("DefaultThemesYaml", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] SecretsEnv {
+            get {
+                object obj = ResourceManager.GetObject("SecretsEnv", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

@@ -7,21 +7,16 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using WindowsDisplayAPI.DisplayConfig;
 
 namespace WinDynamicDesktop
 {
     public partial class ThemeDialog : Form
     {
         private int selectedIndex;
-        private SemaphoreSlim loadSemaphore = new SemaphoreSlim(1);
 
         private static readonly Func<string, string> _ = Localization.GetTranslation;
         private const string themeLink = "https://windd.info/themes/";
@@ -42,7 +37,7 @@ namespace WinDynamicDesktop
             this.FormClosed += OnFormClosed;
 
             this.toolStrip1.Renderer = new CustomToolStripRenderer();
-            this.meatballButton.Image = GetMeatballIcon();
+            this.meatballButton.Image = ThemeDialogUtils.GetMeatballIcon(this.ForeColor);
 
             Rectangle bounds = Screen.FromControl(this).Bounds;
             Size thumbnailSize = ThemeThumbLoader.GetThumbnailSize(this);
@@ -107,120 +102,13 @@ namespace WinDynamicDesktop
             importDialog.InitImport(themePaths);
         }
 
-        private string[] GetDisplayNames()
+        private bool IsLockScreenSelected
         {
-            // https://github.com/winleafs/Winleafs/blob/98ba3ba/Winleafs.Wpf/Helpers/ScreenBoundsHelper.cs#L36=
-            var activeDisplays = WindowsDisplayAPI.Display.GetDisplays();
-            var activeDisplayDevicePaths = activeDisplays.OrderBy(d => d.DisplayName)
-                .Select(d => d.DevicePath).ToArray();
-            return PathDisplayTarget.GetDisplayTargets()
-                .Where(dt => activeDisplayDevicePaths.Contains(dt.DevicePath))
-                .OrderBy(dt => Array.IndexOf(activeDisplayDevicePaths, dt.DevicePath)).Select(dt =>
-                {
-                    return string.IsNullOrEmpty(dt.FriendlyName) ? _("Internal Display") : dt.FriendlyName;
-                }).ToArray();
-        }
-
-        private Bitmap GetMeatballIcon()
-        {
-            Bitmap bitmap = new Bitmap(16, 16, PixelFormat.Format32bppArgb);
-            using (Graphics graphics = Graphics.FromImage(bitmap))
+            get
             {
-                graphics.Clear(Color.Transparent);
-                for (int i = 0; i < 3; i++)
-                {
-                    graphics.FillEllipse(new SolidBrush(this.ForeColor), i * 6, 6, 4, 4);
-                }
+                return UwpDesktop.IsUwpSupported() &&
+                    displayComboBox.SelectedIndex == displayComboBox.Items.Count - 1;
             }
-            return bitmap;
-        }
-
-        private void LoadThemes(List<ThemeConfig> themes, string activeTheme = null, string focusTheme = null)
-        {
-            this.loadSemaphore.Wait(60000);
-            Size thumbnailSize = ThemeThumbLoader.GetThumbnailSize(this);
-            ListViewItem focusedItem = null;
-
-            foreach (ThemeConfig theme in themes.ToList())
-            {
-                try
-                {
-                    using (Image thumbnailImage = ThemeThumbLoader.GetThumbnailImage(theme, thumbnailSize, true))
-                    {
-                        this.Invoke(new Action(() =>
-                        {
-                            listView1.LargeImageList.Images.Add(thumbnailImage);
-                            string itemText = ThemeManager.GetThemeName(theme);
-                            if (JsonConfig.settings.favoriteThemes != null &&
-                                JsonConfig.settings.favoriteThemes.Contains(theme.themeId))
-                            {
-                                itemText = "★ " + itemText;
-                            }
-                            ListViewItem newItem = listView1.Items.Add(itemText,
-                                listView1.LargeImageList.Images.Count - 1);
-                            newItem.Tag = theme.themeId;
-
-                            if (activeTheme != null && activeTheme == theme.themeId)
-                            {
-                                newItem.Font = new Font(newItem.Font, FontStyle.Bold);
-                            }
-                            if (focusTheme == null || focusTheme == theme.themeId)
-                            {
-                                focusedItem = newItem;
-                            }
-                        }));
-                    }
-                }
-                catch (OutOfMemoryException)
-                {
-                    ThemeLoader.HandleError(new FailedToCreateThumbnail(theme.themeId));
-                }
-            }
-
-            this.Invoke(new Action(() =>
-            {
-                listView1.Sort();
-
-                if (focusedItem == null)
-                {
-                    focusedItem = listView1.Items[0];
-                }
-
-                focusedItem.Selected = true;
-                listView1.EnsureVisible(focusedItem.Index);
-
-                ThemeThumbLoader.CacheThumbnails(listView1);
-            }));
-            this.loadSemaphore.Release();
-        }
-
-        private void LoadImportedThemes(List<ThemeConfig> themes, ImportDialog importDialog)
-        {
-            themes.Sort((t1, t2) => t1.themeId.CompareTo(t2.themeId));
-
-            foreach (ThemeConfig theme in themes)
-            {
-                foreach (ListViewItem item in listView1.Items)
-                {
-                    if ((string)item.Tag == theme.themeId)
-                    {
-                        listView1.Items.RemoveAt(item.Index);
-                        listView1.LargeImageList.Images[item.ImageIndex].Dispose();
-                        break;
-                    }
-                }
-            }
-
-            Task.Run(() =>
-            {
-                LoadThemes(themes);
-
-                this.Invoke(new Action(() =>
-                {
-                    importDialog.thumbnailsLoaded = true;
-                    importDialog.Close();
-                }));
-            });
         }
 
         private void ApplySelectedTheme()
@@ -235,46 +123,16 @@ namespace WinDynamicDesktop
             }
             else if (IsLockScreenSelected)
             {
-                if (JsonConfig.settings.lockScreenDisplayIndex != -1)
+                bool shouldContinue = ThemeDialogUtils.UpdateConfigForLockScreen();
+                if (!shouldContinue)
                 {
-                    DialogResult result = MessageDialog.ShowQuestion(string.Format(
-                        _("Applying this theme will stop the lock screen image from syncing with {0}. " +
-                        "Are you sure you want to continue?"), LockScreenChanger.GetDisplayName()));
-                    if (result != DialogResult.Yes)
-                    {
-                        return;
-                    }
+                    return;
                 }
-
-                JsonConfig.settings.lockScreenDisplayIndex = -1;
                 JsonConfig.settings.lockScreenTheme = activeTheme;
-                LockScreenChanger.UpdateMenuItems();
             }
             else
             {
-                int numNewDisplays = Screen.AllScreens.Length - activeThemes.Count + 1;
-
-                if (numNewDisplays > 0)
-                {
-                    for (int i = 0; i < numNewDisplays; i++)
-                    {
-                        activeThemes.Add(null);
-                    }
-                }
-
-                if (activeThemes[0] != null)
-                {
-                    for (int i = 0; i < activeThemes.Count; i++)
-                    {
-                        if (activeThemes[i] == null)
-                        {
-                            activeThemes[i] = activeThemes[0];
-                        }
-                    }
-
-                    activeThemes[0] = null;
-                }
-
+                ThemeDialogUtils.UpdateConfigForDisplay(activeThemes);
                 activeThemes[displayComboBox.SelectedIndex] = activeTheme;
             }
 
@@ -345,19 +203,6 @@ namespace WinDynamicDesktop
             previewer.ViewModel.PreviewTheme(theme, ThemeThumbLoader.GetWindowsWallpaper(IsLockScreenSelected));
         }
 
-        private bool IsLockScreenSelected
-        {
-            get
-            {
-                return UwpDesktop.IsUwpSupported() &&
-                    displayComboBox.SelectedIndex == displayComboBox.Items.Count - 1;
-            }
-        }
-
-        // Code to change ListView appearance from https://stackoverflow.com/a/4463114/5504760
-        [DllImport("uxtheme.dll", ExactSpelling = true, CharSet = CharSet.Unicode)]
-        internal static extern int SetWindowTheme(IntPtr hwnd, string pszSubAppName, string pszSubIdList);
-
         private void ThemeDialog_Load(object sender, EventArgs e)
         {
             previewer = new WPF.ThemePreviewer();
@@ -365,7 +210,7 @@ namespace WinDynamicDesktop
 
             listView1.ContextMenuStrip = contextMenuStrip1;
             listView1.ListViewItemSorter = new CompareByItemText();
-            SetWindowTheme(listView1.Handle, DarkUI.IsDark ? "DarkMode_Explorer" : "Explorer", null);
+            ThemeDialogUtils.SetWindowTheme(listView1.Handle, DarkUI.IsDark ? "DarkMode_Explorer" : "Explorer", null);
 
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
@@ -382,7 +227,7 @@ namespace WinDynamicDesktop
 
             if (UwpDesktop.IsMultiDisplaySupported())
             {
-                string[] displayNames = GetDisplayNames();
+                string[] displayNames = ThemeDialogUtils.GetDisplayNames();
                 for (int i = 0; i < displayNames.Length; i++)
                 {
                     displayComboBox.Items.Add(string.Format(_("Display {0}: {1}"), i + 1, displayNames[i]));
@@ -406,7 +251,8 @@ namespace WinDynamicDesktop
                 focusTheme = "Mojave_Desert";
             }
 
-            Task.Run(new Action(() => LoadThemes(ThemeManager.themeSettings, activeTheme, focusTheme)));
+            ThemeLoadOpts loadOpts = new ThemeLoadOpts(activeTheme, focusTheme);
+            Task.Run(new Action(() => ThemeDialogUtils.LoadThemes(ThemeManager.themeSettings, listView1, loadOpts)));
         }
 
         private void displayComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -562,29 +408,10 @@ namespace WinDynamicDesktop
             int itemIndex = listView1.FocusedItem.Index;
             string themeId = (string)listView1.Items[itemIndex].Tag;
             ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
+            bool shouldContinue = ThemeDialogUtils.DeleteTheme(theme, listView1, itemIndex);
 
-            if ((!JsonConfig.IsNullOrEmpty(JsonConfig.settings.activeThemes) &&
-                (JsonConfig.settings.activeThemes[0] == themeId || (JsonConfig.settings.activeThemes[0] == null &&
-                JsonConfig.settings.activeThemes.Contains(themeId)))) || JsonConfig.settings.lockScreenTheme == themeId)
+            if (shouldContinue)
             {
-                MessageDialog.ShowWarning(string.Format(_("The '{0}' theme cannot be deleted because it is " +
-                    "currently active for one or more displays."), ThemeManager.GetThemeName(theme)), _("Error"));
-                return;
-            }
-
-            DialogResult result = MessageDialog.ShowQuestion(string.Format(_("Are you sure you want to remove " +
-                "the '{0}' theme?"), ThemeManager.GetThemeName(theme)), _("Question"), MessageBoxIcon.Warning);
-
-            if (result == DialogResult.Yes)
-            {
-                if (!ThemeManager.defaultThemes.Contains(theme.themeId))
-                {
-                    int imageIndex = listView1.Items[itemIndex].ImageIndex;
-                    listView1.Items.RemoveAt(itemIndex);
-                    listView1.Items[itemIndex - 1].Selected = true;
-                    listView1.LargeImageList.Images[imageIndex].Dispose();
-                }
-
                 Task.Run(() =>
                 {
                     ThemeManager.RemoveTheme(theme);
@@ -620,7 +447,7 @@ namespace WinDynamicDesktop
             if (e.CloseReason == CloseReason.UserClosing && !importDialog.thumbnailsLoaded)
             {
                 e.Cancel = true;
-                LoadImportedThemes(ThemeManager.importedThemes, importDialog);
+                ThemeDialogUtils.LoadImportedThemes(ThemeManager.importedThemes, listView1, importDialog);
             }
             else
             {

@@ -25,7 +25,7 @@ namespace WinDynamicDesktop
             using (RegistryKey startupKey = Registry.CurrentUser.OpenSubKey(registryStartupLocation))
             {
                 startOnBoot = startupKey.GetValue("WinDynamicDesktop") != null;
-            };
+            }
 
             TrayMenu.startOnBootItem.Checked = startOnBoot;
         }

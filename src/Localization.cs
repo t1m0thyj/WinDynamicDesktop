@@ -10,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -18,9 +17,6 @@ namespace WinDynamicDesktop
 {
     class Localization
     {
-        private static readonly string poeditorApiToken = Encoding.UTF8.GetString(Convert.FromBase64String(
-            "ODdlMGM3ZjRmMjE1YjRiMjkwNTE4NDUyMWE4Y2FkNTE="));
-
         public static string[] languageCodes = new string[]
         {
             "am", "ar", "ar-ae", "az",
@@ -155,7 +151,7 @@ namespace WinDynamicDesktop
             var client = new RestClient("https://api.poeditor.com");
 
             var request = new RestRequest("v2/projects/export", Method.Post);
-            request.AddParameter("api_token", poeditorApiToken);
+            request.AddParameter("api_token", Environment.GetEnvironmentVariable("POEDITOR_API_TOKEN"));
             request.AddParameter("id", "293081");
             request.AddParameter("language", currentLocale);
             request.AddParameter("type", "mo");

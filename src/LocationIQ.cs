@@ -6,7 +6,6 @@ using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -14,8 +13,6 @@ namespace WinDynamicDesktop
 {
     class LocationIQService
     {
-        private static readonly string apiKey = Encoding.UTF8.GetString(Convert.FromBase64String(
-            "cGsuYmRhNTk1NDRhN2VjZWMxYjAxMDZkNzg5MzdlMDQzOTk="));
         private static readonly Func<string, string> _ = Localization.GetTranslation;
 
         private static void HandleLocationSuccess(LocationIQData data, ScheduleDialog dialog)
@@ -38,7 +35,7 @@ namespace WinDynamicDesktop
             var client = new RestClient("https://us1.locationiq.com");
 
             var request = new RestRequest("v1/search.php");
-            request.AddParameter("key", apiKey);
+            request.AddParameter("key", Environment.GetEnvironmentVariable("LOCATIONIQ_API_KEY"));
             request.AddParameter("q", locationStr);
             request.AddParameter("format", "json");
             request.AddParameter("limit", "1");
