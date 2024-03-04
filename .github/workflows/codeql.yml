@@ -34,6 +34,10 @@ jobs:
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
+    
+    - name: Create env file
+      run: echo ${{ secrets.ENV_FILE }} | base64 --decode > .env
+      shell: bash
 
     - name: Autobuild
       run: dotnet build src\WinDynamicDesktop.csproj

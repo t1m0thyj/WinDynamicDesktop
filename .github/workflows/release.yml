@@ -21,6 +21,9 @@ jobs:
 
     - uses: microsoft/setup-msbuild@v2
 
+    - run: echo ${{ secrets.ENV_FILE }} | base64 --decode > .env
+      shell: bash
+
     - run: scripts\version.ps1 ${{ github.event.inputs.version }}
 
     - run: scripts\package.ps1
