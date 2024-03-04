@@ -36,7 +36,7 @@ jobs:
         languages: ${{ matrix.language }}
     
     - name: Create env file
-      run: echo ${{ secrets.ENV_FILE }} | base64 --decode > .env
+      run: echo ${{ secrets.ENV_FILE }} | base64 --decode > src/.env
       shell: bash
 
     - name: Autobuild
