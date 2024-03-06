@@ -34,13 +34,11 @@ jobs:
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
-    
-    - name: Create env file
-      run: echo ${{ secrets.ENV_FILE }} | base64 --decode > src/.env
-      shell: bash
 
     - name: Autobuild
-      run: dotnet build src\WinDynamicDesktop.csproj
+      run: |
+        cp .env.example .env
+        dotnet build src\WinDynamicDesktop.csproj
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3

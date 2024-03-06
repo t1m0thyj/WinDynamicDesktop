@@ -8,7 +8,7 @@ Pull requests are welcome. For major changes, please [open an issue](https://git
     * .NET desktop deployment
     * Universal Windows Platform deployment
 
-2. Create an env file by copying `src/.env.example` to `src/.env`. Define the following variables in it:
+2. Create an env file by copying `.env.example` to `.env`. Define the following variables in it:
     * `LOCATIONIQ_API_KEY` (optional) - [LocationIQ API key](https://help.locationiq.com/support/solutions/articles/36000172496-how-do-i-get-the-api-key-access-token-) used to get latitude and longitude based on city name
     * `POEDITOR_API_TOKEN` (optional) - [POEditor API token](https://poeditor.com/account/api) used to test new translations from the POEditor website
 
