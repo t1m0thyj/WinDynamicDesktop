@@ -8,6 +8,8 @@ using System.Linq;
 
 namespace WinDynamicDesktop
 {
+    public enum AppearanceMode { Automatic, Light, Dark }
+
     public enum DaySegment { Sunrise, Day, Sunset, Night, AlwaysDay, AlwaysNight }
 
     public class DaySegmentData
@@ -169,7 +171,7 @@ namespace WinDynamicDesktop
             DaySegmentData segmentData = GetDaySegmentData(data, dateNow);
             e.daySegment2 = segmentData.segment2;
 
-            bool preferSegment2 = JsonConfig.settings.darkMode;
+            bool preferSegment2 = JsonConfig.settings.appearanceMode > 0;
             if (!preferSegment2 && e.currentTheme != null)
             {
                 if ((segmentData.segmentType == DaySegment.Sunrise || segmentData.segmentType == DaySegment.Night) &&
@@ -187,7 +189,9 @@ namespace WinDynamicDesktop
             if (data.polarPeriod != PolarPeriod.None)
             {
                 imageList = e.currentTheme?.dayImageList;
-                if (data.polarPeriod == PolarPeriod.PolarNight || JsonConfig.settings.darkMode)
+                if (JsonConfig.settings.appearanceMode == (int)AppearanceMode.Dark ||
+                    (JsonConfig.settings.appearanceMode == (int)AppearanceMode.Automatic &&
+                    data.polarPeriod == PolarPeriod.PolarNight))
                 {
                     imageList = e.currentTheme?.nightImageList;
                 }
@@ -237,7 +241,8 @@ namespace WinDynamicDesktop
             else
             {
                 imageList = e.currentTheme?.dayImageList;
-                if (segmentData.segment2 == 1 || JsonConfig.settings.darkMode)
+                if (JsonConfig.settings.appearanceMode == (int)AppearanceMode.Dark ||
+                    (JsonConfig.settings.appearanceMode == (int)AppearanceMode.Automatic && segmentData.segment2 == 1))
                 {
                     imageList = e.currentTheme?.nightImageList;
                 }
@@ -270,11 +275,13 @@ namespace WinDynamicDesktop
             }
         }
 
-        public static void ToggleDarkMode()
+        public static void SetAppearanceMode(AppearanceMode themeMode)
         {
-            bool isEnabled = JsonConfig.settings.darkMode ^ true;
-            JsonConfig.settings.darkMode = isEnabled;
-            TrayMenu.darkModeItem.Checked = isEnabled;
+            JsonConfig.settings.appearanceMode = (int)themeMode;
+            for (int i = 0; i < TrayMenu.themeModeItems.Length; i++)
+            {
+                TrayMenu.themeModeItems[i].Checked = i == (int)themeMode;
+            }
 
             AppContext.scheduler.Run();
         }

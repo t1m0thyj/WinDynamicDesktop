@@ -29,7 +29,9 @@ namespace WinDynamicDesktop
 
         // Theme settings
         public string[] activeThemes { get; set; }
+        [Obsolete("Will be removed in v6")]
         public bool darkMode { get; set; }
+        public int appearanceMode { get; set; }
         [Obsolete("Will be removed in v6")]
         public bool changeLockScreen { get; set; }
         public int lockScreenDisplayIndex { get; set; } = -1;

@@ -50,7 +50,7 @@ namespace WinDynamicDesktop
 
         static void LoadDotEnv()
         {
-            string envText = Encoding.UTF8.GetString(Properties.Resources.SecretsEnv);
+            string envText = Encoding.UTF8.GetString(Properties.Resources.DotEnv);
             string[] envLines = envText.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
             foreach (string line in envLines)

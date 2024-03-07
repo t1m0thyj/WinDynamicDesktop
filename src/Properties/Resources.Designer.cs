@@ -92,9 +92,9 @@ namespace WinDynamicDesktop.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] SecretsEnv {
+        internal static byte[] DotEnv {
             get {
-                object obj = ResourceManager.GetObject("SecretsEnv", resourceCulture);
+                object obj = ResourceManager.GetObject("DotEnv", resourceCulture);
                 return ((byte[])(obj));
             }
         }

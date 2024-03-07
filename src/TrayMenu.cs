@@ -13,8 +13,8 @@ namespace WinDynamicDesktop
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
 
-        public static ToolStripMenuItem darkModeItem;
         public static ToolStripMenuItem startOnBootItem;
+        public static ToolStripMenuItem[] themeModeItems = new ToolStripMenuItem[3];
         public static ToolStripMenuItem fullScreenItem;
         public static ToolStripMenuItem hideTrayItem;
         public static ToolStripMenuItem enableScriptsItem;
@@ -27,9 +27,13 @@ namespace WinDynamicDesktop
 
         private ToolStripItem[] GetMenuItems()
         {
-            darkModeItem = new ToolStripMenuItem(_("Enable &Night Mode"), null, OnDarkModeClick);
-            darkModeItem.Checked = JsonConfig.settings.darkMode;
             startOnBootItem = new ToolStripMenuItem(_("Start on &Boot"), null, OnStartOnBootClick);
+            ToolStripMenuItem themeModeItem = new ToolStripMenuItem(_("T&heme Mode"));
+            themeModeItems[0] = new ToolStripMenuItem(_("&Automatic"), null, OnThemeModeItemClick);
+            themeModeItems[1] = new ToolStripMenuItem(_("&Light Mode"), null, OnThemeModeItemClick);
+            themeModeItems[2] = new ToolStripMenuItem(_("&Dark Mode"), null, OnThemeModeItemClick);
+            themeModeItems[JsonConfig.settings.appearanceMode].Checked = true;
+            themeModeItem.DropDownItems.AddRange(themeModeItems);
             ToolStripMenuItem optionsItem = new ToolStripMenuItem(_("More &Options"));
             optionsItem.DropDownItems.AddRange(GetOptionsMenuItems());
 
@@ -40,8 +44,8 @@ namespace WinDynamicDesktop
                 new ToolStripMenuItem(_("&Configure Schedule..."), null, OnScheduleItemClick),
                 new ToolStripMenuItem(_("&Select Theme..."), null, OnThemeItemClick),
                 new ToolStripSeparator(),
-                darkModeItem,
                 startOnBootItem,
+                themeModeItem,
                 optionsItem,
                 new ToolStripSeparator(),
                 new ToolStripMenuItem(_("&Check for Updates"), null, OnUpdateItemClick),
@@ -101,14 +105,14 @@ namespace WinDynamicDesktop
             ThemeManager.SelectTheme();
         }
 
-        private void OnDarkModeClick(object sender, EventArgs e)
-        {
-            SolarScheduler.ToggleDarkMode();
-        }
-
         private void OnStartOnBootClick(object sender, EventArgs e)
         {
             UwpDesktop.GetHelper().ToggleStartOnBoot();
+        }
+
+        private void OnThemeModeItemClick(object sender, EventArgs e)
+        {
+            SolarScheduler.SetAppearanceMode((AppearanceMode)Array.IndexOf(themeModeItems, (ToolStripMenuItem)sender));
         }
 
         private async void OnUpdateItemClick(object sender, EventArgs e)

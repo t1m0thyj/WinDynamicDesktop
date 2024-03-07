@@ -79,6 +79,11 @@ namespace WinDynamicDesktop
                 JsonConfig.settings.lastShuffleTime = JsonConfig.settings.lastShuffleDate;
                 JsonConfig.settings.lastShuffleDate = null;
             }
+            if (JsonConfig.settings.darkMode == true)
+            {
+                JsonConfig.settings.appearanceMode = (int)AppearanceMode.Dark;
+                JsonConfig.settings.darkMode = false;
+            }
 #pragma warning restore 618
         }
 
