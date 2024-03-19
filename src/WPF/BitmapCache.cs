@@ -91,6 +91,7 @@ namespace WinDynamicDesktop.WPF
             }
 
             img.EndInit();
+            img.StreamSource?.Dispose();
             img.Freeze();
             return img;
         }
