@@ -1,3 +1,4 @@
+using FakeTimeZone;
 using TimeZoneConverter;
 
 namespace WinDynamicDesktop.Tests
@@ -125,6 +126,23 @@ namespace WinDynamicDesktop.Tests
             Assert.Equal(DateTime.MinValue, data.solarTimes[1]);
             Assert.Equal(DateTime.MinValue, data.solarTimes[2]);
             Assert.Equal(ConvertTime(testDate).Date, ConvertTime(data.solarTimes[3]).Date);
+        }
+
+        [Fact]
+        public void TestDaylightSavingTime()
+        {
+            localTz = "Europe/London";  // London (UTC -> UTC+1)
+            using var _ = new FakeLocalTimeZone(TZConvert.GetTimeZoneInfo(localTz));
+            SunriseSunsetService.GetDateTimeNow = () => DateTime.Today.AddMinutes(90);
+            DateTime testDate = new DateTime(2024, 3, 31, 0, 0, 0, DateTimeKind.Local);
+            JsonConfig.settings.latitude = 51.50;
+            JsonConfig.settings.longitude = -0.129;
+            SolarData data = SunriseSunsetService.GetSolarData(testDate.Date);
+            Assert.Equal(PolarPeriod.None, data.polarPeriod);
+            Assert.Equal(ConvertTime(testDate).Date, ConvertTime(data.sunriseTime).Date);
+            Assert.Equal((6, 38), (ConvertTime(data.sunriseTime).Hour, ConvertTime(data.sunriseTime).Minute));
+            Assert.Equal(ConvertTime(testDate).Date, ConvertTime(data.sunsetTime).Date);
+            Assert.Equal((19, 32), (ConvertTime(data.sunsetTime).Hour, ConvertTime(data.sunsetTime).Minute));
         }
     }
 }
