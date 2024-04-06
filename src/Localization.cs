@@ -10,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WinDynamicDesktop
@@ -61,7 +60,7 @@ namespace WinDynamicDesktop
             }
             else
             {
-                LoadLocaleFromWeb().Wait();
+                LoadLocaleFromWeb();
             }
 
             if (JsonConfig.firstRun)
@@ -146,7 +145,7 @@ namespace WinDynamicDesktop
             }
         }
 
-        private static async Task LoadLocaleFromWeb()
+        private static void LoadLocaleFromWeb()
         {
             var client = new RestClient("https://api.poeditor.com");
 
@@ -156,7 +155,7 @@ namespace WinDynamicDesktop
             request.AddParameter("language", currentLocale);
             request.AddParameter("type", "mo");
 
-            var response = await client.ExecuteAsync<PoEditorApiData>(request);
+            var response = client.Execute<PoEditorApiData>(request);
             if (!response.IsSuccessful)
             {
                 return;
@@ -164,7 +163,7 @@ namespace WinDynamicDesktop
 
             using (HttpClient httpClient = new HttpClient())
             {
-                byte[] moBinary = await httpClient.GetByteArrayAsync(response.Data.result.url);
+                byte[] moBinary = httpClient.GetByteArrayAsync(response.Data.result.url).Result;
 
                 using (Stream stream = new MemoryStream(moBinary))
                 {
