@@ -69,12 +69,13 @@ namespace WinDynamicDesktop
         {
             autoSaveTimer?.Stop();
             ConfigMigrator.RenameSettingsFile();
+            string jsonText = null;
 
             if (!firstRun)
             {
                 try
                 {
-                    string jsonText = File.ReadAllText("settings.json");
+                    jsonText = File.ReadAllText("settings.json");
                     ConfigMigrator.UpdateConfig(jsonText);
                     settings = JsonConvert.DeserializeObject<AppConfig>(jsonText);
                 }
@@ -94,10 +95,10 @@ namespace WinDynamicDesktop
                 }
             }
 
-            unsavedChanges = false;
+            unsavedChanges = ConfigMigrator.UpdateObsoleteSettings(jsonText);
             autoSaveTimer = new System.Timers.Timer(1000);
             autoSaveTimer.AutoReset = false;
-            ConfigMigrator.UpdateObsoleteSettings();
+            autoSaveTimer.Enabled = unsavedChanges;
 
             settings.PropertyChanged += OnSettingsPropertyChanged;
             autoSaveTimer.Elapsed += OnAutoSaveTimerElapsed;

@@ -116,7 +116,8 @@ namespace WinDynamicDesktop
             ScriptManager.RunScripts(new ScriptArgs
             {
                 daySegment2 = displayEvents[0].daySegment2,
-                daySegment4 = displayEvents[0].daySegment4,
+                daySegment4 = displayEvents[0].daySegment4 ?? -1,
+                themeMode = JsonConfig.settings.appearanceMode,
                 imagePaths = displayEvents.Select(e =>
                     (e.displayIndex == overrideEvent?.displayIndex ? overrideEvent : e).lastImagePath).ToArray()
             }, forceImageUpdate);

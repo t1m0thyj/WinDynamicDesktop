@@ -60,31 +60,46 @@ namespace WinDynamicDesktop
             UpdateToVersion5(jsonText);
         }
 
-        public static void UpdateObsoleteSettings()  // Added 2024-01-22
+        public static bool UpdateObsoleteSettings(string jsonText)  // Added 2024-01-22
         {
+            bool settingsChanged = false;
 #pragma warning disable 618
             if (JsonConfig.settings.changeLockScreen)
             {
                 JsonConfig.settings.lockScreenDisplayIndex = Array.FindIndex(JsonConfig.settings.activeThemes,
                     (themeId) => themeId != null);
                 JsonConfig.settings.changeLockScreen = false;
+                settingsChanged = true;
             }
             if (JsonConfig.settings.enableShuffle)
             {
                 JsonConfig.settings.themeShuffleMode = 22;
                 JsonConfig.settings.enableShuffle = false;
+                settingsChanged = true;
             }
             if (JsonConfig.settings.lastShuffleDate != null)
             {
                 JsonConfig.settings.lastShuffleTime = JsonConfig.settings.lastShuffleDate;
                 JsonConfig.settings.lastShuffleDate = null;
+                settingsChanged = true;
             }
-            if (JsonConfig.settings.darkMode == true)
+            if (JsonConfig.settings.darkMode)
             {
                 JsonConfig.settings.appearanceMode = (int)AppearanceMode.Dark;
                 JsonConfig.settings.darkMode = false;
+                settingsChanged = true;
             }
 #pragma warning restore 618
+            if (JsonConfig.settings.enableScripts && jsonText?.IndexOf("\"appearanceMode\"") == -1)
+            {
+                MessageDialog.ShowInfo("Updated to WinDynamicDesktop 5.5 successfully. PowerShell scripts that are " +
+                    "outdated have been temporarily disabled.\n\nTo update them, download the latest scripts from " +
+                    "https://windd.info/scripts/ and revise any custom scripts.\n\nAfter scripts have been updated, " +
+                    "you can re-enable PowerShell scripts in the \"More Options\" menu.");
+                JsonConfig.settings.enableScripts = false;
+                settingsChanged = true;
+            }
+            return settingsChanged;
         }
 
         private static DateTime SafeParse(string dateTime)  // Added 2020-05-21
