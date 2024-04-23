@@ -350,17 +350,24 @@ namespace WinDynamicDesktop
         {
             var hitTestInfo = listView1.HitTest(listView1.PointToClient(Cursor.Position));
             int itemIndex = hitTestInfo.Item?.Index ?? -1;
+            string themeId = null;
+            ThemeConfig theme = null;
 
-            if (itemIndex <= 0)
+            if (itemIndex < 0)
             {
                 e.Cancel = true;
                 return;
             }
+            else if (itemIndex > 0)
+            {
+                themeId = (string)listView1.Items[itemIndex].Tag;
+                theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
+            }
 
-            string themeId = (string)listView1.Items[itemIndex].Tag;
-            ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
             bool isWindowsTheme = themeId == DefaultThemes.GetWindowsTheme()?.themeId;
-            contextMenuStrip1.Items[1].Enabled = ThemeManager.IsThemeDownloaded(theme) && !isWindowsTheme;
+            contextMenuStrip1.Items[0].Enabled = itemIndex > 0;
+            contextMenuStrip1.Items[1].Enabled = theme != null && ThemeManager.IsThemeDownloaded(theme) &&
+                !isWindowsTheme;
 
             if (JsonConfig.settings.favoriteThemes == null ||
                 !JsonConfig.settings.favoriteThemes.Contains(themeId))
@@ -372,7 +379,7 @@ namespace WinDynamicDesktop
                 contextMenuStrip1.Items[0].Text = _("Remove from favorites");
             }
 
-            if (ThemeManager.defaultThemes.Contains(themeId) || isWindowsTheme)
+            if (themeId == null || ThemeManager.defaultThemes.Contains(themeId) || isWindowsTheme)
             {
                 contextMenuStrip1.Items[1].Text = _("Delete");
             }
@@ -380,6 +387,9 @@ namespace WinDynamicDesktop
             {
                 contextMenuStrip1.Items[1].Text = _("Delete permanently");
             }
+
+            contextMenuStrip1.Items[3].Text = _("Show only installed themes");
+            (contextMenuStrip1.Items[3] as ToolStripMenuItem).Checked = JsonConfig.settings.showInstalledOnly;
         }
 
         private void favoriteThemeMenuItem_Click(object sender, EventArgs e)
@@ -422,6 +432,11 @@ namespace WinDynamicDesktop
                     }
                 });
             }
+        }
+
+        private void showInstalledMenuItem_Click(object sender, EventArgs e)
+        {
+            ThemeDialogUtils.ToggleShowInstalledOnly(listView1, !JsonConfig.settings.showInstalledOnly);
         }
 
         private void OnDownloadDialogClosed(object sender, FormClosedEventArgs e)

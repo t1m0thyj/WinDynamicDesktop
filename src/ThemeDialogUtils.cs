@@ -72,6 +72,11 @@ namespace WinDynamicDesktop
 
             foreach (ThemeConfig theme in themes.ToList())
             {
+                if (JsonConfig.settings.showInstalledOnly && !ThemeManager.IsThemeDownloaded(theme))
+                {
+                    continue;
+                }
+
                 try
                 {
                     using (Image thumbnailImage = ThemeThumbLoader.GetThumbnailImage(theme, thumbnailSize, true))
@@ -220,6 +225,32 @@ namespace WinDynamicDesktop
             }
 
             return result == DialogResult.Yes;
+        }
+
+        internal static void ToggleShowInstalledOnly(ListView listView, bool newValue)
+        {
+            JsonConfig.settings.showInstalledOnly = newValue;
+            if (newValue)
+            {
+                foreach (ListViewItem item in listView.Items)
+                {
+                    if (item.Index > 0)
+                    {
+                        string themeId = (string)item.Tag;
+                        ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
+                        if (!ThemeManager.IsThemeDownloaded(theme))
+                        {
+                            listView.Items.Remove(item);
+                            listView.LargeImageList.Images[item.ImageIndex].Dispose();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                LoadThemes(ThemeManager.themeSettings.Where(theme => !ThemeManager.IsThemeDownloaded(theme)).ToList(),
+                    listView, new ThemeLoadOpts());
+            }
         }
     }
 }

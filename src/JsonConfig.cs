@@ -44,6 +44,7 @@ namespace WinDynamicDesktop
         public string lastShuffleTime { get; set; }
         public string[] shuffleHistory { get; set; }
         public string[] favoriteThemes { get; set; }
+        public bool showInstalledOnly { get; set; }
 
         // General settings
         public string language { get; set; }

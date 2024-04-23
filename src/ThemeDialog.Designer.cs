@@ -43,6 +43,8 @@
             toolStrip1 = new System.Windows.Forms.ToolStrip();
             displayComboBox = new System.Windows.Forms.ToolStripComboBox();
             meatballButton = new System.Windows.Forms.ToolStripDropDownButton();
+            toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            showInstalledMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             contextMenuStrip1.SuspendLayout();
             toolStrip1.SuspendLayout();
             SuspendLayout();
@@ -106,10 +108,10 @@
             // contextMenuStrip1
             // 
             contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { favoriteThemeMenuItem, deleteThemeMenuItem });
+            contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { favoriteThemeMenuItem, deleteThemeMenuItem, toolStripSeparator1, showInstalledMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
             contextMenuStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            contextMenuStrip1.Size = new System.Drawing.Size(181, 48);
+            contextMenuStrip1.Size = new System.Drawing.Size(181, 98);
             contextMenuStrip1.Opening += contextMenuStrip1_Opening;
             // 
             // favoriteThemeMenuItem
@@ -192,6 +194,18 @@
             meatballButton.Text = "…";
             meatballButton.ToolTipText = "See More";
             // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            // 
+            // showInstalledMenuItem
+            // 
+            showInstalledMenuItem.Name = "showInstalledMenuItem";
+            showInstalledMenuItem.Size = new System.Drawing.Size(180, 22);
+            showInstalledMenuItem.Text = "toolStripMenuItem3";
+            showInstalledMenuItem.Click += showInstalledMenuItem_Click;
+            // 
             // ThemeDialog
             // 
             AcceptButton = applyButton;
@@ -236,5 +250,7 @@
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripComboBox displayComboBox;
         private System.Windows.Forms.ToolStripDropDownButton meatballButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem showInstalledMenuItem;
     }
 }
