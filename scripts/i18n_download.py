@@ -20,8 +20,6 @@ client = POEditorAPI(os.getenv("POEDITOR_API_TOKEN"))
 projects = client.list_projects()
 project_id = [proj for proj in projects if proj["name"] == "WinDynamicDesktop"][0]["id"]
 languages = client.list_project_languages(project_id)
-with open("../src/Localization.cs", 'r', encoding="utf-8") as fileobj:
-    l10n_src = fileobj.read()
 
 for lang in languages:
     language_code = lang["code"]
@@ -29,6 +27,4 @@ for lang in languages:
     if lang["percentage"] < 50 and not os.path.isfile(output_file):
         continue
     print(f"Downloading translation for {language_code}")
-    if f"\"{language_code}\"" not in l10n_src[:l10n_src.index("};")]:
-        print(f"WARNING: Language list does not include {language_code}")
     client.export(project_id, language_code, file_type, local_file=output_file)

@@ -1,5 +1,20 @@
 # Changelog
 
+## `5.5.0`
+
+**Note:** PowerShell scripts written for older versions of WinDD will stop working and must be updated. To update them, download the latest scripts from [here](https://windd.info/scripts/) and revise any custom scripts.
+
+### Enhancements
+
+* Added light mode as alternative to dark mode that always shows day images ([#547](https://github.com/t1m0thyj/WinDynamicDesktop/issues/547))
+* Added option to show only installed themes in Select Theme dialog ([#576](https://github.com/t1m0thyj/WinDynamicDesktop/issues/576))
+
+### Bug Fixes
+
+* Fixed error in wallpaper scheduler the day after Daylight Saving Time begins ([#579](https://github.com/t1m0thyj/WinDynamicDesktop/issues/579))
+* Fixed invalid format strings for some translations like Javanese ([#580](https://github.com/t1m0thyj/WinDynamicDesktop/issues/580))
+* Fixed error when downloading beta translations from POEditor ([#581](https://github.com/t1m0thyj/WinDynamicDesktop/issues/581))
+
 ## `5.4.2`
 
 **Note:** Version 5.4.0 had a bug causing the Change Lockscreen Image setting to be disabled for some users. If you had this option selected, check lock screen settings in the Select Theme dialog to ensure it is still enabled after upgrading.
