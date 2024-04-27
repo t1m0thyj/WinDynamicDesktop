@@ -137,7 +137,7 @@ namespace WinDynamicDesktop
 
         private void OnRefreshItemClick(object sender, EventArgs e)
         {
-            AppContext.scheduler.Run(true);
+            AppContext.scheduler.RunAndUpdateLocation(true);
         }
 
         private void OnFullScreenItemClick(object sender, EventArgs e)

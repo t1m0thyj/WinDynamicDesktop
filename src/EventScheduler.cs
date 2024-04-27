@@ -51,11 +51,11 @@ namespace WinDynamicDesktop
             SystemEvents.TimeChanged += OnTimeChanged;
         }
 
-        public void Run(bool forceImageUpdate = false, DisplayEvent overrideEvent = null)
+        public bool Run(bool forceImageUpdate = false, DisplayEvent overrideEvent = null)
         {
             if (!LaunchSequence.IsLocationReady() || !LaunchSequence.IsThemeReady())
             {
-                return;
+                return false;
             }
             else if (displayEvents == null || forceImageUpdate)
             {
@@ -129,6 +129,17 @@ namespace WinDynamicDesktop
             }
 
             StartTimer(nextUpdateTime.Value);
+            return true;
+        }
+
+        public async void RunAndUpdateLocation(bool forceImageUpdate = false)
+        {
+            bool result = Run(forceImageUpdate);
+
+            if (result && JsonConfig.settings.locationMode == 1 && await UwpLocation.UpdateGeoposition())
+            {
+                Run();  // Update wallpaper again if location has changed
+            }
         }
 
         private bool UpdateDisplayList()
@@ -217,12 +228,15 @@ namespace WinDynamicDesktop
                 return;
             }
 
-            if (updateLocation && JsonConfig.settings.locationMode == 1)
+            if (updateLocation)
             {
-                Task.Run(UwpLocation.UpdateGeoposition);
+                RunAndUpdateLocation();
+            }
+            else
+            {
+                Run();
             }
 
-            Run();
             UpdateChecker.TryCheckAuto();
         }
 

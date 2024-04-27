@@ -31,7 +31,7 @@ namespace WinDynamicDesktop
             ThemeManager.Initialize();
             ScriptManager.Initialize();
 
-            scheduler.Run();
+            scheduler.RunAndUpdateLocation();
             LaunchSequence.NextStep();
             UpdateChecker.Initialize();
         }
