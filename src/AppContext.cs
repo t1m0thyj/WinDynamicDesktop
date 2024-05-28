@@ -24,7 +24,7 @@ namespace WinDynamicDesktop
             LoggingHandler.RotateDebugLog();
 
             ThemeManager.importPaths = args.Where(System.IO.File.Exists).ToList();
-            HandleMultiInstance();
+            HandleMultiInstance(args);
 
             InitializeTrayIcon();
             LocationManager.Initialize();
@@ -36,7 +36,7 @@ namespace WinDynamicDesktop
             UpdateChecker.Initialize();
         }
 
-        private void HandleMultiInstance()
+        private void HandleMultiInstance(string[] args)
         {
             ipcManager = new IpcManager();
 
@@ -46,9 +46,9 @@ namespace WinDynamicDesktop
             }
             else
             {
-                if (ThemeManager.importPaths.Count > 0 || JsonConfig.settings.hideTrayIcon)
+                if (args.Length > 0 || JsonConfig.settings.hideTrayIcon)
                 {
-                    ipcManager.SendArgsToFirstInstance(ThemeManager.importPaths.ToArray());
+                    ipcManager.SendArgsToFirstInstance(args);
                 }
                 else
                 {
@@ -99,9 +99,36 @@ namespace WinDynamicDesktop
                 MainForm.BeginInvoke(ToggleTrayIcon);
             }
 
-            ThemeManager.importPaths.AddRange(args);
+            foreach (string arg in args)
+            {
+                if (arg.StartsWith('/'))
+                {
+                    switch (arg.ToLower())
+                    {
+                        case "/refresh":
+                            scheduler.RunAndUpdateLocation(true);
+                            break;
+                        case "/theme:auto":
+                            MainForm.BeginInvoke(SolarScheduler.SetAppearanceMode, AppearanceMode.Automatic);
+                            break;
+                        case "/theme:light":
+                            MainForm.BeginInvoke(SolarScheduler.SetAppearanceMode, AppearanceMode.Light); 
+                            break;
+                        case "/theme:dark":
+                            MainForm.BeginInvoke(SolarScheduler.SetAppearanceMode, AppearanceMode.Dark);
+                            break;
+                        default:
+                            Console.WriteLine("Unrecognized command line option: " + arg);
+                            break;
+                    }
+                }
+                else
+                {
+                    ThemeManager.importPaths.Add(arg);
+                }
+            }
 
-            if (args.Length > 0 && !ThemeManager.importMode)
+            if (ThemeManager.importPaths.Count > 0 && !ThemeManager.importMode)
             {
                 MainForm.BeginInvoke(ThemeManager.SelectTheme);
             }
@@ -126,8 +153,8 @@ namespace WinDynamicDesktop
                 notifyIcon.Visible = false;
             }
 
-            JsonConfig.SaveConfig();
             ipcManager?.Dispose();
+            JsonConfig.SaveConfig();
         }
     }
 }

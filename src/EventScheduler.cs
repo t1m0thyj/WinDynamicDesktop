@@ -186,7 +186,7 @@ namespace WinDynamicDesktop
                 }
             }
 
-            LoggingHandler.LogMessage("Setting wallpaper to {0}@{1}", imagePath, e.displayIndex);
+            LoggingHandler.LogMessage("Setting wallpaper {0} to {1}", e.displayIndex, imagePath);
             try
             {
                 if (e.displayIndex != DisplayEvent.LockScreenIndex)

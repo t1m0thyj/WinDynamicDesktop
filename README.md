@@ -30,7 +30,7 @@ Extend the behavior of WinDynamicDesktop with PowerShell scripts, and share them
 
 ## Supported Devices
 
-WinDynamicDesktop is developed primarily for Windows 10, but should run on any version of Windows with .NET Framework 4.5 or newer installed. If your version of .NET Framework is too old, you can install a newer one from [here](https://www.microsoft.com/net/download).
+WinDynamicDesktop is developed primarily for Windows 11, but should run on any device with Windows 7 or newer. Windows Insider builds are not officially supported.
 
 ## Resources
 

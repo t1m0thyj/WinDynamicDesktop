@@ -141,7 +141,7 @@
             locationPermissionLabel.Name = "locationPermissionLabel";
             locationPermissionLabel.Size = new System.Drawing.Size(161, 15);
             locationPermissionLabel.TabIndex = 8;
-            locationPermissionLabel.Text = "Only available in Windows 10";
+            locationPermissionLabel.Text = "Only available in Windows 10 and later";
             // 
             // sunriseTimeLabel
             // 

@@ -48,10 +48,10 @@ This is a nuspec. It mostly adheres to https://docs.nuget.org/create/Nuspec-Refe
     <mailingListUrl>https://github.com/t1m0thyj/WinDynamicDesktop/discussions</mailingListUrl>
     <bugTrackerUrl>https://github.com/t1m0thyj/WinDynamicDesktop/issues</bugTrackerUrl>
     <tags>windynamicdesktop windows10 dynamic-desktop wallpaper</tags>
-    <summary>Port of macOS Mojave Dynamic Desktop feature to Windows 10</summary>
-    <description>Experience Dynamic Desktop on Windows 10!
+    <summary>Port of macOS Mojave Dynamic Desktop feature to Windows</summary>
+    <description>Experience Dynamic Desktop on Windows!
 
-WinDynamicDesktop ports the Dynamic Desktop feature from macOS Mojave to Windows 10. It uses your location to determine the times of sunrise and sunset, and changes your desktop wallpaper based on the time of day. Choose a theme and enter your location the first time you run the app, then it will minimize to your system tray and change the wallpaper in the background. You can import custom themes or create your own, and customize the app to automatically change the Windows 10 theme color or update your location periodically.
+WinDynamicDesktop ports the Dynamic Desktop feature from macOS Mojave to Windows 10 and 11. It uses your location to determine the times of sunrise and sunset, and changes your desktop wallpaper based on the time of day. Choose a theme and enter your location the first time you run the app, then it will minimize to your system tray and change the wallpaper in the background. You can import custom themes or create your own, and customize the app to automatically change the Windows 10 theme color or update your location periodically.
 
 Note: This app uses the LocationIQ API to convert your location to latitude and longitude, or the Windows location API if permission is granted. Location data is anonymous and never saved without your consent.</description>
     <releaseNotes>{{releaseNotes}}</releaseNotes>
