@@ -379,7 +379,7 @@ namespace WinDynamicDesktop.WPF
             FrontImage = null;
             SelectedIndex = -1;
 
-            System.Windows.Application.Current.Dispatcher.BeginInvoke(Items.Clear);
+            Items.Clear();
             cache.Clear();
         }
 

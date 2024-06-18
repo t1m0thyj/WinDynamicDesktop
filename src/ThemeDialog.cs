@@ -489,7 +489,7 @@ namespace WinDynamicDesktop
 
         private void OnFormClosed(object sender, FormClosedEventArgs e)
         {
-            previewer.ViewModel.Stop();
+            this.Invoke(previewer.ViewModel.Stop);
         }
     }
 
