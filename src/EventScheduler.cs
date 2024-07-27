@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WinDynamicDesktop
@@ -259,6 +258,7 @@ namespace WinDynamicDesktop
         {
             if (UpdateDisplayList())
             {
+                MessageBox.Show("Display Change");
                 LoggingHandler.LogMessage("Scheduler event triggered by display change");
                 HandleTimerEvent(false);
             }

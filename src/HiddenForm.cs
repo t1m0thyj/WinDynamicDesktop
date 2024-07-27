@@ -8,12 +8,27 @@ using System.Windows.Forms;
 
 namespace WinDynamicDesktop
 {
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    public struct DEV_BROADCAST_DEVICEINTERFACE
+    {
+        public int dbcc_size;
+        public int dbcc_devicetype;
+        public int dbcc_reserved;
+        public Guid dbcc_classguid;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
+        public char[] dbcc_name;
+    }
+
     // https://github.com/specshell/specshell.software.winform.hiddenform/blob/main/src/Specshell.WinForm.HiddenForm/HiddenForm.cs
     internal class HiddenForm : Form
     {
+        private const int DBT_DEVICEARRIVAL = 0x8000;
+        private const int DBT_DEVICEREMOVECOMPLETE = 0x8004;
         private const int ENDSESSION_CLOSEAPP = 0x1;
         private const int WM_QUERYENDSESSION = 0x11;
         private const int WM_ENDSESSION = 0x16;
+        private const int WM_DEVICECHANGE = 0x219;
+        public readonly Guid GUID_DEVINTERFACE_MONITOR = new Guid("E6F07B5F-EE97-4a90-B076-33F57BF4EAA7");
 
         [DllImport("user32.dll")]
         private static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hwndNewParent);
@@ -58,6 +73,18 @@ namespace WinDynamicDesktop
                         Application.Exit();
                     }
                     m.Result = IntPtr.Zero;
+                    break;
+                case WM_DEVICECHANGE:
+                    if (m.LParam != IntPtr.Zero &&
+                        (m.WParam == DBT_DEVICEARRIVAL || m.WParam == DBT_DEVICEREMOVECOMPLETE))
+                    {
+                        var data = (DEV_BROADCAST_DEVICEINTERFACE)m.GetLParam(typeof(DEV_BROADCAST_DEVICEINTERFACE));
+                        if (data.dbcc_classguid == GUID_DEVINTERFACE_MONITOR)
+                        {
+                            // TODO Why doesn't this work? Display Change on Extend, nothing on Duplicate
+                            MessageBox.Show("Device Change");
+                        }
+                    }
                     break;
                 default:
                     base.WndProc(ref m);
