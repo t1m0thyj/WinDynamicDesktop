@@ -34,7 +34,7 @@ namespace WinDynamicDesktop
             SolarData data = SunriseSunsetService.GetSolarData(DateTime.Today);
             SolarData nextData = SunriseSunsetService.GetSolarData(DateTime.Today.AddDays(1));
 
-            if (data.polarPeriod != PolarPeriod.None)
+            if (data.IsPolarPeriodTotal())
             {
                 if (theme.sunriseImageList != null && !theme.sunriseImageList.SequenceEqual(theme.dayImageList))
                 {
@@ -123,7 +123,8 @@ namespace WinDynamicDesktop
             {
                 return new DaySegmentData(DaySegment.AlwaysNight, 1, 3);
             }
-            else if (data.solarTimes[0] <= time && time < data.solarTimes[1])
+            else if ((data.solarTimes[0] <= time && time < data.solarTimes[1]) ||
+                (data.polarPeriod == PolarPeriod.CivilPolarDay && DateTime.Now > data.solarTimes[3]))
             {
                 return new DaySegmentData(DaySegment.Sunrise, daySegment2, 0);
             }
@@ -131,7 +132,8 @@ namespace WinDynamicDesktop
             {
                 return new DaySegmentData(DaySegment.Day, daySegment2, 1);
             }
-            else if (data.solarTimes[2] <= time && time < data.solarTimes[3])
+            else if ((data.solarTimes[2] <= time && time < data.solarTimes[3]) ||
+                (data.polarPeriod == PolarPeriod.CivilPolarDay && DateTime.Now < data.solarTimes[0]))
             {
                 return new DaySegmentData(DaySegment.Sunset, daySegment2, 2);
             }
@@ -143,7 +145,7 @@ namespace WinDynamicDesktop
 
         public static DateTime CalcNextUpdateTime(SolarData data)
         {
-            if (data.polarPeriod != PolarPeriod.None)
+            if (data.IsPolarPeriodTotal())
             {
                 return DateTime.Today.AddDays(1);
             }
@@ -186,7 +188,7 @@ namespace WinDynamicDesktop
                 }
             }
 
-            if (data.polarPeriod != PolarPeriod.None)
+            if (data.IsPolarPeriodTotal())
             {
                 imageList = e.currentTheme?.dayImageList;
                 if (JsonConfig.settings.appearanceMode == (int)AppearanceMode.Dark ||
@@ -205,6 +207,11 @@ namespace WinDynamicDesktop
                 switch (segmentData.segmentType)
                 {
                     case DaySegment.Sunrise:
+                        if (dateNow > data.solarTimes[3])
+                        {
+                            data = SunriseSunsetService.GetSolarData(dateNow.Date.AddDays(1));
+                        }
+
                         imageList = e.currentTheme?.sunriseImageList;
                         segmentStart = data.solarTimes[0];
                         segmentEnd = data.solarTimes[1];
@@ -215,6 +222,11 @@ namespace WinDynamicDesktop
                         segmentEnd = data.solarTimes[2];
                         break;
                     case DaySegment.Sunset:
+                        if (dateNow < data.solarTimes[0])
+                        {
+                            data = SunriseSunsetService.GetSolarData(dateNow.Date.AddDays(-1));
+                        }
+
                         imageList = e.currentTheme?.sunsetImageList;
                         segmentStart = data.solarTimes[2];
                         segmentEnd = data.solarTimes[3];

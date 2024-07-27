@@ -56,7 +56,7 @@ namespace WinDynamicDesktop.Tests
             JsonConfig.settings.latitude = 78.22;
             JsonConfig.settings.longitude = 15.63;
             SolarData data = SunriseSunsetService.GetSolarData(testDate.Date);
-            Assert.Equal(PolarPeriod.None, data.polarPeriod);
+            Assert.Equal(PolarPeriod.CivilPolarDay, data.polarPeriod);
             Assert.Equal(ConvertTime(testDate).Date, ConvertTime(data.sunriseTime).Date);
             Assert.Equal((1, 6), (ConvertTime(data.sunriseTime).Hour, ConvertTime(data.sunriseTime).Minute));
             Assert.Equal(ConvertTime(testDate).AddDays(1).Date, ConvertTime(data.sunsetTime).Date);
@@ -96,7 +96,7 @@ namespace WinDynamicDesktop.Tests
             JsonConfig.settings.latitude = 78.22;
             JsonConfig.settings.longitude = 15.63;
             SolarData data = SunriseSunsetService.GetSolarData(testDate.Date);
-            Assert.Equal(PolarPeriod.None, data.polarPeriod);
+            Assert.Equal(PolarPeriod.CivilPolarNight, data.polarPeriod);
             Assert.Equal(ConvertTime(testDate).Date, ConvertTime(data.sunriseTime).Date);
             Assert.Equal((12, 17), (ConvertTime(data.sunriseTime).Hour, ConvertTime(data.sunriseTime).Minute));
             Assert.Equal(ConvertTime(testDate).Date, ConvertTime(data.sunsetTime).Date);

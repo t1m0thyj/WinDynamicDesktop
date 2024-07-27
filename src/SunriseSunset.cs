@@ -12,7 +12,7 @@ using TimeZoneConverter;
 
 namespace WinDynamicDesktop
 {
-    public enum PolarPeriod { None, PolarDay, PolarNight }
+    public enum PolarPeriod { None, PolarDay, PolarNight, CivilPolarDay, CivilPolarNight }
 
     public class SolarData
     {
@@ -21,6 +21,11 @@ namespace WinDynamicDesktop
         public DateTime sunsetTime { get; set; }
         public DateTime[] solarTimes { get; set; }
         public DateTime solarNoon { get; set; }
+
+        public bool IsPolarPeriodTotal()
+        {
+            return polarPeriod == PolarPeriod.PolarDay || polarPeriod == PolarPeriod.PolarNight;
+        }
     }
 
     class SunriseSunsetService
@@ -108,11 +113,13 @@ namespace WinDynamicDesktop
             {
                 data.solarTimes[0] = data.solarNoon.AddHours(-12);
                 data.solarTimes[3] = data.solarNoon.AddHours(12).AddTicks(-1);
+                data.polarPeriod = PolarPeriod.CivilPolarDay;
             }
             // Skip day segment (civil polar night) if golden hour is undefined
             else if (data.solarTimes[1] == DateTime.MinValue && data.solarTimes[2] == DateTime.MinValue)
             {
                 data.solarTimes[1] = data.solarTimes[2] = data.solarNoon;
+                data.polarPeriod = PolarPeriod.CivilPolarNight;
             }
 
             return data;
