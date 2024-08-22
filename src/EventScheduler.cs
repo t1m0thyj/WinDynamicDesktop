@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WinDynamicDesktop
@@ -82,7 +81,8 @@ namespace WinDynamicDesktop
                 if (i < displayEvents.Count - 1)
                 {
                     string themeId = JsonConfig.settings.activeThemes[0];
-                    if (themeId == null && JsonConfig.settings.activeThemes.Length > 1)
+                    if (themeId == null && JsonConfig.settings.activeThemes.Length > 1 &&
+                        i + 1 < JsonConfig.settings.activeThemes.Length)
                     {
                         themeId = JsonConfig.settings.activeThemes[i + 1];
                     }
