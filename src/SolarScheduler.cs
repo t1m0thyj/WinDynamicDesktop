@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace WinDynamicDesktop
 {
-    public enum AppearanceMode { Automatic, Light, Dark }
+    public enum AppearanceMode { Automatic, Auto = Automatic, Light, Dark }
 
     public enum DaySegment { Sunrise, Day, Sunset, Night, AlwaysDay, AlwaysNight }
 

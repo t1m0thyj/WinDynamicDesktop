@@ -3,7 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using System;
-using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -23,8 +22,8 @@ namespace WinDynamicDesktop
             Localization.Initialize();
             LoggingHandler.RotateDebugLog();
 
-            ThemeManager.importPaths = args.Where(System.IO.File.Exists).ToList();
-            HandleMultiInstance(args);
+            CheckSingleInstance(args);
+            ipcManager.ProcessArgs(args);
 
             InitializeTrayIcon();
             LocationManager.Initialize();
@@ -36,13 +35,13 @@ namespace WinDynamicDesktop
             UpdateChecker.Initialize();
         }
 
-        private void HandleMultiInstance(string[] args)
+        private void CheckSingleInstance(string[] args)
         {
             ipcManager = new IpcManager();
 
             if (ipcManager.isFirstInstance)
             {
-                ipcManager.ListenForArgs(OnArgumentsReceived);
+                ipcManager.ListenForArgs(this);
             }
             else
             {
@@ -90,48 +89,6 @@ namespace WinDynamicDesktop
             JsonConfig.settings.hideTrayIcon = isHidden;
             TrayMenu.hideTrayItem.Checked = isHidden;
             notifyIcon.Visible = !isHidden;
-        }
-
-        private void OnArgumentsReceived(string[] args)
-        {
-            if (JsonConfig.settings.hideTrayIcon)
-            {
-                MainForm.BeginInvoke(ToggleTrayIcon);
-            }
-
-            foreach (string arg in args)
-            {
-                if (arg.StartsWith('/'))
-                {
-                    switch (arg.ToLower())
-                    {
-                        case "/refresh":
-                            scheduler.RunAndUpdateLocation(true);
-                            break;
-                        case "/theme:auto":
-                            MainForm.BeginInvoke(SolarScheduler.SetAppearanceMode, AppearanceMode.Automatic);
-                            break;
-                        case "/theme:light":
-                            MainForm.BeginInvoke(SolarScheduler.SetAppearanceMode, AppearanceMode.Light); 
-                            break;
-                        case "/theme:dark":
-                            MainForm.BeginInvoke(SolarScheduler.SetAppearanceMode, AppearanceMode.Dark);
-                            break;
-                        default:
-                            Console.WriteLine("Unrecognized command line option: " + arg);
-                            break;
-                    }
-                }
-                else
-                {
-                    ThemeManager.importPaths.Add(arg);
-                }
-            }
-
-            if (ThemeManager.importPaths.Count > 0 && !ThemeManager.importMode)
-            {
-                MainForm.BeginInvoke(ThemeManager.SelectTheme);
-            }
         }
 
         private void OnNotifyIconMouseUp(object sender, MouseEventArgs e)

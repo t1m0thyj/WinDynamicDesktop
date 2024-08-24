@@ -19,7 +19,7 @@ namespace WinDynamicDesktop
 
         public static bool downloadMode = false;
         public static bool importMode = false;
-        public static List<string> importPaths;
+        public static List<string> importPaths = new List<string>();
         public static List<ThemeConfig> importedThemes = new List<ThemeConfig>();
 
         public static string[] defaultThemes;
