@@ -66,9 +66,9 @@ namespace WinDynamicDesktop
         {
             foreach (string arg in initialArgs)
             {
-                if (arg.ToLower().StartsWith("/theme") && arg.IndexOf('=') != -1)
+                if (arg.StartsWith("/theme", StringComparison.OrdinalIgnoreCase) && arg.IndexOf('=') != -1)
                 {
-                    ProcessThemeArg(arg.ToLower());
+                    ProcessThemeArg(arg);
                 }
                 else if (arg.StartsWith('/'))
                 {
@@ -104,9 +104,9 @@ namespace WinDynamicDesktop
 
             foreach (string arg in args)
             {
-                if (arg.ToLower().StartsWith("/theme") && arg.IndexOf('=') != -1)
+                if (arg.StartsWith("/theme", StringComparison.OrdinalIgnoreCase) && arg.IndexOf('=') != -1)
                 {
-                    string themeId = ProcessThemeArg(arg.ToLower());
+                    string themeId = ProcessThemeArg(arg);
                     if (themeId != null)
                     {
                         ThemeShuffler.AddThemeToHistory(themeId);
@@ -153,11 +153,11 @@ namespace WinDynamicDesktop
                 return null;
             }
 
-            if (arg.StartsWith("/theme="))
+            if (arg.StartsWith("/theme=", StringComparison.OrdinalIgnoreCase))
             {
                 JsonConfig.settings.activeThemes[0] = themeId;
             }
-            else if (arg.StartsWith("/theme:L="))
+            else if (arg.StartsWith("/theme:L=", StringComparison.OrdinalIgnoreCase))
             {
                 JsonConfig.settings.lockScreenTheme = themeId;
                 JsonConfig.settings.lockScreenDisplayIndex = -1;
