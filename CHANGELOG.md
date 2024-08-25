@@ -1,5 +1,18 @@
 # Changelog
 
+## `5.6.0`
+
+### Enhancements
+
+* Added Sequoia Abstract theme
+* Added [command line support](https://github.com/t1m0thyj/WinDynamicDesktop/wiki/Frequently-asked-questions#how-can-i-automate-actions-in-the-app) for actions like selecting themes, refreshing wallpaper, and toggling theme mode ([#585](https://github.com/t1m0thyj/WinDynamicDesktop/issues/585))
+
+### Bug Fixes
+
+* Fixed error that could happen when changing theme and in a region where sun stays up all day ([#599](https://github.com/t1m0thyj/WinDynamicDesktop/issues/599))
+* Fixed crash on startup when number of monitors has increased since the last time app ran ([#604](https://github.com/t1m0thyj/WinDynamicDesktop/issues/604))
+* Fixed automatic location not updating when app is restarted or Refresh Wallpaper command is run
+
 ## `5.5.0`
 
 **Note:** PowerShell scripts written for older versions of WinDD will stop working and must be updated. To update them, download the latest scripts from [here](https://windd.info/scripts/) and revise any custom scripts.

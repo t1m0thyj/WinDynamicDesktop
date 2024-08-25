@@ -18,7 +18,7 @@ namespace WinDynamicDesktop
     {
         public static string[] languageCodes = new string[]
         {
-            "am", "ar", "ar-ae", "az",
+            "am", "ar", "az",
             "bg", "bn",
             "ca", "cs",
             "da", "de",
