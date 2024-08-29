@@ -13,7 +13,7 @@ namespace WinDynamicDesktop
     public partial class AboutDialog : Form
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
-        private readonly string websiteLink = "https://github.com/t1m0thyj/WinDynamicDesktop";
+        private readonly string websiteLink = "https://windd.info";
         private readonly string donateLink = "https://paypal.me/t1m0thyj";
         private readonly string rateLink = "ms-windows-store://review/?ProductId=9NM8N7DQ3Z5F";
 

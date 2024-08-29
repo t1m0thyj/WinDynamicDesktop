@@ -10,6 +10,9 @@ $oldVersion = $xmlDoc.Project.PropertyGroup.Version
 
 if (!$newVersion) {
     $newVersion = "$oldVersion-g$(git rev-parse --short HEAD)"
+} elseif ($newVersion -eq $oldVersion) {
+    Write-Host "Version is already $newVersion"
+    exit
 }
 
 $xmlDoc.Project.PropertyGroup.Version = $newVersion

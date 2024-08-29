@@ -37,7 +37,7 @@ This is a nuspec. It mostly adheres to https://docs.nuget.org/create/Nuspec-Refe
     <title>WinDynamicDesktop (Install)</title>
     <authors>Timothy Johnson</authors>
     <!-- projectUrl is required for the community feed -->
-    <projectUrl>https://github.com/t1m0thyj/WinDynamicDesktop</projectUrl>
+    <projectUrl>https://windd.info</projectUrl>
     <iconUrl>https://cdn.statically.io/gh/t1m0thyj/WinDynamicDesktop/189f4bb0/imgs/choco_icon.png</iconUrl>
     <copyright>2024 Timothy Johnson</copyright>
     <!-- If there is a license Url available, it is required for the community feed -->

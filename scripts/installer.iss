@@ -5,7 +5,7 @@
 ;#define MyAppVersion GetVersionNumbersString("..\src\bin\Release\WinDynamicDesktop.exe")
 ;#define MyAppPlatform "x86"
 #define MyAppPublisher "Timothy Johnson"
-#define MyAppURL "https://github.com/t1m0thyj/WinDynamicDesktop"
+#define MyAppURL "https://windd.info"
 #define MyAppExeName "WinDynamicDesktop.exe"
 #define MyAppAssocName "Dynamic Desktop Wallpaper"
 #define MyAppAssocExt ".ddw"
