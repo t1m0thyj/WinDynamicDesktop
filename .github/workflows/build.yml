@@ -42,9 +42,16 @@ jobs:
       env:
         AppxBundle: Never
         Configuration: Release
+        MSBuildDebugEngine: 1
         Platform: ${{ matrix.platform }}
         UapAppxPackageBuildMode: SideloadOnly
         UseTemporarySignCert: true
+
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: logs-${{ matrix.platform }}
+        path: MSBuild_Logs
 
     - uses: actions/upload-artifact@v4
       with:
