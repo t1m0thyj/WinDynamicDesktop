@@ -18,6 +18,36 @@ Pick any of the themes bundled with macOS, or many more themes available for dow
 
 ![Screenshot of Select Theme window](images/select_theme.png)
 
+### Custom Themes (import from file)
+
+To use custom themes follow the format seen below as an example. 
+You will need a directory with your images labled as 1.jpg, 2.jpg etc.., as well as a json file with your configuration to import. 
+
+```powershel
+PS C:\Users\JohnDoe\Pictures\Theme\> ls
+  Directory: C:\Users\Johndoe\Pictures\Theme
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----         10/8/2024   5:21 PM        4524216 1.jpg
+-a----         10/8/2024   5:21 PM        5018148 2.jpg
+-a----         10/8/2024   5:21 PM        4180552 3.jpg
+-a----         10/8/2024   5:21 PM        4183664 4.jpg
+-a----        10/11/2024   1:51 PM            166 image.json
+```
+image.json 
+
+```json
+{
+  "imageFilename": "*.jpg",
+  "imageCredits": "John Doe",
+  "sunriseImageList": [1],
+  "dayImageList": [2],
+  "sunsetImageList": [3],
+  "nightImageList": [4]
+}
+```
+
 ## Schedule
 
 Choose a schedule for cycling through wallpaper images over 24 hours
