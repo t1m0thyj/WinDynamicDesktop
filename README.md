@@ -14,7 +14,7 @@ Port of macOS Mojave Dynamic Desktop feature to Windows 10 and 11. Available on 
 
 ## Themes
 
-Pick any of the themes bundled with macOS, or many more themes available for download [here](https://windd.info/themes/)
+Pick from bundled macOS themes, browse hundreds of themes [available online](https://windd.info/themes/), or [create your own](https://github.com/t1m0thyj/WinDynamicDesktop/wiki/Creating-custom-themes)
 
 ![Screenshot of Select Theme window](images/select_theme.png)
 
