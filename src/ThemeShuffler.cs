@@ -55,20 +55,10 @@ namespace WinDynamicDesktop
             };
         }
 
-        public static void AddThemeToHistory(string themeId, bool clearHistory = false)
+        public static void AddThemeToHistory(string themeId)
         {
-            List<string> shuffleHistory;
-
-            if (!clearHistory)
-            {
-                shuffleHistory = JsonConfig.settings.shuffleHistory?.ToList() ?? new List<string>();
-                shuffleHistory.Remove(themeId);
-            }
-            else
-            {
-                shuffleHistory = new List<string>();
-            }
-
+            List<string> shuffleHistory = JsonConfig.settings.shuffleHistory?.ToList() ?? new List<string>();
+            shuffleHistory.Remove(themeId);
             shuffleHistory.Add(themeId);
             JsonConfig.settings.shuffleHistory = shuffleHistory.ToArray();
             JsonConfig.settings.lastShuffleTime = DateTime.Now.ToString(CultureInfo.InvariantCulture);
@@ -147,7 +137,7 @@ namespace WinDynamicDesktop
             return nextUpdateTime?.AddTicks(1);
         }
 
-        private static ThemeConfig GetNextTheme()
+        private static ThemeConfig GetNextTheme(string lastThemeId)
         {
             List<string> shuffleHistory = JsonConfig.settings.shuffleHistory?.ToList() ?? new List<string>();
             ThemeConfig[] themeChoices = GetThemeChoices().Where(
@@ -162,7 +152,8 @@ namespace WinDynamicDesktop
             {
                 themeChoices = GetThemeChoices().ToArray();
                 nextTheme = themeChoices[rng.Next(themeChoices.Length)];
-                string lastThemeId = shuffleHistory.LastOrDefault();
+                lastThemeId = lastThemeId ?? shuffleHistory.LastOrDefault();
+                Array.Clear(JsonConfig.settings.shuffleHistory);
 
                 while ((themeChoices.Length > 1) && (nextTheme.themeId == lastThemeId))
                 {
@@ -170,7 +161,7 @@ namespace WinDynamicDesktop
                 }
             }
 
-            AddThemeToHistory(nextTheme.themeId, themeChoices.Length == 0);
+            AddThemeToHistory(nextTheme.themeId);
             return nextTheme;
         }
 
@@ -196,19 +187,19 @@ namespace WinDynamicDesktop
         {
             if (JsonConfig.settings.activeThemes[0] != null)
             {
-                JsonConfig.settings.activeThemes[0] = GetNextTheme().themeId;
+                JsonConfig.settings.activeThemes[0] = GetNextTheme(JsonConfig.settings.activeThemes[0]).themeId;
             }
             else
             {
                 for (int i = 1; i < JsonConfig.settings.activeThemes.Length; i++)
                 {
-                    JsonConfig.settings.activeThemes[i] = GetNextTheme().themeId;
+                    JsonConfig.settings.activeThemes[i] = GetNextTheme(JsonConfig.settings.activeThemes[i]).themeId;
                 }
             }
 
             if (JsonConfig.settings.lockScreenTheme != null)
             {
-                JsonConfig.settings.lockScreenTheme = GetNextTheme().themeId;
+                JsonConfig.settings.lockScreenTheme = GetNextTheme(JsonConfig.settings.lockScreenTheme).themeId;
             }
         }
 
