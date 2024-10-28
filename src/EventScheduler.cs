@@ -238,6 +238,15 @@ namespace WinDynamicDesktop
             }
 
             UpdateChecker.TryCheckAuto();
+            // Update access time for extracted DLL files to prevent Storage Sense from deleting them
+            string tempLibPath = Path.Combine(Path.GetTempPath(), ".net", Application.ProductName);
+            if (Directory.Exists(tempLibPath))
+            {
+                foreach (string filePath in Directory.EnumerateFiles(tempLibPath, "*.dll", SearchOption.AllDirectories))
+                {
+                    File.SetLastAccessTime(filePath, DateTime.Now);
+                }
+            }
         }
 
         private void OnBackgroundTimerElapsed(object sender, EventArgs e)

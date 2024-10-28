@@ -53,16 +53,15 @@ namespace WinDynamicDesktop
                     m.Result = new IntPtr(1);
                     break;
                 case WM_ENDSESSION:
-                    if (m.WParam != IntPtr.Zero)
+                    if ((m.LParam & ENDSESSION_CLOSEAPP) != 0)
                     {
                         Application.Exit();
                     }
                     m.Result = IntPtr.Zero;
                     break;
-                default:
-                    base.WndProc(ref m);
-                    break;
             }
+
+            base.WndProc(ref m);
         }
 
         private void HiddenForm_Load(object source, EventArgs e)
