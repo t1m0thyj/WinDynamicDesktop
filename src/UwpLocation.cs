@@ -10,6 +10,7 @@ namespace WinDynamicDesktop
     class UwpLocation
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
+        public static Exception lastUpdateError;
 
         private static async Task<bool> UnsafeRequestAccess()
         {
@@ -68,7 +69,9 @@ namespace WinDynamicDesktop
 
                 return true;
             }
-            catch { /* Do nothing */ }
+            catch (Exception exc) {
+                lastUpdateError = exc;
+            }
 
             return false;
         }

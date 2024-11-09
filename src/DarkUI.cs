@@ -12,8 +12,8 @@ namespace WinDynamicDesktop
 {
     internal class DarkUI
     {
-        private static readonly Color bgColorDark = Color.FromArgb(32, 32, 32);
-        private static readonly Color fgColorDark = Color.FromArgb(224, 224, 224);
+        public static readonly Color bgColorDark = Color.FromArgb(32, 32, 32);
+        public static readonly Color fgColorDark = Color.FromArgb(224, 224, 224);
 
         public static bool IsDark
         {

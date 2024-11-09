@@ -54,7 +54,7 @@ namespace WinDynamicDesktop
             {
                 if (!hasLocationPermission)
                 {
-                    locationPermissionLabel.ForeColor = SystemColors.ControlText;
+                    locationPermissionLabel.ForeColor = DarkUI.IsDark ? DarkUI.fgColorDark : default;
                     locationPermissionLabel.Text = _("Click below to grant permission to access location");
                 }
                 else
@@ -180,7 +180,9 @@ namespace WinDynamicDesktop
                     {
                         hasLocationPermission = UwpLocation.HasAccess();
                         UpdateLocationState();
-                        MessageDialog.ShowWarning(_("Failed to get location from Windows location service."), _("Error"));
+                        MessageDialog.ShowWarning(string.Format(
+                            _("Failed to get location from Windows location service:\n\n{0}"),
+                            UwpLocation.lastUpdateError.ToString()), _("Error"));
                     }
                 }
                 else if (radioButton3.Checked)
