@@ -67,7 +67,9 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
-    - run: dotnet restore src\WinDynamicDesktop.sln
+    - run: |
+        cp .env.example .env
+        dotnet restore src\WinDynamicDesktop.sln
 
     - run: dotnet test --verbosity normal
       working-directory: test
