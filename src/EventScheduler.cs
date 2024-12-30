@@ -101,7 +101,8 @@ namespace WinDynamicDesktop
                 SolarScheduler.CalcNextUpdateTime(data, displayEvents[i]);
                 LoggingHandler.LogMessage("Updated display event: {0}", displayEvents[i]);
 
-                bool isEventOverridden = displayEvents[i].displayIndex == overrideEvent?.displayIndex;
+                bool isEventOverridden = overrideEvent != null &&
+                    displayEvents[i].displayIndex == Math.Max(0, overrideEvent.displayIndex);
                 if (displayEvents[i].currentTheme != null || isEventOverridden)
                 {
                     HandleDisplayEvent(isEventOverridden ? overrideEvent : displayEvents[i]);
@@ -238,15 +239,6 @@ namespace WinDynamicDesktop
             }
 
             UpdateChecker.TryCheckAuto();
-            // Update access time for extracted DLL files to prevent Storage Sense from deleting them
-            string tempLibPath = Path.Combine(Path.GetTempPath(), ".net", Application.ProductName);
-            if (Directory.Exists(tempLibPath))
-            {
-                foreach (string filePath in Directory.EnumerateFiles(tempLibPath, "*.dll", SearchOption.AllDirectories))
-                {
-                    File.SetLastAccessTime(filePath, DateTime.Now);
-                }
-            }
         }
 
         private void OnBackgroundTimerElapsed(object sender, EventArgs e)

@@ -5,6 +5,7 @@
 using RestSharp;
 using System;
 using System.Globalization;
+using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -136,6 +137,7 @@ namespace WinDynamicDesktop
 
         public static void TryCheckAuto(bool forceIfEnabled = false)
         {
+            PreserveTempDlls();
             if (UwpDesktop.IsRunningAsUwp() || JsonConfig.settings.autoUpdateCheck == false)
             {
                 return;
@@ -154,6 +156,19 @@ namespace WinDynamicDesktop
             }
 
             Task.Run(CheckAuto);
+        }
+
+        private static void PreserveTempDlls()
+        {
+            // Update access time for extracted DLL files to prevent Storage Sense from deleting them
+            string tempLibPath = Path.Combine(Path.GetTempPath(), ".net", Application.ProductName);
+            if (Directory.Exists(tempLibPath))
+            {
+                foreach (string filePath in Directory.EnumerateFiles(tempLibPath, "*.dll", SearchOption.AllDirectories))
+                {
+                    File.SetLastAccessTime(filePath, DateTime.Now);
+                }
+            }
         }
 
         private static void OnAutoUpdateItemClick(object sender, EventArgs e)
