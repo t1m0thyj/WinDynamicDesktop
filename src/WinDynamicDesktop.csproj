@@ -30,7 +30,10 @@
     <PackageReference Include="GeoTimeZone" Version="5.3.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NGettext" Version="0.6.7" />
-    <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" PrivateAssets="All" />
+    <PackageReference Include="PropertyChanged.SourceGenerator" Version="1.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="RestSharp" Version="112.1.0" />
     <PackageReference Include="SunCalcNet" Version="1.2.2" />
     <PackageReference Include="TimeZoneConverter" Version="6.1.0" />

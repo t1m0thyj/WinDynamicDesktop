@@ -10,6 +10,7 @@ guidelines = 80
 [*.cs]
 file_header_template = This Source Code Form is subject to the terms of the Mozilla Public\nLicense, v. 2.0. If a copy of the MPL was not distributed with this\nfile, You can obtain one at http://mozilla.org/MPL/2.0/.
 guidelines = 80, 120
+propertychanged.first_letter_capitalization = lower_case
 
 # Xml files
 [*.xml]

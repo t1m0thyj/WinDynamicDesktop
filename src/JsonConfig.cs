@@ -3,7 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using Newtonsoft.Json;
-using PropertyChanged;
+using PropertyChanged.SourceGenerator;
 using System;
 using System.ComponentModel;
 using System.IO;
@@ -11,49 +11,44 @@ using System.Windows.Forms;
 
 namespace WinDynamicDesktop
 {
-    [AddINotifyPropertyChangedInterface]
-    public class AppConfig : INotifyPropertyChanged
+    public partial class AppConfig : INotifyPropertyChanged
     {
-#pragma warning disable 67
-        public event PropertyChangedEventHandler PropertyChanged;
-#pragma warning restore 67
-
         // Schedule settings
-        public int locationMode { get; set; }
-        public string location { get; set; }
-        public double? latitude { get; set; }
-        public double? longitude { get; set; }
-        public string sunriseTime { get; set; }
-        public string sunsetTime { get; set; }
-        public int sunriseSunsetDuration { get; set; }
+        [Notify] private int _locationMode { get; set; }
+        [Notify] private string _location { get; set; }
+        [Notify] private double? _latitude { get; set; }
+        [Notify] private double? _longitude { get; set; }
+        [Notify] private string _sunriseTime { get; set; }
+        [Notify] private string _sunsetTime { get; set; }
+        [Notify] private int _sunriseSunsetDuration { get; set; }
 
         // Theme settings
-        public string[] activeThemes { get; set; }
-        [Obsolete("Will be removed in v6")]
+        [Notify] private string[] _activeThemes { get; set; }
+        [Obsolete("Deprecated")]
         public bool darkMode { get; set; }
-        public int appearanceMode { get; set; }
-        [Obsolete("Will be removed in v6")]
+        [Notify] private int _appearanceMode { get; set; }
+        [Obsolete("Deprecated")]
         public bool changeLockScreen { get; set; }
-        public int lockScreenDisplayIndex { get; set; } = -1;
-        public string lockScreenTheme { get; set; }
-        [Obsolete("Will be removed in v6")]
+        [Notify] private int _lockScreenDisplayIndex { get; set; } = -1;
+        [Notify] private string _lockScreenTheme { get; set; }
+        [Obsolete("Deprecated")]
         public bool enableShuffle { get; set; }
-        public int themeShuffleMode { get; set; } = (int)ShufflePeriod.EveryDay;
-        [Obsolete("Will be removed in v6")]
+        [Notify] private int _themeShuffleMode { get; set; } = (int)ShufflePeriod.EveryDay;
+        [Obsolete("Deprecated")]
         public string lastShuffleDate { get; set; }
-        public string lastShuffleTime { get; set; }
-        public string[] shuffleHistory { get; set; }
-        public string[] favoriteThemes { get; set; }
-        public bool showInstalledOnly { get; set; }
+        [Notify] private string _lastShuffleTime { get; set; }
+        [Notify] private string[] _shuffleHistory { get; set; }
+        [Notify] private string[] _favoriteThemes { get; set; }
+        [Notify] private bool _showInstalledOnly { get; set; }
 
         // General settings
-        public string language { get; set; }
-        public bool autoUpdateCheck { get; set; } = true;
-        public string lastUpdateCheckTime { get; set; }
-        public bool hideTrayIcon { get; set; }
-        public bool fullScreenPause { get; set; }
-        public bool enableScripts { get; set; }
-        public bool debugLogging { get; set; }
+        [Notify] private string _language { get; set; }
+        [Notify] private bool _autoUpdateCheck { get; set; } = true;
+        [Notify] private string _lastUpdateCheckTime { get; set; }
+        [Notify] private bool _hideTrayIcon { get; set; }
+        [Notify] private bool _fullScreenPause { get; set; }
+        [Notify] private bool _enableScripts { get; set; }
+        [Notify] private bool _debugLogging { get; set; }
     }
 
     class JsonConfig
