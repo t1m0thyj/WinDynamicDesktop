@@ -123,7 +123,7 @@ namespace WinDynamicDesktop
             }
             else if (IsLockScreenSelected)
             {
-                bool shouldContinue = ThemeDialogUtils.UpdateConfigForLockScreen();
+                bool shouldContinue = ThemeDialogUtils.UpdateConfigForLockScreen(activeTheme);
                 if (!shouldContinue)
                 {
                     return;

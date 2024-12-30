@@ -183,7 +183,7 @@ namespace WinDynamicDesktop
             }
         }
 
-        internal static bool UpdateConfigForLockScreen()
+        internal static bool UpdateConfigForLockScreen(string activeTheme)
         {
             if (JsonConfig.settings.lockScreenDisplayIndex != -1)
             {
@@ -194,6 +194,12 @@ namespace WinDynamicDesktop
                 {
                     return false;
                 }
+            }
+            else if (JsonConfig.settings.lockScreenTheme == null && activeTheme != null)
+            {
+                MessageDialog.ShowInfo(_("WinDynamicDesktop cannot change the lock screen image when Windows " +
+                    "Spotlight is enabled. If the lock screen image does not update, navigate to \"Personalization " +
+                    "-> Lock screen\" in Windows settings and check that the lock screen is set to Picture mode."));
             }
 
             JsonConfig.settings.lockScreenDisplayIndex = -1;

@@ -92,11 +92,18 @@ namespace WinDynamicDesktop
 
         private static Task<Windows.Storage.StorageFile> LoadImageFile(string imagePath)
         {
-            string[] pathSegments = imagePath.Split(Path.DirectorySeparatorChar);
-            var uri = new Uri("ms-appdata:///local/themes/" +
-                Uri.EscapeDataString(pathSegments[pathSegments.Length - 2]) + "/" +
-                Uri.EscapeDataString(pathSegments[pathSegments.Length - 1]));
-            return Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri).AsTask();
+            if (imagePath.StartsWith(Environment.CurrentDirectory))
+            {
+                string[] pathSegments = imagePath.Split(Path.DirectorySeparatorChar);
+                var uri = new Uri("ms-appdata:///local/themes/" +
+                    Uri.EscapeDataString(pathSegments[pathSegments.Length - 2]) + "/" +
+                    Uri.EscapeDataString(pathSegments[pathSegments.Length - 1]));
+                return Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri).AsTask();
+            }
+            else
+            {
+                return Windows.Storage.StorageFile.GetFileFromPathAsync(imagePath).AsTask();
+            }
         }
     }
 }
