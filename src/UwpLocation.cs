@@ -25,7 +25,11 @@ namespace WinDynamicDesktop
 
             try
             {
-                hasAccess = Task.Run(() => UnsafeRequestAccess()).Result;
+                var task = Task.Run(() => UnsafeRequestAccess());
+                if (Task.WaitAny(task, Task.Delay(5000)) == 0)
+                {
+                    hasAccess = task.Result;
+                }
             }
             catch   // Error when attempting to show UWP location prompt in WinForms app
             {
@@ -69,7 +73,8 @@ namespace WinDynamicDesktop
 
                 return true;
             }
-            catch (Exception exc) {
+            catch (Exception exc)
+            {
                 lastUpdateError = exc;
             }
 
