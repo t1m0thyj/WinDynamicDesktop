@@ -26,16 +26,17 @@ namespace WinDynamicDesktop.Tests
         {
             driver.FindElementByXPath("//Window[@Name='Select Language']").Click();
             driver.FindElementByXPath("//Button[@Name='OK']").Click();
-            Thread.Sleep(TimeSpan.FromSeconds(1));
+            Thread.Sleep(TimeSpan.FromSeconds(5));
 
             driver.SwitchTo().Window(driver.WindowHandles[0]);
             driver.FindElementByXPath("//Window[@Name='Configure Schedule']").Click();
             driver.FindElementByAccessibilityId("radioButton1").Click();
             driver.FindElementByAccessibilityId("locationBox").SendKeys("New York NY");
             driver.FindElementByXPath("//Button[@Name='OK']").Click();
+            Thread.Sleep(TimeSpan.FromSeconds(2));
             driver.SwitchTo().Window(driver.WindowHandles.Last());
             driver.FindElementByXPath("//Button[@Name='Yes']").Click();
-            Thread.Sleep(TimeSpan.FromSeconds(1));
+            Thread.Sleep(TimeSpan.FromSeconds(5));
 
             driver.SwitchTo().Window(driver.WindowHandles[0]);
             driver.FindElementByXPath("//Window[@Name='Select Theme']").Click();
