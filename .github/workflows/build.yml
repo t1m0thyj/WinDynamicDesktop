@@ -78,7 +78,7 @@ jobs:
 
     - run: |
         npm install -g appium
-        Start-Process -NoNewWindow -FilePath "C:\Program Files (x86)\Windows Application Driver\WinAppDriver.exe"
+        Start-Process -FilePath "C:\Program Files (x86)\Windows Application Driver\WinAppDriver.exe"
         Start-Sleep -Seconds 5
 
     - uses: actions/download-artifact@v4
