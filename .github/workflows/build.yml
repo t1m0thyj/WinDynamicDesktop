@@ -41,7 +41,7 @@ jobs:
     - uses: actions/upload-artifact@v4
       with:
         name: exe-${{ matrix.platform }}
-        path: src\bin\Release\**\publish\*.exe
+        path: src\bin\Release\net8.0-windows10.0.19041.0\win-${{ matrix.platform }}\publish\*.exe
 
     - run: msbuild uwp\WinDynamicDesktop.Package.wapproj /v:m /p:AppxBundle=$env:AppxBundle /p:Configuration=$env:Configuration /p:Platform=$env:Platform /p:UapAppxPackageBuildMode=$env:UapAppxPackageBuildMode /p:UseTemporarySignCert=$env:UseTemporarySignCert
       env:
@@ -54,7 +54,7 @@ jobs:
     - uses: actions/upload-artifact@v4
       with:
         name: msix-${{ matrix.platform }}
-        path: uwp\AppPackages\**\*.msix
+        path: uwp\AppPackages\*\*.msix
 
   test:
     runs-on: windows-latest
