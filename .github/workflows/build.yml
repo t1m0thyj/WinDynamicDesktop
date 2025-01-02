@@ -17,6 +17,11 @@ jobs:
         platform: [x86, x64, arm64]
 
     steps:
+    - run: |
+        ls C:\Windows\Web
+        ls C:\Windows\Web\Wallpaper
+        ls C:\Windows\Web\Wallpaper\Windows
+    
     - uses: actions/checkout@v4
 
     - uses: actions/setup-dotnet@v4
