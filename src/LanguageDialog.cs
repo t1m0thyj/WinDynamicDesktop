@@ -56,30 +56,31 @@ namespace WinDynamicDesktop
             int langIndex = languageNames.IndexOf((string)comboBox1.SelectedItem);
             string languageCode = Localization.languageCodes[langIndex];
 
-            if (languageCode != Localization.currentLocale)
-            {
-                Localization.currentLocale = languageCode;
+            // if (languageCode != Localization.currentLocale)
+            // {
+            //     Localization.currentLocale = languageCode;
 
-                if (AppContext.notifyIcon == null)  // Has UI been loaded yet?
-                {
-                    Localization.LoadLocaleFromFile();
-                }
+            //     if (AppContext.notifyIcon == null)  // Has UI been loaded yet?
+            //     {
+            //         Localization.LoadLocaleFromFile();
+            //     }
 
-                JsonConfig.settings.language = languageCode;
+            //     JsonConfig.settings.language = languageCode;
 
-                if (AppContext.notifyIcon != null)
-                {
-                    DialogResult result = MessageDialog.ShowQuestion(_("WinDynamicDesktop needs to restart for the " +
-                        "language to change. Do you want to restart the app now?"), _("Question"));
+            //     if (AppContext.notifyIcon != null)
+            //     {
+            //         DialogResult result = MessageDialog.ShowQuestion(_("WinDynamicDesktop needs to restart for the " +
+            //             "language to change. Do you want to restart the app now?"), _("Question"));
 
-                    if (result == DialogResult.Yes)
-                    {
-                        JsonConfig.ReloadConfig();
-                    }
-                }
-            }
+            //         if (result == DialogResult.Yes)
+            //         {
+            //             JsonConfig.ReloadConfig();
+            //         }
+            //     }
+            // }
 
             this.Close();
+            Localization.SelectLanguage(false);
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
