@@ -26,23 +26,24 @@ namespace WinDynamicDesktop.Tests
         {
             driver.FindElementByXPath("//Window[@Name='Select Language']").Click();
             driver.FindElementByXPath("//Button[@Name='OK']").Click();
-            Thread.Sleep(TimeSpan.FromSeconds(5));
+            Thread.Sleep(TimeSpan.FromSeconds(10));
 
             driver.SwitchTo().Window(driver.WindowHandles[0]);
             driver.FindElementByXPath("//Window[@Name='Configure Schedule']").Click();
             driver.FindElementByAccessibilityId("radioButton1").Click();
             driver.FindElementByAccessibilityId("locationBox").SendKeys("New York NY");
             driver.FindElementByXPath("//Button[@Name='OK']").Click();
-            Thread.Sleep(TimeSpan.FromSeconds(2));
+            Thread.Sleep(TimeSpan.FromSeconds(5));
             driver.SwitchTo().Window(driver.WindowHandles.Last());
             driver.FindElementByXPath("//Button[@Name='Yes']").Click();
-            Thread.Sleep(TimeSpan.FromSeconds(5));
+            Thread.Sleep(TimeSpan.FromSeconds(10));
 
             driver.SwitchTo().Window(driver.WindowHandles[0]);
             driver.FindElementByXPath("//Window[@Name='Select Theme']").Click();
             driver.FindElementByAccessibilityId("listView1").SendKeys(Keys.Control + Keys.End);
             driver.FindElementByXPath("//ListItem[@Name='Windows 11']").Click();
             driver.FindElementByXPath("//Button[@Name='Apply']").Click();
+            Thread.Sleep(TimeSpan.FromSeconds(5));
 
             Assert.Contains(["scripts", "settings.json", "themes"],
                 Directory.GetFileSystemEntries(Path.GetDirectoryName(AppPath)).Select(Path.GetFileName).ToArray());
