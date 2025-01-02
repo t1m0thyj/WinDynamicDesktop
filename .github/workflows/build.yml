@@ -59,6 +59,7 @@ jobs:
   test:
     runs-on: windows-latest
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
+    needs: build
 
     steps:
     - uses: actions/checkout@v4
@@ -71,5 +72,20 @@ jobs:
         cp .env.example .env
         dotnet restore src\WinDynamicDesktop.sln
 
-    - run: dotnet test --verbosity normal
+    - name: Unit Tests
+      run: dotnet test --filter type!=system --verbosity normal
+      working-directory: test
+
+    - run: |
+        npm install -g appium
+        Start-Process -NoNewWindow -FilePath "C:\Program Files (x86)\Windows Application Driver\WinAppDriver.exe"
+        Start-Sleep -Seconds 5
+
+    - uses: actions/download-artifact@v4
+      with:
+        name: exe-x64
+        path: test\bin
+
+    - name: System Tests
+      run: dotnet test --filter type=system --verbosity normal
       working-directory: test
