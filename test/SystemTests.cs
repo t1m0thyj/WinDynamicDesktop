@@ -2,6 +2,7 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Windows;
+using OpenQA.Selenium.Support.Extensions;
 
 namespace WinDynamicDesktop.Tests
 {
@@ -35,10 +36,14 @@ namespace WinDynamicDesktop.Tests
             driver.FindElementByXPath("//Button[@Name='OK']").Click();
             Thread.Sleep(TimeSpan.FromSeconds(5));
             driver.SwitchTo().Window(driver.WindowHandles.Last());
+            driver.TakeScreenshot().SaveAsFile(@"..\..\..\screenshot1.png", ScreenshotImageFormat.Png);
             driver.FindElementByXPath("//Button[@Name='Yes']").Click();
-            Thread.Sleep(TimeSpan.FromSeconds(60));
+            driver.TakeScreenshot().SaveAsFile(@"..\..\..\screenshot2.png", ScreenshotImageFormat.Png);
+            Thread.Sleep(TimeSpan.FromSeconds(20));
+            driver.TakeScreenshot().SaveAsFile(@"..\..\..\screenshot3.png", ScreenshotImageFormat.Png);
 
             driver.SwitchTo().Window(driver.WindowHandles[0]);
+            driver.TakeScreenshot().SaveAsFile(@"..\..\..\screenshot4.png", ScreenshotImageFormat.Png);
             driver.FindElementByXPath("//Window[@Name='Select Theme']").Click();
             driver.FindElementByAccessibilityId("listView1").SendKeys(Keys.Control + Keys.End);
             driver.FindElementByXPath("//ListItem[@Name='Windows 11']").Click();
