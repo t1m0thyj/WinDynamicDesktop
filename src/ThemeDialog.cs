@@ -227,10 +227,14 @@ namespace WinDynamicDesktop
 
             if (UwpDesktop.IsMultiDisplaySupported())
             {
-                string[] displayNames = ThemeDialogUtils.GetDisplayNames();
-                for (int i = 0; i < displayNames.Length; i++)
+                var task = Task.Run(() => ThemeDialogUtils.GetDisplayNames());
+                if (Task.WaitAny(task, Task.Delay(10000)) == 0)
                 {
-                    displayComboBox.Items.Add(string.Format(_("Display {0}: {1}"), i + 1, displayNames[i]));
+                    string[] displayNames = task.Result;
+                    for (int i = 0; i < displayNames.Length; i++)
+                    {
+                        displayComboBox.Items.Add(string.Format(_("Display {0}: {1}"), i + 1, displayNames[i]));
+                    }
                 }
             }
             if (UwpDesktop.IsUwpSupported())
