@@ -35,7 +35,12 @@ namespace WinDynamicDesktop
         internal static string[] GetDisplayNames()
         {
             // https://github.com/winleafs/Winleafs/blob/98ba3ba/Winleafs.Wpf/Helpers/ScreenBoundsHelper.cs#L36=
-            var activeDisplays = WindowsDisplayAPI.Display.GetDisplays();
+            var task = Task.Run(() => WindowsDisplayAPI.Display.GetDisplays());
+            if (Task.WaitAny(task, Task.Delay(10000)) == 1)
+            {
+                return [];
+            }
+            var activeDisplays = task.Result;
             var activeDisplayDevicePaths = activeDisplays.OrderBy(d => d.DisplayName)
                 .Select(d => d.DevicePath).ToArray();
             return PathDisplayTarget.GetDisplayTargets()
