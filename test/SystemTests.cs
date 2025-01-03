@@ -35,15 +35,14 @@ namespace WinDynamicDesktop.Tests
             driver.FindElementByAccessibilityId("locationBox").SendKeys("New York NY");
             driver.FindElementByXPath("//Button[@Name='OK']").Click();
             Thread.Sleep(TimeSpan.FromSeconds(5));
-            driver.SwitchTo().Window(driver.WindowHandles.Last());
+            //driver.SwitchTo().Window(driver.WindowHandles.Last());
             driver.TakeScreenshot().SaveAsFile(@"..\..\..\screenshot1.png", ScreenshotImageFormat.Png);
             driver.FindElementByXPath("//Button[@Name='Yes']").Click();
             driver.TakeScreenshot().SaveAsFile(@"..\..\..\screenshot2.png", ScreenshotImageFormat.Png);
-            Thread.Sleep(TimeSpan.FromSeconds(20));
-            driver.TakeScreenshot().SaveAsFile(@"..\..\..\screenshot3.png", ScreenshotImageFormat.Png);
+            Thread.Sleep(TimeSpan.FromSeconds(10));
 
             driver.SwitchTo().Window(driver.WindowHandles[0]);
-            driver.TakeScreenshot().SaveAsFile(@"..\..\..\screenshot4.png", ScreenshotImageFormat.Png);
+            driver.TakeScreenshot().SaveAsFile(@"..\..\..\screenshot3.png", ScreenshotImageFormat.Png);
             driver.FindElementByXPath("//Window[@Name='Select Theme']").Click();
             driver.FindElementByAccessibilityId("listView1").SendKeys(Keys.Control + Keys.End);
             driver.FindElementByXPath("//ListItem[@Name='Windows 11']").Click();
