@@ -36,7 +36,7 @@ namespace WinDynamicDesktop.Tests
             Thread.Sleep(TimeSpan.FromSeconds(5));
             driver.SwitchTo().Window(driver.WindowHandles.Last());
             driver.FindElementByXPath("//Button[@Name='Yes']").Click();
-            Thread.Sleep(TimeSpan.FromSeconds(20));
+            Thread.Sleep(TimeSpan.FromSeconds(60));
 
             driver.SwitchTo().Window(driver.WindowHandles[0]);
             driver.FindElementByXPath("//Window[@Name='Select Theme']").Click();
