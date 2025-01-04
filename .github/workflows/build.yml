@@ -82,6 +82,7 @@ jobs:
       working-directory: test
 
     - run: |
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location" -Name "Value" -Value "Allow"
         npm install -g appium
         Start-Process -FilePath "C:\Program Files (x86)\Windows Application Driver\WinAppDriver.exe"
         Start-Sleep -Seconds 5
