@@ -69,7 +69,8 @@ namespace WinDynamicDesktop
 
                 return true;
             }
-            catch (Exception exc) {
+            catch (Exception exc)
+            {
                 lastUpdateError = exc;
             }
 
