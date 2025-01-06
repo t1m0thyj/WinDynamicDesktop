@@ -30,7 +30,7 @@ jobs:
 
     - run: scripts\version.ps1
 
-    - run: dotnet restore src\WinDynamicDesktop.sln
+    - run: dotnet restore WinDynamicDesktop.sln
 
     - run: dotnet publish src\WinDynamicDesktop.csproj -a ${{ matrix.platform }} -c Release --no-restore --self-contained -p:EnableCompressionInSingleFile=$env:EnableCompressionInSingleFile -p:IncludeNativeLibrariesForSelfExtract=$env:IncludeNativeLibrariesForSelfExtract -p:PublishSingleFile=$env:PublishSingleFile
       env:
@@ -70,7 +70,7 @@ jobs:
 
     - run: |
         cp .env.example .env
-        dotnet restore src\WinDynamicDesktop.sln
+        dotnet restore WinDynamicDesktop.sln
 
     - name: Unit Tests
       run: dotnet test --filter type!=system --verbosity normal

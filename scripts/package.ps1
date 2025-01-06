@@ -11,7 +11,7 @@ $appVersion = ([Xml](Get-Content -Path "src\WinDynamicDesktop.csproj")).Project.
 Remove-Item "dist" -ErrorAction Ignore -Recurse
 New-Item -ItemType Directory -Force -Path "dist"
 
-dotnet restore src\WinDynamicDesktop.sln
+dotnet restore WinDynamicDesktop.sln
 
 foreach ($platform in $appPlatforms) {
     dotnet publish src\WinDynamicDesktop.csproj -a $platform -c Release --no-restore --self-contained -p:EnableCompressionInSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:PublishSingleFile=true

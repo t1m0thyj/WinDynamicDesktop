@@ -12,7 +12,7 @@ Pull requests are welcome. For major changes, please [open an issue](https://git
     * `LOCATIONIQ_API_KEY` (optional) - [LocationIQ API key](https://help.locationiq.com/support/solutions/articles/36000172496-how-do-i-get-the-api-key-access-token-) used to get latitude and longitude based on city name
     * `POEDITOR_API_TOKEN` (optional) - [POEditor API token](https://poeditor.com/account/api) used to test new translations from the POEditor website
 
-3. Open [the solution file](./src/WinDynamicDesktop.sln) in Visual Studio and build one of the projects:
+3. Open [the solution file](./WinDynamicDesktop.sln) in Visual Studio and build one of the projects:
     * `WinDynamicDesktop` - Main project to run the app
     * `WinDynamicDesktop.Package` - UWP project for Microsoft Store app
     * `WinDynamicDesktop.Tests` - Unit tests
