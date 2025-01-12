@@ -24,6 +24,12 @@ namespace WinDynamicDesktop
             SendMessageTimeout(FindWindow("Progman", null), 0x52c, IntPtr.Zero, IntPtr.Zero, 0, 500, out result);
         }
 
+        public static void RefreshDesktop()
+        {
+            IntPtr result = IntPtr.Zero;
+            SendMessageTimeout(FindWindow("Progman", null), 0x001a, IntPtr.Zero, IntPtr.Zero, 0, 500, out result);
+        }
+
         public static void SetWallpaper(string imagePath, int displayIndex = -1)
         {
             EnableTransitions();
@@ -49,6 +55,8 @@ namespace WinDynamicDesktop
                 thread.Start();
                 thread.Join(2000);
             }
+
+            RefreshDesktop();  // Send WM_SETTINGCHANGE to refresh the desktop
         }
     }
 }
