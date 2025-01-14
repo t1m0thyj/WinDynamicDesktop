@@ -2,6 +2,7 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Windows;
+using System.Drawing;
 using System.Windows.Automation;
 
 namespace WinDynamicDesktop.Tests
@@ -54,11 +55,7 @@ namespace WinDynamicDesktop.Tests
             }
             catch (WebDriverException)
             {
-                try
-                {
-                    driver.GetScreenshot().SaveAsFile(Path.Combine(Path.GetDirectoryName(AppPath), "screenshot.png"));
-                }
-                catch { /* Do nothing */ }
+                TakeScreenshot(Path.Combine(Path.GetDirectoryName(AppPath), "screenshot.png"));
                 throw;
             }
         }
@@ -87,6 +84,19 @@ namespace WinDynamicDesktop.Tests
             using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop"))
             {
                 return key?.GetValue("WallPaper") as string;
+            }
+        }
+
+        private void TakeScreenshot(string filePath)
+        {
+            Rectangle bounds = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
+            using (Bitmap bitmap = new Bitmap(bounds.Width, bounds.Height))
+            {
+                using (Graphics g = Graphics.FromImage(bitmap))
+                {
+                    g.CopyFromScreen(bounds.X, bounds.Y, 0, 0, bounds.Size);
+                }
+                bitmap.Save(filePath, System.Drawing.Imaging.ImageFormat.Png);
             }
         }
     }
