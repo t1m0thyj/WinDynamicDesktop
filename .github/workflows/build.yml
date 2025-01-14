@@ -93,4 +93,6 @@ jobs:
       if: ${{ failure() }}
       with:
         name: test-dir
-        path: test\bin
+        path: |
+          test\bin
+          !test\bin\*.exe
