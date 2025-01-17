@@ -30,7 +30,7 @@ namespace WinDynamicDesktop.Tests
             {
                 driver.FindElementByXPath("//Window[@Name='Select Language']").Click();
                 driver.FindElementByXPath("//Button[@Name='OK']").Click();
-                Thread.Sleep(TimeSpan.FromSeconds(5));
+                Thread.Sleep(TimeSpan.FromSeconds(2));
 
                 if (HandleLocationPrompt()) Thread.Sleep(TimeSpan.FromSeconds(2));
                 driver.SwitchTo().Window(driver.WindowHandles[0]);
@@ -38,9 +38,9 @@ namespace WinDynamicDesktop.Tests
                 driver.FindElementByAccessibilityId("radioButton1").Click();
                 driver.FindElementByAccessibilityId("locationBox").SendKeys("New York NY");
                 driver.FindElementByXPath("//Button[@Name='OK']").Click();
-                Thread.Sleep(TimeSpan.FromSeconds(2));
-                driver.FindElementByXPath("//Button[@Name='Yes']").Click();
                 Thread.Sleep(TimeSpan.FromSeconds(5));
+                driver.FindElementByXPath("//Button[@Name='Yes']").Click();
+                Thread.Sleep(TimeSpan.FromSeconds(2));
 
                 driver.SwitchTo().Window(driver.WindowHandles[0]);
                 driver.FindElementByXPath("//Window[@Name='Select Theme']").Click();
