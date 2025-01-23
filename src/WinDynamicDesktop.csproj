@@ -36,7 +36,7 @@
     </PackageReference>
     <PackageReference Include="RestSharp" Version="112.1.0" />
     <PackageReference Include="SunCalcNet" Version="1.2.2" />
-    <PackageReference Include="TimeZoneConverter" Version="6.1.0" />
+    <PackageReference Include="TimeZoneConverter" Version="7.0.0" />
     <PackageReference Include="WindowsDisplayAPI" Version="1.3.0.13" />
   </ItemGroup>
   <ItemGroup>
