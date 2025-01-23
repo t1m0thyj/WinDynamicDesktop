@@ -35,11 +35,8 @@ namespace WinDynamicDesktop.Tests
                 if (HandleLocationPrompt()) Thread.Sleep(TimeSpan.FromSeconds(2));
                 driver.SwitchTo().Window(driver.WindowHandles[0]);
                 driver.FindElementByXPath("//Window[@Name='Configure Schedule']").Click();
-                driver.FindElementByAccessibilityId("radioButton1").Click();
-                driver.FindElementByAccessibilityId("locationBox").SendKeys("New York NY");
+                driver.FindElementByAccessibilityId("radioButton3").Click();
                 driver.FindElementByXPath("//Button[@Name='OK']").Click();
-                Thread.Sleep(TimeSpan.FromSeconds(5));
-                driver.FindElementByXPath("//Button[@Name='Yes']").Click();
                 Thread.Sleep(TimeSpan.FromSeconds(2));
 
                 driver.SwitchTo().Window(driver.WindowHandles[0]);
@@ -50,7 +47,7 @@ namespace WinDynamicDesktop.Tests
                 Thread.Sleep(TimeSpan.FromSeconds(2));
 
                 Assert.Contains(["scripts", "settings.json", "themes"],
-                Directory.GetFileSystemEntries(Path.GetDirectoryName(AppPath)).Select(Path.GetFileName).ToArray());
+                    Directory.GetFileSystemEntries(Path.GetDirectoryName(AppPath)).Select(Path.GetFileName).ToArray());
                 Assert.StartsWith(Path.Combine(Path.GetDirectoryName(AppPath), "themes", "Windows_11", "img"), GetWallpaperPath());
             }
             catch (WebDriverException)
