@@ -8,8 +8,8 @@
     <AssemblyName>WinDynamicDesktop</AssemblyName>
     <PackageId>WinDynamicDesktop</PackageId>
     <Product>WinDynamicDesktop</Product>
-    <Copyright>Copyright © 2024 Timothy Johnson</Copyright>
-    <Version>5.6.0</Version>
+    <Copyright>Copyright © 2025 Timothy Johnson</Copyright>
+    <Version>5.6.1</Version>
     <ApplicationIcon>resources\WinDynamicDesktop.ico</ApplicationIcon>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>

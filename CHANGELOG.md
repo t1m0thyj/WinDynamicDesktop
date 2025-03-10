@@ -1,5 +1,14 @@
 # Changelog
 
+## `5.6.1`
+
+**Note:** PowerShell scripts that update Windows theme have been fixed to work with Windows 11 (thanks @KrakenByte27). Download the latest scripts from [here](https://github.com/t1m0thyj/WDD-scripts/tree/master/stable#readme).
+
+* Fixed issue where same theme could be shown twice in a row when theme shuffle option is enabled for multiple monitors ([#608](https://github.com/t1m0thyj/WinDynamicDesktop/issues/608))
+* Fixed crash that could occur when opening Select Theme dialog if Windows Storage Sense had deleted DLLs from temp folder ([#558](https://github.com/t1m0thyj/WinDynamicDesktop/issues/558))
+* Fixed error when applying the None theme to lock screen ([#626](https://github.com/t1m0thyj/WinDynamicDesktop/issues/626))
+* Added message when applying lock screen theme to mention that Windows Spotlight needs to be disabled ([#625](https://github.com/t1m0thyj/WinDynamicDesktop/issues/625))
+
 ## `5.6.0`
 
 ### Enhancements
