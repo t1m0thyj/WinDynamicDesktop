@@ -4,6 +4,7 @@
 
 using System;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WinDynamicDesktop
@@ -26,13 +27,16 @@ namespace WinDynamicDesktop
             ipcManager.ProcessArgs(args);
 
             InitializeTrayIcon();
-            LocationManager.Initialize();
             ThemeManager.Initialize();
             ScriptManager.Initialize();
 
-            scheduler.RunAndUpdateLocation();
-            LaunchSequence.NextStep();
-            UpdateChecker.Initialize();
+            Task.Run(() =>
+            {
+                LocationManager.Initialize();
+                scheduler.RunAndUpdateLocation();
+                MainForm.Invoke(() => LaunchSequence.NextStep());
+                UpdateChecker.Initialize();
+            });
         }
 
         private void CheckSingleInstance(string[] args)

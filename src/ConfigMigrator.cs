@@ -116,6 +116,11 @@ namespace WinDynamicDesktop
 
         private static void UpdateToVersion4(string jsonText)  // Added 2020-01-01
         {
+            if (jsonText.IndexOf("\"changeSystemTheme\"") == -1)
+            {
+                return;
+            }
+
             OldAppConfigV3 oldSettings;
             try
             {
