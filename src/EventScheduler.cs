@@ -133,9 +133,10 @@ namespace WinDynamicDesktop
             return true;
         }
 
-        public async void RunAndUpdateLocation(bool forceImageUpdate = false)
+        public async void RunAndUpdateLocation(bool forceImageUpdate = false, Action locationReady = null)
         {
             bool result = Run(forceImageUpdate);
+            locationReady?.Invoke();
 
             if (result && JsonConfig.settings.locationMode == 1 && await UwpLocation.UpdateGeoposition())
             {

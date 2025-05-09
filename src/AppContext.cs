@@ -32,8 +32,7 @@ namespace WinDynamicDesktop
 
             Task.Run(() =>
             {
-                LocationManager.Initialize();
-                scheduler.RunAndUpdateLocation();
+                scheduler.RunAndUpdateLocation(false, LocationManager.Initialize);
                 MainForm.Invoke(() => LaunchSequence.NextStep());
                 UpdateChecker.Initialize();
             });

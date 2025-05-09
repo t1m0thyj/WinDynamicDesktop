@@ -166,7 +166,7 @@ namespace WinDynamicDesktop
             {
                 if (radioButton1.Checked)
                 {
-                    await LocationIQService.GetLocationData(locationBox.Text, this);
+                    await LocationManager.FetchLocationData(locationBox.Text, this);
                 }
                 else if (radioButton2.Checked)
                 {
