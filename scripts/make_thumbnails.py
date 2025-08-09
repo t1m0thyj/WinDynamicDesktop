@@ -8,6 +8,8 @@ from PIL import Image
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
+# Thumbnails for theme repo: width=384, quality=95
+# Thumbnails for MS Store: width=1920, quality=-1 (png)
 img_width = int(sys.argv[1]) if len(sys.argv) > 1 else 256
 img_height = int(img_width * 9 / 16)
 jpeg_quality = int(sys.argv[2]) if len(sys.argv) > 2 else 95
