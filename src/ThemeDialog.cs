@@ -120,6 +120,10 @@ namespace WinDynamicDesktop
             if (displayComboBox.SelectedIndex == 0)
             {
                 activeThemes[0] = activeTheme;
+                if (selectedIndex == 0)
+                {
+                    activeThemes.RemoveRange(1, activeThemes.Count - 1);
+                }
             }
             else if (IsLockScreenSelected)
             {
