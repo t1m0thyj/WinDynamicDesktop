@@ -21,12 +21,7 @@ namespace WinDynamicDesktop
 
         public TrayMenu()
         {
-            if (DarkUI.IsDark)
-            {
-                // TODO Update dynamically when system theme changes
-                this.Renderer = new ToolStripSystemDarkModeRenderer();
-            }
-
+            DarkUI.ThemeMenu(this);
             this.Items.AddRange(GetMenuItems());
             UwpDesktop.GetHelper().CheckStartOnBoot();
         }

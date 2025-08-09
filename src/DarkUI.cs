@@ -54,8 +54,22 @@ namespace WinDynamicDesktop
             }
         }
 
+        public static void ThemeMenu(ContextMenuStrip menu)
+        {
+            if (IsDark)
+            {
+                menu.Renderer = new ToolStripSystemDarkModeRenderer();
+            }
+            else
+            {
+                menu.Renderer = new ToolStripSystemRenderer();
+            }
+        }
+
         public static void UserDefaultAppThemeIsDarkChanged(object sender, bool isDark)
         {
+            ThemeMenu(AppContext.notifyIcon.ContextMenuStrip);
+
             foreach (Form form in Application.OpenForms)
             {
                 form.BeginInvoke(() => ThemeForm(form, false));
