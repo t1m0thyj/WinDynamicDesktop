@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <TargetFrameworks>net8.0-windows10.0.19041.0</TargetFrameworks>
+    <TargetFrameworks Condition="!$([MSBuild]::IsOSPlatform('Windows'))">net8.0</TargetFrameworks>
     <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
     <Platforms>AnyCPU;x86;x64;ARM64</Platforms>
     <OutputType>WinExe</OutputType>
@@ -11,10 +12,11 @@
     <Copyright>Copyright © 2025 Timothy Johnson</Copyright>
     <Version>5.6.1</Version>
     <ApplicationIcon>resources\WinDynamicDesktop.ico</ApplicationIcon>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
-    <Deterministic>true</Deterministic>
-    <EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
   <ItemGroup>
     <Resource Include="resources\fonts\fontawesome-webfont.ttf" />
