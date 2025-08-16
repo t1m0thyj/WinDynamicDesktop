@@ -80,7 +80,7 @@ jobs:
         npm install -g appium
         Start-Process -FilePath "C:\Program Files (x86)\Windows Application Driver\WinAppDriver.exe"
 
-    - uses: actions/download-artifact@v4
+    - uses: actions/download-artifact@v5
       with:
         name: exe-x64
         path: test\bin
