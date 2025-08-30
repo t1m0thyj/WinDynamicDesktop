@@ -37,6 +37,7 @@ namespace WinDynamicDesktop
         public EventScheduler()
         {
             fullScreenChecker = new FullScreenApi(() => HandleTimerEvent(true));
+            HiddenForm.OnPowerModeChanged = OnPowerModeChanged;
 
             backgroundTimer.AutoReset = true;
             backgroundTimer.Interval = 60e3;
@@ -268,7 +269,7 @@ namespace WinDynamicDesktop
 
         private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
         {
-            if (e.Mode == PowerModes.Resume && (UpdateDisplayList() ||
+            if ((e == null || e.Mode == PowerModes.Resume) && (UpdateDisplayList() ||
                 (nextUpdateTime.HasValue && DateTime.Now >= nextUpdateTime.Value)))
             {
                 LoggingHandler.LogMessage("Scheduler event triggered by resume from sleep");

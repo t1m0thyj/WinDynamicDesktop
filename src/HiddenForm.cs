@@ -14,7 +14,12 @@ namespace WinDynamicDesktop
         private const int ENDSESSION_CLOSEAPP = 0x1;
         private const int WM_QUERYENDSESSION = 0x11;
         private const int WM_ENDSESSION = 0x16;
+        private const int WM_POWERBROADCAST = 0x0218;
+        private const int PBT_APMRESUMESUSPEND = 0x0007;
+        private const int PBT_APMRESUMEAUTOMATIC = 0x0012;
 
+        public static Microsoft.Win32.PowerModeChangedEventHandler OnPowerModeChanged;
+        
         [DllImport("user32.dll")]
         private static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hwndNewParent);
 
@@ -58,6 +63,13 @@ namespace WinDynamicDesktop
                         Application.Exit();
                     }
                     m.Result = IntPtr.Zero;
+                    break;
+                case WM_POWERBROADCAST:
+                    int pbt = m.WParam.ToInt32();
+                    if (pbt == PBT_APMRESUMEAUTOMATIC || pbt == PBT_APMRESUMESUSPEND)
+                    {
+                        OnPowerModeChanged(null, null);
+                    }
                     break;
             }
 
