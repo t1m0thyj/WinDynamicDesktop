@@ -49,6 +49,7 @@ namespace WinDynamicDesktop
                 themeModeItem,
                 optionsItem,
                 new ToolStripSeparator(),
+                new ToolStripMenuItem(_("&Refresh Wallpaper"), null, OnRefreshItemClick),
                 new ToolStripMenuItem(_("&Check for Updates"), null, OnUpdateItemClick),
                 new ToolStripMenuItem(_("&About"), null, OnAboutItemClick),
                 new ToolStripSeparator(),
@@ -61,7 +62,6 @@ namespace WinDynamicDesktop
             List<ToolStripItem> items = new List<ToolStripItem>()
             {
                 new ToolStripMenuItem(_("Select &Language..."), null, OnLanguageItemClick),
-                new ToolStripMenuItem(_("&Refresh Wallpaper"), null, OnRefreshItemClick),
                 new ToolStripSeparator()
             };
 
@@ -116,6 +116,11 @@ namespace WinDynamicDesktop
             SolarScheduler.SetAppearanceMode((AppearanceMode)Array.IndexOf(themeModeItems, (ToolStripMenuItem)sender));
         }
 
+        private void OnRefreshItemClick(object sender, EventArgs e)
+        {
+            AppContext.scheduler.RunAndUpdateLocation(true);
+        }
+
         private async void OnUpdateItemClick(object sender, EventArgs e)
         {
             await UpdateChecker.CheckManual();
@@ -134,11 +139,6 @@ namespace WinDynamicDesktop
         private void OnLanguageItemClick(object sender, EventArgs e)
         {
             Localization.SelectLanguage(false);
-        }
-
-        private void OnRefreshItemClick(object sender, EventArgs e)
-        {
-            AppContext.scheduler.RunAndUpdateLocation(true);
         }
 
         private void OnFullScreenItemClick(object sender, EventArgs e)

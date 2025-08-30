@@ -53,7 +53,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="('$(Configuration)' == 'Debug') Or ('$(UseTemporarySignCert)' == 'true')">
     <PackageCertificateKeyFile>WinDynamicDesktop.Package_TemporaryKey.pfx</PackageCertificateKeyFile>
-    <PackageCertificateThumbprint>5ADE99CD9D217992B3986F6D855AB49E24DCD1F3</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>DDFC0FC9F62CF74D1712777295B14B91657144F2</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="('$(Configuration)' == 'Release') And ('$(UseTemporarySignCert)' != 'true')">
     <PackageCertificateThumbprint>CB1A6283A6FD16EF9026AB059F94176D5F0A54C0</PackageCertificateThumbprint>
