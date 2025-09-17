@@ -31,7 +31,7 @@
     <PackageReference Include="DarkNet" Version="2.3.0" />
     <PackageReference Include="DesktopBridge.Helpers" Version="1.2.2" />
     <PackageReference Include="GeoTimeZone" Version="6.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="NGettext" Version="0.6.7" />
     <PackageReference Include="PropertyChanged.SourceGenerator" Version="1.1.1">
       <PrivateAssets>all</PrivateAssets>
