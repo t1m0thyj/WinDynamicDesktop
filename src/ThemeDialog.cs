@@ -214,6 +214,7 @@ namespace WinDynamicDesktop
 
             listView1.ContextMenuStrip = contextMenuStrip1;
             listView1.ListViewItemSorter = new CompareByItemText();
+            ThemeDialogUtils.SetWindowTheme(listView1.Handle, "Explorer", null);
 
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
