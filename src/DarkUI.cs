@@ -22,48 +22,48 @@ namespace WinDynamicDesktop
 
         public static void ThemeForm(Form form, bool onInit = true)
         {
-            if (onInit && IsSupported)
-            {
-                DarkNet.Instance.SetWindowThemeForms(form, Theme.Auto);
-            }
+            //if (onInit && IsSupported)
+            //{
+            //    DarkNet.Instance.SetWindowThemeForms(form, Theme.Auto);
+            //}
 
-            form.BackColor = IsDark ? bgColorDark : default;
-            form.ForeColor = IsDark ? fgColorDark : default;
+            //form.BackColor = IsDark ? bgColorDark : default;
+            //form.ForeColor = IsDark ? fgColorDark : default;
 
-            foreach (Control childControl in GetControls(form))
-            {
-                childControl.BackColor = IsDark ? bgColorDark : default;
-                childControl.ForeColor = IsDark ? fgColorDark : default;
+            //foreach (Control childControl in GetControls(form))
+            //{
+            //    childControl.BackColor = IsDark ? bgColorDark : default;
+            //    childControl.ForeColor = IsDark ? fgColorDark : default;
 
-                if (childControl is LinkLabel)
-                {
-                    ((LinkLabel)childControl).LinkColor = IsDark ? Color.LightBlue : default;
-                }
+            //    if (childControl is LinkLabel)
+            //    {
+            //        ((LinkLabel)childControl).LinkColor = IsDark ? Color.LightBlue : default;
+            //    }
 
-                if (onInit)
-                {
-                    childControl.Paint += (object sender, PaintEventArgs e) =>
-                    {
-                        if (IsDark && !childControl.Enabled)
-                        {
-                            TextRenderer.DrawText(e.Graphics, childControl.Text, childControl.Font,
-                                childControl.ClientRectangle, Color.Gray);
-                        }
-                    };
-                }
-            }
+            //    if (onInit)
+            //    {
+            //        childControl.Paint += (object sender, PaintEventArgs e) =>
+            //        {
+            //            if (IsDark && !childControl.Enabled)
+            //            {
+            //                TextRenderer.DrawText(e.Graphics, childControl.Text, childControl.Font,
+            //                    childControl.ClientRectangle, Color.Gray);
+            //            }
+            //        };
+            //    }
+            //}
         }
 
         public static void ThemeMenu(ContextMenuStrip menu)
         {
-            if (IsDark)
-            {
-                menu.Renderer = new ToolStripSystemDarkModeRenderer();
-            }
-            else
-            {
-                menu.Renderer = new ToolStripSystemRenderer();
-            }
+            //if (IsDark)
+            //{
+            //    menu.Renderer = new ToolStripSystemDarkModeRenderer();
+            //}
+            //else
+            //{
+            //    menu.Renderer = new ToolStripSystemRenderer();
+            //}
         }
 
         public static void UserDefaultAppThemeIsDarkChanged(object sender, bool isDark)
