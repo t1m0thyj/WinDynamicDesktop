@@ -20,7 +20,7 @@ namespace WinDynamicDesktop
         {
             InitializeComponent();
             Localization.TranslateForm(this);
-            this.linkLabel1.LinkColor = SystemColors.HotTrack;
+            this.linkLabel1.LinkColor = System.Drawing.SystemColors.HotTrack;
         }
 
         private void LanguageDialog_Load(object sender, EventArgs e)
