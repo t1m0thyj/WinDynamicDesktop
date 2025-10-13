@@ -18,7 +18,6 @@ namespace WinDynamicDesktop
         public ScheduleDialog()
         {
             InitializeComponent();
-            DarkUI.ThemeForm(this);
             int oldLabelRightMargin = sunriseTimeLabel.Right;
             Localization.TranslateForm(this);
             this.sunriseTimeLabel.Left += (oldLabelRightMargin - sunriseTimeLabel.Right);
@@ -54,7 +53,7 @@ namespace WinDynamicDesktop
             {
                 if (!hasLocationPermission)
                 {
-                    locationPermissionLabel.ForeColor = DarkUI.IsDark ? DarkUI.fgColorDark : default;
+                    locationPermissionLabel.ForeColor = default;
                     locationPermissionLabel.Text = _("Click below to grant permission to access location");
                 }
                 else
