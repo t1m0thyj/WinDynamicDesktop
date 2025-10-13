@@ -28,10 +28,10 @@ namespace WinDynamicDesktop
         public ThemeDialog()
         {
             InitializeComponent();
-            DarkUI.ThemeForm(this);
             int oldButtonWidth = this.importButton.Width;
             Localization.TranslateForm(this);
             this.themeLinkLabel.Left += (this.importButton.Width - oldButtonWidth);
+            this.themeLinkLabel.LinkColor = SystemColors.HotTrack;
 
             this.FormClosing += OnFormClosing;
             this.FormClosed += OnFormClosed;
@@ -214,7 +214,6 @@ namespace WinDynamicDesktop
 
             listView1.ContextMenuStrip = contextMenuStrip1;
             listView1.ListViewItemSorter = new CompareByItemText();
-            ThemeDialogUtils.SetWindowTheme(listView1.Handle, DarkUI.IsDark ? "DarkMode_Explorer" : "Explorer", null);
 
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
