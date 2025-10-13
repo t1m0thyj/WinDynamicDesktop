@@ -27,6 +27,7 @@ namespace WinDynamicDesktop
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
+            Application.SetColorMode(SystemColorMode.System);
             Application.Run(new AppContext(args));
         }
 

@@ -21,7 +21,7 @@ jobs:
 
     - uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 10.0.x
 
     - uses: microsoft/setup-msbuild@v2
 
@@ -41,7 +41,7 @@ jobs:
     - uses: actions/upload-artifact@v5
       with:
         name: exe-${{ matrix.platform }}
-        path: src\bin\Release\net8.0-windows10.0.19041.0\win-${{ matrix.platform }}\publish\*.exe
+        path: src\bin\Release\net10.0-windows10.0.19041.0\win-${{ matrix.platform }}\publish\*.exe
 
     - run: msbuild uwp\WinDynamicDesktop.Package.wapproj /v:m /p:AppxBundle=$env:AppxBundle /p:Configuration=$env:Configuration /p:Platform=$env:Platform /p:UapAppxPackageBuildMode=$env:UapAppxPackageBuildMode /p:UseTemporarySignCert=$env:UseTemporarySignCert
       env:
@@ -66,7 +66,7 @@ jobs:
 
     - uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 10.0.x
 
     - run: |
         cp .env.example .env
