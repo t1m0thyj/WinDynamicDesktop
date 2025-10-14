@@ -78,6 +78,15 @@ namespace WinDynamicDesktop
             Localization.NotifyIfTestMode();
         }
 
+        public static void HandleThemeChange()
+        {
+            Application.SetColorMode(SystemColorMode.System);
+            foreach (Form form in Application.OpenForms)
+            {
+                form.Invalidate();
+            }
+        }
+
         public static void ShowPopup(string message, string title = null)
         {
             notifyIcon.BalloonTipTitle = title ?? "WinDynamicDesktop";
