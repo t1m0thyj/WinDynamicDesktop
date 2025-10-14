@@ -20,7 +20,6 @@ namespace WinDynamicDesktop
         public AboutDialog()
         {
             InitializeComponent();
-            DarkUI.ThemeForm(this);
             Localization.TranslateForm(this);
         }
 

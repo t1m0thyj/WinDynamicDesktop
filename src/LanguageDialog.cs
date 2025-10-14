@@ -19,8 +19,8 @@ namespace WinDynamicDesktop
         public LanguageDialog()
         {
             InitializeComponent();
-            DarkUI.ThemeForm(this);
             Localization.TranslateForm(this);
+            this.linkLabel1.LinkColor = System.Drawing.SystemColors.HotTrack;
         }
 
         private void LanguageDialog_Load(object sender, EventArgs e)

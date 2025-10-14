@@ -65,7 +65,6 @@ namespace WinDynamicDesktop
         private void InitializeTrayIcon()
         {
             Application.ApplicationExit += OnApplicationExit;
-            Dark.Net.DarkNet.Instance.UserDefaultAppThemeIsDarkChanged += DarkUI.UserDefaultAppThemeIsDarkChanged;
 
             notifyIcon = new NotifyIcon
             {
@@ -77,6 +76,15 @@ namespace WinDynamicDesktop
             notifyIcon.MouseUp += OnNotifyIconMouseUp;
 
             Localization.NotifyIfTestMode();
+        }
+
+        public static void HandleThemeChange()
+        {
+            Application.SetColorMode(SystemColorMode.System);
+            foreach (Form form in Application.OpenForms)
+            {
+                form.Invalidate();
+            }
         }
 
         public static void ShowPopup(string message, string title = null)

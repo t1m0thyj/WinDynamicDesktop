@@ -5,6 +5,7 @@
 using NGettext;
 using RestSharp;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -118,7 +119,7 @@ namespace WinDynamicDesktop
                 form.Text = GetTranslation(form.Text);
             }
 
-            foreach (Control childControl in DarkUI.GetControls(form))
+            foreach (Control childControl in GetControls(form))
             {
                 if (childControl.GetType().GetProperty("Text") != null
                     && childControl.Text != null)
@@ -142,6 +143,20 @@ namespace WinDynamicDesktop
             {
                 AppContext.ShowPopup(string.Format(
                     Localization.GetTranslation("Downloaded '{0}' translation from POEditor"), currentLocale));
+            }
+        }
+
+        // Code from https://stackoverflow.com/a/664083/5504760
+        private static IEnumerable<Control> GetControls(Control form)
+        {
+            foreach (Control childControl in form.Controls)
+            {
+                foreach (Control grandChild in GetControls(childControl))
+                {
+                    yield return grandChild;
+                }
+
+                yield return childControl;
             }
         }
 
