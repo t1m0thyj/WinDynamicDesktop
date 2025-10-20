@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: windows-2022
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
 
     strategy:
@@ -24,10 +24,6 @@ jobs:
         dotnet-version: 8.0.x
 
     - uses: microsoft/setup-msbuild@v2
-
-    - run: |
-        $vsInstallerPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vs_community.exe"
-        & $vsInstallerPath --quiet --wait --add Microsoft.VisualStudio.Component.Windows10SDK.19041
 
     - run: echo ${{ secrets.ENV_FILE }} | base64 --decode > .env
       shell: bash
