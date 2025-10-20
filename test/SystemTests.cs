@@ -32,7 +32,7 @@ namespace WinDynamicDesktop.Tests
                 driver.FindElementByXPath("//Button[@Name='OK']").Click();
                 Thread.Sleep(TimeSpan.FromSeconds(2));
 
-                if (HandleLocationPrompt()) Thread.Sleep(TimeSpan.FromSeconds(2));
+                if (HandleLocationPrompt()) Thread.Sleep(TimeSpan.FromSeconds(5));
                 driver.SwitchTo().Window(driver.WindowHandles[0]);
                 driver.FindElementByXPath("//Window[@Name='Configure Schedule']").Click();
                 driver.FindElementByAccessibilityId("radioButton3").Click();
