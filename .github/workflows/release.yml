@@ -22,7 +22,7 @@ jobs:
     - uses: microsoft/setup-msbuild@v2
 
     - run: |
-        $vsInstallerPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vs_community.exe"
+        $vsInstallerPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vs_installer.exe"
         & $vsInstallerPath --quiet --wait --add Microsoft.VisualStudio.Component.Windows10SDK.19041
 
     - run: echo ${{ secrets.ENV_FILE }} | base64 --decode > .env
