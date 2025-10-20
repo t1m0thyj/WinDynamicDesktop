@@ -229,7 +229,7 @@ namespace WinDynamicDesktop
             meatballButton.DropDownItems.Add(new ToolStripSeparator());
             meatballButton.DropDownItems.AddRange(LockScreenChanger.GetMenuItems());
 
-            if (UwpDesktop.IsMultiDisplaySupported())
+            if (UwpDesktop.IsWinRtSupported())
             {
                 string[] displayNames = ThemeDialogUtils.GetDisplayNames();
                 for (int i = 0; i < displayNames.Length; i++)

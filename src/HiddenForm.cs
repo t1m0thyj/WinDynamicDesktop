@@ -5,6 +5,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using WinDynamicDesktop.COM;
 
 namespace WinDynamicDesktop
 {
@@ -15,11 +16,8 @@ namespace WinDynamicDesktop
         private const int WM_QUERYENDSESSION = 0x11;
         private const int WM_ENDSESSION = 0x16;
         private const int WM_POWERBROADCAST = 0x0218;
-        private const int PBT_APMRESUMESUSPEND = 0x0007;
-        private const int PBT_APMRESUMEAUTOMATIC = 0x0012;
+        private const int PBT_POWERSETTINGCHANGE = 0x8013;
 
-        public static Microsoft.Win32.PowerModeChangedEventHandler OnPowerModeChanged;
-        
         [DllImport("user32.dll")]
         private static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hwndNewParent);
 
@@ -65,10 +63,9 @@ namespace WinDynamicDesktop
                     m.Result = IntPtr.Zero;
                     break;
                 case WM_POWERBROADCAST:
-                    int pbt = m.WParam.ToInt32();
-                    if (pbt == PBT_APMRESUMEAUTOMATIC || pbt == PBT_APMRESUMESUSPEND)
+                    if (m.WParam.ToInt32() == PBT_POWERSETTINGCHANGE && PowerSetting.IsExitingStandby(m.LParam))
                     {
-                        OnPowerModeChanged(null, null);
+                        AppContext.scheduler.HandleResumeFromStandby();
                     }
                     break;
             }
@@ -80,6 +77,11 @@ namespace WinDynamicDesktop
         {
             const int HWND_MESSAGE = -1;
             SetParent(this.Handle, new IntPtr(HWND_MESSAGE));
+
+            if (UwpDesktop.IsWinRtSupported())
+            {
+                PowerSetting.RegisterWindow(this.Handle);
+            }
         }
     }
 }

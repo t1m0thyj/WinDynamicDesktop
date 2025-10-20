@@ -145,6 +145,11 @@ namespace WinDynamicDesktop
             }
         }
 
+        public void HandleResumeFromStandby()
+        {
+            OnPowerModeChanged(null, new PowerModeChangedEventArgs(PowerModes.Resume));
+        }
+
         private bool UpdateDisplayList()
         {
             if (JsonConfig.IsNullOrEmpty(JsonConfig.settings.activeThemes) ||
@@ -269,7 +274,7 @@ namespace WinDynamicDesktop
 
         private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
         {
-            if ((e == null || e.Mode == PowerModes.Resume) && (UpdateDisplayList() ||
+            if (e.Mode == PowerModes.Resume && (UpdateDisplayList() ||
                 (nextUpdateTime.HasValue && DateTime.Now >= nextUpdateTime.Value)))
             {
                 LoggingHandler.LogMessage("Scheduler event triggered by resume from sleep");
