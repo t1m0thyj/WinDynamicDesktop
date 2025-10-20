@@ -37,7 +37,6 @@ namespace WinDynamicDesktop
         public EventScheduler()
         {
             fullScreenChecker = new FullScreenApi(() => HandleTimerEvent(true));
-            HiddenForm.OnPowerModeChanged = OnPowerModeChanged;
 
             backgroundTimer.AutoReset = true;
             backgroundTimer.Interval = 60e3;
@@ -134,10 +133,10 @@ namespace WinDynamicDesktop
             return true;
         }
 
-        public async void RunAndUpdateLocation(bool forceImageUpdate = false, Action locationReady = null)
+        public async void RunAndUpdateLocation(bool forceImageUpdate = false, Action onLocationReady = null)
         {
             bool result = Run(forceImageUpdate);
-            locationReady?.Invoke();
+            onLocationReady?.Invoke();
 
             if (result && JsonConfig.settings.locationMode == 1 && await UwpLocation.UpdateGeoposition())
             {
