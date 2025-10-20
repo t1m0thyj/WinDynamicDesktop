@@ -27,7 +27,7 @@ jobs:
 
     - run: |
         $vsInstallerPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vs_installer.exe"
-        & $vsInstallerPath --quiet --wait --add Microsoft.VisualStudio.Component.Windows10SDK.19041
+        $vsInstallerPath modify --installPath "C:\Program Files\Microsoft Visual Studio\2022\Enterprise" --add Microsoft.VisualStudio.Component.Windows10SDK.19041 --quiet --norestart --nocache | Out-Host
 
     - run: echo ${{ secrets.ENV_FILE }} | base64 --decode > .env
       shell: bash
