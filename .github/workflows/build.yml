@@ -86,7 +86,7 @@ jobs:
         path: test\bin
 
     - name: System Tests
-      run: dotnet test --filter type=system --verbosity detailed
+      run: dotnet test --filter type=system --verbosity normal
       working-directory: test
     
     - uses: actions/upload-artifact@v4

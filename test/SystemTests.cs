@@ -3,7 +3,6 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Windows;
 using System.Drawing;
-using System.Windows.Automation;
 
 namespace WinDynamicDesktop.Tests
 {
@@ -30,7 +29,7 @@ namespace WinDynamicDesktop.Tests
             {
                 driver.FindElementByXPath("//Window[@Name='Select Language']").Click();
                 driver.FindElementByXPath("//Button[@Name='OK']").Click();
-                Thread.Sleep(TimeSpan.FromSeconds(5));
+                Thread.Sleep(TimeSpan.FromSeconds(2));
 
                 if (HandleLocationPrompt()) Thread.Sleep(TimeSpan.FromSeconds(2));
                 driver.SwitchTo().Window(driver.WindowHandles[0]);
@@ -64,13 +63,12 @@ namespace WinDynamicDesktop.Tests
 
         private bool HandleLocationPrompt()
         {
-            var dialogMatcher = new PropertyCondition(AutomationElement.NameProperty, "Let Windows and apps access your location?");
-            var buttonMatcher = new PropertyCondition(AutomationElement.NameProperty, "Yes");
-            AutomationElement dialog = AutomationElement.RootElement.FindFirst(TreeScope.Children, dialogMatcher);
-            if (dialog?.FindFirst(TreeScope.Descendants, buttonMatcher) is AutomationElement yesButton &&
-                yesButton.GetCurrentPattern(InvokePattern.Pattern) is InvokePattern invokePattern)
+            if (driver.WindowHandles.Count == 0)
             {
-                invokePattern.Invoke();
+                // Default focus is on No button, so Shift+Tab to focus Yes, then Enter to confirm
+                System.Windows.Forms.SendKeys.SendWait("+{TAB}");
+                Thread.Sleep(500);
+                System.Windows.Forms.SendKeys.SendWait("{ENTER}");
                 return true;
             }
             return false;
