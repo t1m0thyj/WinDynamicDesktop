@@ -38,7 +38,7 @@ jobs:
         IncludeNativeLibrariesForSelfExtract: true
         PublishSingleFile: true
     
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v5
       with:
         name: exe-${{ matrix.platform }}
         path: src\bin\Release\net8.0-windows10.0.19041.0\win-${{ matrix.platform }}\publish\*.exe
@@ -51,7 +51,7 @@ jobs:
         UapAppxPackageBuildMode: SideloadOnly
         UseTemporarySignCert: true
 
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v5
       with:
         name: msix-${{ matrix.platform }}
         path: uwp\AppPackages\*\*.msix
@@ -89,7 +89,7 @@ jobs:
       run: dotnet test --filter type=system --verbosity normal
       working-directory: test
     
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v5
       if: ${{ failure() }}
       with:
         name: test-dir
