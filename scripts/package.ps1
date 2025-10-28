@@ -15,7 +15,7 @@ dotnet restore WinDynamicDesktop.sln
 
 foreach ($platform in $appPlatforms) {
     dotnet publish src\WinDynamicDesktop.csproj -a $platform -c Release --no-restore --self-contained -p:EnableCompressionInSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:PublishSingleFile=true
-    Copy-Item -Path "src\bin\Release\net8.0-windows10.0.19041.0\win-$platform\publish\WinDynamicDesktop.exe" -Destination "dist\WinDynamicDesktop_$appVersion`_$platform`_Portable.exe"
+    Copy-Item -Path "src\bin\Release\net10.0-windows10.0.19041.0\win-$platform\publish\WinDynamicDesktop.exe" -Destination "dist\WinDynamicDesktop_$appVersion`_$platform`_Portable.exe"
 
     iscc scripts\installer.iss /dMyAppPlatform="$platform" /dMyAppVersion="$appVersion"
 }

@@ -15,6 +15,7 @@ namespace WinDynamicDesktop
         private const int ENDSESSION_CLOSEAPP = 0x1;
         private const int WM_QUERYENDSESSION = 0x11;
         private const int WM_ENDSESSION = 0x16;
+        private const int WM_SETTINGCHANGE = 0x1A;
         private const int WM_POWERBROADCAST = 0x0218;
         private const int PBT_POWERSETTINGCHANGE = 0x8013;
 
@@ -61,6 +62,12 @@ namespace WinDynamicDesktop
                         Application.Exit();
                     }
                     m.Result = IntPtr.Zero;
+                    break;
+                case WM_SETTINGCHANGE:
+                    if (Marshal.PtrToStringUni(m.LParam) == "ImmersiveColorSet")
+                    {
+                        AppContext.HandleThemeChange();
+                    }
                     break;
                 case WM_POWERBROADCAST:
                     if (m.WParam.ToInt32() == PBT_POWERSETTINGCHANGE && PowerSetting.IsExitingStandby(m.LParam))
