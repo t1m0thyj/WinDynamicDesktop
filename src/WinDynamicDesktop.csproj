@@ -33,7 +33,7 @@
     <PackageReference Include="GeoTimeZone" Version="6.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="NGettext" Version="0.6.7" />
-    <PackageReference Include="PropertyChanged.SourceGenerator" Version="1.1.1">
+    <PackageReference Include="PropertyChanged.SourceGenerator" Version="1.1.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
