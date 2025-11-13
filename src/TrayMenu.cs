@@ -21,7 +21,6 @@ namespace WinDynamicDesktop
 
         public TrayMenu()
         {
-            DarkUI.ThemeMenu(this);
             this.Items.AddRange(GetMenuItems());
             UwpDesktop.GetHelper().CheckStartOnBoot();
         }
