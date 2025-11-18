@@ -19,11 +19,8 @@
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="locale\*.mo" />
-    <EmbeddedResource Include="resources\images\*.jpg" />
     <EmbeddedResource Include="resources\fonts\fontawesome-webfont.ttf" />
-    <Compile Remove="WPF\**" />
-    <EmbeddedResource Remove="WPF\**" />
-    <None Remove="WPF\**" />
+    <EmbeddedResource Include="resources\images\*.jpg" />
   </ItemGroup>
   <ItemGroup>
     <AdditionalFiles Remove="app.manifest" />
