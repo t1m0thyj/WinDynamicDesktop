@@ -11,7 +11,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WinDynamicDesktop.Properties;
 
+#pragma warning disable SYSLIB5002
 namespace WinDynamicDesktop
 {
     public partial class ThemeDialog : Form
@@ -31,13 +33,13 @@ namespace WinDynamicDesktop
             int oldButtonWidth = this.importButton.Width;
             Localization.TranslateForm(this);
             this.themeLinkLabel.Left += (this.importButton.Width - oldButtonWidth);
+
+            this.searchBoxButton.BackgroundImage = SystemColors.UseAlternativeColorSet ?
+                Resources.IconSearch_Dark : Resources.IconSearch_Light;
             this.themeLinkLabel.LinkColor = SystemColors.HotTrack;
 
             this.FormClosing += OnFormClosing;
             this.FormClosed += OnFormClosed;
-
-            this.toolStrip1.Renderer = new CustomToolStripRenderer();
-            this.meatballButton.Image = ThemeDialogUtils.GetMeatballIcon(this.ForeColor);
 
             Rectangle bounds = Screen.FromControl(this).Bounds;
             Size thumbnailSize = ThemeThumbLoader.GetThumbnailSize(this);
@@ -50,10 +52,10 @@ namespace WinDynamicDesktop
             }
 
             this.previewerHost.Anchor &= ~AnchorStyles.Left;
-            this.toolStrip1.Width = newWidth;
-            this.displayComboBox.Width += newWidth - oldWidth + this.meatballButton.Margin.Left;
+            this.displayComboBox.Width = newWidth;
             this.listView1.Width = newWidth;
-            this.downloadButton.Left += (newWidth - oldWidth) / 2;
+            this.searchBox.Width = newWidth;
+            this.searchBoxButton.Left += (newWidth - oldWidth);
             this.applyButton.Left += (newWidth - oldWidth) / 2;
             this.closeButton.Left += (newWidth - oldWidth) / 2;
             this.Width += (newWidth - oldWidth);
@@ -172,7 +174,7 @@ namespace WinDynamicDesktop
             }
         }
 
-        private void DownloadTheme(ThemeConfig theme, bool applyPending)
+        private void DownloadTheme(ThemeConfig theme, bool applyPending = false)
         {
             DownloadDialog downloadDialog = new DownloadDialog() { Owner = this, applyPending = applyPending };
             downloadDialog.FormClosed += OnDownloadDialogClosed;
@@ -201,10 +203,9 @@ namespace WinDynamicDesktop
                 themeDownloaded = ThemeManager.IsThemeDownloaded(theme);
             }
 
-            downloadButton.Enabled = !themeDownloaded;
             applyButton.Enabled = true;
-
-            previewer.ViewModel.PreviewTheme(theme, ThemeThumbLoader.GetWindowsWallpaper(IsLockScreenSelected));
+            previewer.ViewModel.PreviewTheme(theme, new Action<ThemeConfig>((theme) => DownloadTheme(theme)),
+                ThemeThumbLoader.GetWindowsWallpaper(IsLockScreenSelected));
         }
 
         private void ThemeDialog_Load(object sender, EventArgs e)
@@ -225,9 +226,9 @@ namespace WinDynamicDesktop
             imageList.Images.Add(ThemeThumbLoader.ScaleImage(windowsWallpaper, thumbnailSize));
             listView1.Items.Add(_("None"), 0);
 
-            meatballButton.DropDownItems.AddRange(ThemeShuffler.GetMenuItems());
-            meatballButton.DropDownItems.Add(new ToolStripSeparator());
-            meatballButton.DropDownItems.AddRange(LockScreenChanger.GetMenuItems());
+            contextMenuStrip2.Items.AddRange(ThemeShuffler.GetMenuItems());
+            contextMenuStrip2.Items.Add(new ToolStripSeparator());
+            contextMenuStrip2.Items.AddRange(LockScreenChanger.GetMenuItems());
 
             if (UwpDesktop.IsWinRtSupported())
             {
@@ -257,6 +258,31 @@ namespace WinDynamicDesktop
 
             ThemeLoadOpts loadOpts = new ThemeLoadOpts(activeTheme, focusTheme);
             Task.Run(new Action(() => ThemeDialogUtils.LoadThemes(ThemeManager.themeSettings, listView1, loadOpts)));
+        }
+
+        private void searchBox_TextChanged(object sender, EventArgs e)
+        {
+            // TODO do actual filtering
+            if (string.IsNullOrWhiteSpace(searchBox.Text))
+            {
+                this.searchBoxButton.BackgroundImage = SystemColors.UseAlternativeColorSet ?
+                    Resources.IconSearch_Dark : Resources.IconSearch_Light;
+                //ThemeDialogUtils.ClearSearchFilter(listView1);
+            }
+            else
+            {
+                this.searchBoxButton.BackgroundImage = SystemColors.UseAlternativeColorSet ?
+                    Resources.IconDismiss_Dark : Resources.IconDismiss_Light;
+                //ThemeDialogUtils.ApplySearchFilter(listView1, searchBox.Text);
+            }
+        }
+
+        private void searchBoxButton_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(searchBox.Text))
+            {
+                searchBox.Text = "";
+            }
         }
 
         private void displayComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -292,11 +318,6 @@ namespace WinDynamicDesktop
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateSelectedItem();
-        }
-
-        private void downloadButton_Click(object sender, EventArgs e)
-        {
-            DownloadTheme(ThemeManager.themeSettings[selectedIndex - 1], false);
         }
 
         private void importButton_Click(object sender, EventArgs e)
@@ -348,6 +369,18 @@ namespace WinDynamicDesktop
         private void closeButton_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void advancedButton_Click(object sender, EventArgs e)
+        {
+            if (!contextMenuStrip2.Visible)
+            {
+                contextMenuStrip2.Show(advancedButton, new Point(0, advancedButton.Height));
+            }
+            else
+            {
+                contextMenuStrip2.Hide();
+            }
         }
 
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
@@ -495,16 +528,6 @@ namespace WinDynamicDesktop
         {
             this.Invoke(previewer.ViewModel.Stop);
         }
-    }
-
-    public class CustomToolStripRenderer : ToolStripSystemRenderer
-    {
-        public CustomToolStripRenderer()
-        {
-            ToolStripManager.VisualStylesEnabled = false;
-        }
-
-        protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e) { }
     }
 
     // Comparer class to make ListView sort by theme name

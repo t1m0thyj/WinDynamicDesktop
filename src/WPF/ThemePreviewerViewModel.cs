@@ -85,6 +85,13 @@ namespace WinDynamicDesktop.WPF
             }
         }
 
+        private Action downloadAction;
+        public Action DownloadAction
+        {
+            get => downloadAction;
+            set => SetProperty(ref downloadAction, value);
+        }
+
         private string downloadSize;
         public string DownloadSize
         {
@@ -164,6 +171,8 @@ namespace WinDynamicDesktop.WPF
 
         public ICommand NextCommand => new RelayCommand(Next);
 
+        public ICommand DownloadCommand => new RelayCommand(() => DownloadAction?.Invoke());
+
         #endregion
 
         private static readonly Func<string, string> _ = Localization.GetTranslation;
@@ -218,7 +227,7 @@ namespace WinDynamicDesktop.WPF
             }
         }
 
-        public void PreviewTheme(ThemeConfig theme, string imagePath = null)
+        public void PreviewTheme(ThemeConfig theme, Action<ThemeConfig> downloadAction, string imagePath = null)
         {
             Stop();
 
@@ -230,6 +239,7 @@ namespace WinDynamicDesktop.WPF
 
             if (theme != null)
             {
+                DownloadAction = () => downloadAction.Invoke(theme);
                 Title = ThemeManager.GetThemeName(theme);
                 Author = ThemeManager.GetThemeAuthor(theme);
                 bool isDownloaded = ThemeManager.IsThemeDownloaded(theme);
@@ -269,7 +279,7 @@ namespace WinDynamicDesktop.WPF
                 }
                 else
                 {
-                    Message = _("Theme is not downloaded. Click Download button to enable full preview.");
+                    Message = _("Theme is not downloaded. Click here to download and enable full preview.");
                     ThemeManager.CalcThemeDownloadSize(theme, size => { DownloadSize = size; });
 
                     string[] resourceNames = Assembly.GetExecutingAssembly().GetManifestResourceNames();

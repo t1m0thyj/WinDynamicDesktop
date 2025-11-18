@@ -96,7 +96,9 @@
 
             <Border HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,15"
                     Visibility="{Binding MessageVisible, Converter={StaticResource BoolVis}}">
-                <TextBlock Text="{Binding Message}" FontSize="16" VerticalAlignment="Center" Margin="8,6,8,6"  />
+                <Button Command="{Binding DownloadCommand}" Style="{StaticResource CarouselButton}" Cursor="Hand" FocusVisualStyle="{x:Null}">
+                    <TextBlock Text="{Binding Message}" FontSize="16" VerticalAlignment="Center" Margin="8,6,8,6" />
+                </Button>
             </Border>
 
             <ListBox HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="16" Focusable="False"

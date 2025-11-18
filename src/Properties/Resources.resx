@@ -127,4 +127,16 @@
   <data name="DotEnv" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\.env;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="IconDismiss_Dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\images\fluent-dismiss_dark.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IconDismiss_Light" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\images\fluent-dismiss_light.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IconSearch_Dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\images\fluent-search_dark.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IconSearch_Light" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\images\fluent-search_light.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

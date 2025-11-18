@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -44,20 +43,6 @@ namespace WinDynamicDesktop
                 {
                     return string.IsNullOrEmpty(dt.FriendlyName) ? _("Internal Display") : dt.FriendlyName;
                 }).ToArray();
-        }
-
-        internal static Bitmap GetMeatballIcon(Color iconColor)
-        {
-            Bitmap bitmap = new Bitmap(16, 16, PixelFormat.Format32bppArgb);
-            using (Graphics graphics = Graphics.FromImage(bitmap))
-            {
-                graphics.Clear(Color.Transparent);
-                for (int i = 0; i < 3; i++)
-                {
-                    graphics.FillEllipse(new SolidBrush(iconColor), i * 6, 6, 4, 4);
-                }
-            }
-            return bitmap;
         }
 
         // Code to change ListView appearance from https://stackoverflow.com/a/4463114/5504760

@@ -37,22 +37,23 @@
             contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(components);
             favoriteThemeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             deleteThemeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            downloadButton = new System.Windows.Forms.Button();
-            previewerHost = new System.Windows.Forms.Integration.ElementHost();
-            listView1 = new System.Windows.Forms.ListView();
-            toolStrip1 = new System.Windows.Forms.ToolStrip();
-            displayComboBox = new System.Windows.Forms.ToolStripComboBox();
-            meatballButton = new System.Windows.Forms.ToolStripDropDownButton();
             toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             showInstalledMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            displayComboBox = new System.Windows.Forms.ComboBox();
+            previewerHost = new System.Windows.Forms.Integration.ElementHost();
+            listView1 = new System.Windows.Forms.ListView();
+            advancedButton = new System.Windows.Forms.Button();
+            searchBox = new System.Windows.Forms.TextBox();
+            searchBoxButton = new System.Windows.Forms.PictureBox();
+            contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(components);
             contextMenuStrip1.SuspendLayout();
-            toolStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)searchBoxButton).BeginInit();
             SuspendLayout();
             // 
             // applyButton
             // 
             applyButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            applyButton.Location = new System.Drawing.Point(536, 488);
+            applyButton.Location = new System.Drawing.Point(475, 488);
             applyButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             applyButton.Name = "applyButton";
             applyButton.Size = new System.Drawing.Size(88, 27);
@@ -65,7 +66,7 @@
             // 
             closeButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             closeButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            closeButton.Location = new System.Drawing.Point(652, 488);
+            closeButton.Location = new System.Drawing.Point(591, 488);
             closeButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             closeButton.Name = "closeButton";
             closeButton.Size = new System.Drawing.Size(88, 27);
@@ -111,7 +112,7 @@
             contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { favoriteThemeMenuItem, deleteThemeMenuItem, toolStripSeparator1, showInstalledMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
             contextMenuStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            contextMenuStrip1.Size = new System.Drawing.Size(181, 98);
+            contextMenuStrip1.Size = new System.Drawing.Size(181, 76);
             contextMenuStrip1.Opening += contextMenuStrip1_Opening;
             // 
             // favoriteThemeMenuItem
@@ -128,17 +129,27 @@
             deleteThemeMenuItem.Text = "toolStripMenuItem2";
             deleteThemeMenuItem.Click += deleteThemeMenuItem_Click;
             // 
-            // downloadButton
+            // toolStripSeparator1
             // 
-            downloadButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            downloadButton.Location = new System.Drawing.Point(419, 488);
-            downloadButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            downloadButton.Name = "downloadButton";
-            downloadButton.Size = new System.Drawing.Size(88, 27);
-            downloadButton.TabIndex = 4;
-            downloadButton.Text = "Download";
-            downloadButton.UseVisualStyleBackColor = true;
-            downloadButton.Click += downloadButton_Click;
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            // 
+            // showInstalledMenuItem
+            // 
+            showInstalledMenuItem.Name = "showInstalledMenuItem";
+            showInstalledMenuItem.Size = new System.Drawing.Size(180, 22);
+            showInstalledMenuItem.Text = "toolStripMenuItem3";
+            showInstalledMenuItem.Click += showInstalledMenuItem_Click;
+            // 
+            // displayComboBox
+            // 
+            displayComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            displayComboBox.Items.AddRange(new object[] { "All Displays" });
+            displayComboBox.Location = new System.Drawing.Point(12, 12);
+            displayComboBox.Name = "displayComboBox";
+            displayComboBox.Size = new System.Drawing.Size(233, 23);
+            displayComboBox.TabIndex = 15;
+            displayComboBox.SelectedIndexChanged += displayComboBox_SelectedIndexChanged;
             // 
             // previewerHost
             // 
@@ -152,59 +163,52 @@
             // listView1
             // 
             listView1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            listView1.Location = new System.Drawing.Point(12, 46);
+            listView1.Location = new System.Drawing.Point(12, 41);
             listView1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             listView1.MultiSelect = false;
             listView1.Name = "listView1";
-            listView1.Size = new System.Drawing.Size(233, 426);
+            listView1.Size = new System.Drawing.Size(233, 408);
             listView1.TabIndex = 0;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.SelectedIndexChanged += listView1_SelectedIndexChanged;
             // 
-            // toolStrip1
+            // advancedButton
             // 
-            toolStrip1.AutoSize = false;
-            toolStrip1.CanOverflow = false;
-            toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
-            toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { displayComboBox, meatballButton });
-            toolStrip1.Location = new System.Drawing.Point(12, 12);
-            toolStrip1.Name = "toolStrip1";
-            toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            toolStrip1.Size = new System.Drawing.Size(233, 25);
-            toolStrip1.TabIndex = 10;
-            toolStrip1.Text = "toolStrip1";
+            advancedButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            advancedButton.Location = new System.Drawing.Point(812, 488);
+            advancedButton.Name = "advancedButton";
+            advancedButton.Size = new System.Drawing.Size(88, 27);
+            advancedButton.TabIndex = 12;
+            advancedButton.Text = "Advanced ▼";
+            advancedButton.UseVisualStyleBackColor = true;
+            advancedButton.Click += advancedButton_Click;
             // 
-            // displayComboBox
+            // searchBox
             // 
-            displayComboBox.AutoSize = false;
-            displayComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            displayComboBox.Items.AddRange(new object[] { "All Displays" });
-            displayComboBox.Name = "displayComboBox";
-            displayComboBox.Size = new System.Drawing.Size(200, 23);
-            displayComboBox.SelectedIndexChanged += displayComboBox_SelectedIndexChanged;
+            searchBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            searchBox.Location = new System.Drawing.Point(12, 452);
+            searchBox.Name = "searchBox";
+            searchBox.PlaceholderText = "Search...";
+            searchBox.Size = new System.Drawing.Size(233, 23);
+            searchBox.TabIndex = 13;
+            searchBox.TextChanged += searchBox_TextChanged;
             // 
-            // meatballButton
+            // searchBoxButton
             // 
-            meatballButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            meatballButton.Margin = new System.Windows.Forms.Padding(5, 1, 0, 2);
-            meatballButton.Name = "meatballButton";
-            meatballButton.ShowDropDownArrow = false;
-            meatballButton.Size = new System.Drawing.Size(4, 22);
-            meatballButton.Text = "…";
-            meatballButton.ToolTipText = "See More";
+            searchBoxButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            searchBoxButton.BackColor = System.Drawing.SystemColors.Window;
+            searchBoxButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            searchBoxButton.Location = new System.Drawing.Point(221, 454);
+            searchBoxButton.Name = "searchBoxButton";
+            searchBoxButton.Size = new System.Drawing.Size(19, 19);
+            searchBoxButton.TabIndex = 14;
+            searchBoxButton.TabStop = false;
+            searchBoxButton.Click += searchBoxButton_Click;
             // 
-            // toolStripSeparator1
+            // contextMenuStrip2
             // 
-            toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
-            // 
-            // showInstalledMenuItem
-            // 
-            showInstalledMenuItem.Name = "showInstalledMenuItem";
-            showInstalledMenuItem.Size = new System.Drawing.Size(180, 22);
-            showInstalledMenuItem.Text = "toolStripMenuItem3";
-            showInstalledMenuItem.Click += showInstalledMenuItem_Click;
+            contextMenuStrip2.Name = "contextMenuStrip2";
+            contextMenuStrip2.Size = new System.Drawing.Size(61, 4);
             // 
             // ThemeDialog
             // 
@@ -213,9 +217,11 @@
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = closeButton;
             ClientSize = new System.Drawing.Size(915, 532);
-            Controls.Add(toolStrip1);
+            Controls.Add(searchBoxButton);
+            Controls.Add(searchBox);
+            Controls.Add(advancedButton);
+            Controls.Add(displayComboBox);
             Controls.Add(listView1);
-            Controls.Add(downloadButton);
             Controls.Add(importButton);
             Controls.Add(themeLinkLabel);
             Controls.Add(applyButton);
@@ -229,8 +235,7 @@
             Text = "Select Theme";
             Load += ThemeDialog_Load;
             contextMenuStrip1.ResumeLayout(false);
-            toolStrip1.ResumeLayout(false);
-            toolStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)searchBoxButton).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -243,14 +248,15 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem favoriteThemeMenuItem;
-        private System.Windows.Forms.Button downloadButton;
         private System.Windows.Forms.Integration.ElementHost previewerHost;
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ToolStripMenuItem deleteThemeMenuItem;
-        private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripComboBox displayComboBox;
-        private System.Windows.Forms.ToolStripDropDownButton meatballButton;
+        private System.Windows.Forms.ComboBox displayComboBox;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem showInstalledMenuItem;
+        private System.Windows.Forms.Button advancedButton;
+        private System.Windows.Forms.TextBox searchBox;
+        private System.Windows.Forms.PictureBox searchBoxButton;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
     }
 }
