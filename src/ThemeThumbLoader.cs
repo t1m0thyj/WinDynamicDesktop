@@ -131,7 +131,7 @@ namespace WinDynamicDesktop
         {
             foreach (System.Windows.Forms.ListViewItem item in listView.Items)
             {
-                if (item.Index == 0)
+                if (item.Tag == null)
                 {
                     continue;
                 }

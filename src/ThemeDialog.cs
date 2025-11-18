@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WinDynamicDesktop.Properties;
 
-#pragma warning disable SYSLIB5002
 namespace WinDynamicDesktop
 {
     public partial class ThemeDialog : Form
@@ -34,8 +33,10 @@ namespace WinDynamicDesktop
             Localization.TranslateForm(this);
             this.themeLinkLabel.Left += (this.importButton.Width - oldButtonWidth);
 
+#pragma warning disable SYSLIB5002
             this.searchBoxButton.BackgroundImage = SystemColors.UseAlternativeColorSet ?
                 Resources.IconSearch_Dark : Resources.IconSearch_Light;
+#pragma warning restore SYSLIB5002
             this.themeLinkLabel.LinkColor = SystemColors.HotTrack;
 
             this.FormClosing += OnFormClosing;
@@ -187,6 +188,11 @@ namespace WinDynamicDesktop
         {
             if (listView1.SelectedItems.Count == 0)
             {
+                if (listView1.Items.Count == 0)
+                {
+                    previewer.ViewModel.PreviewTheme(null, null,
+                        ThemeThumbLoader.GetWindowsWallpaper(IsLockScreenSelected));
+                }
                 applyButton.Enabled = false;
                 return;
             }
@@ -195,7 +201,7 @@ namespace WinDynamicDesktop
             bool themeDownloaded = true;
             ThemeConfig theme = null;
 
-            if (selectedIndex > 0)
+            if (listView1.Items[selectedIndex].Tag != null)
             {
                 string themeId = (string)listView1.Items[selectedIndex].Tag;
                 selectedIndex = ThemeManager.themeSettings.FindIndex(t => t.themeId == themeId) + 1;
@@ -262,19 +268,21 @@ namespace WinDynamicDesktop
 
         private void searchBox_TextChanged(object sender, EventArgs e)
         {
-            // TODO do actual filtering
+#pragma warning disable SYSLIB5002
             if (string.IsNullOrWhiteSpace(searchBox.Text))
             {
                 this.searchBoxButton.BackgroundImage = SystemColors.UseAlternativeColorSet ?
                     Resources.IconSearch_Dark : Resources.IconSearch_Light;
-                //ThemeDialogUtils.ClearSearchFilter(listView1);
             }
             else
             {
                 this.searchBoxButton.BackgroundImage = SystemColors.UseAlternativeColorSet ?
                     Resources.IconDismiss_Dark : Resources.IconDismiss_Light;
-                //ThemeDialogUtils.ApplySearchFilter(listView1, searchBox.Text);
             }
+#pragma warning restore SYSLIB5002
+
+            ThemeDialogUtils.ApplySearchFilter(listView1, searchBox.Text);
+            UpdateSelectedItem();
         }
 
         private void searchBoxButton_Click(object sender, EventArgs e)
@@ -395,14 +403,14 @@ namespace WinDynamicDesktop
                 e.Cancel = true;
                 return;
             }
-            else if (itemIndex > 0)
+            else if (listView1.Items[itemIndex].Tag != null)
             {
                 themeId = (string)listView1.Items[itemIndex].Tag;
                 theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
             }
 
             bool isWindowsTheme = themeId == DefaultThemes.GetWindowsTheme()?.themeId;
-            contextMenuStrip1.Items[0].Enabled = itemIndex > 0;
+            contextMenuStrip1.Items[0].Enabled = theme != null;
             contextMenuStrip1.Items[1].Enabled = theme != null && ThemeManager.IsThemeDownloaded(theme) &&
                 !isWindowsTheme;
 

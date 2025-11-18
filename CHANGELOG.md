@@ -1,5 +1,18 @@
 # Changelog
 
+## Recent Changes
+
+### Enhancements
+
+* Added Tahoe Abstract theme
+* Updated to .NET 10 which enables dark mode across entire application ([#553](https://github.com/t1m0thyj/WinDynamicDesktop/issues/553))
+
+### Bug Fixes
+
+* Reduced impact on Windows startup time ([#645](https://github.com/t1m0thyj/WinDynamicDesktop/issues/645))
+* Fixed error when applying "None" wallpaper theme ([#652](https://github.com/t1m0thyj/WinDynamicDesktop/issues/652))
+* Fixed wallpaper not always refreshing when PC resumes from sleep ([#657](https://github.com/t1m0thyj/WinDynamicDesktop/issues/657))
+
 ## `5.6.1`
 
 **Note:** PowerShell scripts that update Windows theme have been fixed to work with Windows 11 (thanks @KrakenByte27). Download the latest scripts from [here](https://github.com/t1m0thyj/WDD-scripts/tree/master/stable#readme).

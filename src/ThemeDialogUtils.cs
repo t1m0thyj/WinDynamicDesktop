@@ -29,6 +29,7 @@ namespace WinDynamicDesktop
     internal class ThemeDialogUtils
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
+        private static List<ListViewItem> allThemeItems = new List<ListViewItem>();
         private static SemaphoreSlim loadSemaphore = new SemaphoreSlim(1);
 
         internal static string[] GetDisplayNames()
@@ -142,6 +143,51 @@ namespace WinDynamicDesktop
             });
         }
 
+        internal static void ApplySearchFilter(ListView listView, string searchText)
+        {
+            searchText = searchText.Trim().ToLower();
+
+            // Save all items on first search
+            if (allThemeItems.Count == 0 && listView.Items.Count > 0)
+            {
+                foreach (ListViewItem item in listView.Items)
+                {
+                    allThemeItems.Add((ListViewItem)item.Clone());
+                }
+            }
+
+            listView.BeginUpdate();
+            listView.Items.Clear();
+
+            // Filter and add items back
+            foreach (ListViewItem item in allThemeItems)
+            {
+                if (string.IsNullOrWhiteSpace(searchText))
+                {
+                    // Show all items when search is empty
+                    listView.Items.Add((ListViewItem)item.Clone());
+                }
+                else
+                {
+                    // Get theme name (remove favorite star)
+                    string themeName = item.Text.Replace("★ ", "").ToLower();
+
+                    if (themeName.Contains(searchText))
+                    {
+                        listView.Items.Add((ListViewItem)item.Clone());
+                    }
+                }
+            }
+
+            listView.EndUpdate();
+
+            // Update selection
+            if (listView.Items.Count > 0 && listView.SelectedItems.Count == 0)
+            {
+                listView.Items[0].Selected = true;
+            }
+        }
+
         internal static void UpdateConfigForDisplay(List<string> activeThemes)
         {
             int numNewDisplays = Screen.AllScreens.Length - activeThemes.Count + 1;
@@ -225,7 +271,7 @@ namespace WinDynamicDesktop
             {
                 foreach (ListViewItem item in listView.Items)
                 {
-                    if (item.Index > 0)
+                    if (item.Tag != null)
                     {
                         string themeId = (string)item.Tag;
                         ThemeConfig theme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
