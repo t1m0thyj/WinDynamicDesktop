@@ -1,0 +1,487 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+using SkiaSharp;
+using SkiaSharp.Views.Desktop;
+using System;
+using System.Drawing;
+using System.IO;
+using System.Reflection;
+using System.Windows.Forms;
+
+namespace WinDynamicDesktop.Skia
+{
+    public class ThemePreviewer : SKControl
+    {
+        private const int ANIMATION_DURATION_MS = 600;
+        private const int ANIMATION_FPS = 120;
+        private const int MARGIN_STANDARD = 20;
+        private const int BORDER_RADIUS = 5;
+        private const byte OVERLAY_ALPHA = 127;
+        private const float OPACITY_NORMAL = 0.5f;
+        private const float OPACITY_HOVER = 1.0f;
+        private const float OPACITY_MESSAGE = 0.8f;
+
+        public ThemePreviewerViewModel ViewModel { get; }
+
+        private readonly Timer animationTimer;
+        private readonly Timer fadeTimer;
+        private float fadeProgress = 0f;
+        private bool isAnimating = false;
+        private DateTime animationStartTime;
+        private static SKTypeface fontAwesome;
+
+        // Cached objects to reduce allocations
+        private readonly SKPaint basePaint = new SKPaint { IsAntialias = true };
+        private readonly SKFont titleFont;
+        private readonly SKFont previewFont;
+        private readonly SKFont textFont;
+        private readonly SKFont iconFont16;
+        private readonly SKFont iconFont20;
+        private readonly SKSamplingOptions samplingOptions = new SKSamplingOptions(SKCubicResampler.Mitchell);
+
+        private Point mousePosition;
+        private bool isMouseOverPlay = false;
+        private bool isMouseOverLeft = false;
+        private bool isMouseOverRight = false;
+        private bool isMouseOverDownload = false;
+
+        public ThemePreviewer()
+        {
+            ViewModel = new ThemePreviewerViewModel(StartAnimation, StopAnimation);
+            DoubleBuffered = true;
+
+            // Load FontAwesome font once
+            if (fontAwesome == null)
+            {
+                using (Stream fontStream = Assembly.GetExecutingAssembly()
+                    .GetManifestResourceStream("WinDynamicDesktop.resources.fonts.fontawesome-webfont.ttf"))
+                {
+                    fontAwesome = SKTypeface.FromStream(fontStream);
+                }
+            }
+
+            // Initialize cached fonts
+            titleFont = new SKFont(SKTypeface.FromFamilyName("Segoe UI", SKFontStyleWeight.Bold, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright), 19);
+            previewFont = new SKFont(SKTypeface.FromFamilyName("Segoe UI", SKFontStyleWeight.Normal, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright), 16);
+            textFont = new SKFont(SKTypeface.FromFamilyName("Segoe UI"), 16);
+            iconFont16 = new SKFont(fontAwesome, 16);
+            iconFont20 = new SKFont(fontAwesome, 20);
+
+            // Timer for smooth fade animations
+            fadeTimer = new Timer
+            {
+                Interval = 1000 / ANIMATION_FPS
+            };
+            fadeTimer.Tick += FadeTimer_Tick;
+
+            // Timer for auto-advance
+            animationTimer = new Timer
+            {
+                Interval = 1000 / 60
+            };
+
+            MouseEnter += (s, e) => ViewModel.IsMouseOver = true;
+            MouseLeave += (s, e) => ViewModel.IsMouseOver = false;
+
+            ViewModel.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(ThemePreviewerViewModel.BackImage) ||
+                    e.PropertyName == nameof(ThemePreviewerViewModel.FrontImage) ||
+                    e.PropertyName == nameof(ThemePreviewerViewModel.IsPlaying) ||
+                    e.PropertyName == nameof(ThemePreviewerViewModel.DownloadSize))
+                {
+                    Invalidate();
+                }
+            };
+
+            KeyDown += ThemePreviewer_KeyDown;
+        }
+
+        private void ThemePreviewer_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Left)
+            {
+                ViewModel.Previous();
+                e.Handled = true;
+            }
+            else if (e.KeyCode == Keys.Right)
+            {
+                ViewModel.Next();
+                e.Handled = true;
+            }
+        }
+
+        protected override void OnPaintSurface(SKPaintSurfaceEventArgs e)
+        {
+            base.OnPaintSurface(e);
+
+            var canvas = e.Surface.Canvas;
+            canvas.Clear(SKColors.Gray);
+
+            var info = e.Info;
+
+            // Draw back image
+            if (ViewModel.BackImage != null)
+            {
+                DrawImage(canvas, ViewModel.BackImage, info, 1.0f);
+            }
+
+            // Draw front image with fade animation
+            if (ViewModel.FrontImage != null && isAnimating)
+            {
+                DrawImage(canvas, ViewModel.FrontImage, info, fadeProgress);
+            }
+
+            // Draw UI overlay
+            if (ViewModel.ControlsVisible)
+            {
+                DrawOverlay(canvas, info);
+            }
+        }
+
+        private void DrawImage(SKCanvas canvas, SKBitmap bitmap, SKImageInfo info, float opacity)
+        {
+            var destRect = new SKRect(0, 0, info.Width, info.Height);
+
+            if (opacity >= 1.0f)
+            {
+                // Fast path for fully opaque images
+                using (var image = SKImage.FromBitmap(bitmap))
+                {
+                    canvas.DrawImage(image, destRect, samplingOptions, null);
+                }
+            }
+            else
+            {
+                // Apply opacity with color filter
+                using (var paint = new SKPaint())
+                {
+                    paint.IsAntialias = true;
+                    paint.ColorFilter = SKColorFilter.CreateBlendMode(
+                        SKColors.White.WithAlpha((byte)(255 * opacity)),
+                        SKBlendMode.DstIn);
+
+                    using (var image = SKImage.FromBitmap(bitmap))
+                    {
+                        canvas.DrawImage(image, destRect, samplingOptions, paint);
+                    }
+                }
+            }
+        }
+
+        private void DrawOverlay(SKCanvas canvas, SKImageInfo info)
+        {
+            basePaint.Style = SKPaintStyle.Fill;
+
+            // Draw left and right arrow button areas
+            if (ViewModel.ControlsVisible)
+            {
+                DrawArrowArea(canvas, info, true);
+                DrawArrowArea(canvas, info, false);
+            }
+
+            // Title and preview text box (top left) - Border with Margin=20, StackPanel with Margin=10
+            basePaint.Color = new SKColor(0, 0, 0, 127);
+
+            // Measure text to calculate proper box size
+            var titleBounds = new SKRect();
+            titleFont.MeasureText(ViewModel.Title ?? "", out titleBounds);
+
+            var previewBounds = new SKRect();
+            previewFont.MeasureText(ViewModel.PreviewText ?? "", out previewBounds);
+
+            float boxWidth = Math.Max(titleBounds.Width, previewBounds.Width) + 20; // 10 margin each side
+            float boxHeight = 19 + 4 + 16 + 20; // title size + margin + preview size + top/bottom margin
+
+            var titleRect = SKRect.Create(20, 20, boxWidth, boxHeight);
+            basePaint.Color = new SKColor(0, 0, 0, 127);
+            canvas.DrawRoundRect(titleRect, 5, 5, basePaint);
+
+            // Title text - 10px margin from border
+            basePaint.Color = SKColors.White;
+            canvas.DrawText(ViewModel.Title ?? "", 30, 20 + 10 + 19, titleFont, basePaint); // margin + top padding + font size
+
+            // Preview text - 4px below title, 16px font
+            canvas.DrawText(ViewModel.PreviewText ?? "", 30, 20 + 10 + 19 + 4 + 16, previewFont, basePaint); // add 4px margin + 16px for text
+
+            // Play/Pause button (top right) - MinWidth=40, MinHeight=40, Margin=20
+            basePaint.Color = new SKColor(0, 0, 0, 127);
+            var playButtonRect = SKRect.Create(info.Width - 40 - 20, 20, 40, 40);
+            canvas.DrawRoundRect(playButtonRect, 5, 5, basePaint);
+
+            float playOpacity = isMouseOverPlay ? 1.0f : 0.5f;
+            basePaint.Color = SKColors.White.WithAlpha((byte)(255 * playOpacity));
+            string playIcon = ViewModel.IsPlaying ? "\uf04c" : "\uf04b";
+            var textBounds = new SKRect();
+            iconFont16.MeasureText(playIcon, out textBounds);
+            float centerX = info.Width - 20 - 20;
+            float centerY = 20 + 20;
+            canvas.DrawText(playIcon, centerX - textBounds.MidX, centerY - textBounds.MidY, iconFont16, basePaint);
+
+            // Corner labels
+            DrawCornerLabel(canvas, info, ViewModel.Author, isBottomRight: true);
+            DrawCornerLabel(canvas, info, ViewModel.DownloadSize, isBottomRight: false);
+
+            // Download message (centered bottom) - Margin="0,0,0,15", TextBlock Margin="8,6,8,6"
+            if (!string.IsNullOrEmpty(ViewModel.Message))
+            {
+                var msgBounds = new SKRect();
+                textFont.MeasureText(ViewModel.Message, out msgBounds);
+                // TextBlock margin: 8,6,8,6 = left+right=16, top+bottom=12
+                float msgWidth = msgBounds.Width + 16;
+                float msgHeight = 6 + 16 + 6; // top margin + text height + bottom margin
+                var msgRect = SKRect.Create(info.Width / 2 - msgWidth / 2, info.Height - msgHeight - 15, msgWidth, msgHeight);
+
+                basePaint.Color = new SKColor(0, 0, 0, 127);
+                canvas.DrawRoundRect(msgRect, 5, 5, basePaint);
+
+                float msgOpacity = isMouseOverDownload ? 1.0f : 0.8f;
+                basePaint.Color = SKColors.White.WithAlpha((byte)(255 * msgOpacity));
+                // Text positioned: border top + top margin + font baseline
+                canvas.DrawText(ViewModel.Message, info.Width / 2 - msgBounds.Width / 2, info.Height - msgHeight - 15 + 6 + 16, textFont, basePaint);
+            }
+
+            // Carousel indicators - Margin=16, Height=32, Rectangle Height=3, Width=30, Margin="3,0"
+            if (ViewModel.CarouselIndicatorsVisible && ViewModel.Items.Count > 0)
+            {
+                DrawCarouselIndicators(canvas, info);
+            }
+        }
+
+        private void DrawArrowArea(SKCanvas canvas, SKImageInfo info, bool isLeft)
+        {
+            bool isHovered = isLeft ? isMouseOverLeft : isMouseOverRight;
+            float opacity = isHovered ? 1.0f : 0.5f;
+
+            float x = isLeft ? 40 : info.Width - 40;
+            float y = info.Height / 2;
+
+            basePaint.Color = SKColors.White.WithAlpha((byte)(255 * opacity));
+
+            string icon = isLeft ? "\uf053" : "\uf054";
+            var textBounds = new SKRect();
+            iconFont20.MeasureText(icon, out textBounds);
+            canvas.DrawText(icon, x - textBounds.MidX, y - textBounds.MidY, iconFont20, basePaint);
+        }
+
+        private void DrawCornerLabel(SKCanvas canvas, SKImageInfo info, string text, bool isBottomRight)
+        {
+            if (string.IsNullOrEmpty(text)) return;
+
+            basePaint.Color = new SKColor(0, 0, 0, OVERLAY_ALPHA);
+            var textBounds = new SKRect();
+            textFont.MeasureText(text, out textBounds);
+
+            // Calculate margins and dimensions
+            float leftMargin = isBottomRight ? 8 : 11;
+            float rightMargin = isBottomRight ? 11 : 8;
+            float borderWidth = textBounds.Width + leftMargin + rightMargin;
+            float borderHeight = 4 + 16 + 9; // top + text + bottom
+
+            // Position rect
+            float rectX = isBottomRight ? info.Width - borderWidth + 3 : -3;
+            float rectY = info.Height - borderHeight + 3;
+            var rect = SKRect.Create(rectX, rectY, borderWidth, borderHeight);
+            canvas.DrawRoundRect(rect, BORDER_RADIUS, BORDER_RADIUS, basePaint);
+
+            // Draw text
+            basePaint.Color = SKColors.White.WithAlpha(OVERLAY_ALPHA);
+            float textX = isBottomRight ? info.Width - textBounds.Width - rightMargin + 3 : leftMargin - 3;
+            float textY = rectY + 4 + 16; // top margin + baseline
+            canvas.DrawText(text, textX, textY, textFont, basePaint);
+        }
+
+        private void DrawCarouselIndicators(SKCanvas canvas, SKImageInfo info)
+        {
+            int count = ViewModel.Items.Count;
+            int indicatorWidth = 30;  // Rectangle Width=30
+            int indicatorHeight = 3;  // Rectangle Height=3
+            int itemSpacing = 6;      // Margin="3,0" means 3px on each side = 6px spacing
+            int totalWidth = count * indicatorWidth + (count - 1) * itemSpacing;
+            int startX = (info.Width - totalWidth) / 2;
+            int y = info.Height - 16 - 32 / 2; // Margin=16 from bottom, Height=32, centered vertically
+
+            for (int i = 0; i < count; i++)
+            {
+                float opacity = (i == ViewModel.SelectedIndex) ? 1.0f : 0.5f;
+                basePaint.Color = SKColors.White.WithAlpha((byte)(255 * opacity));
+
+                int rectX = startX + i * (indicatorWidth + itemSpacing);
+                var rect = SKRect.Create(rectX, y - indicatorHeight / 2, indicatorWidth, indicatorHeight);
+                canvas.DrawRect(rect, basePaint);
+            }
+        }
+
+        protected override void OnMouseClick(MouseEventArgs e)
+        {
+            base.OnMouseClick(e);
+
+            if (!ViewModel.ControlsVisible) return;
+
+            // Check if play button was clicked - MinWidth=40, MinHeight=40, Margin=20
+            var playButtonRect = new Rectangle(Width - 40 - 20, 20, 40, 40);
+            if (playButtonRect.Contains(e.Location))
+            {
+                ViewModel.TogglePlayPause();
+                return;
+            }
+
+            // Check if left arrow area was clicked
+            if (e.X < 80)
+            {
+                ViewModel.Previous();
+                return;
+            }
+
+            // Check if right arrow area was clicked
+            if (e.X > Width - 80)
+            {
+                ViewModel.Next();
+                return;
+            }
+
+            // Check if download message was clicked - Margin="0,0,0,15", TextBlock Margin="8,6,8,6"
+            if (!string.IsNullOrEmpty(ViewModel.Message))
+            {
+                using (var textFont = new SKFont(SKTypeface.FromFamilyName("Segoe UI"), 16))
+                {
+                    var msgBounds = new SKRect();
+                    textFont.MeasureText(ViewModel.Message, out msgBounds);
+                    float msgWidth = msgBounds.Width + 16; // 8+8
+                    float msgHeight = 6 + 16 + 6; // top + text + bottom margin
+                    var msgRect = new Rectangle((int)(Width / 2 - msgWidth / 2), Height - (int)msgHeight - 15, (int)msgWidth, (int)msgHeight);
+                    if (msgRect.Contains(e.Location))
+                    {
+                        ViewModel.InvokeDownload();
+                        return;
+                    }
+                }
+            }
+
+            // Check if carousel indicator was clicked - Margin=16, Height=32
+            if (ViewModel.CarouselIndicatorsVisible && ViewModel.Items.Count > 0)
+            {
+                int count = ViewModel.Items.Count;
+                int indicatorWidth = 30;
+                int itemSpacing = 6;
+                int totalWidth = count * indicatorWidth + (count - 1) * itemSpacing;
+                int startX = (Width - totalWidth) / 2;
+                int y = Height - 16 - 32 / 2;
+
+                for (int i = 0; i < count; i++)
+                {
+                    int rectX = startX + i * (indicatorWidth + itemSpacing);
+                    var rect = new Rectangle(rectX, y - 16, indicatorWidth, 32); // Full clickable height
+                    if (rect.Contains(e.Location))
+                    {
+                        ViewModel.SelectedIndex = i;
+                        return;
+                    }
+                }
+            }
+        }
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+
+            mousePosition = e.Location;
+            bool needsRedraw = false;
+
+            // Update cursor based on location
+            if (!ViewModel.ControlsVisible)
+            {
+                Cursor = Cursors.Default;
+                return;
+            }
+
+            bool wasOverPlay = isMouseOverPlay;
+            bool wasOverLeft = isMouseOverLeft;
+            bool wasOverRight = isMouseOverRight;
+            bool wasOverDownload = isMouseOverDownload;
+
+            // Play button - MinWidth=40, MinHeight=40, Margin=20
+            var playButtonRect = new Rectangle(Width - 40 - 20, 20, 40, 40);
+            isMouseOverPlay = playButtonRect.Contains(e.Location);
+
+            // Left arrow (80px wide area on left side, full height)
+            isMouseOverLeft = e.X < 80;
+
+            // Right arrow (80px wide area on right side, full height)
+            isMouseOverRight = e.X > Width - 80;
+
+            // Download message
+            isMouseOverDownload = false;
+            if (!string.IsNullOrEmpty(ViewModel.Message))
+            {
+                using (var textFont = new SKFont(SKTypeface.FromFamilyName("Segoe UI"), 16))
+                {
+                    var msgBounds = new SKRect();
+                    textFont.MeasureText(ViewModel.Message, out msgBounds);
+                    float msgWidth = msgBounds.Width + 16; // 8+8
+                    float msgHeight = 6 + 16 + 6; // top + text + bottom margin
+                    var msgRect = new Rectangle((int)(Width / 2 - msgWidth / 2), Height - (int)msgHeight - 15, (int)msgWidth, (int)msgHeight);
+                    isMouseOverDownload = msgRect.Contains(e.Location);
+                }
+            }
+
+            needsRedraw = (isMouseOverPlay != wasOverPlay) || (isMouseOverLeft != wasOverLeft) ||
+                         (isMouseOverRight != wasOverRight) || (isMouseOverDownload != wasOverDownload);
+
+            bool isOverClickable = isMouseOverPlay || isMouseOverLeft || isMouseOverRight || isMouseOverDownload;
+            Cursor = isOverClickable ? Cursors.Hand : Cursors.Default;
+
+            if (needsRedraw)
+            {
+                Invalidate();
+            }
+        }
+
+        private void StartAnimation()
+        {
+            fadeProgress = 0f;
+            isAnimating = true;
+            animationStartTime = DateTime.Now;
+            fadeTimer.Start();
+        }
+
+        private void StopAnimation()
+        {
+            fadeTimer.Stop();
+            isAnimating = false;
+            fadeProgress = 0f;
+            Invalidate();
+        }
+
+        private void FadeTimer_Tick(object sender, EventArgs e)
+        {
+            var elapsed = DateTime.Now - animationStartTime;
+            fadeProgress = Math.Min(1.0f, (float)(elapsed.TotalMilliseconds / ANIMATION_DURATION_MS));
+
+            // Ease in-out sine function
+            fadeProgress = (float)(Math.Sin((fadeProgress - 0.5) * Math.PI) / 2 + 0.5);
+
+            Invalidate();
+
+            if (fadeProgress >= 1.0f)
+            {
+                fadeTimer.Stop();
+                isAnimating = false;
+                ViewModel.OnAnimationComplete();
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                fadeTimer?.Dispose();
+                animationTimer?.Dispose();
+                ViewModel?.Stop();
+            }
+            base.Dispose(disposing);
+        }
+    }
+}

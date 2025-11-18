@@ -14,7 +14,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
-namespace WinDynamicDesktop.SkiaSharp
+namespace WinDynamicDesktop.Skia
 {
     public class ThemePreviewItem
     {
@@ -154,22 +154,21 @@ namespace WinDynamicDesktop.SkiaSharp
 
         #endregion
 
-        #region Commands
+        #region Public Methods
 
-        public ICommand PlayCommand => new RelayCommand(() =>
+        public void TogglePlayPause()
         {
             IsPlaying = !IsPlaying;
             if (IsPlaying && fadeQueue.IsEmpty)
             {
                 transitionTimer.Start();
             }
-        });
+        }
 
-        public ICommand PreviousCommand => new RelayCommand(Previous);
-
-        public ICommand NextCommand => new RelayCommand(Next);
-
-        public ICommand DownloadCommand => new RelayCommand(() => DownloadAction?.Invoke());
+        public void InvokeDownload()
+        {
+            DownloadAction?.Invoke();
+        }
 
         #endregion
 
@@ -327,7 +326,7 @@ namespace WinDynamicDesktop.SkiaSharp
             Start(activeImage);
         }
 
-        private void Previous()
+        public void Previous()
         {
             if (SelectedIndex == 0)
             {
@@ -339,7 +338,7 @@ namespace WinDynamicDesktop.SkiaSharp
             }
         }
 
-        private void Next()
+        public void Next()
         {
             if (SelectedIndex == Items.Count - 1)
             {

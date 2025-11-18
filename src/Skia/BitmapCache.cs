@@ -10,7 +10,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using SkiaSharp;
 
-namespace WinDynamicDesktop.SkiaSharp
+namespace WinDynamicDesktop.Skia
 {
     sealed class BitmapCache
     {
@@ -138,10 +138,10 @@ namespace WinDynamicDesktop.SkiaSharp
                             using (var fullBitmap = new SKBitmap(info))
                             {
                                 codec.GetPixels(fullBitmap.Info, fullBitmap.GetPixels());
-                                fullBitmap.ScalePixels(bitmap, SKFilterQuality.High);
+                                fullBitmap.ScalePixels(bitmap, new SKSamplingOptions(SKCubicResampler.Mitchell));
                             }
                         }
-
+                        
                         return bitmap;
                     }
                 }
