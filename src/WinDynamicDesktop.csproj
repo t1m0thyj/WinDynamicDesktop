@@ -16,12 +16,14 @@
   </PropertyGroup>
   <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
     <UseWindowsForms>true</UseWindowsForms>
-    <UseWPF>true</UseWPF>
   </PropertyGroup>
   <ItemGroup>
-    <Resource Include="resources\fonts\fontawesome-webfont.ttf" />
     <EmbeddedResource Include="locale\*.mo" />
     <EmbeddedResource Include="resources\images\*.jpg" />
+    <EmbeddedResource Include="resources\fonts\fontawesome-webfont.ttf" />
+    <Compile Remove="WPF\**" />
+    <EmbeddedResource Remove="WPF\**" />
+    <None Remove="WPF\**" />
   </ItemGroup>
   <ItemGroup>
     <AdditionalFiles Remove="app.manifest" />
@@ -37,6 +39,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="RestSharp" Version="112.1.0" />
+    <PackageReference Include="SkiaSharp" Version="3.119.1" />
+    <PackageReference Include="SkiaSharp.Views.WindowsForms" Version="3.119.1" />
     <PackageReference Include="SunCalcNet" Version="1.2.3" />
     <PackageReference Include="TimeZoneConverter" Version="7.2.0" />
     <PackageReference Include="WindowsDisplayAPI" Version="1.3.0.13" />
