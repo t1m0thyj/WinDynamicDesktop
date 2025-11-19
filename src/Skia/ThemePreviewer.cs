@@ -142,17 +142,14 @@ namespace WinDynamicDesktop.Skia
             }
         }
 
-        private void DrawImage(SKCanvas canvas, SKBitmap bitmap, SKImageInfo info, float opacity)
+        private void DrawImage(SKCanvas canvas, SKImage image, SKImageInfo info, float opacity)
         {
             var destRect = new SKRect(0, 0, info.Width, info.Height);
 
             if (opacity >= 1.0f)
             {
                 // Fast path for fully opaque images
-                using (var image = SKImage.FromBitmap(bitmap))
-                {
-                    canvas.DrawImage(image, destRect, samplingOptions, null);
-                }
+                canvas.DrawImage(image, destRect, samplingOptions, null);
             }
             else
             {
@@ -164,10 +161,7 @@ namespace WinDynamicDesktop.Skia
                         SKColors.White.WithAlpha((byte)(255 * opacity)),
                         SKBlendMode.DstIn);
 
-                    using (var image = SKImage.FromBitmap(bitmap))
-                    {
-                        canvas.DrawImage(image, destRect, samplingOptions, paint);
-                    }
+                    canvas.DrawImage(image, destRect, samplingOptions, paint);
                 }
             }
         }

@@ -97,15 +97,15 @@ namespace WinDynamicDesktop.Skia
             set => SetProperty(ref downloadSize, value);
         }
 
-        private SKBitmap backImage;
-        public SKBitmap BackImage
+        private SKImage backImage;
+        public SKImage BackImage
         {
             get => backImage;
             set => SetProperty(ref backImage, value);
         }
 
-        private SKBitmap frontImage;
-        public SKBitmap FrontImage
+        private SKImage frontImage;
+        public SKImage FrontImage
         {
             get => frontImage;
             set => SetProperty(ref frontImage, value);
@@ -176,7 +176,7 @@ namespace WinDynamicDesktop.Skia
 
         private const int TRANSITION_TIME = 5;
 
-        private readonly BitmapCache cache = new BitmapCache();
+        private readonly ImageCache cache = new ImageCache();
         private readonly System.Windows.Forms.Timer transitionTimer;
         private readonly ConcurrentQueue<int> fadeQueue = new ConcurrentQueue<int>();
         private readonly SemaphoreSlim fadeSemaphore = new SemaphoreSlim(1, 1);

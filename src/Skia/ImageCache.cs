@@ -12,14 +12,14 @@ using SkiaSharp;
 
 namespace WinDynamicDesktop.Skia
 {
-    sealed class BitmapCache
+    sealed class ImageCache
     {
         readonly int maxWidth;
         readonly int maxHeight;
         readonly object cacheLock = new object();
-        readonly Dictionary<Uri, SKBitmap> images = new Dictionary<Uri, SKBitmap>();
+        readonly Dictionary<Uri, SKImage> images = new Dictionary<Uri, SKImage>();
 
-        public SKBitmap this[Uri uri]
+        public SKImage this[Uri uri]
         {
             get
             {
@@ -46,16 +46,16 @@ namespace WinDynamicDesktop.Skia
         {
             lock (cacheLock)
             {
-                foreach (var bitmap in images.Values)
+                foreach (var image in images.Values)
                 {
-                    bitmap?.Dispose();
+                    image?.Dispose();
                 }
                 images.Clear();
             }
             GC.Collect();
         }
 
-        public BitmapCache(bool limitDecodeSize = true)
+        public ImageCache(bool limitDecodeSize = true)
         {
             if (limitDecodeSize)
             {
@@ -78,7 +78,7 @@ namespace WinDynamicDesktop.Skia
             }
         }
 
-        private SKBitmap CreateImage(Uri uri)
+        private SKImage CreateImage(Uri uri)
         {
             try
             {
@@ -114,7 +114,7 @@ namespace WinDynamicDesktop.Skia
 
                         var info = codec.Info;
                         
-                        // Calculate scaled dimensions
+                        // Calculate target dimensions
                         int targetWidth = info.Width;
                         int targetHeight = info.Height;
 
@@ -125,24 +125,31 @@ namespace WinDynamicDesktop.Skia
                             targetHeight = (int)(info.Height * scale);
                         }
 
-                        var bitmap = new SKBitmap(targetWidth, targetHeight, info.ColorType, info.AlphaType);
-                        
-                        if (targetWidth == info.Width && targetHeight == info.Height)
+                        // Decode at native size
+                        using (var sourceBitmap = new SKBitmap(info))
                         {
-                            // No scaling needed
-                            codec.GetPixels(bitmap.Info, bitmap.GetPixels());
-                        }
-                        else
-                        {
-                            // Decode at full size then scale down with high quality
-                            using (var fullBitmap = new SKBitmap(info))
+                            if (codec.GetPixels(sourceBitmap.Info, sourceBitmap.GetPixels()) != SKCodecResult.Success)
                             {
-                                codec.GetPixels(fullBitmap.Info, fullBitmap.GetPixels());
-                                fullBitmap.ScalePixels(bitmap, new SKSamplingOptions(SKCubicResampler.Mitchell));
+                                return null;
+                            }
+
+                            // If scaling is needed, create scaled version with high quality
+                            if (targetWidth != sourceBitmap.Width || targetHeight != sourceBitmap.Height)
+                            {
+                                using (var scaledBitmap = new SKBitmap(targetWidth, targetHeight, info.ColorType, info.AlphaType))
+                                {
+                                    sourceBitmap.ScalePixels(scaledBitmap, new SKSamplingOptions(SKCubicResampler.Mitchell));
+                                    var image = SKImage.FromBitmap(scaledBitmap);
+                                    return image;
+                                }
+                            }
+                            else
+                            {
+                                // No scaling needed
+                                var image = SKImage.FromBitmap(sourceBitmap);
+                                return image;
                             }
                         }
-                        
-                        return bitmap;
                     }
                 }
             }
