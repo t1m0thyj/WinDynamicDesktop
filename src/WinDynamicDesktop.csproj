@@ -58,10 +58,10 @@
   <ItemGroup>
     <InternalsVisibleTo Include="WinDynamicDesktop.Tests" />
   </ItemGroup>
-  <Target Name="RemoveUnneededDlls" AfterTargets="ComputeFilesToPublish">
+  <Target Name="ExplicitRemoveFromFilesToBundle" BeforeTargets="GenerateSingleFileBundle" DependsOnTargets="PrepareForBundle">
     <ItemGroup>
-      <ResolvedFileToPublish Remove="@(ResolvedFileToPublish)" Condition="$([System.String]::Copy('%(Filename)').StartsWith('OpenTK'))" />
-      <ResolvedFileToPublish Remove="@(ResolvedFileToPublish)" Condition="'%(Filename)' == 'glfw3'" />
+      <FilesToRemoveFromBundle Include="@(FilesToBundle)" Condition="($([System.String]::Copy('%(Filename)').StartsWith('OpenTK'))) OR ('%(Filename)' == 'glfw3')" />
+      <FilesToBundle Remove="@(FilesToRemoveFromBundle)" />
     </ItemGroup>
   </Target>
 </Project>
