@@ -18,6 +18,7 @@ namespace WinDynamicDesktop.Skia
         private const int ANIMATION_FPS = 120;
         private const int MARGIN_STANDARD = 20;
         private const int BORDER_RADIUS = 5;
+        private const int ARROW_AREA_WIDTH = 80;
         private const byte OVERLAY_ALPHA = 127;
         private const float OPACITY_NORMAL = 0.5f;
         private const float OPACITY_HOVER = 1.0f;
@@ -25,7 +26,6 @@ namespace WinDynamicDesktop.Skia
 
         public ThemePreviewerViewModel ViewModel { get; }
 
-        private readonly Timer animationTimer;
         private readonly Timer fadeTimer;
         private float fadeProgress = 0f;
         private bool isAnimating = false;
@@ -41,11 +41,18 @@ namespace WinDynamicDesktop.Skia
         private readonly SKFont iconFont20;
         private readonly SKSamplingOptions samplingOptions = new SKSamplingOptions(SKCubicResampler.Mitchell);
 
-        private Point mousePosition;
         private bool isMouseOverPlay = false;
         private bool isMouseOverLeft = false;
         private bool isMouseOverRight = false;
         private bool isMouseOverDownload = false;
+
+        // Cached UI element rectangles for rendering and hit testing
+        private Rectangle titleBoxRect;
+        private Rectangle playButtonRect;
+        private Rectangle downloadMessageRect;
+        private Rectangle authorLabelRect;
+        private Rectangle downloadSizeLabelRect;
+        private Rectangle[] carouselIndicatorRects;
 
         public ThemePreviewer()
         {
@@ -75,12 +82,6 @@ namespace WinDynamicDesktop.Skia
                 Interval = 1000 / ANIMATION_FPS
             };
             fadeTimer.Tick += FadeTimer_Tick;
-
-            // Timer for auto-advance
-            animationTimer = new Timer
-            {
-                Interval = 1000 / 60
-            };
 
             MouseEnter += (s, e) => ViewModel.IsMouseOver = true;
             MouseLeave += (s, e) => ViewModel.IsMouseOver = false;
@@ -182,65 +183,61 @@ namespace WinDynamicDesktop.Skia
                 DrawArrowArea(canvas, info, false);
             }
 
-            // Title and preview text box (top left) - Border with Margin=20, StackPanel with Margin=10
-            basePaint.Color = new SKColor(0, 0, 0, 127);
-
-            // Measure text to calculate proper box size
+            // Title and preview text box (top left)
             var titleBounds = new SKRect();
             titleFont.MeasureText(ViewModel.Title ?? "", out titleBounds);
-
             var previewBounds = new SKRect();
             previewFont.MeasureText(ViewModel.PreviewText ?? "", out previewBounds);
 
-            float boxWidth = Math.Max(titleBounds.Width, previewBounds.Width) + 20; // 10 margin each side
-            float boxHeight = 19 + 4 + 16 + 20; // title size + margin + preview size + top/bottom margin
+            float boxWidth = Math.Max(titleBounds.Width, previewBounds.Width) + 20;
+            float boxHeight = 19 + 4 + 16 + 20;
+            titleBoxRect = new Rectangle(20, 20, (int)boxWidth, (int)boxHeight);
 
-            var titleRect = SKRect.Create(20, 20, boxWidth, boxHeight);
             basePaint.Color = new SKColor(0, 0, 0, 127);
-            canvas.DrawRoundRect(titleRect, 5, 5, basePaint);
+            canvas.DrawRoundRect(SKRect.Create(titleBoxRect.X, titleBoxRect.Y, titleBoxRect.Width, titleBoxRect.Height), 5, 5, basePaint);
 
-            // Title text - 10px margin from border
             basePaint.Color = SKColors.White;
-            canvas.DrawText(ViewModel.Title ?? "", 30, 20 + 10 + 19, titleFont, basePaint); // margin + top padding + font size
+            canvas.DrawText(ViewModel.Title ?? "", titleBoxRect.X + 10, titleBoxRect.Y + 8 + 19, titleFont, basePaint);
+            canvas.DrawText(ViewModel.PreviewText ?? "", titleBoxRect.X + 10, titleBoxRect.Y + 8 + 19 + 5 + 16, previewFont, basePaint);
 
-            // Preview text - 4px below title, 16px font
-            canvas.DrawText(ViewModel.PreviewText ?? "", 30, 20 + 10 + 19 + 4 + 16, previewFont, basePaint); // add 4px margin + 16px for text
-
-            // Play/Pause button (top right) - MinWidth=40, MinHeight=40, Margin=20
+            // Play/Pause button (top right)
+            playButtonRect = new Rectangle(info.Width - 40 - 20, 20, 40, 40);
+            
             basePaint.Color = new SKColor(0, 0, 0, 127);
-            var playButtonRect = SKRect.Create(info.Width - 40 - 20, 20, 40, 40);
-            canvas.DrawRoundRect(playButtonRect, 5, 5, basePaint);
+            canvas.DrawRoundRect(SKRect.Create(playButtonRect.X, playButtonRect.Y, playButtonRect.Width, playButtonRect.Height), 5, 5, basePaint);
 
             float playOpacity = isMouseOverPlay ? 1.0f : 0.5f;
             basePaint.Color = SKColors.White.WithAlpha((byte)(255 * playOpacity));
             string playIcon = ViewModel.IsPlaying ? "\uf04c" : "\uf04b";
             var textBounds = new SKRect();
             iconFont16.MeasureText(playIcon, out textBounds);
-            float centerX = info.Width - 20 - 20;
-            float centerY = 20 + 20;
+            float centerX = playButtonRect.X + playButtonRect.Width / 2;
+            float centerY = playButtonRect.Y + playButtonRect.Height / 2;
             canvas.DrawText(playIcon, centerX - textBounds.MidX, centerY - textBounds.MidY, iconFont16, basePaint);
 
             // Corner labels
             DrawCornerLabel(canvas, info, ViewModel.Author, isBottomRight: true);
             DrawCornerLabel(canvas, info, ViewModel.DownloadSize, isBottomRight: false);
 
-            // Download message (centered bottom) - Margin="0,0,0,15", TextBlock Margin="8,6,8,6"
+            // Download message (centered bottom)
             if (!string.IsNullOrEmpty(ViewModel.Message))
             {
                 var msgBounds = new SKRect();
                 textFont.MeasureText(ViewModel.Message, out msgBounds);
-                // TextBlock margin: 8,6,8,6 = left+right=16, top+bottom=12
                 float msgWidth = msgBounds.Width + 16;
-                float msgHeight = 6 + 16 + 6; // top margin + text height + bottom margin
-                var msgRect = SKRect.Create(info.Width / 2 - msgWidth / 2, info.Height - msgHeight - 15, msgWidth, msgHeight);
+                float msgHeight = 6 + 16 + 6;
+                downloadMessageRect = new Rectangle((int)(info.Width / 2 - msgWidth / 2), info.Height - (int)msgHeight - 15, (int)msgWidth, (int)msgHeight);
 
                 basePaint.Color = new SKColor(0, 0, 0, 127);
-                canvas.DrawRoundRect(msgRect, 5, 5, basePaint);
+                canvas.DrawRoundRect(SKRect.Create(downloadMessageRect.X, downloadMessageRect.Y, downloadMessageRect.Width, downloadMessageRect.Height), 5, 5, basePaint);
 
                 float msgOpacity = isMouseOverDownload ? 1.0f : 0.8f;
                 basePaint.Color = SKColors.White.WithAlpha((byte)(255 * msgOpacity));
-                // Text positioned: border top + top margin + font baseline
-                canvas.DrawText(ViewModel.Message, info.Width / 2 - msgBounds.Width / 2, info.Height - msgHeight - 15 + 6 + 16, textFont, basePaint);
+                canvas.DrawText(ViewModel.Message, downloadMessageRect.X + 8, downloadMessageRect.Y + 5 + 16, textFont, basePaint);
+            }
+            else
+            {
+                downloadMessageRect = Rectangle.Empty;
             }
 
             // Carousel indicators - Margin=16, Height=32, Rectangle Height=3, Width=30, Margin="3,0"
@@ -268,9 +265,15 @@ namespace WinDynamicDesktop.Skia
 
         private void DrawCornerLabel(SKCanvas canvas, SKImageInfo info, string text, bool isBottomRight)
         {
-            if (string.IsNullOrEmpty(text)) return;
+            if (string.IsNullOrEmpty(text))
+            {
+                if (isBottomRight)
+                    authorLabelRect = Rectangle.Empty;
+                else
+                    downloadSizeLabelRect = Rectangle.Empty;
+                return;
+            }
 
-            basePaint.Color = new SKColor(0, 0, 0, OVERLAY_ALPHA);
             var textBounds = new SKRect();
             textFont.MeasureText(text, out textBounds);
 
@@ -278,30 +281,40 @@ namespace WinDynamicDesktop.Skia
             float leftMargin = isBottomRight ? 8 : 11;
             float rightMargin = isBottomRight ? 11 : 8;
             float borderWidth = textBounds.Width + leftMargin + rightMargin;
-            float borderHeight = 4 + 16 + 9; // top + text + bottom
+            float borderHeight = 4 + 16 + 9;
 
-            // Position rect
+            // Position rect and cache it
             float rectX = isBottomRight ? info.Width - borderWidth + 3 : -3;
             float rectY = info.Height - borderHeight + 3;
-            var rect = SKRect.Create(rectX, rectY, borderWidth, borderHeight);
-            canvas.DrawRoundRect(rect, BORDER_RADIUS, BORDER_RADIUS, basePaint);
+            Rectangle labelRect = new Rectangle((int)rectX, (int)rectY, (int)borderWidth, (int)borderHeight);
+            
+            if (isBottomRight)
+                authorLabelRect = labelRect;
+            else
+                downloadSizeLabelRect = labelRect;
+
+            basePaint.Color = new SKColor(0, 0, 0, OVERLAY_ALPHA);
+            canvas.DrawRoundRect(SKRect.Create(rectX, rectY, borderWidth, borderHeight), BORDER_RADIUS, BORDER_RADIUS, basePaint);
 
             // Draw text
             basePaint.Color = SKColors.White.WithAlpha(OVERLAY_ALPHA);
             float textX = isBottomRight ? info.Width - textBounds.Width - rightMargin + 3 : leftMargin - 3;
-            float textY = rectY + 4 + 16; // top margin + baseline
+            float textY = rectY + 4 + 16;
             canvas.DrawText(text, textX, textY, textFont, basePaint);
         }
 
         private void DrawCarouselIndicators(SKCanvas canvas, SKImageInfo info)
         {
             int count = ViewModel.Items.Count;
-            int indicatorWidth = 30;  // Rectangle Width=30
-            int indicatorHeight = 3;  // Rectangle Height=3
-            int itemSpacing = 6;      // Margin="3,0" means 3px on each side = 6px spacing
+            int indicatorWidth = 30;
+            int indicatorHeight = 3;
+            int itemSpacing = 6;
             int totalWidth = count * indicatorWidth + (count - 1) * itemSpacing;
             int startX = (info.Width - totalWidth) / 2;
-            int y = info.Height - 16 - 32 / 2; // Margin=16 from bottom, Height=32, centered vertically
+            int y = info.Height - 16 - 32 / 2;
+
+            // Cache clickable rectangles for hit testing
+            carouselIndicatorRects = new Rectangle[count];
 
             for (int i = 0; i < count; i++)
             {
@@ -311,6 +324,9 @@ namespace WinDynamicDesktop.Skia
                 int rectX = startX + i * (indicatorWidth + itemSpacing);
                 var rect = SKRect.Create(rectX, y - indicatorHeight / 2, indicatorWidth, indicatorHeight);
                 canvas.DrawRect(rect, basePaint);
+
+                // Cache full clickable height for hit testing
+                carouselIndicatorRects[i] = new Rectangle(rectX, y - 16, indicatorWidth, 32);
             }
         }
 
@@ -320,8 +336,7 @@ namespace WinDynamicDesktop.Skia
 
             if (!ViewModel.ControlsVisible) return;
 
-            // Check if play button was clicked - MinWidth=40, MinHeight=40, Margin=20
-            var playButtonRect = new Rectangle(Width - 40 - 20, 20, 40, 40);
+            // Check if play button was clicked
             if (playButtonRect.Contains(e.Location))
             {
                 ViewModel.TogglePlayPause();
@@ -329,52 +344,32 @@ namespace WinDynamicDesktop.Skia
             }
 
             // Check if left arrow area was clicked
-            if (e.X < 80)
+            if (e.X < ARROW_AREA_WIDTH)
             {
                 ViewModel.Previous();
                 return;
             }
 
             // Check if right arrow area was clicked
-            if (e.X > Width - 80)
+            if (e.X > Width - ARROW_AREA_WIDTH)
             {
                 ViewModel.Next();
                 return;
             }
 
-            // Check if download message was clicked - Margin="0,0,0,15", TextBlock Margin="8,6,8,6"
-            if (!string.IsNullOrEmpty(ViewModel.Message))
+            // Check if download message was clicked
+            if (downloadMessageRect.Contains(e.Location))
             {
-                using (var textFont = new SKFont(SKTypeface.FromFamilyName("Segoe UI"), 16))
-                {
-                    var msgBounds = new SKRect();
-                    textFont.MeasureText(ViewModel.Message, out msgBounds);
-                    float msgWidth = msgBounds.Width + 16; // 8+8
-                    float msgHeight = 6 + 16 + 6; // top + text + bottom margin
-                    var msgRect = new Rectangle((int)(Width / 2 - msgWidth / 2), Height - (int)msgHeight - 15, (int)msgWidth, (int)msgHeight);
-                    if (msgRect.Contains(e.Location))
-                    {
-                        ViewModel.InvokeDownload();
-                        return;
-                    }
-                }
+                ViewModel.InvokeDownload();
+                return;
             }
 
-            // Check if carousel indicator was clicked - Margin=16, Height=32
-            if (ViewModel.CarouselIndicatorsVisible && ViewModel.Items.Count > 0)
+            // Check if carousel indicator was clicked
+            if (carouselIndicatorRects != null)
             {
-                int count = ViewModel.Items.Count;
-                int indicatorWidth = 30;
-                int itemSpacing = 6;
-                int totalWidth = count * indicatorWidth + (count - 1) * itemSpacing;
-                int startX = (Width - totalWidth) / 2;
-                int y = Height - 16 - 32 / 2;
-
-                for (int i = 0; i < count; i++)
+                for (int i = 0; i < carouselIndicatorRects.Length; i++)
                 {
-                    int rectX = startX + i * (indicatorWidth + itemSpacing);
-                    var rect = new Rectangle(rectX, y - 16, indicatorWidth, 32); // Full clickable height
-                    if (rect.Contains(e.Location))
+                    if (carouselIndicatorRects[i].Contains(e.Location))
                     {
                         ViewModel.SelectedIndex = i;
                         return;
@@ -387,7 +382,6 @@ namespace WinDynamicDesktop.Skia
         {
             base.OnMouseMove(e);
 
-            mousePosition = e.Location;
             bool needsRedraw = false;
 
             // Update cursor based on location
@@ -402,35 +396,52 @@ namespace WinDynamicDesktop.Skia
             bool wasOverRight = isMouseOverRight;
             bool wasOverDownload = isMouseOverDownload;
 
-            // Play button - MinWidth=40, MinHeight=40, Margin=20
-            var playButtonRect = new Rectangle(Width - 40 - 20, 20, 40, 40);
-            isMouseOverPlay = playButtonRect.Contains(e.Location);
-
-            // Left arrow (80px wide area on left side, full height)
-            isMouseOverLeft = e.X < 80;
-
-            // Right arrow (80px wide area on right side, full height)
-            isMouseOverRight = e.X > Width - 80;
-
-            // Download message
+            // Reset all hover states
+            isMouseOverPlay = false;
+            isMouseOverLeft = false;
+            isMouseOverRight = false;
             isMouseOverDownload = false;
-            if (!string.IsNullOrEmpty(ViewModel.Message))
+
+            // Check UI elements in priority order using cached rectangles
+            isMouseOverPlay = playButtonRect.Contains(e.Location);
+            
+            if (!isMouseOverPlay)
+                isMouseOverDownload = downloadMessageRect.Contains(e.Location);
+
+            // Check if over any UI box (title, corner labels)
+            bool isOverUIBox = false;
+            if (!isMouseOverPlay && !isMouseOverDownload)
             {
-                using (var textFont = new SKFont(SKTypeface.FromFamilyName("Segoe UI"), 16))
+                isOverUIBox = titleBoxRect.Contains(e.Location) ||
+                             authorLabelRect.Contains(e.Location) ||
+                             downloadSizeLabelRect.Contains(e.Location);
+            }
+
+            // Arrows only if not over other UI elements
+            if (!isMouseOverPlay && !isMouseOverDownload && !isOverUIBox)
+            {
+                isMouseOverLeft = e.X < ARROW_AREA_WIDTH;
+                isMouseOverRight = e.X > Width - ARROW_AREA_WIDTH;
+            }
+
+            // Check carousel indicators for hand cursor
+            bool isOverCarouselIndicator = false;
+            if (carouselIndicatorRects != null)
+            {
+                for (int i = 0; i < carouselIndicatorRects.Length; i++)
                 {
-                    var msgBounds = new SKRect();
-                    textFont.MeasureText(ViewModel.Message, out msgBounds);
-                    float msgWidth = msgBounds.Width + 16; // 8+8
-                    float msgHeight = 6 + 16 + 6; // top + text + bottom margin
-                    var msgRect = new Rectangle((int)(Width / 2 - msgWidth / 2), Height - (int)msgHeight - 15, (int)msgWidth, (int)msgHeight);
-                    isMouseOverDownload = msgRect.Contains(e.Location);
+                    if (carouselIndicatorRects[i].Contains(e.Location))
+                    {
+                        isOverCarouselIndicator = true;
+                        break;
+                    }
                 }
             }
 
             needsRedraw = (isMouseOverPlay != wasOverPlay) || (isMouseOverLeft != wasOverLeft) ||
                          (isMouseOverRight != wasOverRight) || (isMouseOverDownload != wasOverDownload);
 
-            bool isOverClickable = isMouseOverPlay || isMouseOverLeft || isMouseOverRight || isMouseOverDownload;
+            bool isOverClickable = isMouseOverPlay || isMouseOverLeft || isMouseOverRight || isMouseOverDownload || isOverCarouselIndicator;
             Cursor = isOverClickable ? Cursors.Hand : Cursors.Default;
 
             if (needsRedraw)
@@ -478,7 +489,6 @@ namespace WinDynamicDesktop.Skia
             if (disposing)
             {
                 fadeTimer?.Dispose();
-                animationTimer?.Dispose();
                 ViewModel?.Stop();
             }
             base.Dispose(disposing);
