@@ -34,6 +34,7 @@ namespace WinDynamicDesktop.Skia
 
         // Cached objects to reduce allocations
         private readonly SKPaint basePaint = new SKPaint { IsAntialias = true };
+        private readonly SKColor overlayColor = new SKColor(0, 0, 0, OVERLAY_ALPHA);
         private readonly SKFont titleFont;
         private readonly SKFont previewFont;
         private readonly SKFont textFont;
@@ -168,14 +169,9 @@ namespace WinDynamicDesktop.Skia
 
         private void DrawOverlay(SKCanvas canvas, SKImageInfo info)
         {
-            basePaint.Style = SKPaintStyle.Fill;
-
             // Draw left and right arrow button areas
-            if (ViewModel.ControlsVisible)
-            {
-                DrawArrowArea(canvas, info, true);
-                DrawArrowArea(canvas, info, false);
-            }
+            DrawArrowArea(canvas, info, true);
+            DrawArrowArea(canvas, info, false);
 
             // Title and preview text box (top left)
             var titleBounds = new SKRect();
@@ -183,24 +179,25 @@ namespace WinDynamicDesktop.Skia
             var previewBounds = new SKRect();
             previewFont.MeasureText(ViewModel.PreviewText ?? "", out previewBounds);
 
-            float boxWidth = Math.Max(titleBounds.Width, previewBounds.Width) + 20;
-            float boxHeight = 19 + 4 + 16 + 20;
-            titleBoxRect = new Rectangle(20, 20, (int)boxWidth, (int)boxHeight);
+            float boxWidth = Math.Max(titleBounds.Width, previewBounds.Width) + MARGIN_STANDARD;
+            float boxHeight = 19 + 4 + 16 + MARGIN_STANDARD;
+            titleBoxRect = new Rectangle(MARGIN_STANDARD, MARGIN_STANDARD, (int)boxWidth, (int)boxHeight);
 
-            basePaint.Color = new SKColor(0, 0, 0, 127);
-            canvas.DrawRoundRect(SKRect.Create(titleBoxRect.X, titleBoxRect.Y, titleBoxRect.Width, titleBoxRect.Height), 5, 5, basePaint);
+            basePaint.Color = overlayColor;
+            canvas.DrawRoundRect(SKRect.Create(titleBoxRect.X, titleBoxRect.Y, titleBoxRect.Width, titleBoxRect.Height), BORDER_RADIUS, BORDER_RADIUS, basePaint);
 
             basePaint.Color = SKColors.White;
             canvas.DrawText(ViewModel.Title ?? "", titleBoxRect.X + 10, titleBoxRect.Y + 8 + 19, titleFont, basePaint);
             canvas.DrawText(ViewModel.PreviewText ?? "", titleBoxRect.X + 10, titleBoxRect.Y + 8 + 19 + 5 + 16, previewFont, basePaint);
 
             // Play/Pause button (top right)
-            playButtonRect = new Rectangle(info.Width - 40 - 20, 20, 40, 40);
-            
-            basePaint.Color = new SKColor(0, 0, 0, 127);
-            canvas.DrawRoundRect(SKRect.Create(playButtonRect.X, playButtonRect.Y, playButtonRect.Width, playButtonRect.Height), 5, 5, basePaint);
+            int playButtonSize = 40;
+            playButtonRect = new Rectangle(info.Width - playButtonSize - MARGIN_STANDARD, MARGIN_STANDARD, playButtonSize, playButtonSize);
 
-            float playOpacity = isMouseOverPlay ? 1.0f : 0.5f;
+            basePaint.Color = overlayColor;
+            canvas.DrawRoundRect(SKRect.Create(playButtonRect.X, playButtonRect.Y, playButtonRect.Width, playButtonRect.Height), BORDER_RADIUS, BORDER_RADIUS, basePaint);
+
+            float playOpacity = isMouseOverPlay ? OPACITY_HOVER : OPACITY_NORMAL;
             basePaint.Color = SKColors.White.WithAlpha((byte)(255 * playOpacity));
             string playIcon = ViewModel.IsPlaying ? "\uf04c" : "\uf04b";
             var textBounds = new SKRect();
@@ -222,10 +219,10 @@ namespace WinDynamicDesktop.Skia
                 float msgHeight = 6 + 16 + 6;
                 downloadMessageRect = new Rectangle((int)(info.Width / 2 - msgWidth / 2), info.Height - (int)msgHeight - 15, (int)msgWidth, (int)msgHeight);
 
-                basePaint.Color = new SKColor(0, 0, 0, 127);
-                canvas.DrawRoundRect(SKRect.Create(downloadMessageRect.X, downloadMessageRect.Y, downloadMessageRect.Width, downloadMessageRect.Height), 5, 5, basePaint);
+                basePaint.Color = overlayColor;
+                canvas.DrawRoundRect(SKRect.Create(downloadMessageRect.X, downloadMessageRect.Y, downloadMessageRect.Width, downloadMessageRect.Height), BORDER_RADIUS, BORDER_RADIUS, basePaint);
 
-                float msgOpacity = isMouseOverDownload ? 1.0f : 0.8f;
+                float msgOpacity = isMouseOverDownload ? OPACITY_HOVER : OPACITY_MESSAGE;
                 basePaint.Color = SKColors.White.WithAlpha((byte)(255 * msgOpacity));
                 canvas.DrawText(ViewModel.Message, downloadMessageRect.X + 8, downloadMessageRect.Y + 5 + 16, textFont, basePaint);
             }
@@ -244,7 +241,7 @@ namespace WinDynamicDesktop.Skia
         private void DrawArrowArea(SKCanvas canvas, SKImageInfo info, bool isLeft)
         {
             bool isHovered = isLeft ? isMouseOverLeft : isMouseOverRight;
-            float opacity = isHovered ? 1.0f : 0.5f;
+            float opacity = isHovered ? OPACITY_HOVER : OPACITY_NORMAL;
 
             float x = isLeft ? 40 : info.Width - 40;
             float y = info.Height / 2;
@@ -271,26 +268,23 @@ namespace WinDynamicDesktop.Skia
             var textBounds = new SKRect();
             textFont.MeasureText(text, out textBounds);
 
-            // Calculate margins and dimensions
             float leftMargin = isBottomRight ? 8 : 11;
             float rightMargin = isBottomRight ? 11 : 8;
             float borderWidth = textBounds.Width + leftMargin + rightMargin;
             float borderHeight = 4 + 16 + 9;
 
-            // Position rect and cache it
             float rectX = isBottomRight ? info.Width - borderWidth + 3 : -3;
             float rectY = info.Height - borderHeight + 3;
             Rectangle labelRect = new Rectangle((int)rectX, (int)rectY, (int)borderWidth, (int)borderHeight);
-            
+
             if (isBottomRight)
                 authorLabelRect = labelRect;
             else
                 downloadSizeLabelRect = labelRect;
 
-            basePaint.Color = new SKColor(0, 0, 0, OVERLAY_ALPHA);
+            basePaint.Color = overlayColor;
             canvas.DrawRoundRect(SKRect.Create(rectX, rectY, borderWidth, borderHeight), BORDER_RADIUS, BORDER_RADIUS, basePaint);
 
-            // Draw text
             basePaint.Color = SKColors.White.WithAlpha(OVERLAY_ALPHA);
             float textX = isBottomRight ? info.Width - textBounds.Width - rightMargin + 3 : leftMargin - 3;
             float textY = rectY + 4 + 16;
@@ -305,21 +299,19 @@ namespace WinDynamicDesktop.Skia
             int itemSpacing = 6;
             int totalWidth = count * indicatorWidth + (count - 1) * itemSpacing;
             int startX = (info.Width - totalWidth) / 2;
-            int y = info.Height - 16 - 32 / 2;
+            int y = info.Height - 16 - 16;  // bottom margin - half of clickable height
 
-            // Cache clickable rectangles for hit testing
             carouselIndicatorRects = new Rectangle[count];
 
             for (int i = 0; i < count; i++)
             {
-                float opacity = (i == ViewModel.SelectedIndex) ? 1.0f : 0.5f;
+                float opacity = (i == ViewModel.SelectedIndex) ? OPACITY_HOVER : OPACITY_NORMAL;
                 basePaint.Color = SKColors.White.WithAlpha((byte)(255 * opacity));
 
                 int rectX = startX + i * (indicatorWidth + itemSpacing);
-                var rect = SKRect.Create(rectX, y - indicatorHeight / 2, indicatorWidth, indicatorHeight);
-                canvas.DrawRect(rect, basePaint);
+                canvas.DrawRect(rectX, y - indicatorHeight / 2, indicatorWidth, indicatorHeight, basePaint);
 
-                // Cache full clickable height for hit testing
+                // Cache full clickable area for hit testing
                 carouselIndicatorRects[i] = new Rectangle(rectX, y - 16, indicatorWidth, 32);
             }
         }
@@ -398,7 +390,7 @@ namespace WinDynamicDesktop.Skia
 
             // Check UI elements in priority order using cached rectangles
             isMouseOverPlay = playButtonRect.Contains(e.Location);
-            
+
             if (!isMouseOverPlay)
                 isMouseOverDownload = downloadMessageRect.Contains(e.Location);
 
@@ -484,6 +476,14 @@ namespace WinDynamicDesktop.Skia
             {
                 fadeTimer?.Dispose();
                 ViewModel?.Stop();
+                
+                // Dispose cached SkiaSharp objects
+                basePaint?.Dispose();
+                titleFont?.Dispose();
+                previewFont?.Dispose();
+                textFont?.Dispose();
+                iconFont16?.Dispose();
+                iconFont20?.Dispose();
             }
             base.Dispose(disposing);
         }
