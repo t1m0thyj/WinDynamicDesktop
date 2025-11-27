@@ -85,7 +85,7 @@ namespace WinDynamicDesktop.Skia
             fadeTimer.Tick += FadeTimer_Tick;
 
             MouseEnter += (s, e) => ViewModel.IsMouseOver = true;
-            MouseLeave += (s, e) => ViewModel.IsMouseOver = false;
+            MouseLeave += OnMouseLeave;
 
             ViewModel.PropertyChanged += (s, e) =>
             {
@@ -429,6 +429,26 @@ namespace WinDynamicDesktop.Skia
 
             bool isOverClickable = isMouseOverPlay || isMouseOverLeft || isMouseOverRight || isMouseOverDownload || isOverCarouselIndicator;
             Cursor = isOverClickable ? Cursors.Hand : Cursors.Default;
+
+            if (needsRedraw)
+            {
+                Invalidate();
+            }
+        }
+
+        private void OnMouseLeave(object sender, EventArgs e)
+        {
+            ViewModel.IsMouseOver = false;
+
+            // Reset all hover states
+            bool needsRedraw = isMouseOverPlay || isMouseOverLeft || isMouseOverRight || isMouseOverDownload;
+            
+            isMouseOverPlay = false;
+            isMouseOverLeft = false;
+            isMouseOverRight = false;
+            isMouseOverDownload = false;
+
+            Cursor = Cursors.Default;
 
             if (needsRedraw)
             {
