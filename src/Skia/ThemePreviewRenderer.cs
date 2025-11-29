@@ -30,12 +30,14 @@ namespace WinDynamicDesktop.Skia
         // Hit test regions (updated during rendering)
         public Rectangle TitleBoxRect { get; private set; }
         public Rectangle PlayButtonRect { get; private set; }
-        public Rectangle DownloadMessageRect { get; private set; }
-        public Rectangle AuthorLabelRect { get; private set; }
         public Rectangle DownloadSizeLabelRect { get; private set; }
+        public Rectangle AuthorLabelRect { get; private set; }
+        public Rectangle DownloadMessageRect { get; private set; }
         public Rectangle LeftArrowRect { get; private set; }
         public Rectangle RightArrowRect { get; private set; }
         public Rectangle[] CarouselIndicatorRects { get; private set; }
+
+        private enum Side { Left, Right }
 
         public ThemePreviewRenderer(SKTypeface fontAwesome)
         {
@@ -81,8 +83,8 @@ namespace WinDynamicDesktop.Skia
             RightArrowRect = new Rectangle(info.Width - ARROW_AREA_WIDTH, 0, ARROW_AREA_WIDTH, info.Height);
 
             // Draw left and right arrow button areas
-            DrawArrowArea(canvas, info, true, hoveredItem == ThemePreviewer.HoveredItem.LeftArrow);
-            DrawArrowArea(canvas, info, false, hoveredItem == ThemePreviewer.HoveredItem.RightArrow);
+            DrawArrowArea(canvas, info, Side.Left, hoveredItem == ThemePreviewer.HoveredItem.LeftArrow);
+            DrawArrowArea(canvas, info, Side.Right, hoveredItem == ThemePreviewer.HoveredItem.RightArrow);
 
             // Title and preview text box (top left)
             var titleBounds = new SKRect();
@@ -118,10 +120,10 @@ namespace WinDynamicDesktop.Skia
             canvas.DrawText(playIcon, centerX - textBounds.MidX, centerY - textBounds.MidY, iconFont16, basePaint);
 
             // Corner labels
-            DrawCornerLabel(canvas, info, viewModel.Author, isBottomRight: true, out var authorRect);
-            AuthorLabelRect = authorRect;
-            DrawCornerLabel(canvas, info, viewModel.DownloadSize, isBottomRight: false, out var downloadSizeRect);
+            DrawCornerLabel(canvas, info, viewModel.DownloadSize, Side.Left, out var downloadSizeRect);
             DownloadSizeLabelRect = downloadSizeRect;
+            DrawCornerLabel(canvas, info, viewModel.Author, Side.Right, out var authorRect);
+            AuthorLabelRect = authorRect;
 
             // Download message (centered bottom)
             if (!string.IsNullOrEmpty(viewModel.Message))
@@ -155,22 +157,22 @@ namespace WinDynamicDesktop.Skia
             }
         }
 
-        private void DrawArrowArea(SKCanvas canvas, SKImageInfo info, bool isLeft, bool isHovered)
+        private void DrawArrowArea(SKCanvas canvas, SKImageInfo info, Side side, bool isHovered)
         {
             float opacity = isHovered ? OPACITY_HOVER : OPACITY_NORMAL;
 
-            float x = isLeft ? 40 : info.Width - 40;
+            float x = side == Side.Left ? 40 : info.Width - 40;
             float y = info.Height / 2;
 
             basePaint.Color = SKColors.White.WithAlpha((byte)(255 * opacity));
 
-            string icon = isLeft ? "\uf053" : "\uf054";
+            string icon = side == Side.Left ? "\uf053" : "\uf054";
             var textBounds = new SKRect();
             iconFont20.MeasureText(icon, out textBounds);
             canvas.DrawText(icon, x - textBounds.MidX, y - textBounds.MidY, iconFont20, basePaint);
         }
 
-        private void DrawCornerLabel(SKCanvas canvas, SKImageInfo info, string text, bool isBottomRight, out Rectangle labelRect)
+        private void DrawCornerLabel(SKCanvas canvas, SKImageInfo info, string text, Side side, out Rectangle labelRect)
         {
             if (string.IsNullOrEmpty(text))
             {
@@ -181,21 +183,23 @@ namespace WinDynamicDesktop.Skia
             var textBounds = new SKRect();
             textFont.MeasureText(text, out textBounds);
 
-            float leftMargin = isBottomRight ? 8 : 11;
-            float rightMargin = isBottomRight ? 11 : 8;
+            var padding = new System.Windows.Forms.Padding(8, 4, 10, 10); // Left, Top, Right, Bottom
+            float leftMargin = side == Side.Right ? padding.Left : padding.Right;
+            float rightMargin = side == Side.Right ? padding.Right : padding.Left;
             float borderWidth = textBounds.Width + leftMargin + rightMargin;
-            float borderHeight = 4 + 16 + 9;
+            float borderHeight = padding.Top + 16 + padding.Bottom;
 
-            float rectX = isBottomRight ? info.Width - borderWidth + 3 : -3;
-            float rectY = info.Height - borderHeight + 3;
+            int offset = 3;
+            float rectX = side == Side.Right ? info.Width - borderWidth + offset : -offset;
+            float rectY = info.Height - borderHeight + offset;
             labelRect = new Rectangle((int)rectX, (int)rectY, (int)borderWidth, (int)borderHeight);
 
             basePaint.Color = overlayColor;
             canvas.DrawRoundRect(SKRect.Create(rectX, rectY, borderWidth, borderHeight), BORDER_RADIUS, BORDER_RADIUS, basePaint);
 
             basePaint.Color = SKColors.White.WithAlpha(OVERLAY_ALPHA);
-            float textX = isBottomRight ? info.Width - textBounds.Width - rightMargin + 3 : leftMargin - 3;
-            float textY = rectY + 4 + 16;
+            float textX = side == Side.Right ? info.Width - textBounds.Width - rightMargin + offset : leftMargin - offset;
+            float textY = rectY + padding.Top + 16;
             canvas.DrawText(text, textX, textY, textFont, basePaint);
         }
 
