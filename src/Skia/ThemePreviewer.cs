@@ -6,6 +6,7 @@ using SkiaSharp;
 using SkiaSharp.Views.Desktop;
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -154,16 +155,11 @@ namespace WinDynamicDesktop.Skia
             }
 
             // Check if carousel indicator was clicked
-            if (renderer.CarouselIndicatorRects != null)
+            var clickedIndex = Array.FindIndex(renderer.CarouselIndicatorRects ?? [], r => r.Contains(e.Location));
+            if (clickedIndex != -1)
             {
-                for (int i = 0; i < renderer.CarouselIndicatorRects.Length; i++)
-                {
-                    if (renderer.CarouselIndicatorRects[i].Contains(e.Location))
-                    {
-                        ViewModel.SelectedIndex = i;
-                        return;
-                    }
-                }
+                ViewModel.SelectedIndex = clickedIndex;
+                return;
             }
         }
 
@@ -199,19 +195,7 @@ namespace WinDynamicDesktop.Skia
             }
 
             // Check carousel indicators for hand cursor
-            bool isOverCarouselIndicator = false;
-            if (renderer.CarouselIndicatorRects != null)
-            {
-                foreach (var rect in renderer.CarouselIndicatorRects)
-                {
-                    if (rect.Contains(e.Location))
-                    {
-                        isOverCarouselIndicator = true;
-                        break;
-                    }
-                }
-            }
-
+            bool isOverCarouselIndicator = renderer.CarouselIndicatorRects?.Any(r => r.Contains(e.Location)) ?? false;
             bool isOverClickable = hoveredItem != HoveredItem.None || isOverCarouselIndicator;
             Cursor = isOverClickable ? Cursors.Hand : Cursors.Default;
 
