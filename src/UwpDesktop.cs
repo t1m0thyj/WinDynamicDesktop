@@ -27,6 +27,13 @@ namespace WinDynamicDesktop
         private static bool? _isRunningAsUwp;
         private static PlatformHelper helper;
 
+        public static bool IsDarkMode()
+        {
+#pragma warning disable SYSLIB5002
+            return System.Drawing.SystemColors.UseAlternativeColorSet;
+#pragma warning restore SYSLIB5002
+        }
+
         public static bool IsRunningAsUwp()
         {
             if (!_isRunningAsUwp.HasValue)

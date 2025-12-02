@@ -31,10 +31,8 @@ namespace WinDynamicDesktop
             Localization.TranslateForm(this);
             this.themeLinkLabel.Left += (this.importButton.Width - oldButtonWidth);
 
-#pragma warning disable SYSLIB5002
-            this.searchBoxButton.BackgroundImage = SystemColors.UseAlternativeColorSet ?
+            this.searchBoxButton.BackgroundImage = UwpDesktop.IsDarkMode() ?
                 Resources.IconSearch_Dark : Resources.IconSearch_Light;
-#pragma warning restore SYSLIB5002
             this.themeLinkLabel.LinkColor = SystemColors.HotTrack;
 
             this.FormClosing += OnFormClosing;
@@ -263,18 +261,16 @@ namespace WinDynamicDesktop
 
         private void searchBox_TextChanged(object sender, EventArgs e)
         {
-#pragma warning disable SYSLIB5002
             if (string.IsNullOrWhiteSpace(searchBox.Text))
             {
-                this.searchBoxButton.BackgroundImage = SystemColors.UseAlternativeColorSet ?
+                this.searchBoxButton.BackgroundImage = UwpDesktop.IsDarkMode() ?
                     Resources.IconSearch_Dark : Resources.IconSearch_Light;
             }
             else
             {
-                this.searchBoxButton.BackgroundImage = SystemColors.UseAlternativeColorSet ?
+                this.searchBoxButton.BackgroundImage = UwpDesktop.IsDarkMode() ?
                     Resources.IconDismiss_Dark : Resources.IconDismiss_Light;
             }
-#pragma warning restore SYSLIB5002
 
             ThemeDialogUtils.ApplySearchFilter(listView1, searchBox.Text);
             UpdateSelectedItem();
