@@ -16,15 +16,21 @@ namespace WinDynamicDesktop.Skia
         private const byte OVERLAY_ALPHA = 127;
         private const float OPACITY_NORMAL = 0.5f;
         private const float OPACITY_HOVER = 1.0f;
-        private const float OPACITY_MESSAGE = 0.8f;
+
+        // FontAwesome icons
+        private const string ICON_PLAY = "\uf04b";
+        private const string ICON_PAUSE = "\uf04c";
+        private const string ICON_CHEVRON_LEFT = "\uf053";
+        private const string ICON_CHEVRON_RIGHT = "\uf054";
 
         private readonly SKPaint basePaint;
-        private readonly SKColor overlayColor;
+        private readonly SKTypeface systemFont;
+        private readonly SKTypeface systemFontBold;
         private readonly SKFont titleFont;
-        private readonly SKFont previewFont;
         private readonly SKFont textFont;
         private readonly SKFont iconFont16;
         private readonly SKFont iconFont20;
+        private readonly SKColor overlayColor;
         private readonly SKSamplingOptions samplingOptions;
 
         // Hit test regions (updated during rendering)
@@ -39,15 +45,16 @@ namespace WinDynamicDesktop.Skia
 
         private enum Side { Left, Right }
 
-        public ThemePreviewRenderer(SKTypeface fontAwesome)
+        public ThemePreviewRenderer(SKTypeface fontAwesome, string systemFontName)
         {
             basePaint = new SKPaint { IsAntialias = true };
-            overlayColor = new SKColor(0, 0, 0, OVERLAY_ALPHA);
-            titleFont = new SKFont(SKTypeface.FromFamilyName("Segoe UI", SKFontStyleWeight.Bold, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright), 19);
-            previewFont = new SKFont(SKTypeface.FromFamilyName("Segoe UI", SKFontStyleWeight.Normal, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright), 16);
-            textFont = new SKFont(SKTypeface.FromFamilyName("Segoe UI"), 16);
+            systemFont = SKTypeface.FromFamilyName(systemFontName);
+            systemFontBold = SKTypeface.FromFamilyName(systemFontName, SKFontStyle.Bold);
+            titleFont = new SKFont(systemFontBold, 19);
+            textFont = new SKFont(systemFont, 16);
             iconFont16 = new SKFont(fontAwesome, 16);
             iconFont20 = new SKFont(fontAwesome, 20);
+            overlayColor = new SKColor(0, 0, 0, OVERLAY_ALPHA);
             samplingOptions = new SKSamplingOptions(SKCubicResampler.Mitchell);
         }
 
@@ -64,12 +71,12 @@ namespace WinDynamicDesktop.Skia
             {
                 // Apply opacity with color filter
                 using (var paint = new SKPaint())
+                using (var colorFilter = SKColorFilter.CreateBlendMode(
+                    SKColors.White.WithAlpha((byte)(255 * opacity)),
+                    SKBlendMode.DstIn))
                 {
                     paint.IsAntialias = true;
-                    paint.ColorFilter = SKColorFilter.CreateBlendMode(
-                        SKColors.White.WithAlpha((byte)(255 * opacity)),
-                        SKBlendMode.DstIn);
-
+                    paint.ColorFilter = colorFilter;
                     canvas.DrawImage(image, destRect, samplingOptions, paint);
                 }
             }
@@ -87,10 +94,10 @@ namespace WinDynamicDesktop.Skia
             DrawArrowArea(canvas, info, Side.Right, hoveredItem == ThemePreviewer.HoveredItem.RightArrow);
 
             // Title and preview text box (top left)
-            var titleBounds = new SKRect();
+            SKRect titleBounds;
             titleFont.MeasureText(viewModel.Title ?? "", out titleBounds);
-            var previewBounds = new SKRect();
-            previewFont.MeasureText(viewModel.PreviewText ?? "", out previewBounds);
+            SKRect previewBounds;
+            textFont.MeasureText(viewModel.PreviewText ?? "", out previewBounds);
 
             float boxWidth = Math.Max(titleBounds.Width, previewBounds.Width) + MARGIN_STANDARD;
             float boxHeight = 19 + 4 + 16 + MARGIN_STANDARD;
@@ -101,7 +108,7 @@ namespace WinDynamicDesktop.Skia
 
             basePaint.Color = SKColors.White;
             canvas.DrawText(viewModel.Title ?? "", TitleBoxRect.X + 10, TitleBoxRect.Y + 8 + 19, titleFont, basePaint);
-            canvas.DrawText(viewModel.PreviewText ?? "", TitleBoxRect.X + 10, TitleBoxRect.Y + 8 + 19 + 5 + 16, previewFont, basePaint);
+            canvas.DrawText(viewModel.PreviewText ?? "", TitleBoxRect.X + 10, TitleBoxRect.Y + 8 + 19 + 5 + 16, textFont, basePaint);
 
             // Play/Pause button (top right)
             int playButtonSize = 40;
@@ -112,8 +119,8 @@ namespace WinDynamicDesktop.Skia
 
             float playOpacity = hoveredItem == ThemePreviewer.HoveredItem.PlayButton ? OPACITY_HOVER : OPACITY_NORMAL;
             basePaint.Color = SKColors.White.WithAlpha((byte)(255 * playOpacity));
-            string playIcon = viewModel.IsPlaying ? "\uf04c" : "\uf04b";
-            var textBounds = new SKRect();
+            string playIcon = viewModel.IsPlaying ? ICON_PAUSE : ICON_PLAY;
+            SKRect textBounds;
             iconFont16.MeasureText(playIcon, out textBounds);
             float centerX = PlayButtonRect.X + PlayButtonRect.Width / 2;
             float centerY = PlayButtonRect.Y + PlayButtonRect.Height / 2;
@@ -128,7 +135,7 @@ namespace WinDynamicDesktop.Skia
             // Download message (centered bottom)
             if (!string.IsNullOrEmpty(viewModel.Message))
             {
-                var msgBounds = new SKRect();
+                SKRect msgBounds;
                 textFont.MeasureText(viewModel.Message, out msgBounds);
                 float msgWidth = msgBounds.Width + 16;
                 float msgHeight = 6 + 16 + 6;
@@ -137,7 +144,7 @@ namespace WinDynamicDesktop.Skia
                 basePaint.Color = overlayColor;
                 canvas.DrawRoundRect(SKRect.Create(DownloadMessageRect.X, DownloadMessageRect.Y, DownloadMessageRect.Width, DownloadMessageRect.Height), BORDER_RADIUS, BORDER_RADIUS, basePaint);
 
-                float msgOpacity = hoveredItem == ThemePreviewer.HoveredItem.DownloadButton ? OPACITY_HOVER : OPACITY_MESSAGE;
+                float msgOpacity = hoveredItem == ThemePreviewer.HoveredItem.DownloadButton ? OPACITY_HOVER : OPACITY_NORMAL;
                 basePaint.Color = SKColors.White.WithAlpha((byte)(255 * msgOpacity));
                 canvas.DrawText(viewModel.Message, DownloadMessageRect.X + 8, DownloadMessageRect.Y + 5 + 16, textFont, basePaint);
             }
@@ -166,8 +173,8 @@ namespace WinDynamicDesktop.Skia
 
             basePaint.Color = SKColors.White.WithAlpha((byte)(255 * opacity));
 
-            string icon = side == Side.Left ? "\uf053" : "\uf054";
-            var textBounds = new SKRect();
+            string icon = side == Side.Left ? ICON_CHEVRON_LEFT : ICON_CHEVRON_RIGHT;
+            SKRect textBounds;
             iconFont20.MeasureText(icon, out textBounds);
             canvas.DrawText(icon, x - textBounds.MidX, y - textBounds.MidY, iconFont20, basePaint);
         }
@@ -180,7 +187,7 @@ namespace WinDynamicDesktop.Skia
                 return;
             }
 
-            var textBounds = new SKRect();
+            SKRect textBounds;
             textFont.MeasureText(text, out textBounds);
 
             var padding = new System.Windows.Forms.Padding(8, 4, 10, 10); // Left, Top, Right, Bottom
@@ -230,8 +237,9 @@ namespace WinDynamicDesktop.Skia
         public void Dispose()
         {
             basePaint?.Dispose();
+            systemFont?.Dispose();
+            systemFontBold?.Dispose();
             titleFont?.Dispose();
-            previewFont?.Dispose();
             textFont?.Dispose();
             iconFont16?.Dispose();
             iconFont20?.Dispose();

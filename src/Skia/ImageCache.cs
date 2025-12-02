@@ -25,19 +25,17 @@ namespace WinDynamicDesktop.Skia
             {
                 lock (cacheLock)
                 {
-                    if (images.ContainsKey(uri))
+                    if (images.TryGetValue(uri, out var image))
                     {
-                        return images[uri];
+                        return image;
                     }
-                    else
+
+                    var img = CreateImage(uri);
+                    if (img != null)
                     {
-                        var img = CreateImage(uri);
-                        if (img != null)
-                        {
-                            images.Add(uri, img);
-                        }
-                        return img;
+                        images.Add(uri, img);
                     }
+                    return img;
                 }
             }
         }

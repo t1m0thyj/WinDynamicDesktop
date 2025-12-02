@@ -52,7 +52,7 @@ namespace WinDynamicDesktop.Skia
                 }
             }
 
-            renderer = new ThemePreviewRenderer(fontAwesome);
+            renderer = new ThemePreviewRenderer(fontAwesome, Control.DefaultFont.FontFamily.Name);
 
             // Timer for smooth fade animations
             fadeTimer = new Timer
