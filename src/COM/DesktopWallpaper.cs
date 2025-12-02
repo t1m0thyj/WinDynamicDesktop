@@ -16,6 +16,15 @@ namespace WinDynamicDesktop.COM
         public byte B;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
+    public struct RECT
+    {
+        public int Left;
+        public int Top;
+        public int Right;
+        public int Bottom;
+    }
+
     public enum DesktopSlideshowOptions
     {
         DSO_SHUFFLEIMAGES = 0x01,
@@ -59,7 +68,7 @@ namespace WinDynamicDesktop.COM
 
         uint GetMonitorDevicePathCount();
 
-        System.Windows.Rect GetMonitorRECT([MarshalAs(UnmanagedType.LPWStr)] string monitorID);
+        RECT GetMonitorRECT([MarshalAs(UnmanagedType.LPWStr)] string monitorID);
 
         void SetBackgroundColor([MarshalAs(UnmanagedType.U4)] COLORREF color);
 

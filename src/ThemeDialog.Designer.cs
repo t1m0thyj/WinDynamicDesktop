@@ -40,7 +40,7 @@
             toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             showInstalledMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             displayComboBox = new System.Windows.Forms.ComboBox();
-            previewerHost = new System.Windows.Forms.Integration.ElementHost();
+            previewerHost = new WinDynamicDesktop.Skia.ThemePreviewer();
             listView1 = new System.Windows.Forms.ListView();
             advancedButton = new System.Windows.Forms.Button();
             searchBox = new System.Windows.Forms.TextBox();
@@ -248,7 +248,7 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem favoriteThemeMenuItem;
-        private System.Windows.Forms.Integration.ElementHost previewerHost;
+        private Skia.ThemePreviewer previewerHost;
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ToolStripMenuItem deleteThemeMenuItem;
         private System.Windows.Forms.ComboBox displayComboBox;

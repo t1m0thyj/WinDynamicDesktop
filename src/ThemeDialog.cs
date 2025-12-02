@@ -24,8 +24,6 @@ namespace WinDynamicDesktop
         private readonly string windowsWallpaper = ThemeThumbLoader.GetWindowsWallpaper(false);
         private readonly string windowsLockScreen = ThemeThumbLoader.GetWindowsWallpaper(true);
 
-        private WPF.ThemePreviewer previewer;
-
         public ThemeDialog()
         {
             InitializeComponent();
@@ -188,7 +186,7 @@ namespace WinDynamicDesktop
             {
                 if (listView1.Items.Count == 0)
                 {
-                    previewer.ViewModel.PreviewTheme(null, null,
+                    previewerHost.ViewModel.PreviewTheme(null, null,
                         ThemeThumbLoader.GetWindowsWallpaper(IsLockScreenSelected));
                 }
                 applyButton.Enabled = false;
@@ -208,15 +206,12 @@ namespace WinDynamicDesktop
             }
 
             applyButton.Enabled = true;
-            previewer.ViewModel.PreviewTheme(theme, new Action<ThemeConfig>((theme) => DownloadTheme(theme)),
+            previewerHost.ViewModel.PreviewTheme(theme, new Action<ThemeConfig>((theme) => DownloadTheme(theme)),
                 ThemeThumbLoader.GetWindowsWallpaper(IsLockScreenSelected));
         }
 
         private void ThemeDialog_Load(object sender, EventArgs e)
         {
-            previewer = new WPF.ThemePreviewer();
-            previewerHost.Child = previewer;
-
             listView1.ContextMenuStrip = contextMenuStrip1;
             listView1.ListViewItemSorter = new CompareByItemText();
             ThemeDialogUtils.SetWindowTheme(listView1.Handle, "Explorer", null);
@@ -530,7 +525,7 @@ namespace WinDynamicDesktop
 
         private void OnFormClosed(object sender, FormClosedEventArgs e)
         {
-            this.Invoke(previewer.ViewModel.Stop);
+            this.Invoke(previewerHost.ViewModel.Stop);
         }
     }
 

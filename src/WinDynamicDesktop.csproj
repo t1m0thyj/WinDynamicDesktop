@@ -16,11 +16,10 @@
   </PropertyGroup>
   <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
     <UseWindowsForms>true</UseWindowsForms>
-    <UseWPF>true</UseWPF>
   </PropertyGroup>
   <ItemGroup>
-    <Resource Include="resources\fonts\fontawesome-webfont.ttf" />
     <EmbeddedResource Include="locale\*.mo" />
+    <EmbeddedResource Include="resources\fonts\fontawesome-webfont.ttf" />
     <EmbeddedResource Include="resources\images\*.jpg" />
   </ItemGroup>
   <ItemGroup>
@@ -37,6 +36,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="RestSharp" Version="113.0.0" />
+    <PackageReference Include="SkiaSharp" Version="3.119.1" />
+    <PackageReference Include="SkiaSharp.Views.WindowsForms" Version="3.119.1" />
     <PackageReference Include="SunCalcNet" Version="1.2.3" />
     <PackageReference Include="TimeZoneConverter" Version="7.2.0" />
     <PackageReference Include="WindowsDisplayAPI" Version="1.3.0.13" />
@@ -57,4 +58,10 @@
   <ItemGroup>
     <InternalsVisibleTo Include="WinDynamicDesktop.Tests" />
   </ItemGroup>
+  <Target Name="ExplicitRemoveFromFilesToBundle" BeforeTargets="GenerateSingleFileBundle" DependsOnTargets="PrepareForBundle">
+    <ItemGroup>
+      <FilesToRemoveFromBundle Include="@(FilesToBundle)" Condition="($([System.String]::Copy('%(Filename)').StartsWith('OpenTK'))) OR ('%(Filename)' == 'glfw3')" />
+      <FilesToBundle Remove="@(FilesToRemoveFromBundle)" />
+    </ItemGroup>
+  </Target>
 </Project>
