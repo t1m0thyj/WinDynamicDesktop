@@ -34,7 +34,7 @@ jobs:
         RELEASE_NAME: WinDynamicDesktop ${{ github.event.inputs.version }}
         TAG_NAME: v${{ github.event.inputs.version }}
 
-    - uses: actions/upload-artifact@v5
+    - uses: actions/upload-artifact@v6
       with:
         name: msixupload  # To download/extract: gh run download -n msixupload
         path: dist\*.msixupload
