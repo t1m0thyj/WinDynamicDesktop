@@ -4,6 +4,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace WinDynamicDesktop.COM
 {
@@ -100,9 +101,23 @@ namespace WinDynamicDesktop.COM
         [Guid("C2CF3110-460E-4fc1-B9D0-8A1C0C9CC4BD")]
         class DesktopWallpaperCoclass { }
 
+        private const int REGDB_E_CLASSNOTREG = 0x80040154;
+
         public static IDesktopWallpaper Create()
         {
-            return (IDesktopWallpaper)new DesktopWallpaperCoclass();
+            for (int attempt = 0; ; attempt++)
+            {
+                try
+                {
+                    return (IDesktopWallpaper)new DesktopWallpaperCoclass();
+                }
+                catch (COMException e) when (e.HResult == REGDB_E_CLASSNOTREG && attempt < 3)
+                {
+                    LoggingHandler.LogMessage("Accessing DesktopWallpaper COM class failed, retrying ({1}/3)",
+                        attempt + 1);
+                    Thread.Sleep(1000);
+                }
+            }
         }
     }
 }
