@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-2022
+    runs-on: windows-2025-vs2026
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
 
     strategy:
@@ -43,12 +43,11 @@ jobs:
         name: exe-${{ matrix.platform }}
         path: src\bin\Release\net10.0-windows10.0.19041.0\win-${{ matrix.platform }}\publish\*.exe
 
-    - run: msbuild uwp\WinDynamicDesktop.Package.wapproj /v:m /p:AppxBundle=$env:AppxBundle /p:Configuration=$env:Configuration /p:Platform=$env:Platform /p:RuntimeIdentifier=$env:RuntimeIdentifier /p:UapAppxPackageBuildMode=$env:UapAppxPackageBuildMode /p:UseTemporarySignCert=$env:UseTemporarySignCert
+    - run: msbuild uwp\WinDynamicDesktop.Package.wapproj /v:m /p:AppxBundle=$env:AppxBundle /p:Configuration=$env:Configuration /p:Platform=$env:Platform /p:UapAppxPackageBuildMode=$env:UapAppxPackageBuildMode /p:UseTemporarySignCert=$env:UseTemporarySignCert
       env:
         AppxBundle: Never
         Configuration: Release
         Platform: ${{ matrix.platform }}
-        RuntimeIdentifier: win-${{ matrix.platform }}
         UapAppxPackageBuildMode: SideloadOnly
         UseTemporarySignCert: true
 
@@ -58,7 +57,7 @@ jobs:
         path: uwp\AppPackages\*\*.msix
 
   test:
-    runs-on: windows-2025
+    runs-on: windows-latest
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
     needs: build
 
