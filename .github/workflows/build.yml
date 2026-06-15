@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-2025-vs2026
+    runs-on: windows-latest
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
 
     strategy:

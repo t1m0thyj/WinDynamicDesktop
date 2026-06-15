@@ -4,14 +4,17 @@
 
 ### Enhancements
 
-* Added Tahoe Abstract theme
+* Added Tahoe Abstract and Golden Gate Abstract themes
 * Updated to .NET 10 which enables dark mode across entire application ([#553](https://github.com/t1m0thyj/WinDynamicDesktop/issues/553))
+* Rewrote theme preview renderer to be more lightweight by using Skia framework ([#672](https://github.com/t1m0thyj/WinDynamicDesktop/pull/672))
 
 ### Bug Fixes
 
 * Reduced impact on Windows startup time ([#645](https://github.com/t1m0thyj/WinDynamicDesktop/issues/645))
 * Fixed error when applying "None" wallpaper theme ([#652](https://github.com/t1m0thyj/WinDynamicDesktop/issues/652))
 * Fixed wallpaper not always refreshing when PC resumes from sleep ([#657](https://github.com/t1m0thyj/WinDynamicDesktop/issues/657))
+* Fixed `COMException` that could happen when PC resumes from sleep ([#680](https://github.com/t1m0thyj/WinDynamicDesktop/issues/680))
+* Fixed `IndexOutOfRangeException` that could occur when wallpaper changes at night in locations that don't get dark ([#686](https://github.com/t1m0thyj/WinDynamicDesktop/issues/686))
 
 ## `5.6.1`
 
