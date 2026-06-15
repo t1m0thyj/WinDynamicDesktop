@@ -112,7 +112,8 @@ namespace WinDynamicDesktop
             else if (data.solarTimes[0] == DateTime.MinValue && data.solarTimes[3] == DateTime.MinValue)
             {
                 data.solarTimes[0] = data.solarNoon.AddHours(-12);
-                data.solarTimes[3] = data.solarNoon.AddHours(12).AddTicks(-1);
+                data.solarTimes[3] = GetSolarTime(GetSunPhases(date.AddDays(1), latitude, longitude),
+                    SunPhaseName.SolarNoon).AddHours(-12);
                 data.polarPeriod = PolarPeriod.CivilPolarDay;
             }
             // Skip day segment (civil polar night) if golden hour is undefined
