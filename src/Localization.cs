@@ -30,7 +30,7 @@ namespace WinDynamicDesktop
             "id", "is", "it",
             "ja", "jv",
             "kk", "ko",
-            "lb",
+            "lb", "lt",
             "mk", "my",
             "nl",
             "pl", "pt", "pt-br",
