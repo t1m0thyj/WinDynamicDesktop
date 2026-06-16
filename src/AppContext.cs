@@ -34,7 +34,7 @@ namespace WinDynamicDesktop
             Task.Run(() =>
             {
                 scheduler.RunAndUpdateLocation(false, LocationManager.Initialize);
-                MainForm.Invoke(() => LaunchSequence.NextStep());
+                MainForm.BeginInvoke(() => LaunchSequence.NextStep());
                 UpdateChecker.Initialize();
             }).ContinueWith(t => LoggingHandler.LogError(t.Exception.InnerException),
                 TaskContinuationOptions.OnlyOnFaulted);
