@@ -17,11 +17,10 @@ namespace WinDynamicDesktop
         [STAThread]
         static void Main(string[] args)
         {
-            string localFolder = UwpDesktop.GetHelper().GetLocalFolder();
-            Application.ThreadException += (sender, e) => LoggingHandler.LogError(localFolder, e.Exception);
+            Application.ThreadException += (sender, e) => LoggingHandler.LogError(e.Exception);
             AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
-                LoggingHandler.LogError(localFolder, e.ExceptionObject as Exception);
-            Directory.SetCurrentDirectory(FindCwd(localFolder));
+                LoggingHandler.LogError(e.ExceptionObject as Exception);
+            Directory.SetCurrentDirectory(FindCwd());
             LoadDotEnv();
 
             // To customize application configuration such as set high DPI settings or default font,
@@ -31,10 +30,10 @@ namespace WinDynamicDesktop
             Application.Run(new AppContext(args));
         }
 
-        static string FindCwd(string localFolder)
+        static string FindCwd()
         {
-            string cwd = localFolder;
-            string pathFile = Path.Combine(localFolder, "WinDynamicDesktop.pth");
+            string cwd = UwpDesktop.GetHelper().GetLocalFolder();
+            string pathFile = Path.Combine(cwd, "WinDynamicDesktop.pth");
 
             if (File.Exists(pathFile))
             {

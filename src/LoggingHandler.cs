@@ -15,11 +15,11 @@ namespace WinDynamicDesktop
     {
         private static readonly object debugLogLock = new object();
 
-        public static void LogError(string cwd, Exception exc)
+        public static void LogError(Exception exc)
         {
             string errorMessage = exc.ToString();
             string processFilename = Process.GetCurrentProcess().MainModule.FileName;
-            string logFilename = Path.Combine(cwd, Path.GetFileName(processFilename) + ".log");
+            string logFilename = Path.Combine(Environment.CurrentDirectory, Path.GetFileName(processFilename) + ".log");
 
             try
             {

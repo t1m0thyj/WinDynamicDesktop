@@ -30,12 +30,14 @@ namespace WinDynamicDesktop
             ThemeManager.Initialize();
             ScriptManager.Initialize();
 
+            var _ = MainForm.Handle; // Force hidden form to be initialized
             Task.Run(() =>
             {
                 scheduler.RunAndUpdateLocation(false, LocationManager.Initialize);
                 MainForm.Invoke(() => LaunchSequence.NextStep());
                 UpdateChecker.Initialize();
-            });
+            }).ContinueWith(t => LoggingHandler.LogError(t.Exception.InnerException),
+                TaskContinuationOptions.OnlyOnFaulted);
         }
 
         private void CheckSingleInstance(string[] args)

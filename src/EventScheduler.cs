@@ -209,7 +209,7 @@ namespace WinDynamicDesktop
             catch (Exception exc)
             {
                 LoggingHandler.LogMessage("Error setting wallpaper: {0}", exc.ToString());
-                LoggingHandler.LogError(UwpDesktop.GetHelper().GetLocalFolder(), exc);
+                LoggingHandler.LogError(exc);
             }
         }
 
