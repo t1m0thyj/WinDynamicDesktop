@@ -122,8 +122,8 @@ namespace WinDynamicDesktop.Skia
                 canvas.Scale(uiScale, uiScale);
 
                 var logicalInfo = new SKImageInfo(
-                    (int)Math.Round(info.Width / uiScale),
-                    (int)Math.Round(info.Height / uiScale),
+                    (int)Math.Floor(info.Width / uiScale),
+                    (int)Math.Floor(info.Height / uiScale),
                     info.ColorType,
                     info.AlphaType,
                     info.ColorSpace);
