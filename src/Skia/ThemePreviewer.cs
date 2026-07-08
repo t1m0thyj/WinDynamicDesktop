@@ -101,7 +101,7 @@ namespace WinDynamicDesktop.Skia
             canvas.Clear(SKColors.Gray);
 
             var info = e.Info;
-            uiScale = Width > 0 ? info.Width / (float)Width : 1f;
+            uiScale = DeviceDpi / 96f;
 
             // Draw back image
             if (ViewModel.BackImage != null)

@@ -52,6 +52,7 @@ namespace WinDynamicDesktop
             this.displayComboBox.Width = newWidth;
             this.listView1.Width = newWidth;
             this.searchBox.Width = newWidth;
+            this.searchBox.Top += (this.searchBox.Height - 23) / 2;
             this.searchBoxButton.Left += (newWidth - oldWidth);
             this.applyButton.Left += (newWidth - oldWidth) / 2;
             this.closeButton.Left += (newWidth - oldWidth) / 2;
