@@ -27,6 +27,7 @@ namespace WinDynamicDesktop.Skia
         private static SKTypeface fontAwesome;
         private readonly ThemePreviewRenderer renderer;
         private HoveredItem hoveredItem = HoveredItem.None;
+        private float uiScale = 1f;
 
         public enum HoveredItem
         {
@@ -100,6 +101,7 @@ namespace WinDynamicDesktop.Skia
             canvas.Clear(SKColors.Gray);
 
             var info = e.Info;
+            uiScale = DeviceDpi / 96f;
 
             // Draw back image
             if (ViewModel.BackImage != null)
@@ -116,7 +118,18 @@ namespace WinDynamicDesktop.Skia
             // Draw UI overlay
             if (ViewModel.ControlsVisible)
             {
-                renderer.DrawOverlay(canvas, info, ViewModel, hoveredItem);
+                canvas.Save();
+                canvas.Scale(uiScale, uiScale);
+
+                var logicalInfo = new SKImageInfo(
+                    (int)Math.Floor(info.Width / uiScale),
+                    (int)Math.Floor(info.Height / uiScale),
+                    info.ColorType,
+                    info.AlphaType,
+                    info.ColorSpace);
+
+                renderer.DrawOverlay(canvas, logicalInfo, ViewModel, hoveredItem);
+                canvas.Restore();
             }
         }
 
