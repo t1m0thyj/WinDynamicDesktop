@@ -107,8 +107,8 @@ namespace WinDynamicDesktop.Skia
             canvas.DrawRoundRect(SKRect.Create(TitleBoxRect.X, TitleBoxRect.Y, TitleBoxRect.Width, TitleBoxRect.Height), BORDER_RADIUS, BORDER_RADIUS, basePaint);
 
             basePaint.Color = SKColors.White;
-            canvas.DrawText(viewModel.Title ?? "", TitleBoxRect.X + 10, TitleBoxRect.Y + 8 + 19, titleFont, basePaint);
-            canvas.DrawText(viewModel.PreviewText ?? "", TitleBoxRect.X + 10, TitleBoxRect.Y + 8 + 19 + 5 + 16, textFont, basePaint);
+            canvas.DrawText(viewModel.Title ?? "", TitleBoxRect.X + 10, TitleBoxRect.Y + 8 + 19, SKTextAlign.Left, titleFont, basePaint);
+            canvas.DrawText(viewModel.PreviewText ?? "", TitleBoxRect.X + 10, TitleBoxRect.Y + 8 + 19 + 5 + 16, SKTextAlign.Left, textFont, basePaint);
 
             // Play/Pause button (top right)
             int playButtonSize = 40;
@@ -124,7 +124,7 @@ namespace WinDynamicDesktop.Skia
             iconFont16.MeasureText(playIcon, out textBounds);
             float centerX = PlayButtonRect.X + PlayButtonRect.Width / 2;
             float centerY = PlayButtonRect.Y + PlayButtonRect.Height / 2;
-            canvas.DrawText(playIcon, centerX - textBounds.MidX, centerY - textBounds.MidY, iconFont16, basePaint);
+            canvas.DrawText(playIcon, centerX - textBounds.MidX, centerY - textBounds.MidY, SKTextAlign.Left, iconFont16, basePaint);
 
             // Corner labels
             DrawCornerLabel(canvas, info, viewModel.DownloadSize, Side.Left, out var downloadSizeRect);
@@ -146,7 +146,7 @@ namespace WinDynamicDesktop.Skia
 
                 float msgOpacity = hoveredItem == ThemePreviewer.HoveredItem.DownloadButton ? OPACITY_HOVER : OPACITY_NORMAL;
                 basePaint.Color = SKColors.White.WithAlpha((byte)(255 * msgOpacity));
-                canvas.DrawText(viewModel.Message, DownloadMessageRect.X + 8, DownloadMessageRect.Y + 5 + 16, textFont, basePaint);
+                canvas.DrawText(viewModel.Message, DownloadMessageRect.X + 8, DownloadMessageRect.Y + 5 + 16, SKTextAlign.Left, textFont, basePaint);
             }
             else
             {
@@ -176,7 +176,7 @@ namespace WinDynamicDesktop.Skia
             string icon = side == Side.Left ? ICON_CHEVRON_LEFT : ICON_CHEVRON_RIGHT;
             SKRect textBounds;
             iconFont20.MeasureText(icon, out textBounds);
-            canvas.DrawText(icon, x - textBounds.MidX, y - textBounds.MidY, iconFont20, basePaint);
+            canvas.DrawText(icon, x - textBounds.MidX, y - textBounds.MidY, SKTextAlign.Left, iconFont20, basePaint);
         }
 
         private void DrawCornerLabel(SKCanvas canvas, SKImageInfo info, string text, Side side, out Rectangle labelRect)
@@ -207,7 +207,7 @@ namespace WinDynamicDesktop.Skia
             basePaint.Color = SKColors.White.WithAlpha(OVERLAY_ALPHA);
             float textX = side == Side.Right ? info.Width - textBounds.Width - rightMargin + offset : leftMargin - offset;
             float textY = rectY + padding.Top + 16;
-            canvas.DrawText(text, textX, textY, textFont, basePaint);
+            canvas.DrawText(text, textX, textY, SKTextAlign.Left, textFont, basePaint);
         }
 
         private void DrawCarouselIndicators(SKCanvas canvas, SKImageInfo info, int count, int selectedIndex)
