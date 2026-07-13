@@ -5,6 +5,7 @@ using FlaUI.Core.Tools;
 using FlaUI.UIA3;
 using Microsoft.Win32;
 using System.Drawing;
+using Xunit.Abstractions;
 
 namespace WinDynamicDesktop.Tests
 {
@@ -16,9 +17,11 @@ namespace WinDynamicDesktop.Tests
         private readonly string appDirectory;
         private readonly Application app;
         private readonly UIA3Automation automation;
+        private readonly ITestOutputHelper output;
 
-        public SystemTests()
+        public SystemTests(ITestOutputHelper output)
         {
+            this.output = output;
             appDirectory = Path.GetDirectoryName(appPath) ?? throw new InvalidOperationException("Failed to resolve app directory.");
             app = Application.Launch(appPath);
             automation = new UIA3Automation();
@@ -58,7 +61,16 @@ namespace WinDynamicDesktop.Tests
 
                 Assert.Contains(["scripts", "settings.json", "themes"],
                     Directory.GetFileSystemEntries(appDirectory).Select(Path.GetFileName).OfType<string>().ToArray());
-                Assert.StartsWith(Path.Combine(appDirectory, "themes", "Windows_11", "img"), GetWallpaperPath());
+
+                string expectedPrefix = Path.Combine(appDirectory, "themes", "Windows_11", "img");
+                string? actualWallpaperPath = GetWallpaperPath();
+                output.WriteLine($"Expected prefix: [{expectedPrefix}] (len={expectedPrefix.Length})");
+                output.WriteLine($"Actual wallpaper path: [{actualWallpaperPath ?? "<null>"}] (len={actualWallpaperPath?.Length ?? 0})");
+
+                Assert.True(
+                    actualWallpaperPath is not null &&
+                    actualWallpaperPath.StartsWith(expectedPrefix, StringComparison.OrdinalIgnoreCase),
+                    $"Wallpaper path mismatch. Expected prefix: [{expectedPrefix}] (len={expectedPrefix.Length}) | Actual: [{actualWallpaperPath ?? "<null>"}] (len={actualWallpaperPath?.Length ?? 0})");
             }
             catch
             {
