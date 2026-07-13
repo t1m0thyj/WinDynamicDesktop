@@ -45,10 +45,9 @@ namespace WinDynamicDesktop.Tests
                 WaitForWindowToClose("Configure Schedule");
 
                 Window themeWindow = WaitForWindow("Select Theme") ?? throw new InvalidOperationException("Select Theme window was not found.");
-                var themeList = FindElementByAutomationId(themeWindow, "listView1");
-                themeList.Patterns.Scroll.Pattern.SetScrollPercent(ScrollPatternConstants.NoScroll, 100);
-
-                FindElement(themeWindow, "//ListItem[@Name='Windows 11']", TimeSpan.FromSeconds(5)).Click();
+                var listItem = FindElement(themeWindow, "//ListItem[@Name='Windows 11']");
+                listItem.Patterns.ScrollItem.Pattern.ScrollIntoView();
+                listItem.Click();
                 var applyButton = FindElement(themeWindow, "//Button[@Name='Apply']").AsButton();
                 applyButton.Invoke();
                 WaitForButtonToBeEnabled(applyButton);
