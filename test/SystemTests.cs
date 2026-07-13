@@ -82,6 +82,8 @@ namespace WinDynamicDesktop.Tests
                 System.Windows.Forms.SendKeys.SendWait("+{TAB}");
                 Thread.Sleep(500);
                 System.Windows.Forms.SendKeys.SendWait("{ENTER}");
+                Thread.Sleep(500);
+                System.Windows.Forms.SendKeys.SendWait("{ESC}");
             }
         }
 
