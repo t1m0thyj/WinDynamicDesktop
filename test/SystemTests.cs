@@ -5,7 +5,6 @@ using FlaUI.Core.Tools;
 using FlaUI.UIA3;
 using Microsoft.Win32;
 using System.Drawing;
-using Xunit.Abstractions;
 
 namespace WinDynamicDesktop.Tests
 {
@@ -17,11 +16,9 @@ namespace WinDynamicDesktop.Tests
         private readonly string appDirectory;
         private readonly Application app;
         private readonly UIA3Automation automation;
-        private readonly ITestOutputHelper output;
 
-        public SystemTests(ITestOutputHelper output)
+        public SystemTests()
         {
-            this.output = output;
             appDirectory = Path.GetDirectoryName(appPath) ?? throw new InvalidOperationException("Failed to resolve app directory.");
             app = Application.Launch(appPath);
             automation = new UIA3Automation();
@@ -34,7 +31,6 @@ namespace WinDynamicDesktop.Tests
             {
                 Window languageWindow = WaitForWindow("Select Language")
                     ?? throw new InvalidOperationException("Select Language window was not found.");
-
                 languageWindow.Focus();
                 FindElement(languageWindow, "//Button[@Name='OK']").AsButton().Invoke();
                 WaitForWindowToClose("Select Language");
@@ -49,10 +45,9 @@ namespace WinDynamicDesktop.Tests
                 Window themeWindow = WaitForWindow("Select Theme") ?? throw new InvalidOperationException("Select Theme window was not found.");
                 var themeList = FindElementByAutomationId(themeWindow, "listView1");
                 themeList.Focus();
-                using (Keyboard.Pressing(FlaUI.Core.WindowsAPI.VirtualKeyShort.CONTROL))
-                {
-                    Keyboard.Type(FlaUI.Core.WindowsAPI.VirtualKeyShort.END);
-                }
+                Keyboard.TypeSimultaneously(
+                    FlaUI.Core.WindowsAPI.VirtualKeyShort.CONTROL,
+                    FlaUI.Core.WindowsAPI.VirtualKeyShort.END);
 
                 FindElement(themeWindow, "//ListItem[@Name='Windows 11']", TimeSpan.FromSeconds(5)).Click();
                 var applyButton = FindElement(themeWindow, "//Button[@Name='Apply']").AsButton();
@@ -61,16 +56,7 @@ namespace WinDynamicDesktop.Tests
 
                 Assert.Contains(["scripts", "settings.json", "themes"],
                     Directory.GetFileSystemEntries(appDirectory).Select(Path.GetFileName).OfType<string>().ToArray());
-
-                string expectedPrefix = Path.Combine(appDirectory, "themes", "Windows_11", "img");
-                string? actualWallpaperPath = GetWallpaperPath();
-                output.WriteLine($"Expected prefix: [{expectedPrefix}] (len={expectedPrefix.Length})");
-                output.WriteLine($"Actual wallpaper path: [{actualWallpaperPath ?? "<null>"}] (len={actualWallpaperPath?.Length ?? 0})");
-
-                Assert.True(
-                    actualWallpaperPath is not null &&
-                    actualWallpaperPath.StartsWith(expectedPrefix, StringComparison.OrdinalIgnoreCase),
-                    $"Wallpaper path mismatch. Expected prefix: [{expectedPrefix}] (len={expectedPrefix.Length}) | Actual: [{actualWallpaperPath ?? "<null>"}] (len={actualWallpaperPath?.Length ?? 0})");
+                Assert.StartsWith(Path.Combine(appDirectory, "themes", "Windows_11", "img"), GetWallpaperPath());
             }
             catch
             {
