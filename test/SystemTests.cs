@@ -35,9 +35,11 @@ namespace WinDynamicDesktop.Tests
                 FindElement(languageWindow, "//Button[@Name='OK']").AsButton().Invoke();
                 WaitForWindowToClose("Select Language");
 
-                // HandleLocationPrompt();
-
-                Window scheduleWindow = WaitForWindow("Configure Schedule") ?? throw new InvalidOperationException("Configure Schedule window was not found.");
+                Window scheduleWindow = WaitForWindow("Configure Schedule", TimeSpan.FromSeconds(5), false);
+                if (scheduleWindow == null) {
+                    HandleLocationPrompt();
+                    scheduleWindow = WaitForWindow("Configure Schedule") ?? throw new InvalidOperationException("Configure Schedule window was not found.");
+                }
                 FindElementByAutomationId(scheduleWindow, "radioButton3").Click();
                 FindElement(scheduleWindow, "//Button[@Name='OK']").AsButton().Invoke();
                 WaitForWindowToClose("Configure Schedule");

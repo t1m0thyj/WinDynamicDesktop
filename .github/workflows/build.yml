@@ -91,4 +91,5 @@ jobs:
         name: test-dir
         path: |
           test\bin
+          !test\bin\Debug\**
           !test\bin\*.exe
