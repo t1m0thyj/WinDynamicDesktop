@@ -76,10 +76,6 @@ jobs:
       run: dotnet test --filter type!=system --verbosity normal
       working-directory: test
 
-    - run: |
-        npm install -g appium
-        Start-Process -FilePath "C:\Program Files (x86)\Windows Application Driver\WinAppDriver.exe"
-
     - uses: actions/download-artifact@v8
       with:
         name: exe-x64

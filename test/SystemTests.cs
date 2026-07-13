@@ -1,25 +1,27 @@
-﻿using Microsoft.Win32;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Appium;
-using OpenQA.Selenium.Appium.Windows;
+﻿using FlaUI.Core;
+using FlaUI.Core.AutomationElements;
+using FlaUI.Core.Input;
+using FlaUI.Core.Tools;
+using FlaUI.UIA3;
+using Microsoft.Win32;
 using System.Drawing;
 
 namespace WinDynamicDesktop.Tests
 {
     public class SystemTests : IDisposable
     {
-        private const string AppiumServerUrl = "http://127.0.0.1:4723";
-        private readonly string AppPath = Path.GetFullPath(@"..\..\..\bin\WinDynamicDesktop.exe");
-        private readonly WindowsDriver<WindowsElement> driver;
+        private static readonly TimeSpan defaultTimeout = TimeSpan.FromSeconds(10);
+        private static readonly TimeSpan retryInterval = TimeSpan.FromMilliseconds(200);
+        private readonly string appPath = Path.GetFullPath(@"..\..\..\bin\WinDynamicDesktop.exe");
+        private readonly string appDirectory;
+        private readonly Application app;
+        private readonly UIA3Automation automation;
 
         public SystemTests()
         {
-            var appCapabilities = new AppiumOptions();
-            appCapabilities.AddAdditionalCapability("app", AppPath);
-            appCapabilities.AddAdditionalCapability("platformName", "Windows");
-            appCapabilities.AddAdditionalCapability("deviceName", "WindowsPC");
-            driver = new WindowsDriver<WindowsElement>(new Uri(AppiumServerUrl), appCapabilities);
-            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            appDirectory = Path.GetDirectoryName(appPath) ?? throw new InvalidOperationException("Failed to resolve app directory.");
+            app = Application.Launch(appPath);
+            automation = new UIA3Automation();
         }
 
         [Fact, Trait("type", "system")]
@@ -27,56 +29,118 @@ namespace WinDynamicDesktop.Tests
         {
             try
             {
-                driver.FindElementByXPath("//Window[@Name='Select Language']").Click();
-                driver.FindElementByXPath("//Button[@Name='OK']").Click();
-                Thread.Sleep(TimeSpan.FromSeconds(2));
+                Window languageWindow = WaitForWindow("Select Language")
+                    ?? throw new InvalidOperationException("Select Language window was not found.");
 
-                if (HandleLocationPrompt()) Thread.Sleep(TimeSpan.FromSeconds(2));
-                driver.SwitchTo().Window(driver.WindowHandles[0]);
-                driver.FindElementByXPath("//Window[@Name='Configure Schedule']").Click();
-                driver.FindElementByAccessibilityId("radioButton3").Click();
-                driver.FindElementByXPath("//Button[@Name='OK']").Click();
-                Thread.Sleep(TimeSpan.FromSeconds(2));
+                languageWindow.Focus();
+                FindElement(languageWindow, "//Button[@Name='OK']").AsButton().Invoke();
+                WaitForWindowToClose("Select Language");
 
-                driver.SwitchTo().Window(driver.WindowHandles[0]);
-                driver.FindElementByXPath("//Window[@Name='Select Theme']").Click();
-                driver.FindElementByAccessibilityId("listView1").SendKeys(Keys.Control + Keys.End);
-                driver.FindElementByXPath("//ListItem[@Name='Windows 11']").Click();
-                driver.FindElementByXPath("//Button[@Name='Apply']").Click();
-                Thread.Sleep(TimeSpan.FromSeconds(2));
+                HandleLocationPrompt();
+
+                Window scheduleWindow = WaitForWindow("Configure Schedule") ?? throw new InvalidOperationException("Configure Schedule window was not found.");
+                FindElementByAutomationId(scheduleWindow, "radioButton3").Click();
+                FindElement(scheduleWindow, "//Button[@Name='OK']").AsButton().Invoke();
+                WaitForWindowToClose("Configure Schedule");
+
+                Window themeWindow = WaitForWindow("Select Theme") ?? throw new InvalidOperationException("Select Theme window was not found.");
+                var themeList = FindElementByAutomationId(themeWindow, "listView1");
+                themeList.Focus();
+                using (Keyboard.Pressing(FlaUI.Core.WindowsAPI.VirtualKeyShort.CONTROL))
+                {
+                    Keyboard.Type(FlaUI.Core.WindowsAPI.VirtualKeyShort.END);
+                }
+
+                FindElement(themeWindow, "//ListItem[@Name='Windows 11']", TimeSpan.FromSeconds(5)).Click();
+                var applyButton = FindElement(themeWindow, "//Button[@Name='Apply']").AsButton();
+                applyButton.Invoke();
+                WaitForButtonToBeEnabled(applyButton);
 
                 Assert.Contains(["scripts", "settings.json", "themes"],
-                    Directory.GetFileSystemEntries(Path.GetDirectoryName(AppPath)).Select(Path.GetFileName).ToArray());
-                Assert.StartsWith(Path.Combine(Path.GetDirectoryName(AppPath), "themes", "Windows_11", "img"), GetWallpaperPath());
+                    Directory.GetFileSystemEntries(appDirectory).Select(Path.GetFileName).OfType<string>().ToArray());
+                Assert.StartsWith(Path.Combine(appDirectory, "themes", "Windows_11", "img"), GetWallpaperPath());
             }
-            catch (WebDriverException)
+            catch
             {
-                TakeScreenshot(Path.Combine(Path.GetDirectoryName(AppPath), "screenshot.png"));
+                TakeScreenshot(Path.Combine(appDirectory, "screenshot.png"));
                 throw;
             }
         }
 
         public void Dispose()
         {
-            driver?.Quit();
+            app?.Close();
+            automation?.Dispose();
+            app?.Dispose();
         }
 
-        private bool HandleLocationPrompt()
+        private void HandleLocationPrompt()
         {
-            if (driver.WindowHandles.Count == 0)
+            if (app.GetAllTopLevelWindows(automation).Length == 0)
             {
-                // Default focus is on No button, so Shift+Tab to focus Yes, then Enter to confirm
+                // Default focus is on No button, so Shift+Tab to focus Yes, then Enter to confirm.
                 System.Windows.Forms.SendKeys.SendWait("+{TAB}");
                 Thread.Sleep(500);
                 System.Windows.Forms.SendKeys.SendWait("{ENTER}");
-                return true;
             }
-            return false;
+        }
+
+        private Window? WaitForWindow(string title, TimeSpan? timeout = null, bool throwOnTimeout = true)
+        {
+            var result = Retry.WhileNull(
+                () => app.GetAllTopLevelWindows(automation).FirstOrDefault(window => window.Title == title),
+                timeout ?? defaultTimeout,
+                retryInterval,
+                throwOnTimeout,
+                true);
+            return result.Result;
+        }
+
+        private AutomationElement FindElement(AutomationElement root, string xpath, TimeSpan? timeout = null)
+        {
+            var result = Retry.WhileNull(
+                () => root.FindFirstByXPath(xpath),
+                timeout ?? defaultTimeout,
+                retryInterval,
+                true,
+                true);
+            return result.Result!;
+        }
+
+        private AutomationElement FindElementByAutomationId(AutomationElement root, string automationId, TimeSpan? timeout = null)
+        {
+            var result = Retry.WhileNull(
+                () => root.FindFirstDescendant(cf => cf.ByAutomationId(automationId)),
+                timeout ?? defaultTimeout,
+                retryInterval,
+                true,
+                true);
+            return result.Result!;
+        }
+
+        private void WaitForWindowToClose(string title)
+        {
+            Retry.WhileNotNull(
+                () => app.GetAllTopLevelWindows(automation).FirstOrDefault(window => window.Title == title),
+                defaultTimeout,
+                retryInterval,
+                true,
+                true);
+        }
+
+        private void WaitForButtonToBeEnabled(Button button)
+        {
+            Retry.WhileFalse(
+                () => button.IsEnabled,
+                defaultTimeout,
+                retryInterval,
+                true,
+                true);
         }
 
         private string? GetWallpaperPath()
         {
-            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop"))
+            using (RegistryKey? key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop"))
             {
                 return key?.GetValue("WallPaper") as string;
             }
@@ -84,7 +148,9 @@ namespace WinDynamicDesktop.Tests
 
         private void TakeScreenshot(string filePath)
         {
-            Rectangle bounds = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
+            var primaryScreen = System.Windows.Forms.Screen.PrimaryScreen
+                ?? throw new InvalidOperationException("No primary screen is available for screenshot capture.");
+            Rectangle bounds = primaryScreen.Bounds;
             using (Bitmap bitmap = new Bitmap(bounds.Width, bounds.Height))
             {
                 using (Graphics g = Graphics.FromImage(bitmap))
