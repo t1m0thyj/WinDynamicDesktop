@@ -1,6 +1,6 @@
 ﻿using FlaUI.Core;
 using FlaUI.Core.AutomationElements;
-using FlaUI.Core.Input;
+using FlaUI.Core.Patterns;
 using FlaUI.Core.Tools;
 using FlaUI.UIA3;
 using Microsoft.Win32;
@@ -31,12 +31,12 @@ namespace WinDynamicDesktop.Tests
             {
                 Window languageWindow = WaitForWindow("Select Language")
                     ?? throw new InvalidOperationException("Select Language window was not found.");
-                languageWindow.Focus();
                 FindElement(languageWindow, "//Button[@Name='OK']").AsButton().Invoke();
                 WaitForWindowToClose("Select Language");
 
-                Window scheduleWindow = WaitForWindow("Configure Schedule", TimeSpan.FromSeconds(5), false);
-                if (scheduleWindow == null) {
+                Window? scheduleWindow = WaitForWindow("Configure Schedule", TimeSpan.FromSeconds(5), false);
+                if (scheduleWindow == null)
+                {
                     HandleLocationPrompt();
                     scheduleWindow = WaitForWindow("Configure Schedule") ?? throw new InvalidOperationException("Configure Schedule window was not found.");
                 }
@@ -46,10 +46,7 @@ namespace WinDynamicDesktop.Tests
 
                 Window themeWindow = WaitForWindow("Select Theme") ?? throw new InvalidOperationException("Select Theme window was not found.");
                 var themeList = FindElementByAutomationId(themeWindow, "listView1");
-                themeList.Focus();
-                Keyboard.TypeSimultaneously(
-                    FlaUI.Core.WindowsAPI.VirtualKeyShort.CONTROL,
-                    FlaUI.Core.WindowsAPI.VirtualKeyShort.END);
+                themeList.Patterns.Scroll.Pattern.SetScrollPercent(ScrollPatternConstants.NoScroll, 100);
 
                 FindElement(themeWindow, "//ListItem[@Name='Windows 11']", TimeSpan.FromSeconds(5)).Click();
                 var applyButton = FindElement(themeWindow, "//Button[@Name='Apply']").AsButton();
@@ -82,8 +79,6 @@ namespace WinDynamicDesktop.Tests
                 System.Windows.Forms.SendKeys.SendWait("+{TAB}");
                 Thread.Sleep(500);
                 System.Windows.Forms.SendKeys.SendWait("{ENTER}");
-                Thread.Sleep(500);
-                System.Windows.Forms.SendKeys.SendWait("{ESC}");
             }
         }
 
