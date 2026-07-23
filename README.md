@@ -30,6 +30,14 @@ Choose a schedule for cycling through wallpaper images over 24 hours
 
 Extend the behavior of WinDynamicDesktop with PowerShell scripts, and share them with other users [here](https://github.com/t1m0thyj/WDD-scripts#readme)
 
+## Virtual Desktops
+
+On Windows 11 22H2 and newer, the experimental **Sync multi-monitor wallpaper across virtual desktops**
+option under **More Options** can keep a multi-monitor theme consistent when switching virtual desktops. It
+combines each monitor's selected image using the physical display layout reported by Windows, then applies the
+result as a spanned wallpaper to every virtual desktop. The option is disabled by default and only applies when
+different themes are configured per display.
+
 ## Supported Devices
 
 WinDynamicDesktop is developed primarily for Windows 11, but should run on any device with Windows 7 or newer. Windows Insider builds are not officially supported.
