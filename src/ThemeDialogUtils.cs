@@ -52,66 +52,82 @@ namespace WinDynamicDesktop
 
         internal static void LoadThemes(List<ThemeConfig> themes, ListView listView, ThemeLoadOpts opts)
         {
-            loadSemaphore.Wait(60000);
-            Size thumbnailSize = ThemeThumbLoader.GetThumbnailSize(listView);
-            ListViewItem focusedItem = null;
+            bool semaphoreAcquired = loadSemaphore.Wait(60000);
 
-            foreach (ThemeConfig theme in themes.ToList())
+            try
             {
-                if (JsonConfig.settings.showInstalledOnly && !ThemeManager.IsThemeDownloaded(theme))
-                {
-                    continue;
-                }
+                Size thumbnailSize = ThemeThumbLoader.GetThumbnailSize(listView);
+                ListViewItem focusedItem = null;
 
-                try
+                foreach (ThemeConfig theme in themes.ToList())
                 {
-                    using (Image thumbnailImage = ThemeThumbLoader.GetThumbnailImage(theme, thumbnailSize, true))
+                    if (JsonConfig.settings.showInstalledOnly && !ThemeManager.IsThemeDownloaded(theme))
                     {
-                        listView.Invoke(new Action(() =>
-                        {
-                            listView.LargeImageList.Images.Add(thumbnailImage);
-                            string itemText = ThemeManager.GetThemeName(theme);
-                            if (JsonConfig.settings.favoriteThemes != null &&
-                                JsonConfig.settings.favoriteThemes.Contains(theme.themeId))
-                            {
-                                itemText = "★ " + itemText;
-                            }
-                            ListViewItem newItem = listView.Items.Add(itemText,
-                                listView.LargeImageList.Images.Count - 1);
-                            newItem.Tag = theme.themeId;
+                        continue;
+                    }
 
-                            if (opts.activeTheme != null && opts.activeTheme == theme.themeId)
+                    try
+                    {
+                        using (Image thumbnailImage = ThemeThumbLoader.GetThumbnailImage(theme, thumbnailSize, true))
+                        {
+                            listView.Invoke(new Action(() =>
                             {
-                                newItem.Font = new Font(newItem.Font, FontStyle.Bold);
-                            }
-                            if (opts.focusTheme == null || opts.focusTheme == theme.themeId)
-                            {
-                                focusedItem = newItem;
-                            }
-                        }));
+                                listView.LargeImageList.Images.Add(thumbnailImage);
+                                string itemText = ThemeManager.GetThemeName(theme);
+                                if (JsonConfig.settings.favoriteThemes != null &&
+                                    JsonConfig.settings.favoriteThemes.Contains(theme.themeId))
+                                {
+                                    itemText = "★ " + itemText;
+                                }
+                                ListViewItem newItem = listView.Items.Add(itemText,
+                                    listView.LargeImageList.Images.Count - 1);
+                                newItem.Tag = theme.themeId;
+
+                                if (opts.activeTheme != null && opts.activeTheme == theme.themeId)
+                                {
+                                    newItem.Font = new Font(newItem.Font, FontStyle.Bold);
+                                }
+                                if (opts.focusTheme == null || opts.focusTheme == theme.themeId)
+                                {
+                                    focusedItem = newItem;
+                                }
+                            }));
+                        }
+                    }
+                    catch (Exception exc)
+                    {
+                        // Image formats that cannot be decoded throw ArgumentException or ExternalException, so
+                        // catching only OutOfMemoryException here used to let the exception escape and leave the
+                        // import dialog waiting for thumbnails forever
+                        LoggingHandler.LogMessage("Failed to generate thumbnail for '{0}' theme: {1}", theme.themeId,
+                            exc);
+                        listView.Invoke(new Action(() =>
+                            ThemeLoader.HandleError(new FailedToCreateThumbnail(theme.themeId))));
                     }
                 }
-                catch (OutOfMemoryException)
+
+                listView.Invoke(new Action(() =>
                 {
-                    ThemeLoader.HandleError(new FailedToCreateThumbnail(theme.themeId));
+                    listView.Sort();
+
+                    if (focusedItem == null)
+                    {
+                        focusedItem = listView.Items[0];
+                    }
+
+                    focusedItem.Selected = true;
+                    listView.EnsureVisible(focusedItem.Index);
+
+                    ThemeThumbLoader.CacheThumbnails(listView);
+                }));
+            }
+            finally
+            {
+                if (semaphoreAcquired)
+                {
+                    loadSemaphore.Release();
                 }
             }
-
-            listView.Invoke(new Action(() =>
-            {
-                listView.Sort();
-
-                if (focusedItem == null)
-                {
-                    focusedItem = listView.Items[0];
-                }
-
-                focusedItem.Selected = true;
-                listView.EnsureVisible(focusedItem.Index);
-
-                ThemeThumbLoader.CacheThumbnails(listView);
-            }));
-            loadSemaphore.Release();
         }
 
         internal static void LoadImportedThemes(List<ThemeConfig> themes, ListView listView, ImportDialog importDialog)
@@ -133,13 +149,24 @@ namespace WinDynamicDesktop
 
             Task.Run(() =>
             {
-                LoadThemes(themes, listView, new ThemeLoadOpts());
-
-                importDialog.Invoke(new Action(() =>
+                try
                 {
-                    importDialog.thumbnailsLoaded = true;
-                    importDialog.Close();
-                }));
+                    LoadThemes(themes, listView, new ThemeLoadOpts());
+                }
+                catch (Exception exc)
+                {
+                    LoggingHandler.LogMessage("Failed to load imported themes: {0}", exc);
+                }
+                finally
+                {
+                    // Closing the dialog here rather than after LoadThemes ensures the import always finishes, even
+                    // if generating thumbnails failed
+                    importDialog.Invoke(new Action(() =>
+                    {
+                        importDialog.thumbnailsLoaded = true;
+                        importDialog.Close();
+                    }));
+                }
             });
         }
 
