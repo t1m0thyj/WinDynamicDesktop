@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using SkiaSharp;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -75,6 +76,7 @@ namespace WinDynamicDesktop
                     return;
                 }
 
+                WriteXzWallpaperState(outputPath);
                 LoggingHandler.LogMessage("Set spanned wallpaper for all virtual desktops: {0}", outputPath);
                 SpannedWallpaperRenderer.CleanCache(cacheDirectory, outputPath);
             }
@@ -216,6 +218,23 @@ namespace WinDynamicDesktop
             if (value != null && Marshal.IsComObject(value))
             {
                 Marshal.ReleaseComObject(value);
+            }
+        }
+
+        private static void WriteXzWallpaperState(string outputPath)
+        {
+            try
+            {
+                string directory = Path.Combine(Environment.GetFolderPath(
+                    Environment.SpecialFolder.LocalApplicationData), "XZWallpaperBypass", "WDD-Span");
+                Directory.CreateDirectory(directory);
+                File.WriteAllText(Path.Combine(directory, "state.json"),
+                    JsonConvert.SerializeObject(new { output = outputPath }));
+            }
+            catch (Exception exc)
+            {
+                LoggingHandler.LogMessage("Could not notify XZDesktop of wallpaper update: {0}",
+                    exc.ToString());
             }
         }
 

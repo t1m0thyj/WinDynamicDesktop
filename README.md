@@ -38,6 +38,10 @@ combines each monitor's selected image using the physical display layout reporte
 result as a spanned wallpaper to every virtual desktop. The option is disabled by default and only applies when
 different themes are configured per display.
 
+After a successful sync, this fork writes `%LOCALAPPDATA%\XZWallpaperBypass\WDD-Span\state.json` so
+[XZ Desktop Wallpaper ByPass](https://github.com/David-Lzy/XZ_Desktop_wallpaper_ByPass) can reload the
+same composite without asking WDD to refresh again.
+
 ## Supported Devices
 
 WinDynamicDesktop is developed primarily for Windows 11, but should run on any device with Windows 7 or newer. Windows Insider builds are not officially supported.
