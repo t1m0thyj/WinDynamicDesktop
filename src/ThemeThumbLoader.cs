@@ -9,7 +9,9 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using SkiaSharp;
 
 namespace WinDynamicDesktop
 {
@@ -52,30 +54,75 @@ namespace WinDynamicDesktop
             return wallpaperPath ?? CreateBlankWallpaper();
         }
 
-        public static Image ScaleImage(Image tempImage, Size size)
+        public static Image ScaleImage(string filename, Size size)
         {
-            if (tempImage.Size == size)
+            using (Stream stream = File.OpenRead(filename))
             {
-                return tempImage;
-            }
-
-            // Image scaling code from https://stackoverflow.com/a/7677163/5504760
-            using (tempImage)
-            {
-                Bitmap bmp = new Bitmap(size.Width, size.Height, PixelFormat.Format32bppArgb);
-
-                using (Graphics g = Graphics.FromImage(bmp))
-                {
-                    g.DrawImage(tempImage, new Rectangle(0, 0, bmp.Width, bmp.Height));
-                }
-
-                return bmp;
+                return ScaleImage(stream, size);
             }
         }
 
-        public static Image ScaleImage(string filename, Size size)
+        // Images are decoded with SkiaSharp rather than System.Drawing so that formats GDI+ cannot read, such as
+        // WebP, are supported here as well as in the theme preview
+        private static Image ScaleImage(Stream stream, Size size)
         {
-            return ScaleImage(Image.FromFile(filename), size);
+            using (SKCodec codec = SKCodec.Create(stream))
+            {
+                if (codec == null)
+                {
+                    throw new ArgumentException("Image could not be decoded because its format is not supported");
+                }
+
+                SKImageInfo info = new SKImageInfo(codec.Info.Width, codec.Info.Height, SKColorType.Bgra8888,
+                    SKAlphaType.Premul);
+
+                using (SKBitmap sourceBitmap = new SKBitmap(info))
+                {
+                    SKCodecResult result = codec.GetPixels(info, sourceBitmap.GetPixels());
+
+                    // Truncated files still decode into a usable image, so only a hard failure is treated as an error
+                    if (result != SKCodecResult.Success && result != SKCodecResult.IncompleteInput)
+                    {
+                        throw new ArgumentException("Image could not be decoded, result was " + result);
+                    }
+
+                    if (sourceBitmap.Width == size.Width && sourceBitmap.Height == size.Height)
+                    {
+                        return ToBitmap(sourceBitmap);
+                    }
+
+                    using (SKBitmap scaledBitmap = new SKBitmap(info.WithSize(size.Width, size.Height)))
+                    {
+                        sourceBitmap.ScalePixels(scaledBitmap, new SKSamplingOptions(SKCubicResampler.Mitchell));
+                        return ToBitmap(scaledBitmap);
+                    }
+                }
+            }
+        }
+
+        private static Bitmap ToBitmap(SKBitmap skBitmap)
+        {
+            Bitmap bmp = new Bitmap(skBitmap.Width, skBitmap.Height, PixelFormat.Format32bppPArgb);
+            BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly,
+                bmp.PixelFormat);
+
+            try
+            {
+                byte[] pixels = skBitmap.Bytes;
+                int rowBytes = Math.Min(skBitmap.RowBytes, bmpData.Stride);
+
+                for (int y = 0; y < skBitmap.Height; y++)
+                {
+                    Marshal.Copy(pixels, y * skBitmap.RowBytes, IntPtr.Add(bmpData.Scan0, y * bmpData.Stride),
+                        rowBytes);
+                }
+            }
+            finally
+            {
+                bmp.UnlockBits(bmpData);
+            }
+
+            return bmp;
         }
 
         public static Image GetThumbnailImage(ThemeConfig theme, Size size, bool useCache)
@@ -102,7 +149,7 @@ namespace WinDynamicDesktop
 
                     using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
                     {
-                        return ScaleImage(Image.FromStream(stream), size);
+                        return ScaleImage(stream, size);
                     }
                 }
             }
