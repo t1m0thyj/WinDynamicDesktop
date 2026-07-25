@@ -130,27 +130,31 @@ namespace WinDynamicDesktop
             if (useCache)
             {
                 string thumbnailPath = GetThumbnailPath(theme);
-                if (File.Exists(thumbnailPath))
-                {
-                    Image cachedImage = Image.FromFile(thumbnailPath);
 
-                    if (cachedImage.Size == size)
+                try
+                {
+                    if (File.Exists(thumbnailPath))
                     {
-                        return cachedImage;
+                        // Scaling instead of discarding a thumbnail whose size does not match keeps a thumbnail
+                        // supplied with the theme, and avoids regenerating cached ones whenever the display DPI
+                        // makes the requested size something other than 192x108
+                        return ScaleImage(thumbnailPath, size);
                     }
-                    else
+                    else if (ThemeManager.defaultThemes.Contains(theme.themeId))
                     {
-                        cachedImage.Dispose();
+                        string resourceName = "WinDynamicDesktop.resources.images." + theme.themeId +
+                            "_thumbnail.jpg";
+
+                        using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+                        {
+                            return ScaleImage(stream, size);
+                        }
                     }
                 }
-                else if (ThemeManager.defaultThemes.Contains(theme.themeId))
+                catch (Exception exc)
                 {
-                    string resourceName = "WinDynamicDesktop.resources.images." + theme.themeId + "_thumbnail.jpg";
-
-                    using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-                    {
-                        return ScaleImage(stream, size);
-                    }
+                    LoggingHandler.LogMessage("Failed to load cached thumbnail for '{0}' theme, generating a new " +
+                        "one: {1}", theme.themeId, exc);
                 }
             }
 
