@@ -136,11 +136,11 @@ namespace WinDynamicDesktop.Skia
 
         // The overlay is drawn onto a canvas scaled by uiScale, so DrawOverlay lays its hit regions out in scaled
         // coordinates while mouse events arrive in device pixels. Convert before hit testing, or every region is
-        // offset towards the top left by a factor of uiScale.
+        // offset towards the top left by a factor of uiScale. Reusing the field rather than reading DeviceDpi again
+        // keeps this matched to the scale the current regions were laid out with.
         private Point ToOverlayPoint(Point location)
         {
-            float scale = DeviceDpi / 96f;
-            return new Point((int)(location.X / scale), (int)(location.Y / scale));
+            return new Point((int)(location.X / uiScale), (int)(location.Y / uiScale));
         }
 
         protected override void OnMouseClick(MouseEventArgs e)
