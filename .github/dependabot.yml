@@ -9,3 +9,6 @@ updates:
     directory: "src"
     schedule:
       interval: "daily"
+    ignore:
+      # https://github.com/dependabot/dependabot-core/issues/13923
+      - dependency-name: "SkiaSharp.Views.WindowsForms"
