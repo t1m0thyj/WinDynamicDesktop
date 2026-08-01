@@ -5,6 +5,7 @@
 using SkiaSharp;
 using SkiaSharp.Views.Desktop;
 using System;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -133,42 +134,53 @@ namespace WinDynamicDesktop.Skia
             }
         }
 
+        // The overlay is drawn onto a canvas scaled by uiScale, so DrawOverlay lays its hit regions out in scaled
+        // coordinates while mouse events arrive in device pixels. Convert before hit testing, or every region is
+        // offset towards the top left by a factor of uiScale. Reusing the field rather than reading DeviceDpi again
+        // keeps this matched to the scale the current regions were laid out with.
+        private Point ToOverlayPoint(Point location)
+        {
+            return new Point((int)(location.X / uiScale), (int)(location.Y / uiScale));
+        }
+
         protected override void OnMouseClick(MouseEventArgs e)
         {
             base.OnMouseClick(e);
 
             if (!ViewModel.ControlsVisible) return;
 
+            Point location = ToOverlayPoint(e.Location);
+
             // Check if play button was clicked
-            if (renderer.PlayButtonRect.Contains(e.Location))
+            if (renderer.PlayButtonRect.Contains(location))
             {
                 ViewModel.TogglePlayPause();
                 return;
             }
 
             // Check if left arrow area was clicked
-            if (renderer.LeftArrowRect.Contains(e.Location))
+            if (renderer.LeftArrowRect.Contains(location))
             {
                 ViewModel.Previous();
                 return;
             }
 
             // Check if right arrow area was clicked
-            if (renderer.RightArrowRect.Contains(e.Location))
+            if (renderer.RightArrowRect.Contains(location))
             {
                 ViewModel.Next();
                 return;
             }
 
             // Check if download message was clicked
-            if (renderer.DownloadMessageRect.Contains(e.Location))
+            if (renderer.DownloadMessageRect.Contains(location))
             {
                 ViewModel.InvokeDownload();
                 return;
             }
 
             // Check if carousel indicator was clicked
-            var clickedIndex = Array.FindIndex(renderer.CarouselIndicatorRects ?? [], r => r.Contains(e.Location));
+            var clickedIndex = Array.FindIndex(renderer.CarouselIndicatorRects ?? [], r => r.Contains(location));
             if (clickedIndex != -1)
             {
                 ViewModel.SelectedIndex = clickedIndex;
@@ -188,27 +200,28 @@ namespace WinDynamicDesktop.Skia
 
             var previousHoveredItem = hoveredItem;
             hoveredItem = HoveredItem.None;
+            Point location = ToOverlayPoint(e.Location);
 
             // Check UI elements in priority order
-            if (renderer.PlayButtonRect.Contains(e.Location))
+            if (renderer.PlayButtonRect.Contains(location))
             {
                 hoveredItem = HoveredItem.PlayButton;
             }
-            else if (renderer.DownloadMessageRect.Contains(e.Location))
+            else if (renderer.DownloadMessageRect.Contains(location))
             {
                 hoveredItem = HoveredItem.DownloadButton;
             }
-            else if (renderer.LeftArrowRect.Contains(e.Location))
+            else if (renderer.LeftArrowRect.Contains(location))
             {
                 hoveredItem = HoveredItem.LeftArrow;
             }
-            else if (renderer.RightArrowRect.Contains(e.Location))
+            else if (renderer.RightArrowRect.Contains(location))
             {
                 hoveredItem = HoveredItem.RightArrow;
             }
 
             // Check carousel indicators for hand cursor
-            bool isOverCarouselIndicator = renderer.CarouselIndicatorRects?.Any(r => r.Contains(e.Location)) ?? false;
+            bool isOverCarouselIndicator = renderer.CarouselIndicatorRects?.Any(r => r.Contains(location)) ?? false;
             bool isOverClickable = hoveredItem != HoveredItem.None || isOverCarouselIndicator;
             Cursor = isOverClickable ? Cursors.Hand : Cursors.Default;
 
