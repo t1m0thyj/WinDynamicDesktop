@@ -37,6 +37,8 @@ namespace WinDynamicDesktop
 
             this.FormClosing += OnFormClosing;
             this.FormClosed += OnFormClosed;
+            this.listView1.DragEnter += OnThemeListDragEnter;
+            this.listView1.DragDrop += OnThemeListDragDrop;
 
             Rectangle bounds = Screen.FromControl(this).Bounds;
             Size thumbnailSize = ThemeThumbLoader.GetThumbnailSize(this);
@@ -258,6 +260,41 @@ namespace WinDynamicDesktop
 
             ThemeLoadOpts loadOpts = new ThemeLoadOpts(activeTheme, focusTheme);
             Task.Run(new Action(() => ThemeDialogUtils.LoadThemes(ThemeManager.themeSettings, listView1, loadOpts)));
+        }
+
+        private void OnThemeListDragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (files != null && files.Any(f => ThemeDialogUtils.IsAcceptableThemeFile(f)))
+                {
+                    e.Effect = DragDropEffects.Copy;
+                    return;
+                }
+            }
+
+            e.Effect = DragDropEffects.None;
+        }
+
+        private void OnThemeListDragDrop(object sender, DragEventArgs e)
+        {
+            if (!e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                return;
+            }
+
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (files == null)
+            {
+                return;
+            }
+
+            List<string> paths = files.Where(f => ThemeDialogUtils.IsAcceptableThemeFile(f)).ToList();
+            if (paths.Count > 0)
+            {
+                ImportThemes(paths);
+            }
         }
 
         private void searchBox_TextChanged(object sender, EventArgs e)

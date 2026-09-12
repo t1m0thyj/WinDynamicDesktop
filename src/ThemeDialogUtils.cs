@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -29,6 +30,7 @@ namespace WinDynamicDesktop
     internal class ThemeDialogUtils
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
+        private static readonly string[] acceptedExtensions = new[] { ".ddw", ".json", ".zip" };
         private static List<ListViewItem> allThemeItems = new List<ListViewItem>();
         private static SemaphoreSlim loadSemaphore = new SemaphoreSlim(1);
 
@@ -288,6 +290,17 @@ namespace WinDynamicDesktop
                 LoadThemes(ThemeManager.themeSettings.Where(theme => !ThemeManager.IsThemeDownloaded(theme)).ToList(),
                     listView, new ThemeLoadOpts());
             }
+        }
+
+        internal static bool IsAcceptableThemeFile(string path)
+        {
+            if (string.IsNullOrEmpty(path) || !File.Exists(path))
+            {
+                return false;
+            }
+
+            string ext = Path.GetExtension(path)?.ToLowerInvariant();
+            return acceptedExtensions.Contains(ext);
         }
     }
 }
