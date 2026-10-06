@@ -64,17 +64,14 @@ namespace WinDynamicDesktop
                 TimeSpan offsetAfter = tzInfo.GetUtcOffset(localDate.AddDays(1));
                 localDate = localDate.Add(offsetAfter - offsetBefore);
             }
-            DateTime tzDate = TimeZoneInfo.ConvertTime(localDate, tzInfo);
-            // Set time to noon because of https://github.com/mourner/suncalc/issues/107
-            DateTime utcDate = new DateTimeOffset(
-                tzDate.Year, tzDate.Month, tzDate.Day, 12, 0, 0, tzInfo.GetUtcOffset(tzDate)).UtcDateTime;
-            return SunCalcNet.SunCalc.GetSunPhases(utcDate, latitude, longitude).ToList();
+            DateTimeOffset tzDate = TimeZoneInfo.ConvertTime(localDate, tzInfo);
+            return SunCalcNet.SunCalc.GetSunPhases(tzDate, latitude, longitude).ToList();
         }
 
         private static DateTime GetSolarTime(List<SunPhase> sunPhases, SunPhaseName desiredPhase)
         {
             SunPhase sunPhase = sunPhases.FirstOrDefault(sp => sp.Name.Value == desiredPhase.Value);
-            return sunPhase.Name != null ? sunPhase.PhaseTime.ToLocalTime() : DateTime.MinValue;
+            return sunPhase.Name != null ? sunPhase.PhaseTime.LocalDateTime : DateTime.MinValue;
         }
 
         public static SolarData GetSolarData(DateTime date)
