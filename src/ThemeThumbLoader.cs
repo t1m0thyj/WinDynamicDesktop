@@ -10,6 +10,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using SkiaSharp;
+using SkiaSharp.Views.Desktop;
 
 namespace WinDynamicDesktop
 {
@@ -52,30 +54,52 @@ namespace WinDynamicDesktop
             return wallpaperPath ?? CreateBlankWallpaper();
         }
 
-        public static Image ScaleImage(Image tempImage, Size size)
+        public static Image ScaleImage(string filename, Size size)
         {
-            if (tempImage.Size == size)
+            using (Stream stream = File.OpenRead(filename))
             {
-                return tempImage;
-            }
-
-            // Image scaling code from https://stackoverflow.com/a/7677163/5504760
-            using (tempImage)
-            {
-                Bitmap bmp = new Bitmap(size.Width, size.Height, PixelFormat.Format32bppArgb);
-
-                using (Graphics g = Graphics.FromImage(bmp))
-                {
-                    g.DrawImage(tempImage, new Rectangle(0, 0, bmp.Width, bmp.Height));
-                }
-
-                return bmp;
+                return ScaleImage(stream, size);
             }
         }
 
-        public static Image ScaleImage(string filename, Size size)
+        // Use SkiaSharp to support WebP and other formats unsupported by GDI+.
+        private static Image ScaleImage(Stream stream, Size size)
         {
-            return ScaleImage(Image.FromFile(filename), size);
+            using (SKCodec codec = SKCodec.Create(stream))
+            {
+                if (codec == null)
+                {
+                    throw new ArgumentException("Image could not be decoded because its format is not supported");
+                }
+
+                SKImageInfo info = new SKImageInfo(codec.Info.Width, codec.Info.Height, SKColorType.Bgra8888,
+                    SKAlphaType.Premul);
+
+                using (SKBitmap sourceBitmap = new SKBitmap(info))
+                {
+                    SKCodecResult result = codec.GetPixels(info, sourceBitmap.GetPixels());
+
+                    // Allow partially decoded images from truncated files.
+                    if (result != SKCodecResult.Success && result != SKCodecResult.IncompleteInput)
+                    {
+                        throw new ArgumentException("Image could not be decoded, result was " + result);
+                    }
+
+                    if (sourceBitmap.Width == size.Width && sourceBitmap.Height == size.Height)
+                    {
+                        return sourceBitmap.ToBitmap();
+                    }
+
+                    using (SKBitmap scaledBitmap = new SKBitmap(info.WithSize(size.Width, size.Height)))
+                    {
+                        if (!sourceBitmap.ScalePixels(scaledBitmap, new SKSamplingOptions(SKCubicResampler.Mitchell)))
+                        {
+                            throw new ArgumentException("Image could not be resized");
+                        }
+                        return scaledBitmap.ToBitmap();
+                    }
+                }
+            }
         }
 
         public static Image GetThumbnailImage(ThemeConfig theme, Size size, bool useCache)
@@ -83,27 +107,29 @@ namespace WinDynamicDesktop
             if (useCache)
             {
                 string thumbnailPath = GetThumbnailPath(theme);
-                if (File.Exists(thumbnailPath))
-                {
-                    Image cachedImage = Image.FromFile(thumbnailPath);
 
-                    if (cachedImage.Size == size)
+                try
+                {
+                    if (File.Exists(thumbnailPath))
                     {
-                        return cachedImage;
+                        // Resize cached and supplied thumbnails to match the display DPI.
+                        return ScaleImage(thumbnailPath, size);
                     }
-                    else
+                    else if (ThemeManager.defaultThemes.Contains(theme.themeId))
                     {
-                        cachedImage.Dispose();
+                        string resourceName = "WinDynamicDesktop.resources.images." + theme.themeId +
+                            "_thumbnail.jpg";
+
+                        using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+                        {
+                            return ScaleImage(stream, size);
+                        }
                     }
                 }
-                else if (ThemeManager.defaultThemes.Contains(theme.themeId))
+                catch (Exception exc)
                 {
-                    string resourceName = "WinDynamicDesktop.resources.images." + theme.themeId + "_thumbnail.jpg";
-
-                    using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-                    {
-                        return ScaleImage(Image.FromStream(stream), size);
-                    }
+                    LoggingHandler.LogMessage("Failed to load cached thumbnail for '{0}' theme, generating a new " +
+                        "one: {1}", theme.themeId, exc);
                 }
             }
 
