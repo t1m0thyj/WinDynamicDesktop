@@ -9,9 +9,9 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using SkiaSharp;
+using SkiaSharp.Views.Desktop;
 
 namespace WinDynamicDesktop
 {
@@ -62,8 +62,7 @@ namespace WinDynamicDesktop
             }
         }
 
-        // Images are decoded with SkiaSharp rather than System.Drawing so that formats GDI+ cannot read, such as
-        // WebP, are supported here as well as in the theme preview
+        // Use SkiaSharp to support WebP and other formats unsupported by GDI+.
         private static Image ScaleImage(Stream stream, Size size)
         {
             using (SKCodec codec = SKCodec.Create(stream))
@@ -80,7 +79,7 @@ namespace WinDynamicDesktop
                 {
                     SKCodecResult result = codec.GetPixels(info, sourceBitmap.GetPixels());
 
-                    // Truncated files still decode into a usable image, so only a hard failure is treated as an error
+                    // Allow partially decoded images from truncated files.
                     if (result != SKCodecResult.Success && result != SKCodecResult.IncompleteInput)
                     {
                         throw new ArgumentException("Image could not be decoded, result was " + result);
@@ -88,41 +87,19 @@ namespace WinDynamicDesktop
 
                     if (sourceBitmap.Width == size.Width && sourceBitmap.Height == size.Height)
                     {
-                        return ToBitmap(sourceBitmap);
+                        return sourceBitmap.ToBitmap();
                     }
 
                     using (SKBitmap scaledBitmap = new SKBitmap(info.WithSize(size.Width, size.Height)))
                     {
-                        sourceBitmap.ScalePixels(scaledBitmap, new SKSamplingOptions(SKCubicResampler.Mitchell));
-                        return ToBitmap(scaledBitmap);
+                        if (!sourceBitmap.ScalePixels(scaledBitmap, new SKSamplingOptions(SKCubicResampler.Mitchell)))
+                        {
+                            throw new ArgumentException("Image could not be resized");
+                        }
+                        return scaledBitmap.ToBitmap();
                     }
                 }
             }
-        }
-
-        private static Bitmap ToBitmap(SKBitmap skBitmap)
-        {
-            Bitmap bmp = new Bitmap(skBitmap.Width, skBitmap.Height, PixelFormat.Format32bppPArgb);
-            BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly,
-                bmp.PixelFormat);
-
-            try
-            {
-                byte[] pixels = skBitmap.Bytes;
-                int rowBytes = Math.Min(skBitmap.RowBytes, bmpData.Stride);
-
-                for (int y = 0; y < skBitmap.Height; y++)
-                {
-                    Marshal.Copy(pixels, y * skBitmap.RowBytes, IntPtr.Add(bmpData.Scan0, y * bmpData.Stride),
-                        rowBytes);
-                }
-            }
-            finally
-            {
-                bmp.UnlockBits(bmpData);
-            }
-
-            return bmp;
         }
 
         public static Image GetThumbnailImage(ThemeConfig theme, Size size, bool useCache)
@@ -135,9 +112,7 @@ namespace WinDynamicDesktop
                 {
                     if (File.Exists(thumbnailPath))
                     {
-                        // Scaling instead of discarding a thumbnail whose size does not match keeps a thumbnail
-                        // supplied with the theme, and avoids regenerating cached ones whenever the display DPI
-                        // makes the requested size something other than 192x108
+                        // Resize cached and supplied thumbnails to match the display DPI.
                         return ScaleImage(thumbnailPath, size);
                     }
                     else if (ThemeManager.defaultThemes.Contains(theme.themeId))
