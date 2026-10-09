@@ -1,4 +1,4 @@
-﻿// This Source Code Form is subject to the terms of the Mozilla Public
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -54,7 +54,11 @@ namespace WinDynamicDesktop
 
         internal static void LoadThemes(List<ThemeConfig> themes, ListView listView, ThemeLoadOpts opts)
         {
-            bool semaphoreAcquired = loadSemaphore.Wait(60000);
+            if (!loadSemaphore.Wait(60000))
+            {
+                LoggingHandler.LogMessage("Timed out waiting for theme load semaphore");
+                return;
+            }
 
             try
             {
@@ -68,43 +72,45 @@ namespace WinDynamicDesktop
                         continue;
                     }
 
+                    Image thumbnailImage;
                     try
                     {
-                        using (Image thumbnailImage = ThemeThumbLoader.GetThumbnailImage(theme, thumbnailSize, true))
-                        {
-                            listView.Invoke(new Action(() =>
-                            {
-                                listView.LargeImageList.Images.Add(thumbnailImage);
-                                string itemText = ThemeManager.GetThemeName(theme);
-                                if (JsonConfig.settings.favoriteThemes != null &&
-                                    JsonConfig.settings.favoriteThemes.Contains(theme.themeId))
-                                {
-                                    itemText = "★ " + itemText;
-                                }
-                                ListViewItem newItem = listView.Items.Add(itemText,
-                                    listView.LargeImageList.Images.Count - 1);
-                                newItem.Tag = theme.themeId;
-
-                                if (opts.activeTheme != null && opts.activeTheme == theme.themeId)
-                                {
-                                    newItem.Font = new Font(newItem.Font, FontStyle.Bold);
-                                }
-                                if (opts.focusTheme == null || opts.focusTheme == theme.themeId)
-                                {
-                                    focusedItem = newItem;
-                                }
-                            }));
-                        }
+                        thumbnailImage = ThemeThumbLoader.GetThumbnailImage(theme, thumbnailSize, true);
                     }
                     catch (Exception exc)
                     {
-                        // Image formats that cannot be decoded throw ArgumentException or ExternalException, so
-                        // catching only OutOfMemoryException here used to let the exception escape and leave the
-                        // import dialog waiting for thumbnails forever
+                        // Unsupported or corrupt images can throw more than OutOfMemoryException.
                         LoggingHandler.LogMessage("Failed to generate thumbnail for '{0}' theme: {1}", theme.themeId,
                             exc);
                         listView.Invoke(new Action(() =>
                             ThemeLoader.HandleError(new FailedToCreateThumbnail(theme.themeId))));
+                        continue;
+                    }
+
+                    using (thumbnailImage)
+                    {
+                        listView.Invoke(new Action(() =>
+                        {
+                            listView.LargeImageList.Images.Add(thumbnailImage);
+                            string itemText = ThemeManager.GetThemeName(theme);
+                            if (JsonConfig.settings.favoriteThemes != null &&
+                                JsonConfig.settings.favoriteThemes.Contains(theme.themeId))
+                            {
+                                itemText = "★ " + itemText;
+                            }
+                            ListViewItem newItem = listView.Items.Add(itemText,
+                                listView.LargeImageList.Images.Count - 1);
+                            newItem.Tag = theme.themeId;
+
+                            if (opts.activeTheme != null && opts.activeTheme == theme.themeId)
+                            {
+                                newItem.Font = new Font(newItem.Font, FontStyle.Bold);
+                            }
+                            if (opts.focusTheme == null || opts.focusTheme == theme.themeId)
+                            {
+                                focusedItem = newItem;
+                            }
+                        }));
                     }
                 }
 
@@ -125,10 +131,7 @@ namespace WinDynamicDesktop
             }
             finally
             {
-                if (semaphoreAcquired)
-                {
-                    loadSemaphore.Release();
-                }
+                loadSemaphore.Release();
             }
         }
 
@@ -161,8 +164,7 @@ namespace WinDynamicDesktop
                 }
                 finally
                 {
-                    // Closing the dialog here rather than after LoadThemes ensures the import always finishes, even
-                    // if generating thumbnails failed
+                    // Close the import dialog even if thumbnail loading fails.
                     importDialog.Invoke(new Action(() =>
                     {
                         importDialog.thumbnailsLoaded = true;
