@@ -1,10 +1,11 @@
-﻿// This Source Code Form is subject to the terms of the Mozilla Public
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -29,6 +30,7 @@ namespace WinDynamicDesktop
     internal class ThemeDialogUtils
     {
         private static readonly Func<string, string> _ = Localization.GetTranslation;
+        private static readonly string[] acceptedExtensions = new[] { ".ddw", ".json", ".zip" };
         private static List<ListViewItem> allThemeItems = new List<ListViewItem>();
         private static SemaphoreSlim loadSemaphore = new SemaphoreSlim(1);
 
@@ -52,20 +54,40 @@ namespace WinDynamicDesktop
 
         internal static void LoadThemes(List<ThemeConfig> themes, ListView listView, ThemeLoadOpts opts)
         {
-            loadSemaphore.Wait(60000);
-            Size thumbnailSize = ThemeThumbLoader.GetThumbnailSize(listView);
-            ListViewItem focusedItem = null;
-
-            foreach (ThemeConfig theme in themes.ToList())
+            if (!loadSemaphore.Wait(60000))
             {
-                if (JsonConfig.settings.showInstalledOnly && !ThemeManager.IsThemeDownloaded(theme))
-                {
-                    continue;
-                }
+                LoggingHandler.LogMessage("Timed out waiting for theme load semaphore");
+                return;
+            }
 
-                try
+            try
+            {
+                Size thumbnailSize = ThemeThumbLoader.GetThumbnailSize(listView);
+                ListViewItem focusedItem = null;
+
+                foreach (ThemeConfig theme in themes.ToList())
                 {
-                    using (Image thumbnailImage = ThemeThumbLoader.GetThumbnailImage(theme, thumbnailSize, true))
+                    if (JsonConfig.settings.showInstalledOnly && !ThemeManager.IsThemeDownloaded(theme))
+                    {
+                        continue;
+                    }
+
+                    Image thumbnailImage;
+                    try
+                    {
+                        thumbnailImage = ThemeThumbLoader.GetThumbnailImage(theme, thumbnailSize, true);
+                    }
+                    catch (Exception exc)
+                    {
+                        // Unsupported or corrupt images can throw more than OutOfMemoryException.
+                        LoggingHandler.LogMessage("Failed to generate thumbnail for '{0}' theme: {1}", theme.themeId,
+                            exc);
+                        listView.Invoke(new Action(() =>
+                            ThemeLoader.HandleError(new FailedToCreateThumbnail(theme.themeId))));
+                        continue;
+                    }
+
+                    using (thumbnailImage)
                     {
                         listView.Invoke(new Action(() =>
                         {
@@ -91,27 +113,26 @@ namespace WinDynamicDesktop
                         }));
                     }
                 }
-                catch (OutOfMemoryException)
+
+                listView.Invoke(new Action(() =>
                 {
-                    ThemeLoader.HandleError(new FailedToCreateThumbnail(theme.themeId));
-                }
+                    listView.Sort();
+
+                    if (focusedItem == null)
+                    {
+                        focusedItem = listView.Items[0];
+                    }
+
+                    focusedItem.Selected = true;
+                    listView.EnsureVisible(focusedItem.Index);
+
+                    ThemeThumbLoader.CacheThumbnails(listView);
+                }));
             }
-
-            listView.Invoke(new Action(() =>
+            finally
             {
-                listView.Sort();
-
-                if (focusedItem == null)
-                {
-                    focusedItem = listView.Items[0];
-                }
-
-                focusedItem.Selected = true;
-                listView.EnsureVisible(focusedItem.Index);
-
-                ThemeThumbLoader.CacheThumbnails(listView);
-            }));
-            loadSemaphore.Release();
+                loadSemaphore.Release();
+            }
         }
 
         internal static void LoadImportedThemes(List<ThemeConfig> themes, ListView listView, ImportDialog importDialog)
@@ -133,13 +154,23 @@ namespace WinDynamicDesktop
 
             Task.Run(() =>
             {
-                LoadThemes(themes, listView, new ThemeLoadOpts());
-
-                importDialog.Invoke(new Action(() =>
+                try
                 {
-                    importDialog.thumbnailsLoaded = true;
-                    importDialog.Close();
-                }));
+                    LoadThemes(themes, listView, new ThemeLoadOpts());
+                }
+                catch (Exception exc)
+                {
+                    LoggingHandler.LogMessage("Failed to load imported themes: {0}", exc);
+                }
+                finally
+                {
+                    // Close the import dialog even if thumbnail loading fails.
+                    importDialog.Invoke(new Action(() =>
+                    {
+                        importDialog.thumbnailsLoaded = true;
+                        importDialog.Close();
+                    }));
+                }
             });
         }
 
@@ -288,6 +319,17 @@ namespace WinDynamicDesktop
                 LoadThemes(ThemeManager.themeSettings.Where(theme => !ThemeManager.IsThemeDownloaded(theme)).ToList(),
                     listView, new ThemeLoadOpts());
             }
+        }
+
+        internal static bool IsAcceptableThemeFile(string path)
+        {
+            if (string.IsNullOrEmpty(path) || !File.Exists(path))
+            {
+                return false;
+            }
+
+            string ext = Path.GetExtension(path)?.ToLowerInvariant();
+            return acceptedExtensions.Contains(ext);
         }
     }
 }

@@ -162,6 +162,7 @@
             // 
             // listView1
             // 
+            listView1.AllowDrop = true;
             listView1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             listView1.Location = new System.Drawing.Point(12, 41);
             listView1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
