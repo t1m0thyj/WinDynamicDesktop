@@ -1,4 +1,4 @@
-﻿// This Source Code Form is subject to the terms of the Mozilla Public
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -18,6 +18,7 @@ namespace WinDynamicDesktop
         public static ToolStripMenuItem fullScreenItem;
         public static ToolStripMenuItem hideTrayItem;
         public static ToolStripMenuItem enableScriptsItem;
+        public static ToolStripMenuItem syncVirtualDesktopWallpapersItem;
 
         public TrayMenu()
         {
@@ -69,10 +70,16 @@ namespace WinDynamicDesktop
             fullScreenItem.Checked = JsonConfig.settings.fullScreenPause;
             hideTrayItem = new ToolStripMenuItem(_("Hide system tray icon"), null, OnHideTrayItemClick);
             hideTrayItem.Checked = JsonConfig.settings.hideTrayIcon;
+            syncVirtualDesktopWallpapersItem = new ToolStripMenuItem(
+                _("Sync multi-monitor wallpaper across virtual desktops (experimental)"), null,
+                OnSyncVirtualDesktopWallpapersClick);
+            syncVirtualDesktopWallpapersItem.Checked = JsonConfig.settings.syncVirtualDesktopWallpapers;
+            syncVirtualDesktopWallpapersItem.Enabled = COM.VirtualDesktopWallpaperApi.IsSupported;
             items.AddRange(new ToolStripItem[]
             {
                 fullScreenItem,
                 hideTrayItem,
+                syncVirtualDesktopWallpapersItem,
                 new ToolStripSeparator()
             });
 
@@ -148,6 +155,20 @@ namespace WinDynamicDesktop
         private void OnHideTrayItemClick(object sender, EventArgs e)
         {
             AppContext.ToggleTrayIcon();
+        }
+
+        private void OnSyncVirtualDesktopWallpapersClick(object sender, EventArgs e)
+        {
+            JsonConfig.settings.syncVirtualDesktopWallpapers =
+                !JsonConfig.settings.syncVirtualDesktopWallpapers;
+            syncVirtualDesktopWallpapersItem.Checked =
+                JsonConfig.settings.syncVirtualDesktopWallpapers;
+
+            if (!JsonConfig.settings.syncVirtualDesktopWallpapers)
+            {
+                SpannedWallpaperManager.RestoreWallpaperPosition();
+            }
+            AppContext.scheduler.Run(true);
         }
 
         private void OnEditConfigFileClick(object sender, EventArgs e)
