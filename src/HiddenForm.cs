@@ -43,6 +43,18 @@ namespace WinDynamicDesktop
             }
         }
 
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            base.OnFormClosing(e);
+
+            // Alt+F4 must not close the background message window and exit the app.
+            // Application.Exit() and Windows shutdown use different close reasons.
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+            }
+        }
+
         protected override void WndProc(ref Message m)
         {
             // https://github.com/rocksdanister/lively/blob/9142f6a4cfc222cd494f205a5daaa1a0238282e3/src/Lively/Lively/Views/WindowMsg/WndProcMsgWindow.xaml.cs#L41
