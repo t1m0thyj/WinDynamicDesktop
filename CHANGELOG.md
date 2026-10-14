@@ -5,6 +5,7 @@
 ### Enhancements
 
 * Added Tahoe Abstract and Golden Gate Abstract themes
+* Added experimental multi-monitor wallpaper sync across virtual desktops, including an XZ Desktop Wallpaper ByPass state bridge
 * Updated to .NET 10 which enables dark mode across entire application ([#553](https://github.com/t1m0thyj/WinDynamicDesktop/issues/553))
 * Rewrote theme preview renderer to be more lightweight by using Skia framework ([#672](https://github.com/t1m0thyj/WinDynamicDesktop/pull/672))
 * Added Lithuanian translation (thanks Matas)

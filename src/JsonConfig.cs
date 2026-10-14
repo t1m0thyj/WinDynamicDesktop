@@ -49,6 +49,8 @@ namespace WinDynamicDesktop
         [Notify] private bool _fullScreenPause { get; set; }
         [Notify] private bool _enableScripts { get; set; }
         [Notify] private bool _debugLogging { get; set; }
+        [Notify] private bool _syncVirtualDesktopWallpapers { get; set; }
+        [Notify] private int _wallpaperPositionBeforeVirtualDesktopSync { get; set; } = -1;
     }
 
     class JsonConfig
