@@ -34,7 +34,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="RestSharp" Version="114.0.0" />
+    <PackageReference Include="RestSharp" Version="114.1.0" />
     <PackageReference Include="SkiaSharp" Version="4.153.1" />
     <PackageReference Include="SkiaSharp.Views.WindowsForms" Version="4.153.1" />
     <PackageReference Include="SunCalcNet" Version="3.0.1" />
