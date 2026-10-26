@@ -1,4 +1,4 @@
-﻿// This Source Code Form is subject to the terms of the Mozilla Public
+// This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
@@ -114,13 +114,17 @@ namespace WinDynamicDesktop
                 }
             }
 
+            string[] imagePaths = displayEvents.Select(e =>
+                (e.displayIndex == overrideEvent?.displayIndex ? overrideEvent : e).lastImagePath).ToArray();
+            SpannedWallpaperManager.Update(imagePaths.Take(displayEvents.Count - 1).ToArray(),
+                JsonConfig.settings.activeThemes[0] == null && overrideEvent == null);
+
             ScriptManager.RunScripts(new ScriptArgs
             {
                 daySegment2 = displayEvents[0].daySegment2,
                 daySegment4 = displayEvents[0].daySegment4 ?? -1,
                 themeMode = JsonConfig.settings.appearanceMode,
-                imagePaths = displayEvents.Select(e =>
-                    (e.displayIndex == overrideEvent?.displayIndex ? overrideEvent : e).lastImagePath).ToArray()
+                imagePaths = imagePaths
             }, forceImageUpdate);
 
             nextUpdateTime = SolarScheduler.CalcNextUpdateTime(data);
@@ -264,7 +268,7 @@ namespace WinDynamicDesktop
 
         private void OnDisplaySettingsChanged(object sender, EventArgs e)
         {
-            if (UpdateDisplayList())
+            if (UpdateDisplayList() || JsonConfig.settings.syncVirtualDesktopWallpapers)
             {
                 LoggingHandler.LogMessage("Scheduler event triggered by display change");
                 HandleTimerEvent(false);
@@ -274,6 +278,7 @@ namespace WinDynamicDesktop
         private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
         {
             if (e.Mode == PowerModes.Resume && (UpdateDisplayList() ||
+                JsonConfig.settings.syncVirtualDesktopWallpapers ||
                 (nextUpdateTime.HasValue && DateTime.Now >= nextUpdateTime.Value)))
             {
                 LoggingHandler.LogMessage("Scheduler event triggered by resume from sleep");
@@ -284,6 +289,7 @@ namespace WinDynamicDesktop
         private void OnSessionSwitch(object sender, SessionSwitchEventArgs e)
         {
             if (e.Reason == SessionSwitchReason.SessionUnlock && (UpdateDisplayList() ||
+                JsonConfig.settings.syncVirtualDesktopWallpapers ||
                 (nextUpdateTime.HasValue && DateTime.Now >= nextUpdateTime.Value)))
             {
                 LoggingHandler.LogMessage("Scheduler event triggered by user session unlock");
