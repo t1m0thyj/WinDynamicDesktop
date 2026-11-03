@@ -65,7 +65,7 @@ namespace WinDynamicDesktop
             forceImageUpdate = UpdateDisplayList() || forceImageUpdate;
             SolarData data = SunriseSunsetService.GetSolarData(DateTime.Today);
             LoggingHandler.LogMessage("Calculated solar data: {0}", data);
-            long nextDisplayUpdateTicks = ThemeShuffler.MaybeShuffleWallpaper(data)?.Ticks ?? long.MaxValue;
+            long nextDisplayUpdateTicks = ThemeShuffler.MaybeShuffleWallpaper()?.Ticks ?? long.MaxValue;
 
             for (int i = 0; i < displayEvents.Count; i++)
             {
