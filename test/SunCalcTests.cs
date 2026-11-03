@@ -182,5 +182,27 @@ namespace WinDynamicDesktop.Tests
             Assert.Equal(convertTime(testDate).Date, convertTime(data.sunsetTime).Date);
             Assert.Equal((19, 32), (convertTime(data.sunsetTime).Hour, convertTime(data.sunsetTime).Minute));
         }
+
+        [Theory]
+        [InlineData(7)]
+        [InlineData(9)]
+        public void TestAdjacentDayAcrossDaylightSavingGap(int currentDay)
+        {
+            using var _ = new FakeLocalTimeZone(TZConvert.GetTimeZoneInfo("America/New_York"));
+            SunriseSunsetService.GetDateTimeNow = () => new DateTime(2026, 3, currentDay, 2, 30, 0,
+                DateTimeKind.Local);
+            // The source computer's DST gap must be handled even when the selected location is elsewhere.
+            JsonConfig.settings.latitude = 51.50;
+            JsonConfig.settings.longitude = -0.129;
+            DateTime transitionDate = new DateTime(2026, 3, 8, 0, 0, 0, DateTimeKind.Local);
+
+            SolarData data = SunriseSunsetService.GetSolarData(transitionDate);
+            SunriseSunsetService.GetDateTimeNow = () => transitionDate.AddHours(12);
+            SolarData expected = SunriseSunsetService.GetSolarData(transitionDate);
+
+            Assert.Equal(expected.sunriseTime, data.sunriseTime);
+            Assert.Equal(expected.sunsetTime, data.sunsetTime);
+            Assert.Equal(expected.solarTimes, data.solarTimes);
+        }
     }
 }
