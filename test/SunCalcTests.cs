@@ -3,8 +3,11 @@ using TimeZoneConverter;
 
 namespace WinDynamicDesktop.Tests
 {
-    public class SunCalcTests
+    public class SunCalcTests : IDisposable
     {
+        private readonly AppConfig originalSettings = JsonConfig.settings;
+        private readonly Func<DateTime> originalClock = SunriseSunsetService.GetDateTimeNow;
+
         private Func<DateTime, DateTime> CreateTimeConverter(string localTz)
         {
             TimeZoneInfo timeZone = TZConvert.GetTimeZoneInfo(localTz);
@@ -13,8 +16,37 @@ namespace WinDynamicDesktop.Tests
 
         public SunCalcTests()
         {
-            JsonConfig.settings.locationMode = 0;
+            JsonConfig.settings = new AppConfig { locationMode = 0 };
             SunriseSunsetService.GetDateTimeNow = () => DateTime.UtcNow.Date.ToLocalTime();
+        }
+
+        public void Dispose()
+        {
+            JsonConfig.settings = originalSettings;
+            SunriseSunsetService.GetDateTimeNow = originalClock;
+        }
+
+        [Theory]
+        [InlineData(35.68, 139.69, "Asia/Tokyo")]
+        [InlineData(-36.85, 174.76, "Pacific/Auckland")]
+        [InlineData(34.05, -118.24, "America/Los_Angeles")]
+        public void TestLocationTimeZone(double latitude, double longitude, string locationTimeZone)
+        {
+            DateTime now = new DateTime(2026, 6, 1, 0, 0, 0, DateTimeKind.Utc).ToLocalTime();
+            SunriseSunsetService.GetDateTimeNow = () => now;
+            JsonConfig.settings.latitude = latitude;
+            JsonConfig.settings.longitude = longitude;
+
+            SolarData data = SunriseSunsetService.GetSolarData(now.Date);
+            TimeZoneInfo timeZone = TZConvert.GetTimeZoneInfo(locationTimeZone);
+            DateTimeOffset locationNow = TimeZoneInfo.ConvertTime(new DateTimeOffset(now), timeZone);
+            var expected = SunCalcNet.SunCalc.GetSunPhases(locationNow, latitude, longitude).ToArray();
+
+            Assert.Equal(locationNow.Date, TimeZoneInfo.ConvertTime(data.sunriseTime, timeZone).Date);
+            Assert.Equal(expected.Single(p => p.Name == SunCalcNet.Model.SunPhaseName.Sunrise).PhaseTime.UtcDateTime,
+                data.sunriseTime.ToUniversalTime());
+            Assert.Equal(expected.Single(p => p.Name == SunCalcNet.Model.SunPhaseName.Sunset).PhaseTime.UtcDateTime,
+                data.sunsetTime.ToUniversalTime());
         }
 
         [Fact]
