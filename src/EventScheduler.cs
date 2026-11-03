@@ -26,6 +26,7 @@ namespace WinDynamicDesktop
 
     class EventScheduler
     {
+        private readonly object schedulerLock = new object();
         private System.Timers.Timer backgroundTimer = new System.Timers.Timer();
         private System.Timers.Timer schedulerTimer = new System.Timers.Timer();
         private const long timerError = (long)(TimeSpan.TicksPerMillisecond * 15.6);
@@ -52,6 +53,15 @@ namespace WinDynamicDesktop
 
         public bool Run(bool forceImageUpdate = false, DisplayEvent overrideEvent = null)
         {
+            // Timer, IPC, and UI updates must keep wallpaper writes and their cached paths in the same order.
+            lock (schedulerLock)
+            {
+                return RunCore(forceImageUpdate, overrideEvent);
+            }
+        }
+
+        private bool RunCore(bool forceImageUpdate, DisplayEvent overrideEvent)
+        {
             if (!LaunchSequence.IsLocationReady() || !LaunchSequence.IsThemeReady())
             {
                 return false;
@@ -66,6 +76,7 @@ namespace WinDynamicDesktop
             SolarData data = SunriseSunsetService.GetSolarData(DateTime.Today);
             LoggingHandler.LogMessage("Calculated solar data: {0}", data);
             long nextDisplayUpdateTicks = ThemeShuffler.MaybeShuffleWallpaper()?.Ticks ?? long.MaxValue;
+            string[] activeThemes = JsonConfig.settings.activeThemes;
 
             for (int i = 0; i < displayEvents.Count; i++)
             {
@@ -80,19 +91,18 @@ namespace WinDynamicDesktop
 
                 if (i < displayEvents.Count - 1)
                 {
-                    string themeId = JsonConfig.settings.activeThemes[0];
-                    if (themeId == null && JsonConfig.settings.activeThemes.Length > 1 &&
-                        i + 1 < JsonConfig.settings.activeThemes.Length)
+                    string themeId = activeThemes[0];
+                    if (themeId == null && activeThemes.Length > 1 && i + 1 < activeThemes.Length)
                     {
-                        themeId = JsonConfig.settings.activeThemes[i + 1];
+                        themeId = activeThemes[i + 1];
                     }
                     displayEvents[i].currentTheme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
-                    displayEvents[i].displayIndex = JsonConfig.settings.activeThemes[0] == null ? i : -1;
+                    displayEvents[i].displayIndex = activeThemes[0] == null ? i : -1;
                 }
                 else
                 {
                     string themeId = JsonConfig.settings.lockScreenDisplayIndex != -1 ?
-                        JsonConfig.settings.activeThemes[JsonConfig.settings.lockScreenDisplayIndex] :
+                        activeThemes[JsonConfig.settings.lockScreenDisplayIndex] :
                         JsonConfig.settings.lockScreenTheme;
                     displayEvents[i].currentTheme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
                     displayEvents[i].displayIndex = DisplayEvent.LockScreenIndex;
@@ -150,6 +160,14 @@ namespace WinDynamicDesktop
         }
 
         private bool UpdateDisplayList()
+        {
+            lock (schedulerLock)
+            {
+                return UpdateDisplayListCore();
+            }
+        }
+
+        private bool UpdateDisplayListCore()
         {
             if (JsonConfig.IsNullOrEmpty(JsonConfig.settings.activeThemes) ||
                 JsonConfig.settings.activeThemes[0] != null)
