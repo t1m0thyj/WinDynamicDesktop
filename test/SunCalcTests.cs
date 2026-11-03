@@ -49,6 +49,26 @@ namespace WinDynamicDesktop.Tests
                 data.sunsetTime.ToUniversalTime());
         }
 
+        [Theory]
+        [InlineData(-30, 30)]
+        [InlineData(30, 60)]
+        public void TestNextSunriseBeforeAndDuringDawn(int dawnOffsetMinutes, int sunriseOffsetMinutes)
+        {
+            JsonConfig.settings.locationMode = -1;
+            JsonConfig.settings.sunriseTime = "06:00:00";
+            JsonConfig.settings.sunsetTime = "18:00:00";
+            DateTime now = DateTime.Now;
+            SolarData data = new SolarData
+            {
+                sunriseTime = now.AddMinutes(sunriseOffsetMinutes),
+                sunsetTime = now.AddHours(8),
+                solarTimes = new[] { now.AddMinutes(dawnOffsetMinutes), now.AddHours(2),
+                    now.AddHours(7), now.AddHours(9) }
+            };
+
+            Assert.Equal(data.sunriseTime, SolarScheduler.CalcNextUpdateTime(data));
+        }
+
         [Fact]
         public void TestWesternHemisphere()
         {
