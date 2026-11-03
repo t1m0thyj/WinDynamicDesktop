@@ -273,11 +273,20 @@ namespace WinDynamicDesktop
 
         private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
         {
-            if (e.Mode == PowerModes.Resume && (UpdateDisplayList() ||
-                (nextUpdateTime.HasValue && DateTime.Now >= nextUpdateTime.Value)))
+            if (e.Mode != PowerModes.Resume)
+            {
+                return;
+            }
+
+            if (UpdateDisplayList() || (nextUpdateTime.HasValue && DateTime.Now >= nextUpdateTime.Value))
             {
                 LoggingHandler.LogMessage("Scheduler event triggered by resume from sleep");
                 HandleTimerEvent(false);
+            }
+            else if (nextUpdateTime.HasValue)
+            {
+                // Relative timers exclude sleep time, so rearm even when the deadline is still in the future.
+                StartTimer(nextUpdateTime.Value);
             }
         }
 

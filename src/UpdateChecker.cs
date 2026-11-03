@@ -45,6 +45,8 @@ namespace WinDynamicDesktop
             TryCheckAuto();
         }
 
+        // https://learn.microsoft.com/windows/win32/api/winbase/nf-winbase-registerapplicationrestart
+        // Windows requires the process to have run for at least 60 seconds before it can be restarted.
         [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
         internal static extern uint RegisterApplicationRestart(string pwzCommandline, uint dwFlags);
 
