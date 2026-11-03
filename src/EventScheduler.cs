@@ -27,16 +27,32 @@ namespace WinDynamicDesktop
     class EventScheduler
     {
         private readonly object schedulerLock = new object();
-        private System.Timers.Timer backgroundTimer = new System.Timers.Timer();
-        private System.Timers.Timer schedulerTimer = new System.Timers.Timer();
+        private readonly ISchedulerTimer backgroundTimer;
+        private readonly ISchedulerTimer schedulerTimer;
+        private readonly Func<int> getDisplayCount;
+        private readonly Func<PlatformHelper> getPlatformHelper;
         private const long timerError = (long)(TimeSpan.TicksPerMillisecond * 15.6);
 
         public FullScreenApi fullScreenChecker;
         private List<DisplayEvent> displayEvents;
         private DateTime? nextUpdateTime;
 
-        public EventScheduler()
+        public EventScheduler() : this(new SchedulerTimer(), new SchedulerTimer(),
+            () => Screen.AllScreens.Length, UwpDesktop.GetHelper)
         {
+            SystemEvents.DisplaySettingsChanged += OnDisplaySettingsChanged;
+            SystemEvents.PowerModeChanged += OnPowerModeChanged;
+            SystemEvents.SessionSwitch += OnSessionSwitch;
+            SystemEvents.TimeChanged += OnTimeChanged;
+        }
+
+        internal EventScheduler(ISchedulerTimer backgroundTimer, ISchedulerTimer schedulerTimer,
+            Func<int> getDisplayCount, Func<PlatformHelper> getPlatformHelper)
+        {
+            this.backgroundTimer = backgroundTimer;
+            this.schedulerTimer = schedulerTimer;
+            this.getDisplayCount = getDisplayCount;
+            this.getPlatformHelper = getPlatformHelper;
             fullScreenChecker = new FullScreenApi(() => HandleTimerEvent(true));
 
             backgroundTimer.AutoReset = true;
@@ -45,10 +61,6 @@ namespace WinDynamicDesktop
             backgroundTimer.Start();
 
             schedulerTimer.Elapsed += OnSchedulerTimerElapsed;
-            SystemEvents.DisplaySettingsChanged += OnDisplaySettingsChanged;
-            SystemEvents.PowerModeChanged += OnPowerModeChanged;
-            SystemEvents.SessionSwitch += OnSessionSwitch;
-            SystemEvents.TimeChanged += OnTimeChanged;
         }
 
         public bool Run(bool forceImageUpdate = false, DisplayEvent overrideEvent = null)
@@ -176,7 +188,7 @@ namespace WinDynamicDesktop
             }
 
             int numDisplaysBefore = displayEvents.Count - 1;
-            int numDisplaysAfter = Screen.AllScreens.Length;
+            int numDisplaysAfter = getDisplayCount();
             if (numDisplaysAfter != numDisplaysBefore)
             {
                 LoggingHandler.LogMessage("Number of displays updated from {0} to {1}", numDisplaysBefore,
@@ -228,11 +240,11 @@ namespace WinDynamicDesktop
             {
                 if (e.displayIndex != DisplayEvent.LockScreenIndex)
                 {
-                    UwpDesktop.GetHelper().SetWallpaper(imagePath, e.displayIndex);
+                    getPlatformHelper().SetWallpaper(imagePath, e.displayIndex);
                 }
                 else
                 {
-                    UwpDesktop.GetHelper().SetLockScreen(imagePath);
+                    getPlatformHelper().SetLockScreen(imagePath);
                 }
                 e.lastImagePath = imagePath;
             }
@@ -292,7 +304,7 @@ namespace WinDynamicDesktop
             HandleTimerEvent(true);
         }
 
-        private void OnDisplaySettingsChanged(object sender, EventArgs e)
+        internal void OnDisplaySettingsChanged(object sender, EventArgs e)
         {
             if (UpdateDisplayList())
             {
