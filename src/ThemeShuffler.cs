@@ -130,7 +130,7 @@ namespace WinDynamicDesktop
                     nextUpdateTime = DateTime.Today.AddDays(7 - (int)DateTime.Today.DayOfWeek);
                     break;
                 case (int)ShufflePeriod.EveryMonth:
-                    nextUpdateTime = DateTime.Today.AddDays(-DateTime.Today.Day).AddMonths(1);
+                    nextUpdateTime = DateTime.Today.AddDays(1 - DateTime.Today.Day).AddMonths(1);
                     break;
             }
 
