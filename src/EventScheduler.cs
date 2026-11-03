@@ -195,7 +195,19 @@ namespace WinDynamicDesktop
                 displayEvents.RemoveRange(numDisplaysAfter, numDisplaysBefore - numDisplaysAfter);
             }
 
-            return numDisplaysAfter > numDisplaysBefore;
+            if (numDisplaysAfter != numDisplaysBefore)
+            {
+                // Monitor indices may change after a disconnect, so cached paths can belong to different displays.
+                foreach (DisplayEvent displayEvent in displayEvents)
+                {
+                    if (displayEvent != null)
+                    {
+                        displayEvent.lastImagePath = null;
+                    }
+                }
+            }
+
+            return numDisplaysAfter != numDisplaysBefore;
         }
 
         private void HandleDisplayEvent(DisplayEvent e)
