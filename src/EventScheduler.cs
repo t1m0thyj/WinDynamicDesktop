@@ -101,8 +101,8 @@ namespace WinDynamicDesktop
                 }
                 else
                 {
-                    string themeId = JsonConfig.settings.lockScreenDisplayIndex != -1 ?
-                        activeThemes[JsonConfig.settings.lockScreenDisplayIndex] :
+                    string themeId = JsonConfig.settings.lockScreenDisplayIndex >= 0 ?
+                        activeThemes.ElementAtOrDefault(JsonConfig.settings.lockScreenDisplayIndex) :
                         JsonConfig.settings.lockScreenTheme;
                     displayEvents[i].currentTheme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
                     displayEvents[i].displayIndex = DisplayEvent.LockScreenIndex;
