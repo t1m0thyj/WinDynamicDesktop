@@ -18,8 +18,10 @@ namespace WinDynamicDesktop.COM
 
     internal class PowerSetting
     {
-        private static readonly Guid GUID_CONSOLE_DISPLAY_STATE =
-            new Guid("6fe69556-704a-47a0-8f24-c28d936fda47");
+        // Interactive applications monitor the display associated with their own session.
+        // https://learn.microsoft.com/windows/win32/power/power-setting-guids
+        private static readonly Guid GUID_SESSION_DISPLAY_STATUS =
+            new Guid("2b84c20e-ad23-4ddf-93db-05ffbd7efca5");
 
         private static IntPtr hPowerNotify;
         private static int? lastDisplayState = null;
@@ -33,7 +35,7 @@ namespace WinDynamicDesktop.COM
 
         public static void RegisterWindow(IntPtr windowHandle)
         {
-            Guid guid = GUID_CONSOLE_DISPLAY_STATE;
+            Guid guid = GUID_SESSION_DISPLAY_STATUS;
             hPowerNotify = RegisterPowerSettingNotification(windowHandle, ref guid, 0);
 
             if (hPowerNotify != IntPtr.Zero)
@@ -53,7 +55,8 @@ namespace WinDynamicDesktop.COM
         {
             var powerSetting = Marshal.PtrToStructure<POWERBROADCAST_SETTING>(msgPtr);
 
-            if (powerSetting.PowerSetting.Equals(GUID_CONSOLE_DISPLAY_STATE))
+            if (powerSetting.PowerSetting.Equals(GUID_SESSION_DISPLAY_STATUS) &&
+                powerSetting.DataLength == sizeof(uint))
             {
                 IntPtr dataPtr = new(msgPtr.ToInt64() + Marshal.SizeOf<POWERBROADCAST_SETTING>());
                 int displayState = Marshal.ReadInt32(dataPtr);
@@ -61,7 +64,7 @@ namespace WinDynamicDesktop.COM
                 bool stateChanged = lastDisplayState.HasValue && lastDisplayState.Value != displayState;
                 lastDisplayState = displayState;
 
-                // If state changed and display is turning on, assume we are exiting standby
+                // Display-on also catches ordinary monitor wake and undimming; checking the schedule is harmless.
                 return stateChanged && displayState == 1;
             }
 

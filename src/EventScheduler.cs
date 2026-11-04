@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace WinDynamicDesktop
@@ -26,16 +27,33 @@ namespace WinDynamicDesktop
 
     class EventScheduler
     {
-        private System.Timers.Timer backgroundTimer = new System.Timers.Timer();
-        private System.Timers.Timer schedulerTimer = new System.Timers.Timer();
+        private readonly object schedulerLock = new object();
+        private readonly ISchedulerTimer backgroundTimer;
+        private readonly ISchedulerTimer schedulerTimer;
+        private readonly Func<int> getDisplayCount;
+        private readonly Func<PlatformHelper> getPlatformHelper;
         private const long timerError = (long)(TimeSpan.TicksPerMillisecond * 15.6);
 
         public FullScreenApi fullScreenChecker;
         private List<DisplayEvent> displayEvents;
         private DateTime? nextUpdateTime;
 
-        public EventScheduler()
+        public EventScheduler() : this(new SchedulerTimer(), new SchedulerTimer(),
+            () => Screen.AllScreens.Length, UwpDesktop.GetHelper)
         {
+            SystemEvents.DisplaySettingsChanged += OnDisplaySettingsChanged;
+            SystemEvents.PowerModeChanged += OnPowerModeChanged;
+            SystemEvents.SessionSwitch += OnSessionSwitch;
+            SystemEvents.TimeChanged += OnTimeChanged;
+        }
+
+        internal EventScheduler(ISchedulerTimer backgroundTimer, ISchedulerTimer schedulerTimer,
+            Func<int> getDisplayCount, Func<PlatformHelper> getPlatformHelper)
+        {
+            this.backgroundTimer = backgroundTimer;
+            this.schedulerTimer = schedulerTimer;
+            this.getDisplayCount = getDisplayCount;
+            this.getPlatformHelper = getPlatformHelper;
             fullScreenChecker = new FullScreenApi(() => HandleTimerEvent(true));
 
             backgroundTimer.AutoReset = true;
@@ -44,13 +62,18 @@ namespace WinDynamicDesktop
             backgroundTimer.Start();
 
             schedulerTimer.Elapsed += OnSchedulerTimerElapsed;
-            SystemEvents.DisplaySettingsChanged += OnDisplaySettingsChanged;
-            SystemEvents.PowerModeChanged += OnPowerModeChanged;
-            SystemEvents.SessionSwitch += OnSessionSwitch;
-            SystemEvents.TimeChanged += OnTimeChanged;
         }
 
         public bool Run(bool forceImageUpdate = false, DisplayEvent overrideEvent = null)
+        {
+            // Timer, IPC, and UI updates must keep wallpaper writes and their cached paths in the same order.
+            lock (schedulerLock)
+            {
+                return RunCore(forceImageUpdate, overrideEvent);
+            }
+        }
+
+        private bool RunCore(bool forceImageUpdate, DisplayEvent overrideEvent)
         {
             if (!LaunchSequence.IsLocationReady() || !LaunchSequence.IsThemeReady())
             {
@@ -65,7 +88,8 @@ namespace WinDynamicDesktop
             forceImageUpdate = UpdateDisplayList() || forceImageUpdate;
             SolarData data = SunriseSunsetService.GetSolarData(DateTime.Today);
             LoggingHandler.LogMessage("Calculated solar data: {0}", data);
-            long nextDisplayUpdateTicks = ThemeShuffler.MaybeShuffleWallpaper(data)?.Ticks ?? long.MaxValue;
+            long nextDisplayUpdateTicks = ThemeShuffler.MaybeShuffleWallpaper()?.Ticks ?? long.MaxValue;
+            string[] activeThemes = JsonConfig.settings.activeThemes;
 
             for (int i = 0; i < displayEvents.Count; i++)
             {
@@ -80,19 +104,18 @@ namespace WinDynamicDesktop
 
                 if (i < displayEvents.Count - 1)
                 {
-                    string themeId = JsonConfig.settings.activeThemes[0];
-                    if (themeId == null && JsonConfig.settings.activeThemes.Length > 1 &&
-                        i + 1 < JsonConfig.settings.activeThemes.Length)
+                    string themeId = activeThemes[0];
+                    if (themeId == null && activeThemes.Length > 1 && i + 1 < activeThemes.Length)
                     {
-                        themeId = JsonConfig.settings.activeThemes[i + 1];
+                        themeId = activeThemes[i + 1];
                     }
                     displayEvents[i].currentTheme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
-                    displayEvents[i].displayIndex = JsonConfig.settings.activeThemes[0] == null ? i : -1;
+                    displayEvents[i].displayIndex = activeThemes[0] == null ? i : -1;
                 }
                 else
                 {
-                    string themeId = JsonConfig.settings.lockScreenDisplayIndex != -1 ?
-                        JsonConfig.settings.activeThemes[JsonConfig.settings.lockScreenDisplayIndex] :
+                    string themeId = JsonConfig.settings.lockScreenDisplayIndex >= 0 ?
+                        activeThemes.ElementAtOrDefault(JsonConfig.settings.lockScreenDisplayIndex) :
                         JsonConfig.settings.lockScreenTheme;
                     displayEvents[i].currentTheme = ThemeManager.themeSettings.Find(t => t.themeId == themeId);
                     displayEvents[i].displayIndex = DisplayEvent.LockScreenIndex;
@@ -151,14 +174,22 @@ namespace WinDynamicDesktop
 
         private bool UpdateDisplayList()
         {
-            if (JsonConfig.IsNullOrEmpty(JsonConfig.settings.activeThemes) ||
+            lock (schedulerLock)
+            {
+                return UpdateDisplayListCore();
+            }
+        }
+
+        private bool UpdateDisplayListCore()
+        {
+            if (displayEvents == null || JsonConfig.IsNullOrEmpty(JsonConfig.settings.activeThemes) ||
                 JsonConfig.settings.activeThemes[0] != null)
             {
                 return false;
             }
 
             int numDisplaysBefore = displayEvents.Count - 1;
-            int numDisplaysAfter = Screen.AllScreens.Length;
+            int numDisplaysAfter = getDisplayCount();
             if (numDisplaysAfter != numDisplaysBefore)
             {
                 LoggingHandler.LogMessage("Number of displays updated from {0} to {1}", numDisplaysBefore,
@@ -177,7 +208,19 @@ namespace WinDynamicDesktop
                 displayEvents.RemoveRange(numDisplaysAfter, numDisplaysBefore - numDisplaysAfter);
             }
 
-            return numDisplaysAfter > numDisplaysBefore;
+            if (numDisplaysAfter != numDisplaysBefore)
+            {
+                // Monitor indices may change after a disconnect, so cached paths can belong to different displays.
+                foreach (DisplayEvent displayEvent in displayEvents)
+                {
+                    if (displayEvent != null)
+                    {
+                        displayEvent.lastImagePath = null;
+                    }
+                }
+            }
+
+            return numDisplaysAfter != numDisplaysBefore;
         }
 
         private void HandleDisplayEvent(DisplayEvent e)
@@ -198,11 +241,11 @@ namespace WinDynamicDesktop
             {
                 if (e.displayIndex != DisplayEvent.LockScreenIndex)
                 {
-                    UwpDesktop.GetHelper().SetWallpaper(imagePath, e.displayIndex);
+                    getPlatformHelper().SetWallpaper(imagePath, e.displayIndex);
                 }
                 else
                 {
-                    UwpDesktop.GetHelper().SetLockScreen(imagePath);
+                    getPlatformHelper().SetLockScreen(imagePath);
                 }
                 e.lastImagePath = imagePath;
             }
@@ -249,45 +292,80 @@ namespace WinDynamicDesktop
 
         private void OnBackgroundTimerElapsed(object sender, EventArgs e)
         {
-            if (nextUpdateTime.HasValue && DateTime.Now >= nextUpdateTime.Value)
-            {
-                LoggingHandler.LogMessage("Scheduler event triggered by timer 2");
-                HandleTimerEvent(true);
-            }
+            HandleTimerElapsed(true);
         }
 
         private void OnSchedulerTimerElapsed(object sender, EventArgs e)
         {
-            LoggingHandler.LogMessage("Scheduler event triggered by timer 1");
-            HandleTimerEvent(true);
+            HandleTimerElapsed(false);
         }
 
-        private void OnDisplaySettingsChanged(object sender, EventArgs e)
+        private void HandleTimerElapsed(bool background)
         {
-            if (UpdateDisplayList())
+            // A run already in progress will rearm the timer; do not queue redundant callbacks behind it.
+            if (!Monitor.TryEnter(schedulerLock))
             {
-                LoggingHandler.LogMessage("Scheduler event triggered by display change");
-                HandleTimerEvent(false);
+                return;
+            }
+
+            try
+            {
+                if (!background || (nextUpdateTime.HasValue && DateTime.Now >= nextUpdateTime.Value))
+                {
+                    LoggingHandler.LogMessage("Scheduler event triggered by timer {0}", background ? 2 : 1);
+                    HandleTimerEvent(true);
+                }
+            }
+            finally
+            {
+                Monitor.Exit(schedulerLock);
+            }
+        }
+
+        internal void OnDisplaySettingsChanged(object sender, EventArgs e)
+        {
+            lock (schedulerLock)
+            {
+                if (UpdateDisplayList())
+                {
+                    LoggingHandler.LogMessage("Scheduler event triggered by display change");
+                    HandleTimerEvent(false);
+                }
             }
         }
 
         private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
         {
-            if (e.Mode == PowerModes.Resume && (UpdateDisplayList() ||
-                (nextUpdateTime.HasValue && DateTime.Now >= nextUpdateTime.Value)))
+            if (e.Mode != PowerModes.Resume)
             {
-                LoggingHandler.LogMessage("Scheduler event triggered by resume from sleep");
-                HandleTimerEvent(false);
+                return;
+            }
+
+            lock (schedulerLock)
+            {
+                if (UpdateDisplayList() || (nextUpdateTime.HasValue && DateTime.Now >= nextUpdateTime.Value))
+                {
+                    LoggingHandler.LogMessage("Scheduler event triggered by resume from sleep");
+                    HandleTimerEvent(false);
+                }
+                else if (nextUpdateTime.HasValue)
+                {
+                    // Relative timers exclude sleep time, so rearm even when the deadline is still in the future.
+                    StartTimer(nextUpdateTime.Value);
+                }
             }
         }
 
         private void OnSessionSwitch(object sender, SessionSwitchEventArgs e)
         {
-            if (e.Reason == SessionSwitchReason.SessionUnlock && (UpdateDisplayList() ||
-                (nextUpdateTime.HasValue && DateTime.Now >= nextUpdateTime.Value)))
+            lock (schedulerLock)
             {
-                LoggingHandler.LogMessage("Scheduler event triggered by user session unlock");
-                HandleTimerEvent(false);
+                if (e.Reason == SessionSwitchReason.SessionUnlock && (UpdateDisplayList() ||
+                    (nextUpdateTime.HasValue && DateTime.Now >= nextUpdateTime.Value)))
+                {
+                    LoggingHandler.LogMessage("Scheduler event triggered by user session unlock");
+                    HandleTimerEvent(false);
+                }
             }
         }
 

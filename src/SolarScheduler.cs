@@ -153,7 +153,7 @@ namespace WinDynamicDesktop
             {
                 return data.sunsetTime;
             }
-            else if (DateTime.Now < data.solarTimes[0])
+            else if (DateTime.Now < data.sunriseTime)
             {
                 return data.sunriseTime;
             }
