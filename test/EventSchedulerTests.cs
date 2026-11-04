@@ -244,6 +244,86 @@ namespace WinDynamicDesktop.Tests
             Assert.Empty(desktop.Writes);
         }
 
+        [Fact]
+        public async Task ResumeRearmDoesNotOverwriteNewerRunTimer()
+        {
+            scheduler.Run();
+            var rearming = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            var runStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            using var release = new ManualResetEventSlim();
+            int intervalSets = 0;
+            int newerRunThread = 0;
+            bool released = false;
+            schedulerTimer.BeforeSetInterval = _ =>
+            {
+                if (Interlocked.Increment(ref intervalSets) == 1)
+                {
+                    rearming.TrySetResult();
+                    released = release.Wait(TimeSpan.FromSeconds(10));
+                }
+            };
+
+            Task resume = Task.Run(scheduler.HandleResumeFromStandby);
+            Task? newerRun = null;
+            try
+            {
+                await rearming.Task.WaitAsync(TimeSpan.FromSeconds(5));
+                JsonConfig.settings.activeThemes = ["B"];
+                newerRun = Task.Factory.StartNew(() =>
+                {
+                    newerRunThread = Environment.CurrentManagedThreadId;
+                    runStarted.TrySetResult();
+                    scheduler.Run(true);
+                }, TaskCreationOptions.LongRunning);
+                await runStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
+                Assert.NotSame(newerRun, await Task.WhenAny(newerRun, Task.Delay(100)));
+            }
+            finally
+            {
+                release.Set();
+                await Task.WhenAll(resume, newerRun ?? Task.CompletedTask).WaitAsync(TimeSpan.FromSeconds(5));
+            }
+
+            Assert.True(released);
+            Assert.Equal(newerRunThread, schedulerTimer.LastStartThreadId);
+            AssertImage(desktop.Writes.Last(), -1, "B");
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task TimerCallbackDoesNotQueueBehindActiveRun(bool background)
+        {
+            scheduler.Run();
+            int starts = schedulerTimer.StartCount;
+            var writing = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            using var release = new ManualResetEventSlim();
+            bool released = false;
+            desktop.BeforeWrite = (_, _) =>
+            {
+                writing.TrySetResult();
+                released = release.Wait(TimeSpan.FromSeconds(10));
+            };
+
+            Task run = Task.Run(() => scheduler.Run(true));
+            Task? callback = null;
+            try
+            {
+                await writing.Task.WaitAsync(TimeSpan.FromSeconds(5));
+                callback = Task.Run(() => (background ? backgroundTimer : schedulerTimer).FireQueued());
+                Assert.Same(callback, await Task.WhenAny(callback, Task.Delay(1000)));
+                await callback;
+            }
+            finally
+            {
+                release.Set();
+                await Task.WhenAll(run, callback ?? Task.CompletedTask).WaitAsync(TimeSpan.FromSeconds(5));
+            }
+
+            Assert.True(released);
+            Assert.Equal(starts + 1, schedulerTimer.StartCount);
+        }
+
         private static ThemeConfig CreateTheme(string id) => new()
         {
             themeId = id,
@@ -260,12 +340,24 @@ namespace WinDynamicDesktop.Tests
 
         private sealed class ManualTimer : ISchedulerTimer
         {
+            private double interval;
             public bool AutoReset { get; set; } = true;
-            public double Interval { get; set; }
+            public double Interval
+            {
+                get => interval;
+                set { BeforeSetInterval?.Invoke(value); interval = value; }
+            }
+            public Action<double>? BeforeSetInterval { get; set; }
             public bool Enabled { get; private set; }
             public int StartCount { get; private set; }
+            public int LastStartThreadId { get; private set; }
             public event ElapsedEventHandler? Elapsed;
-            public void Start() { Enabled = true; StartCount++; }
+            public void Start()
+            {
+                Enabled = true;
+                StartCount++;
+                LastStartThreadId = Environment.CurrentManagedThreadId;
+            }
             public void Stop() => Enabled = false;
             public void Dispose() { Stop(); Elapsed = null; }
 
@@ -273,8 +365,11 @@ namespace WinDynamicDesktop.Tests
             {
                 Assert.True(Enabled);
                 if (!AutoReset) Enabled = false;
-                Elapsed?.Invoke(this, new ElapsedEventArgs(DateTime.Now));
+                FireQueued();
             }
+
+            // System.Timers.Timer can deliver an already-queued callback after Stop().
+            public void FireQueued() => Elapsed?.Invoke(this, new ElapsedEventArgs(DateTime.Now));
         }
 
         private sealed class RecordingDesktop : PlatformHelper

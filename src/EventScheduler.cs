@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace WinDynamicDesktop
@@ -291,25 +292,45 @@ namespace WinDynamicDesktop
 
         private void OnBackgroundTimerElapsed(object sender, EventArgs e)
         {
-            if (nextUpdateTime.HasValue && DateTime.Now >= nextUpdateTime.Value)
-            {
-                LoggingHandler.LogMessage("Scheduler event triggered by timer 2");
-                HandleTimerEvent(true);
-            }
+            HandleTimerElapsed(true);
         }
 
         private void OnSchedulerTimerElapsed(object sender, EventArgs e)
         {
-            LoggingHandler.LogMessage("Scheduler event triggered by timer 1");
-            HandleTimerEvent(true);
+            HandleTimerElapsed(false);
+        }
+
+        private void HandleTimerElapsed(bool background)
+        {
+            // A run already in progress will rearm the timer; do not queue redundant callbacks behind it.
+            if (!Monitor.TryEnter(schedulerLock))
+            {
+                return;
+            }
+
+            try
+            {
+                if (!background || (nextUpdateTime.HasValue && DateTime.Now >= nextUpdateTime.Value))
+                {
+                    LoggingHandler.LogMessage("Scheduler event triggered by timer {0}", background ? 2 : 1);
+                    HandleTimerEvent(true);
+                }
+            }
+            finally
+            {
+                Monitor.Exit(schedulerLock);
+            }
         }
 
         internal void OnDisplaySettingsChanged(object sender, EventArgs e)
         {
-            if (UpdateDisplayList())
+            lock (schedulerLock)
             {
-                LoggingHandler.LogMessage("Scheduler event triggered by display change");
-                HandleTimerEvent(false);
+                if (UpdateDisplayList())
+                {
+                    LoggingHandler.LogMessage("Scheduler event triggered by display change");
+                    HandleTimerEvent(false);
+                }
             }
         }
 
@@ -320,25 +341,31 @@ namespace WinDynamicDesktop
                 return;
             }
 
-            if (UpdateDisplayList() || (nextUpdateTime.HasValue && DateTime.Now >= nextUpdateTime.Value))
+            lock (schedulerLock)
             {
-                LoggingHandler.LogMessage("Scheduler event triggered by resume from sleep");
-                HandleTimerEvent(false);
-            }
-            else if (nextUpdateTime.HasValue)
-            {
-                // Relative timers exclude sleep time, so rearm even when the deadline is still in the future.
-                StartTimer(nextUpdateTime.Value);
+                if (UpdateDisplayList() || (nextUpdateTime.HasValue && DateTime.Now >= nextUpdateTime.Value))
+                {
+                    LoggingHandler.LogMessage("Scheduler event triggered by resume from sleep");
+                    HandleTimerEvent(false);
+                }
+                else if (nextUpdateTime.HasValue)
+                {
+                    // Relative timers exclude sleep time, so rearm even when the deadline is still in the future.
+                    StartTimer(nextUpdateTime.Value);
+                }
             }
         }
 
         private void OnSessionSwitch(object sender, SessionSwitchEventArgs e)
         {
-            if (e.Reason == SessionSwitchReason.SessionUnlock && (UpdateDisplayList() ||
-                (nextUpdateTime.HasValue && DateTime.Now >= nextUpdateTime.Value)))
+            lock (schedulerLock)
             {
-                LoggingHandler.LogMessage("Scheduler event triggered by user session unlock");
-                HandleTimerEvent(false);
+                if (e.Reason == SessionSwitchReason.SessionUnlock && (UpdateDisplayList() ||
+                    (nextUpdateTime.HasValue && DateTime.Now >= nextUpdateTime.Value)))
+                {
+                    LoggingHandler.LogMessage("Scheduler event triggered by user session unlock");
+                    HandleTimerEvent(false);
+                }
             }
         }
 
