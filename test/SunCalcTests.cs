@@ -1,4 +1,5 @@
 using FakeTimeZone;
+using SunCalcNet.Model;
 using TimeZoneConverter;
 
 namespace WinDynamicDesktop.Tests
@@ -217,12 +218,18 @@ namespace WinDynamicDesktop.Tests
             DateTime transitionDate = new DateTime(2026, 3, 8, 0, 0, 0, DateTimeKind.Local);
 
             SolarData data = SunriseSunsetService.GetSolarData(transitionDate);
-            SunriseSunsetService.GetDateTimeNow = () => transitionDate.AddHours(12);
-            SolarData expected = SunriseSunsetService.GetSolarData(transitionDate);
+            // London is on UTC on this date. Calculate its phases directly, without the service's conversion.
+            var expected = SunCalcNet.SunCalc.GetSunPhases(
+                new DateTimeOffset(2026, 3, 8, 12, 0, 0, TimeSpan.Zero), 51.50, -0.129).ToArray();
 
-            Assert.Equal(expected.sunriseTime, data.sunriseTime);
-            Assert.Equal(expected.sunsetTime, data.sunsetTime);
-            Assert.Equal(expected.solarTimes, data.solarTimes);
+            Assert.Equal(expected.Single(p => p.Name == SunPhaseName.Sunrise).PhaseTime.UtcDateTime,
+                data.sunriseTime.ToUniversalTime());
+            Assert.Equal(expected.Single(p => p.Name == SunPhaseName.Sunset).PhaseTime.UtcDateTime,
+                data.sunsetTime.ToUniversalTime());
+            SunPhaseName[] twilightPhases = [SunPhaseName.Dawn, SunPhaseName.GoldenHourEnd,
+                SunPhaseName.GoldenHour, SunPhaseName.Dusk];
+            Assert.Equal(twilightPhases.Select(name => expected.Single(p => p.Name == name).PhaseTime.UtcDateTime),
+                data.solarTimes.Select(time => time.ToUniversalTime()));
         }
     }
 }
