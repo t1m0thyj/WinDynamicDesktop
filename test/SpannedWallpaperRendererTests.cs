@@ -1,4 +1,5 @@
 using SkiaSharp;
+using System.Runtime.InteropServices;
 using WinDynamicDesktop.COM;
 
 namespace WinDynamicDesktop.Tests
@@ -62,6 +63,17 @@ namespace WinDynamicDesktop.Tests
 
             Assert.Equal(SKColors.Black, bitmap.GetPixel(0, 0));
             Assert.Equal(SKColors.Red, bitmap.GetPixel(0, 1));
+        }
+
+        [Theory]
+        [InlineData(unchecked((int)0x80004005), true)]
+        [InlineData(unchecked((int)0x800706BA), true)]
+        [InlineData(unchecked((int)0x800706BE), true)]
+        [InlineData(unchecked((int)0x80070005), false)]
+        public void ClassifiesOnlyKnownRdpTopologyErrorsAsTransient(int hresult, bool expected)
+        {
+            Assert.Equal(expected, SpannedWallpaperManager.IsTransientDesktopWallpaperError(
+                new COMException("test", hresult)));
         }
 
         public void Dispose()

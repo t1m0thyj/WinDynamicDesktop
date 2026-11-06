@@ -42,6 +42,8 @@ After a successful sync, this fork writes `%LOCALAPPDATA%\XZWallpaperBypass\WDD-
 [XZ Desktop Wallpaper ByPass](https://github.com/David-Lzy/XZ_Desktop_wallpaper_ByPass) can reload the
 same composite without asking WDD to refresh again.
 
+With sync enabled, WDD also refreshes after a remote or console session reconnect, because Windows may reset the wallpaper layout during the transition. Known transient desktop-wallpaper COM failures are treated as temporary during sync; other errors remain visible. Recovery depends on Windows making the wallpaper service available again.
+
 ## Supported Devices
 
 WinDynamicDesktop is developed primarily for Windows 11, but should run on any device with Windows 7 or newer. Windows Insider builds are not officially supported.

@@ -83,7 +83,7 @@ namespace WinDynamicDesktop
             catch (Exception exc)
             {
                 LoggingHandler.LogMessage("Error syncing virtual desktop wallpapers: {0}", exc.ToString());
-                LoggingHandler.LogError(exc);
+                ReportUnexpectedError(exc);
                 RestoreAfterFailure(desktopWallpaper, monitorIds, imagePaths);
             }
             finally
@@ -182,7 +182,7 @@ namespace WinDynamicDesktop
             catch (Exception exc)
             {
                 LoggingHandler.LogMessage("Could not restore wallpaper position: {0}", exc.ToString());
-                LoggingHandler.LogError(exc);
+                ReportUnexpectedError(exc);
             }
             finally
             {
@@ -209,6 +209,21 @@ namespace WinDynamicDesktop
             catch (Exception exc)
             {
                 LoggingHandler.LogMessage("Could not restore per-monitor wallpapers: {0}", exc.ToString());
+                ReportUnexpectedError(exc);
+            }
+        }
+
+        internal static bool IsTransientDesktopWallpaperError(Exception exc)
+        {
+            return exc is COMException && (exc.HResult == unchecked((int)0x80004005) ||
+                exc.HResult == unchecked((int)0x800706BA) ||
+                exc.HResult == unchecked((int)0x800706BE));
+        }
+
+        private static void ReportUnexpectedError(Exception exc)
+        {
+            if (!IsTransientDesktopWallpaperError(exc))
+            {
                 LoggingHandler.LogError(exc);
             }
         }

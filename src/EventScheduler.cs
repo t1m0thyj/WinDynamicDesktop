@@ -288,13 +288,20 @@ namespace WinDynamicDesktop
 
         private void OnSessionSwitch(object sender, SessionSwitchEventArgs e)
         {
-            if (e.Reason == SessionSwitchReason.SessionUnlock && (UpdateDisplayList() ||
+            if (ShouldRefreshAfterSessionSwitch(e.Reason) && (UpdateDisplayList() ||
                 JsonConfig.settings.syncVirtualDesktopWallpapers ||
                 (nextUpdateTime.HasValue && DateTime.Now >= nextUpdateTime.Value)))
             {
-                LoggingHandler.LogMessage("Scheduler event triggered by user session unlock");
+                LoggingHandler.LogMessage("Scheduler event triggered by session connect or unlock");
                 HandleTimerEvent(false);
             }
+        }
+
+        internal static bool ShouldRefreshAfterSessionSwitch(SessionSwitchReason reason)
+        {
+            return reason == SessionSwitchReason.SessionUnlock ||
+                reason == SessionSwitchReason.RemoteConnect ||
+                reason == SessionSwitchReason.ConsoleConnect;
         }
 
         private void OnTimeChanged(object sender, EventArgs e)

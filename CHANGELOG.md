@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+* Refresh the spanned virtual-desktop wallpaper after remote and console session reconnects
+* Avoid modal error reports for known transient desktop-wallpaper COM failures during sync and recovery
+
 ## `5.7.0`
 
 ### Enhancements
