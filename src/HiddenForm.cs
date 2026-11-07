@@ -19,9 +19,6 @@ namespace WinDynamicDesktop
         private const int WM_POWERBROADCAST = 0x0218;
         private const int PBT_POWERSETTINGCHANGE = 0x8013;
 
-        [DllImport("user32.dll")]
-        private static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hwndNewParent);
-
         public HiddenForm()
         {
             this.Load += this.HiddenForm_Load;
@@ -63,13 +60,18 @@ namespace WinDynamicDesktop
                 case WM_QUERYENDSESSION:
                     if ((m.LParam & ENDSESSION_CLOSEAPP) != 0)
                     {
-                        UpdateChecker.RegisterApplicationRestart(null, (int)RestartFlags.RESTART_NO_CRASH |
+                        // Register before Restart Manager commits to closing us. Allow update restarts only.
+                        uint result = UpdateChecker.RegisterApplicationRestart(null, (int)RestartFlags.RESTART_NO_CRASH |
                             (int)RestartFlags.RESTART_NO_HANG | (int)RestartFlags.RESTART_NO_REBOOT);
+                        if (result != 0)
+                        {
+                            LoggingHandler.LogMessage("Failed to register application restart: HRESULT 0x{0:X8}", result);
+                        }
                     }
                     m.Result = new IntPtr(1);
                     break;
                 case WM_ENDSESSION:
-                    if ((m.LParam & ENDSESSION_CLOSEAPP) != 0)
+                    if (m.WParam != IntPtr.Zero && (m.LParam & ENDSESSION_CLOSEAPP) != 0)
                     {
                         Application.Exit();
                     }
@@ -94,9 +96,8 @@ namespace WinDynamicDesktop
 
         private void HiddenForm_Load(object source, EventArgs e)
         {
-            const int HWND_MESSAGE = -1;
-            SetParent(this.Handle, new IntPtr(HWND_MESSAGE));
-
+            // Keep a top-level window: message-only windows cannot receive broadcasts or be enumerated
+            // by Restart Manager. The zero-sized tool window stays out of the taskbar and Alt+Tab.
             if (UwpDesktop.IsWinRtSupported())
             {
                 PowerSetting.RegisterWindow(this.Handle);
