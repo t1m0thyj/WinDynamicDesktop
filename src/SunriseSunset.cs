@@ -64,7 +64,7 @@ namespace WinDynamicDesktop
                 TimeSpan offsetAfter = tzInfo.GetUtcOffset(localDate.AddDays(1));
                 localDate = localDate.Add(offsetAfter - offsetBefore);
             }
-            DateTimeOffset tzDate = TimeZoneInfo.ConvertTime(localDate, tzInfo);
+            DateTimeOffset tzDate = TimeZoneInfo.ConvertTime(new DateTimeOffset(localDate), tzInfo);
             return SunCalcNet.SunCalc.GetSunPhases(tzDate, latitude, longitude).ToList();
         }
 

@@ -1,10 +1,14 @@
 using FakeTimeZone;
+using SunCalcNet.Model;
 using TimeZoneConverter;
 
 namespace WinDynamicDesktop.Tests
 {
-    public class SunCalcTests
+    public class SunCalcTests : IDisposable
     {
+        private readonly AppConfig originalSettings = JsonConfig.settings;
+        private readonly Func<DateTime> originalClock = SunriseSunsetService.GetDateTimeNow;
+
         private Func<DateTime, DateTime> CreateTimeConverter(string localTz)
         {
             TimeZoneInfo timeZone = TZConvert.GetTimeZoneInfo(localTz);
@@ -13,8 +17,57 @@ namespace WinDynamicDesktop.Tests
 
         public SunCalcTests()
         {
-            JsonConfig.settings.locationMode = 0;
+            JsonConfig.settings = new AppConfig { locationMode = 0 };
             SunriseSunsetService.GetDateTimeNow = () => DateTime.UtcNow.Date.ToLocalTime();
+        }
+
+        public void Dispose()
+        {
+            JsonConfig.settings = originalSettings;
+            SunriseSunsetService.GetDateTimeNow = originalClock;
+        }
+
+        [Theory]
+        [InlineData(35.68, 139.69, "Asia/Tokyo")]
+        [InlineData(-36.85, 174.76, "Pacific/Auckland")]
+        [InlineData(34.05, -118.24, "America/Los_Angeles")]
+        public void TestLocationTimeZone(double latitude, double longitude, string locationTimeZone)
+        {
+            DateTime now = new DateTime(2026, 6, 1, 0, 0, 0, DateTimeKind.Utc).ToLocalTime();
+            SunriseSunsetService.GetDateTimeNow = () => now;
+            JsonConfig.settings.latitude = latitude;
+            JsonConfig.settings.longitude = longitude;
+
+            SolarData data = SunriseSunsetService.GetSolarData(now.Date);
+            TimeZoneInfo timeZone = TZConvert.GetTimeZoneInfo(locationTimeZone);
+            DateTimeOffset locationNow = TimeZoneInfo.ConvertTime(new DateTimeOffset(now), timeZone);
+            var expected = SunCalcNet.SunCalc.GetSunPhases(locationNow, latitude, longitude).ToArray();
+
+            Assert.Equal(locationNow.Date, TimeZoneInfo.ConvertTime(data.sunriseTime, timeZone).Date);
+            Assert.Equal(expected.Single(p => p.Name == SunCalcNet.Model.SunPhaseName.Sunrise).PhaseTime.UtcDateTime,
+                data.sunriseTime.ToUniversalTime());
+            Assert.Equal(expected.Single(p => p.Name == SunCalcNet.Model.SunPhaseName.Sunset).PhaseTime.UtcDateTime,
+                data.sunsetTime.ToUniversalTime());
+        }
+
+        [Theory]
+        [InlineData(-30, 30)]
+        [InlineData(30, 60)]
+        public void TestNextSunriseBeforeAndDuringDawn(int dawnOffsetMinutes, int sunriseOffsetMinutes)
+        {
+            JsonConfig.settings.locationMode = -1;
+            JsonConfig.settings.sunriseTime = "06:00:00";
+            JsonConfig.settings.sunsetTime = "18:00:00";
+            DateTime now = DateTime.Now;
+            SolarData data = new SolarData
+            {
+                sunriseTime = now.AddMinutes(sunriseOffsetMinutes),
+                sunsetTime = now.AddHours(8),
+                solarTimes = new[] { now.AddMinutes(dawnOffsetMinutes), now.AddHours(2),
+                    now.AddHours(7), now.AddHours(9) }
+            };
+
+            Assert.Equal(data.sunriseTime, SolarScheduler.CalcNextUpdateTime(data));
         }
 
         [Fact]
@@ -149,6 +202,34 @@ namespace WinDynamicDesktop.Tests
             Assert.Equal((6, 37), (convertTime(data.sunriseTime).Hour, convertTime(data.sunriseTime).Minute));
             Assert.Equal(convertTime(testDate).Date, convertTime(data.sunsetTime).Date);
             Assert.Equal((19, 32), (convertTime(data.sunsetTime).Hour, convertTime(data.sunsetTime).Minute));
+        }
+
+        [Theory]
+        [InlineData(7)]
+        [InlineData(9)]
+        public void TestAdjacentDayAcrossDaylightSavingGap(int currentDay)
+        {
+            using var _ = new FakeLocalTimeZone(TZConvert.GetTimeZoneInfo("America/New_York"));
+            SunriseSunsetService.GetDateTimeNow = () => new DateTime(2026, 3, currentDay, 2, 30, 0,
+                DateTimeKind.Local);
+            // The source computer's DST gap must be handled even when the selected location is elsewhere.
+            JsonConfig.settings.latitude = 51.50;
+            JsonConfig.settings.longitude = -0.129;
+            DateTime transitionDate = new DateTime(2026, 3, 8, 0, 0, 0, DateTimeKind.Local);
+
+            SolarData data = SunriseSunsetService.GetSolarData(transitionDate);
+            // London is on UTC on this date. Calculate its phases directly, without the service's conversion.
+            var expected = SunCalcNet.SunCalc.GetSunPhases(
+                new DateTimeOffset(2026, 3, 8, 12, 0, 0, TimeSpan.Zero), 51.50, -0.129).ToArray();
+
+            Assert.Equal(expected.Single(p => p.Name == SunPhaseName.Sunrise).PhaseTime.UtcDateTime,
+                data.sunriseTime.ToUniversalTime());
+            Assert.Equal(expected.Single(p => p.Name == SunPhaseName.Sunset).PhaseTime.UtcDateTime,
+                data.sunsetTime.ToUniversalTime());
+            SunPhaseName[] twilightPhases = [SunPhaseName.Dawn, SunPhaseName.GoldenHourEnd,
+                SunPhaseName.GoldenHour, SunPhaseName.Dusk];
+            Assert.Equal(twilightPhases.Select(name => expected.Single(p => p.Name == name).PhaseTime.UtcDateTime),
+                data.solarTimes.Select(time => time.ToUniversalTime()));
         }
     }
 }

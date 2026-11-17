@@ -64,7 +64,7 @@ namespace WinDynamicDesktop
             JsonConfig.settings.lastShuffleTime = DateTime.Now.ToString(CultureInfo.InvariantCulture);
         }
 
-        public static DateTime? MaybeShuffleWallpaper(SolarData solarData)
+        public static DateTime? MaybeShuffleWallpaper()
         {
             if (JsonConfig.settings.themeShuffleMode / 10 == 0)
             {
@@ -109,6 +109,7 @@ namespace WinDynamicDesktop
                 LoggingHandler.LogMessage(string.Format("Last shuffle time was {0}",
                     JsonConfig.settings.lastShuffleTime));
                 ShuffleWallpaper();
+                lastShuffleTime = DateTime.Now;
             }
 
             switch (JsonConfig.settings.themeShuffleMode % 10)
@@ -117,8 +118,7 @@ namespace WinDynamicDesktop
                     nextUpdateTime = DateTime.Today.AddHours(DateTime.Now.Hour + 1);
                     break;
                 case (int)ShufflePeriod.Every12Hours:
-                    nextUpdateTime = DateTime.Now < solarData.solarNoon ? solarData.solarNoon :
-                        solarData.solarNoon.AddHours(12);
+                    nextUpdateTime = (lastShuffleTime ?? DateTime.Now).AddHours(12);
                     break;
                 case (int)ShufflePeriod.EveryDay:
                     nextUpdateTime = DateTime.Today.AddDays(1);
@@ -130,7 +130,7 @@ namespace WinDynamicDesktop
                     nextUpdateTime = DateTime.Today.AddDays(7 - (int)DateTime.Today.DayOfWeek);
                     break;
                 case (int)ShufflePeriod.EveryMonth:
-                    nextUpdateTime = DateTime.Today.AddDays(-DateTime.Today.Day).AddMonths(1);
+                    nextUpdateTime = DateTime.Today.AddDays(1 - DateTime.Today.Day).AddMonths(1);
                     break;
             }
 
