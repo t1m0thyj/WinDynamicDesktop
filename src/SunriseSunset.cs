@@ -36,20 +36,6 @@ namespace WinDynamicDesktop
         private static readonly Func<string, string> _ = Localization.GetTranslation;
         internal static Func<DateTime> GetDateTimeNow = () => DateTime.Now;
 
-        // Sun altitudes in degrees (sunrise/sunset accounts for refraction and solar radius), converted to match
-        // GetSunPosition which applies atmospheric refraction unlike the geometric angles used by GetSunPhases
-        private static readonly double HorizonAltitude = ToApparentAltitude(-0.833);
-        private static readonly double CivilTwilightAltitude = ToApparentAltitude(-6.0);
-        private static readonly double GoldenHourAltitude = ToApparentAltitude(6.0);
-
-        private static double ToApparentAltitude(double degrees)
-        {
-            // Same refraction formula as SunCalc (Bennett 1982), clamped at the horizon
-            double h = Math.Max(degrees, 0) * Math.PI / 180;
-            double refraction = 0.0002967 / Math.Tan(h + 0.00312536 / (h + 0.08901179));
-            return degrees + refraction * 180 / Math.PI;
-        }
-
         private static SolarData GetUserProvidedSolarData(DateTime date)
         {
             SolarData data = new SolarData();
@@ -104,89 +90,62 @@ namespace WinDynamicDesktop
 
             // A solar day spans from the nadir before solar noon to the nadir after it, which does not line up
             // with the calendar day at high latitudes (e.g. sunset at 00:30 belongs to the previous evening).
-            // The next nadir is derived from tomorrow's solar noon so consecutive days join without gaps.
-            data.solarNoon = GetSolarTime(GetSunPhases(date, latitude, longitude), SunPhaseName.SolarNoon);
-            DateTime noonUtc = data.solarNoon.ToUniversalTime();
-            DateTime prevNadirUtc = noonUtc.AddHours(-12);
-            DateTime nextNadirUtc = GetSolarTime(GetSunPhases(date.AddDays(1), latitude, longitude),
-                SunPhaseName.SolarNoon).ToUniversalTime().AddHours(-12);
+            // SunCalc only returns events within a calendar day, so gather them from yesterday through tomorrow.
+            List<SunPhase> sunPhases = GetSunPhases(date, latitude, longitude);
+            List<SunPhase> nextSunPhases = GetSunPhases(date.AddDays(1), latitude, longitude);
+            List<SunPhase> allSunPhases = [.. GetSunPhases(date.AddDays(-1), latitude, longitude), .. sunPhases,
+                .. nextSunPhases];
+            data.solarNoon = GetSolarTime(sunPhases, SunPhaseName.SolarNoon);
+            DateTime prevNadir = data.solarNoon.AddHours(-12);
+            DateTime nextNadir = GetSolarTime(nextSunPhases, SunPhaseName.SolarNoon).AddHours(-12);
+            double noonAltitude = SunCalc.GetSunPosition(data.solarNoon.ToUniversalTime(), latitude,
+                longitude).Altitude;
 
-            double GetAltitude(DateTime utc) => GetSunAltitude(utc, latitude, longitude);
-            DateTime Rising(double threshold) =>
-                FindSunCrossing(prevNadirUtc, noonUtc, threshold, GetAltitude).ToLocalTime();
-            DateTime Setting(double threshold) =>
-                FindSunCrossing(nextNadirUtc, noonUtc, threshold, GetAltitude).ToLocalTime();
-
-            data.sunriseTime = Rising(HorizonAltitude);
-            data.sunsetTime = Setting(HorizonAltitude);
-            data.solarTimes = new DateTime[4]
+            // Events are ordered from lowest to highest sun altitude. If one is missing, the sun stayed on one side
+            // of it all morning/evening: above it (clamp to nadir) if a higher event happened or noon is above
+            // the horizon with no events at all, otherwise below it (clamp to noon).
+            DateTime[] FindEvents(SunPhaseName[] names, DateTime start, DateTime end, DateTime nadir)
             {
-                Rising(CivilTwilightAltitude),
-                Rising(GoldenHourAltitude),
-                Setting(GoldenHourAltitude),
-                Setting(CivilTwilightAltitude)
-            };
-
-            double noonAltitude = GetAltitude(noonUtc);
-            double prevNadirAltitude = GetAltitude(prevNadirUtc);
-            double nextNadirAltitude = GetAltitude(nextNadirUtc);
-            data.hasSunrise = prevNadirAltitude < HorizonAltitude && noonAltitude >= HorizonAltitude;
-            data.hasSunset = nextNadirAltitude < HorizonAltitude && noonAltitude >= HorizonAltitude;
-
-            if (noonAltitude < HorizonAltitude)
-            {
-                data.polarPeriod = PolarPeriod.PolarNight;
+                DateTime[] times = names.Select(name => allSunPhases
+                    .Where(sp => sp.Name.Value == name.Value)
+                    .Select(sp => sp.PhaseTime.LocalDateTime)
+                    .FirstOrDefault(t => start <= t && t < end, DateTime.MinValue)).ToArray();
+                int highestFound = Array.FindLastIndex(times, t => t != DateTime.MinValue);
+                for (int i = 0; i < times.Length; i++)
+                {
+                    if (times[i] == DateTime.MinValue)
+                    {
+                        bool sunAbove = highestFound >= 0 ? i < highestFound : noonAltitude > 0;
+                        times[i] = sunAbove ? nadir : data.solarNoon;
+                    }
+                }
+                return times;
             }
-            else if (prevNadirAltitude >= HorizonAltitude && nextNadirAltitude >= HorizonAltitude)
+
+            DateTime[] rising = FindEvents([SunPhaseName.Dawn, SunPhaseName.Sunrise, SunPhaseName.GoldenHourEnd],
+                prevNadir, data.solarNoon, prevNadir);
+            DateTime[] setting = FindEvents([SunPhaseName.Dusk, SunPhaseName.Sunset, SunPhaseName.GoldenHour],
+                data.solarNoon, nextNadir, nextNadir);
+            data.sunriseTime = rising[1];
+            data.sunsetTime = setting[1];
+            data.solarTimes = [rising[0], rising[2], setting[2], setting[0]];
+            data.hasSunrise = prevNadir < data.sunriseTime && data.sunriseTime < data.solarNoon;
+            data.hasSunset = data.solarNoon < data.sunsetTime && data.sunsetTime < nextNadir;
+
+            if (!data.hasSunrise && !data.hasSunset)
             {
-                data.polarPeriod = PolarPeriod.PolarDay;
+                data.polarPeriod = noonAltitude > 0 ? PolarPeriod.PolarDay : PolarPeriod.PolarNight;
             }
-            else if (noonAltitude < GoldenHourAltitude)
+            else if (data.solarTimes[1] == data.solarNoon && data.solarTimes[2] == data.solarNoon)
             {
                 data.polarPeriod = PolarPeriod.CivilPolarNight;
             }
-            else if (prevNadirAltitude >= CivilTwilightAltitude && nextNadirAltitude >= CivilTwilightAltitude)
+            else if (data.solarTimes[0] == prevNadir && data.solarTimes[3] == nextNadir)
             {
                 data.polarPeriod = PolarPeriod.CivilPolarDay;
             }
 
             return data;
-        }
-
-        private static double GetSunAltitude(DateTime utc, double latitude, double longitude)
-        {
-            return SunCalc.GetSunPosition(utc, latitude, longitude).Altitude * 180 / Math.PI;
-        }
-
-        // Finds when the sun crosses the threshold altitude between nadir and noon, where altitude is monotonic.
-        // If it never drops below the threshold, the event is clamped to the nadir (segment extends all night).
-        // If it never climbs above the threshold, the event is clamped to noon (segment collapses to nothing).
-        private static DateTime FindSunCrossing(DateTime nadir, DateTime noon, double threshold,
-            Func<DateTime, double> getAltitude)
-        {
-            if (getAltitude(nadir) >= threshold)
-            {
-                return nadir;
-            }
-            else if (getAltitude(noon) < threshold)
-            {
-                return noon;
-            }
-
-            DateTime below = nadir, above = noon;
-            while (Math.Abs((above - below).Ticks) > TimeSpan.TicksPerSecond)
-            {
-                DateTime middle = below.AddTicks((above - below).Ticks / 2);
-                if (getAltitude(middle) >= threshold)
-                {
-                    above = middle;
-                }
-                else
-                {
-                    below = middle;
-                }
-            }
-            return below.AddTicks((above - below).Ticks / 2);
         }
 
         public static string GetSunriseSunsetString(SolarData solarData)
