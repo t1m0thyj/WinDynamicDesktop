@@ -113,7 +113,13 @@ namespace WinDynamicDesktop
 
         public static DaySegmentData GetDaySegmentData(SolarData data, DateTime time)
         {
-            int daySegment2 = (data.sunriseTime <= DateTime.Now && DateTime.Now < data.sunsetTime) ? 0 : 1;
+            bool isSunUp = data.sunriseTime <= time && time < data.sunsetTime;
+            if (time < data.solarTimes[0] && !data.IsPolarPeriodTotal())
+            {
+                // Yesterday's sunset may fall after midnight at high latitudes
+                isSunUp = time < SunriseSunsetService.GetSolarData(time.Date.AddDays(-1)).sunsetTime;
+            }
+            int daySegment2 = isSunUp ? 0 : 1;
 
             if (data.polarPeriod == PolarPeriod.PolarDay)
             {
@@ -124,7 +130,7 @@ namespace WinDynamicDesktop
                 return new DaySegmentData(DaySegment.AlwaysNight, 1, 3);
             }
             else if ((data.solarTimes[0] <= time && time < data.solarTimes[1]) ||
-                (data.polarPeriod == PolarPeriod.CivilPolarDay && DateTime.Now > data.solarTimes[3]))
+                (data.polarPeriod == PolarPeriod.CivilPolarDay && time > data.solarTimes[3]))
             {
                 return new DaySegmentData(DaySegment.Sunrise, daySegment2, 0);
             }
@@ -133,7 +139,7 @@ namespace WinDynamicDesktop
                 return new DaySegmentData(DaySegment.Day, daySegment2, 1);
             }
             else if ((data.solarTimes[2] <= time && time < data.solarTimes[3]) ||
-                (data.polarPeriod == PolarPeriod.CivilPolarDay && DateTime.Now < data.solarTimes[0]))
+                (data.polarPeriod == PolarPeriod.CivilPolarDay && time < data.solarTimes[0]))
             {
                 return new DaySegmentData(DaySegment.Sunset, daySegment2, 2);
             }
@@ -153,9 +159,11 @@ namespace WinDynamicDesktop
             {
                 return data.sunsetTime;
             }
-            else if (DateTime.Now < data.solarTimes[0])
+            else if (DateTime.Now < data.sunriseTime)
             {
-                return data.sunriseTime;
+                // Yesterday's sunset may fall after midnight at high latitudes
+                SolarData yesterdaysData = SunriseSunsetService.GetSolarData(DateTime.Today.AddDays(-1));
+                return DateTime.Now < yesterdaysData.sunsetTime ? yesterdaysData.sunsetTime : data.sunriseTime;
             }
             else
             {

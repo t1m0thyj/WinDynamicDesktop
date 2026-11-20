@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using GeoTimeZone;
+using SunCalcNet;
 using SunCalcNet.Model;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,8 @@ namespace WinDynamicDesktop
         public DateTime sunsetTime { get; set; }
         public DateTime[] solarTimes { get; set; }
         public DateTime solarNoon { get; set; }
+        public bool hasSunrise = true;
+        public bool hasSunset = true;
 
         public bool IsPolarPeriodTotal()
         {
@@ -64,14 +67,14 @@ namespace WinDynamicDesktop
                 TimeSpan offsetAfter = tzInfo.GetUtcOffset(localDate.AddDays(1));
                 localDate = localDate.Add(offsetAfter - offsetBefore);
             }
-            DateTimeOffset tzDate = TimeZoneInfo.ConvertTime(localDate, tzInfo);
-            return SunCalcNet.SunCalc.GetSunPhases(tzDate, latitude, longitude).ToList();
+            DateTimeOffset tzDate = TimeZoneInfo.ConvertTime(new DateTimeOffset(localDate), tzInfo);
+            return SunCalc.GetSunPhases(tzDate, latitude, longitude).ToList();
         }
 
         private static DateTime GetSolarTime(List<SunPhase> sunPhases, SunPhaseName desiredPhase)
         {
-            SunPhase sunPhase = sunPhases.FirstOrDefault(sp => sp.Name.Value == desiredPhase.Value);
-            return sunPhase.Name != null ? sunPhase.PhaseTime.LocalDateTime : DateTime.MinValue;
+            DateTimeOffset? phaseTime = SunPhaseExtensions.FindTime(sunPhases, desiredPhase);
+            return phaseTime != null ? phaseTime.Value.LocalDateTime : DateTime.MinValue;
         }
 
         public static SolarData GetSolarData(DateTime date)
@@ -83,41 +86,63 @@ namespace WinDynamicDesktop
 
             double latitude = JsonConfig.settings.latitude.Value;
             double longitude = JsonConfig.settings.longitude.Value;
-            var sunPhases = GetSunPhases(date, latitude, longitude);
             SolarData data = new SolarData();
 
-            // Sunrise/sunset = -0.833 deg, Civil twilight = -6 deg, Golden hour = +6 deg above horizon
-            data.sunriseTime = GetSolarTime(sunPhases, SunPhaseName.Sunrise);
-            data.sunsetTime = GetSolarTime(sunPhases, SunPhaseName.Sunset);
-            data.solarTimes = new DateTime[4]
-            {
-                GetSolarTime(sunPhases, SunPhaseName.Dawn),
-                GetSolarTime(sunPhases, SunPhaseName.GoldenHourEnd),
-                GetSolarTime(sunPhases, SunPhaseName.GoldenHour),
-                GetSolarTime(sunPhases, SunPhaseName.Dusk)
-            };
+            // A solar day spans from the nadir before solar noon to the nadir after it, which does not line up
+            // with the calendar day at high latitudes (e.g. sunset at 00:30 belongs to the previous evening).
+            // SunCalc only returns events within a calendar day, so gather them from yesterday through tomorrow.
+            List<SunPhase> sunPhases = GetSunPhases(date, latitude, longitude);
+            List<SunPhase> nextSunPhases = GetSunPhases(date.AddDays(1), latitude, longitude);
+            List<SunPhase> allSunPhases = [.. GetSunPhases(date.AddDays(-1), latitude, longitude), .. sunPhases,
+                .. nextSunPhases];
             data.solarNoon = GetSolarTime(sunPhases, SunPhaseName.SolarNoon);
+            DateTime prevNadir = data.solarNoon.AddHours(-12);
+            DateTime nextNadir = GetSolarTime(nextSunPhases, SunPhaseName.SolarNoon).AddHours(-12);
+            double noonAltitude = SunCalc.GetSunPosition(data.solarNoon.ToUniversalTime(), latitude,
+                longitude).Altitude;
 
-            // Assume polar day/night if sunrise/sunset time are undefined
-            if (data.sunriseTime == DateTime.MinValue || data.sunsetTime == DateTime.MinValue)
+            // Events are ordered from lowest to highest sun altitude. If one is missing, the sun stayed on one side
+            // of it all morning/evening: above it (clamp to nadir) if a higher event happened or noon is above
+            // the horizon with no events at all, otherwise below it (clamp to noon).
+            DateTime[] FindEvents(SunPhaseName[] names, DateTime start, DateTime end, DateTime nadir)
             {
-                double sunAltitude = SunCalcNet.SunCalc.GetSunPosition(data.solarNoon.ToUniversalTime(), latitude,
-                    longitude).Altitude;
-                data.polarPeriod = sunAltitude > 0 ? PolarPeriod.PolarDay : PolarPeriod.PolarNight;
+                DateTime[] times = names.Select(name => allSunPhases
+                    .Where(sp => sp.Name.Value == name.Value)
+                    .Select(sp => sp.PhaseTime.LocalDateTime)
+                    .FirstOrDefault(t => start <= t && t < end, DateTime.MinValue)).ToArray();
+                int highestFound = Array.FindLastIndex(times, t => t != DateTime.MinValue);
+                for (int i = 0; i < times.Length; i++)
+                {
+                    if (times[i] == DateTime.MinValue)
+                    {
+                        bool sunAbove = highestFound >= 0 ? i < highestFound : noonAltitude > 0;
+                        times[i] = sunAbove ? nadir : data.solarNoon;
+                    }
+                }
+                return times;
             }
-            // Skip night segment (civil polar day) if dawn/dusk time are undefined
-            else if (data.solarTimes[0] == DateTime.MinValue && data.solarTimes[3] == DateTime.MinValue)
+
+            DateTime[] rising = FindEvents([SunPhaseName.Dawn, SunPhaseName.Sunrise, SunPhaseName.GoldenHourEnd],
+                prevNadir, data.solarNoon, prevNadir);
+            DateTime[] setting = FindEvents([SunPhaseName.Dusk, SunPhaseName.Sunset, SunPhaseName.GoldenHour],
+                data.solarNoon, nextNadir, nextNadir);
+            data.sunriseTime = rising[1];
+            data.sunsetTime = setting[1];
+            data.solarTimes = [rising[0], rising[2], setting[2], setting[0]];
+            data.hasSunrise = prevNadir < data.sunriseTime && data.sunriseTime < data.solarNoon;
+            data.hasSunset = data.solarNoon < data.sunsetTime && data.sunsetTime < nextNadir;
+
+            if (!data.hasSunrise && !data.hasSunset)
             {
-                data.solarTimes[0] = data.solarNoon.AddHours(-12);
-                data.solarTimes[3] = GetSolarTime(GetSunPhases(date.AddDays(1), latitude, longitude),
-                    SunPhaseName.SolarNoon).AddHours(-12);
-                data.polarPeriod = PolarPeriod.CivilPolarDay;
+                data.polarPeriod = noonAltitude > 0 ? PolarPeriod.PolarDay : PolarPeriod.PolarNight;
             }
-            // Skip day segment (civil polar night) if golden hour is undefined
-            else if (data.solarTimes[1] == DateTime.MinValue && data.solarTimes[2] == DateTime.MinValue)
+            else if (data.solarTimes[1] == data.solarNoon && data.solarTimes[2] == data.solarNoon)
             {
-                data.solarTimes[1] = data.solarTimes[2] = data.solarNoon;
                 data.polarPeriod = PolarPeriod.CivilPolarNight;
+            }
+            else if (data.solarTimes[0] == prevNadir && data.solarTimes[3] == nextNadir)
+            {
+                data.polarPeriod = PolarPeriod.CivilPolarDay;
             }
 
             return data;
@@ -132,8 +157,9 @@ namespace WinDynamicDesktop
                 case PolarPeriod.PolarNight:
                     return _("Sunrise/Sunset: Always down");
                 default:
-                    return string.Format(_("Sunrise: {0}, Sunset: {1}"), solarData.sunriseTime.ToShortTimeString(),
-                        solarData.sunsetTime.ToShortTimeString());
+                    return string.Format(_("Sunrise: {0}, Sunset: {1}"),
+                        solarData.hasSunrise ? solarData.sunriseTime.ToShortTimeString() : "—",
+                        solarData.hasSunset ? solarData.sunsetTime.ToShortTimeString() : "—");
             }
         }
     }
