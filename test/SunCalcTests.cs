@@ -62,7 +62,7 @@ namespace WinDynamicDesktop.Tests
             Assert.Equal(convertTime(testDate).Date, convertTime(data.sunriseTime).Date);
             Assert.Equal((1, 55), (convertTime(data.sunriseTime).Hour, convertTime(data.sunriseTime).Minute));
             Assert.Equal(convertTime(testDate).AddDays(1).Date, convertTime(data.sunsetTime).Date);
-            Assert.Equal((0, 35), (convertTime(data.sunsetTime).Hour, convertTime(data.sunsetTime).Minute));
+            Assert.Equal((0, 37), (convertTime(data.sunsetTime).Hour, convertTime(data.sunsetTime).Minute));
             Assert.Equal(convertTime(testDate).Date, convertTime(data.solarNoon).Date);
             Assert.Equal((12, 56), (convertTime(data.solarNoon).Hour, convertTime(data.solarNoon).Minute));
             Assert.Equal(12 * 60, data.solarNoon.Subtract(data.solarTimes[0]).TotalMinutes);
@@ -81,14 +81,16 @@ namespace WinDynamicDesktop.Tests
             JsonConfig.settings.longitude = 15.63;
             SolarData data = SunriseSunsetService.GetSolarData(testDate.Date);
             Assert.Equal(PolarPeriod.PolarDay, data.polarPeriod);
-            Assert.Equal(DateTime.MinValue, data.sunriseTime);
-            Assert.Equal(DateTime.MinValue, data.sunsetTime);
+            Assert.False(data.hasSunrise);
+            Assert.False(data.hasSunset);
             Assert.Equal(convertTime(testDate).Date, convertTime(data.solarNoon).Date);
             Assert.Equal((12, 56), (convertTime(data.solarNoon).Hour, convertTime(data.solarNoon).Minute));
-            Assert.Equal(DateTime.MinValue, data.solarTimes[0]);
+            Assert.Equal(data.solarNoon.AddHours(-12), data.sunriseTime);
+            Assert.Equal(data.solarNoon.AddHours(-12), data.solarTimes[0]);
             Assert.Equal(convertTime(testDate).Date, convertTime(data.solarTimes[1]).Date);
             Assert.Equal(convertTime(testDate).Date, convertTime(data.solarTimes[2]).Date);
-            Assert.Equal(DateTime.MinValue, data.solarTimes[3]);
+            Assert.Equal(12 * 60, (int)Math.Round(data.sunsetTime.Subtract(data.solarNoon).TotalMinutes));
+            Assert.Equal(data.sunsetTime, data.solarTimes[3]);
         }
 
         [Fact]
@@ -118,19 +120,68 @@ namespace WinDynamicDesktop.Tests
         {
             const string localTz = "Arctic/Longyearbyen";  // Svalbard (UTC+1)
             var convertTime = CreateTimeConverter(localTz);
-            DateTime testDate = new DateTime(2024, 10, 27, 0, 0, 0, DateTimeKind.Utc).ToLocalTime();
+            DateTime testDate = new DateTime(2024, 10, 26, 0, 0, 0, DateTimeKind.Utc).ToLocalTime();
             JsonConfig.settings.latitude = 78.22;
             JsonConfig.settings.longitude = 15.63;
             SolarData data = SunriseSunsetService.GetSolarData(testDate.Date);
             Assert.Equal(PolarPeriod.PolarNight, data.polarPeriod);
-            Assert.Equal(DateTime.MinValue, data.sunriseTime);
-            Assert.Equal(DateTime.MinValue, data.sunsetTime);
+            Assert.False(data.hasSunrise);
+            Assert.False(data.hasSunset);
             Assert.Equal(convertTime(testDate).Date, convertTime(data.solarNoon).Date);
-            Assert.Equal((11, 41), (convertTime(data.solarNoon).Hour, convertTime(data.solarNoon).Minute));
+            Assert.Equal((12, 41), (convertTime(data.solarNoon).Hour, convertTime(data.solarNoon).Minute));
+            Assert.Equal(data.solarNoon, data.sunriseTime);
+            Assert.Equal(data.solarNoon, data.sunsetTime);
             Assert.Equal(convertTime(testDate).Date, convertTime(data.solarTimes[0]).Date);
-            Assert.Equal(DateTime.MinValue, data.solarTimes[1]);
-            Assert.Equal(DateTime.MinValue, data.solarTimes[2]);
+            Assert.Equal(data.solarNoon, data.solarTimes[1]);
+            Assert.Equal(data.solarNoon, data.solarTimes[2]);
             Assert.Equal(convertTime(testDate).Date, convertTime(data.solarTimes[3]).Date);
+        }
+
+        [Fact]
+        public void TestPolarDayTransition()
+        {
+            const string localTz = "Arctic/Longyearbyen";  // Svalbard (UTC+2 in summer)
+            var convertTime = CreateTimeConverter(localTz);
+            DateTime testDate = new DateTime(2024, 4, 18, 0, 0, 0, DateTimeKind.Utc).ToLocalTime();
+            JsonConfig.settings.latitude = 78.22;
+            JsonConfig.settings.longitude = 15.63;
+            SolarData prevData = SunriseSunsetService.GetSolarData(testDate.Date.AddDays(-1));
+            SolarData data = SunriseSunsetService.GetSolarData(testDate.Date);
+            SolarData nextData = SunriseSunsetService.GetSolarData(testDate.Date.AddDays(1));
+
+            // Sun sets after midnight, rises again shortly after, then stays up through the next night
+            Assert.True(data.hasSunrise);
+            Assert.False(data.hasSunset);
+            Assert.True(prevData.sunsetTime < data.sunriseTime);
+            Assert.Equal(convertTime(testDate).Date, convertTime(prevData.sunsetTime).Date);
+            Assert.Equal(convertTime(testDate).Date, convertTime(data.sunriseTime).Date);
+            Assert.Equal(nextData.solarNoon.AddHours(-12), data.sunsetTime);
+            Assert.Equal(PolarPeriod.PolarDay, nextData.polarPeriod);
+            Assert.Equal("Sunrise: " + data.sunriseTime.ToShortTimeString() + ", Sunset: —",
+                SunriseSunsetService.GetSunriseSunsetString(data));
+        }
+
+        [Fact]
+        public void TestHighLatitudeContinuity()
+        {
+            JsonConfig.settings.latitude = 78.22;  // Svalbard
+            JsonConfig.settings.longitude = 15.63;
+            DateTime startDate = new DateTime(2024, 1, 1);
+            SolarData prevData = SunriseSunsetService.GetSolarData(startDate);
+
+            for (int i = 1; i <= 366; i++)
+            {
+                SolarData data = SunriseSunsetService.GetSolarData(startDate.AddDays(i));
+                DateTime[] times = [data.solarTimes[0], data.sunriseTime, data.solarTimes[1], data.solarTimes[2],
+                    data.sunsetTime, data.solarTimes[3]];
+                for (int j = 1; j < times.Length; j++)
+                {
+                    Assert.True(times[j - 1] <= times[j], $"Out of order on {startDate.AddDays(i):d}");
+                }
+                Assert.True(times[2] <= data.solarNoon && data.solarNoon <= times[3]);
+                Assert.True(prevData.solarTimes[3] <= data.solarTimes[0], $"Overlap before {startDate.AddDays(i):d}");
+                prevData = data;
+            }
         }
 
         [Fact]
