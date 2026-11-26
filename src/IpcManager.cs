@@ -3,8 +3,10 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Pipes;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -153,21 +155,34 @@ namespace WinDynamicDesktop
                 return null;
             }
 
-            if (arg.StartsWith("/theme=", StringComparison.OrdinalIgnoreCase))
-            {
-                JsonConfig.settings.activeThemes[0] = themeId;
-            }
-            else if (arg.StartsWith("/theme:L=", StringComparison.OrdinalIgnoreCase))
+            if (arg.StartsWith("/theme:L=", StringComparison.OrdinalIgnoreCase))
             {
                 JsonConfig.settings.lockScreenTheme = themeId;
                 JsonConfig.settings.lockScreenDisplayIndex = -1;
+                return themeId;
+            }
+
+            List<string> activeThemes = JsonConfig.IsNullOrEmpty(JsonConfig.settings.activeThemes) ?
+                new List<string> { null } : JsonConfig.settings.activeThemes.ToList();
+            if (arg.StartsWith("/theme=", StringComparison.OrdinalIgnoreCase))
+            {
+                activeThemes[0] = themeId;
             }
             else
             {
-                int displayNumber = int.Parse(arg[7].ToString());
-                JsonConfig.settings.activeThemes[displayNumber] = themeId;
-                JsonConfig.settings.activeThemes[0] = null;
+                if (!arg.StartsWith("/theme:", StringComparison.OrdinalIgnoreCase) ||
+                    !int.TryParse(arg.AsSpan(7, arg.IndexOf('=') - 7), out int displayNumber) ||
+                    displayNumber < 1 || displayNumber > Screen.AllScreens.Length)
+                {
+                    Console.WriteLine("Failed to set theme - invalid display number: " + arg);
+                    return null;
+                }
+
+                ThemeDialogUtils.UpdateConfigForDisplay(activeThemes);
+                activeThemes[displayNumber] = themeId;
             }
+
+            JsonConfig.settings.activeThemes = activeThemes.ToArray();
 
             return themeId;
         }
