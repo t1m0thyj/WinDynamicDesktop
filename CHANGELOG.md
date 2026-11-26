@@ -1,10 +1,16 @@
 # Changelog
 
+## Unreleased
+
+* Refresh the spanned virtual-desktop wallpaper after remote and console session reconnects
+* Avoid modal error reports for known transient desktop-wallpaper COM failures during sync and recovery
+
 ## `5.7.0`
 
 ### Enhancements
 
 * Added Tahoe Abstract and Golden Gate Abstract themes
+* Added experimental multi-monitor wallpaper sync across virtual desktops, including an XZ Desktop Wallpaper ByPass state bridge
 * Updated to .NET 10 which enables dark mode across entire application ([#553](https://github.com/t1m0thyj/WinDynamicDesktop/issues/553))
 * Rewrote theme preview renderer to be more lightweight by using Skia framework ([#672](https://github.com/t1m0thyj/WinDynamicDesktop/pull/672))
 * Added Lithuanian translation (thanks Matas)
